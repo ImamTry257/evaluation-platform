@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PolicyEval - Evaluasi Kuesioner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#d4dcd5",
+                    "on-background": "#161d19",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-variant": "#dde4dd",
+                    "surface-container": "#e8f0e9",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "tertiary": "#a43a3a",
+                    "on-tertiary-fixed": "#410005",
+                    "on-surface-variant": "#3c4a42",
+                    "on-primary-fixed-variant": "#005236",
+                    "primary-fixed": "#6ffbbe",
+                    "inverse-surface": "#2b322d",
+                    "error": "#ba1a1a",
+                    "primary-container": "#10b981",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#ebf3eb",
+                    "background": "#f4fbf4",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "on-secondary-fixed-variant": "#454747",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "error-container": "#ffdad6",
+                    "surface": "#f4fbf4",
+                    "on-tertiary-container": "#711419",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#e2e2e2",
+                    "secondary-container": "#dfe0e0",
+                    "outline": "#6c7a71",
+                    "inverse-primary": "#4edea3",
+                    "tertiary-container": "#fc7c78",
+                    "on-surface": "#161d19",
+                    "surface-tint": "#006c49",
+                    "secondary": "#5d5f5f",
+                    "on-primary-container": "#00422b",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#eef6ee",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#f4fbf4",
+                    "on-primary": "#ffffff",
+                    "primary": "#006c49",
+                    "on-secondary-container": "#616363",
+                    "surface-container-highest": "#dde4dd",
+                    "on-primary-fixed": "#002113",
+                    "tertiary-fixed": "#ffdad7",
+                    "outline-variant": "#bbcabf",
+                    "surface-container-high": "#e3eae3",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "0.5rem",
+                    "md": "1rem",
+                    "lg": "1.5rem",
+                    "gutter": "1.5rem",
+                    "base": "4px",
+                    "margin": "2rem",
+                    "2xl": "3rem",
+                    "xl": "2rem",
+                    "xs": "0.25rem"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-base": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f9fafb;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .likert-button:hover:not(.active) {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+        .likert-button.active {
+            background-color: #006c49;
+            color: white;
+            border-color: #006c49;
+            transform: scale(1.1);
+        }
+        .progress-pulse {
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center">
+<!-- Sticky Header Navigation -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant h-20 px-gutter flex flex-col justify-center">
+<div class="max-w-4xl w-full mx-auto flex items-center justify-between gap-6">
+<!-- Progress Info -->
+<div class="flex-1 flex flex-col gap-1.5">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Progress Evaluasi</span>
+<span class="font-label-caps text-label-caps text-primary font-bold">25% Selesai</span>
+</div>
+<div class="w-full bg-secondary-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full transition-all duration-700 ease-out" style="width: 25%"></div>
+</div>
+</div>
+<!-- Timer & Status -->
+<div class="flex items-center gap-4 pl-6 border-l border-outline-variant">
+<div class="flex flex-col items-end">
+<div class="flex items-center gap-1.5 text-tertiary">
+<span class="material-symbols-outlined text-base">timer</span>
+<span class="font-title-md text-title-md font-bold tabular-nums" id="countdown">44:59</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
+</div>
+</div>
+<!-- Profile Placeholder for Context -->
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio headshot of a middle-aged academic woman with a friendly expression. She is wearing a modern charcoal blazer over a clean white blouse. The background is a soft, out-of-focus environmental research facility with greenery and technical charts, maintaining a minimalist and corporate SaaS aesthetic with bright, natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcDYt4YYKg2Pul2V83WKWn2vO-wnxAL6J0B2YEYeNw1nI4B7TjXELzU0jZFIapXnEN78amwTtd0FQnQS33dsv9Io4k_oj42r5zB-B_Zk61NNvDt1CMSpC-_wXO0bd8--CV0THYT7hBsQN8PfMhlYfNDjZSrK6HjF0xaxh4hzs7DUeFRkJsLVKzaB-Tf6N-IG5JRYuZfHIZbUnFO0Ia2Pj56Y5i5maYK-dlN95FiH43o7Mul3pHjg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 w-full max-w-3xl mt-24 px-gutter pb-32 flex flex-col items-center">
+<!-- Animated Background Element (Subtle) -->
+<div class="fixed inset-0 -z-10 pointer-events-none opacity-20">
+
+</div>
+<!-- Question Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-8 md:p-12 mt-12 transition-all duration-300 hover:shadow-md">
+<!-- Meta Information -->
+<div class="flex flex-col gap-2 mb-8 text-center md:text-left">
+<p class="font-label-caps text-label-caps text-primary tracking-[0.1em] uppercase">
+                    Pertanyaan 5 dari 20 • <span class="font-bold">Konservasi Energi</span>
+</p>
+<h1 class="font-headline-lg text-headline-lg text-on-background leading-tight">
+                    Sejauh mana sekolah mengimplementasikan sistem monitoring emisi karbon secara berkala?
+                </h1>
+</div>
+<!-- Likert Scale Container -->
+<div class="mt-12 flex flex-col gap-10">
+<div class="flex justify-between items-center w-full px-2">
+<span class="font-body-sm text-body-sm text-secondary max-w-[100px] text-center leading-tight">Sangat Tidak Setuju</span>
+<span class="font-body-sm text-body-sm text-secondary max-w-[100px] text-center leading-tight">Sangat Setuju</span>
+</div>
+<div class="relative flex justify-between items-center w-full">
+<!-- Line connecting dots -->
+<div class="absolute top-1/2 left-0 right-0 h-px bg-outline-variant -translate-y-1/2 z-0"></div>
+<!-- Likert Options -->
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(1)">1</button>
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(2)">2</button>
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(3)">3</button>
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(4)">4</button>
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(5)">5</button>
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(6)">6</button>
+<button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md transition-all duration-200" onclick="selectScale(7)">7</button>
+</div>
+</div>
+<!-- Optional Commentary -->
+<div class="mt-12">
+<label class="font-label-caps text-label-caps text-secondary block mb-3 uppercase">Catatan Tambahan (Opsional)</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary-container focus:border-primary transition-all p-4 text-body-base font-body-base" placeholder="Berikan alasan atau detail tambahan untuk penilaian Anda..." rows="3"></textarea>
+</div>
+</div>
+<!-- Instructional Tip -->
+<div class="mt-8 flex items-start gap-3 text-secondary-fixed-dim max-w-xl mx-auto opacity-70">
+<span class="material-symbols-outlined text-md mt-0.5">info</span>
+<p class="font-body-sm text-body-sm">Pastikan Anda telah meninjau dokumen pendukung kebijakan lingkungan sekolah sebelum menjawab pertanyaan ini.</p>
+</div>
+</main>
+<!-- Fixed Footer Navigation -->
+<footer class="fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant h-24 flex items-center">
+<div class="max-w-4xl w-full mx-auto px-gutter flex items-center justify-between">
+<!-- Left: Previous -->
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl font-title-md text-title-md text-secondary hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined">arrow_back</span>
+                Sebelumnya
+            </button>
+<!-- Right: Next / Submit -->
+<div class="flex items-center gap-4">
+<!-- Submit only visible on last question (hidden here by default logic) -->
+<button class="hidden items-center gap-2 px-8 py-3 rounded-xl font-title-md text-title-md bg-tertiary text-on-tertiary shadow-lg shadow-tertiary/20 hover:opacity-90 active:scale-95 transition-all" id="submitBtn">
+                    Kirim Evaluasi
+                    <span class="material-symbols-outlined">send</span>
+</button>
+<button class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim hover:text-on-primary-fixed active:scale-95 transition-all" id="nextBtn">
+                    Selanjutnya
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</footer>
+<script>
+        // Simple Likert Scale Selection Logic
+        function selectScale(val) {
+            const buttons = document.querySelectorAll('.likert-button');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.innerText) === val) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Visual feedback of saving
+            const savedIndicator = document.querySelector('.text-primary span.text-sm');
+            savedIndicator.classList.add('scale-125');
+            setTimeout(() => savedIndicator.classList.remove('scale-125'), 300);
+        }
+
+        // Countdown Timer Implementation
+        let timeLeft = 44 * 60 + 59;
+        const countdownEl = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                countdownEl.textContent = "00:00";
+                countdownEl.parentElement.classList.replace('text-tertiary', 'text-error');
+            } else {
+                timeLeft--;
+            }
+        }, 1000);
+
+        // Interaction for "Next" - Mocking "Last Question" state
+        let questionCounter = 5;
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            questionCounter++;
+            if (questionCounter >= 20) {
+                document.getElementById('nextBtn').classList.add('hidden');
+                document.getElementById('submitBtn').classList.remove('hidden');
+                document.getElementById('submitBtn').classList.add('flex');
+            }
+        });
+    </script>
+</body></html>

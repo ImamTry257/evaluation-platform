@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manajemen Kuesioner | PolicyEval</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#711419",
+                    "inverse-surface": "#2b322d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface": "#f4fbf4",
+                    "on-background": "#161d19",
+                    "secondary-container": "#dfe0e0",
+                    "surface-variant": "#dde4dd",
+                    "surface-container-low": "#eef6ee",
+                    "surface-container-high": "#e3eae3",
+                    "on-primary-container": "#00422b",
+                    "outline": "#6c7a71",
+                    "background": "#f4fbf4",
+                    "secondary": "#5d5f5f",
+                    "inverse-primary": "#4edea3",
+                    "surface-container": "#e8f0e9",
+                    "tertiary-container": "#fc7c78",
+                    "surface-tint": "#006c49",
+                    "primary-fixed": "#6ffbbe",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#410005",
+                    "on-surface-variant": "#3c4a42",
+                    "outline-variant": "#bbcabf",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#616363",
+                    "tertiary": "#a43a3a",
+                    "surface-bright": "#f4fbf4",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#10b981",
+                    "surface-dim": "#d4dcd5",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdad7",
+                    "primary": "#006c49",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-primary-fixed-variant": "#005236",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "on-primary-fixed": "#002113",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "inverse-on-surface": "#ebf3eb",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#dde4dd",
+                    "on-surface": "#161d19"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "0.5rem",
+                    "gutter": "1.5rem",
+                    "2xl": "3rem",
+                    "base": "4px",
+                    "md": "1rem",
+                    "margin": "2rem",
+                    "xs": "0.25rem",
+                    "lg": "1.5rem",
+                    "xl": "2rem"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "body-base": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm flex flex-col py-6 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-[20px] font-bold text-primary dark:text-inverse-primary leading-none">PolicyEval</h1>
+<p class="text-[12px] text-secondary mt-1">Environmental SaaS</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-base text-body-base">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-base text-body-base">Period</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 bg-primary-container/10 dark:bg-primary-container/20 text-primary dark:text-primary-fixed-dim border-l-4 border-primary dark:border-primary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-body-base text-body-base">Questionnaire</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="font-body-base text-body-base">Aspect</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+<span class="font-body-base text-body-base">Question</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-base text-body-base">Respondent</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-body-base text-body-base">Recommendation</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-body-base text-body-base">Reports</span>
+</a>
+<div class="pt-4 mt-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-base text-body-base">Settings</span>
+</a>
+</div>
+</nav>
+<div class="px-6 mt-auto">
+<div class="p-4 bg-surface-container rounded-xl flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkhFkgFKna2wbMriLO5V5nDC6pxf-FNcRhAJCKWorMhAlRuqH_OSJrAMhslZCmac9umqWFu14qoz6cun4uS8jivetEPrzKm1LlBWO7VWO5yUCVXHeDG04_1kmPu8WDbp4gMj53VnnCYATX_twGuKZP5nBz-LwGAlRqvVgP6dC1RcUrH8XPmHWGGwozbgsD8TKyyb5tGkAtHHYRQBw05B4IvEfWPibyePB4R9soQQx_IVCaYhGCvA"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-sm font-bold truncate">Budi Santoso</p>
+<p class="text-[10px] text-secondary truncate">Administrator</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-[280px] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative max-w-md w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-full text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container rounded-full p-2 text-secondary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="hover:bg-surface-container rounded-full p-2 text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="hover:bg-surface-container rounded-full p-2 text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<span class="font-title-md text-sm font-medium">PolicyEval</span>
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC1A6AnO1OC-GeNJNJDjpOIwfWHTxS6AtB_AZWp-PfHU2l9KqIrQ9x3Qj4ApMRxyUYD3h-6DgKFpbGjFzUiB1Ztx06C2RK3zYQ2BsUmRoVg1_c9gDp3hb_xJ4Eb8F7uH7UFqziASc7y07ExZ5Kas63MJYbZuahur27-QwIkjqCJUv9-ADKQIh7IN5S4nt6cChSykKNDWfwaNejgnvJAIBmk3EzfO82tEt5y-8ml8LSd40Dqbxf1g"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-24 pb-12 px-gutter">
+<div class="max-w-[1440px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div class="max-w-2xl">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2">Manajemen Kuesioner</h2>
+<p class="font-body-base text-body-base text-secondary">Kelola instrumen evaluasi kebijakan lingkungan sekolah secara komprehensif. Sesuaikan pertanyaan, periode, dan target responden untuk mendapatkan data yang akurat.</p>
+</div>
+<div>
+<button class="bg-primary hover:bg-on-primary-container text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all active:scale-95 shadow-md">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                        Buat Kuesioner
+                    </button>
+</div>
+</div>
+<!-- Bento Filter Bar -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm mb-8 flex flex-wrap items-center gap-4">
+<div class="flex-1 min-w-[240px]">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm" data-icon="search">search</span>
+<input class="w-full h-10 pl-9 pr-4 bg-surface-container-lowest border border-outline-variant rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Cari nama kuesioner..." type="text"/>
+</div>
+</div>
+<div class="w-48">
+<select class="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+<option value="">Semua Periode</option>
+<option>Ganjil 2023/2024</option>
+<option>Genap 2023/2024</option>
+<option>Ganjil 2024/2025</option>
+</select>
+</div>
+<div class="w-40">
+<select class="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+<option value="">Status</option>
+<option>Draft</option>
+<option>Terbit</option>
+<option>Arsip</option>
+</select>
+</div>
+<button class="h-10 px-4 border border-outline-variant rounded-lg text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                    More Filters
+                </button>
+</div>
+<!-- Card Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+<!-- Card 1 -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl" data-icon="description">description</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wide">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Terbit
+                            </span>
+</div>
+<h3 class="font-title-md text-on-surface mb-2 leading-tight">Evaluasi Penggunaan Energi 2024</h3>
+<p class="text-sm text-secondary mb-6 line-clamp-2">Survei tingkat efisiensi pemakaian listrik kelas dan optimalisasi perangkat elektronik sekolah.</p>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-xs font-medium bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">Ganjil 2023/24</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span class="text-xs">45 Menit</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">category</span>
+<span class="text-xs">5 Aspek</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">quiz</span>
+<span class="text-xs font-medium">32 Pertanyaan</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<button class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                            View Structure
+                        </button>
+<div class="flex items-center gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors" title="Archive">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-error/80 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment_late">assignment_late</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold uppercase tracking-wide">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                Draft
+                            </span>
+</div>
+<h3 class="font-title-md text-on-surface mb-2 leading-tight">Survei Pengelolaan Sampah Mandiri</h3>
+<p class="text-sm text-secondary mb-6 line-clamp-2">Draf awal instrumen penilaian kebersihan kantin dan area terbuka hijau oleh siswa.</p>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-xs font-medium bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">Genap 2023/24</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span class="text-xs">20 Menit</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">category</span>
+<span class="text-xs">3 Aspek</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">quiz</span>
+<span class="text-xs font-medium">12 Pertanyaan</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<button class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                            View Structure
+                        </button>
+<div class="flex items-center gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="px-3 py-1 bg-primary text-white text-xs font-bold rounded-lg hover:bg-on-primary-container transition-colors">
+                                Publish
+                            </button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-error/80 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-all flex flex-col opacity-80 hover:opacity-100">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-2xl" data-icon="history">history</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-container/30 text-on-tertiary-container text-xs font-bold uppercase tracking-wide">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                Arsip
+                            </span>
+</div>
+<h3 class="font-title-md text-on-surface mb-2 leading-tight">Audit RTH Sekolah Tahap 1</h3>
+<p class="text-sm text-secondary mb-6 line-clamp-2">Instrumen lama tahun ajaran 2022/2023 untuk pemantauan berkala Ruang Terbuka Hijau.</p>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-xs font-medium bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">Genap 2022/23</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span class="text-xs">60 Menit</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">category</span>
+<span class="text-xs">8 Aspek</span>
+</div>
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-sm">quiz</span>
+<span class="text-xs font-medium">45 Pertanyaan</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<button class="text-xs font-bold text-secondary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">analytics</span>
+                            View Reports
+                        </button>
+<div class="flex items-center gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors" title="Restore">
+<span class="material-symbols-outlined text-[20px]">restore</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-error/80 transition-colors" title="Permanent Delete">
+<span class="material-symbols-outlined text-[20px]">delete_forever</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 bg-white rounded-xl border border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm mb-12">
+<p class="text-sm text-secondary">Menampilkan <span class="font-semibold text-on-surface">3</span> dari <span class="font-semibold text-on-surface">12</span> kuesioner</p>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant text-secondary hover:bg-surface-container-low transition-all disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary text-white font-bold transition-all shadow-sm">1</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant text-secondary hover:bg-surface-container-low transition-all">2</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant text-secondary hover:bg-surface-container-low transition-all">3</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant text-secondary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Dashboard Insight Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">checklist</span>
+</div>
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">+12%</span>
+</div>
+<h4 class="text-secondary text-sm font-medium mb-1">Total Respon Diterima</h4>
+<p class="text-3xl font-bold text-on-surface">1,482</p>
+<div class="absolute bottom-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[80px]">poll</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<span class="text-xs font-bold text-secondary bg-surface-container px-2 py-1 rounded-md">Stable</span>
+</div>
+<h4 class="text-secondary text-sm font-medium mb-1">Rata-rata Durasi Pengisian</h4>
+<p class="text-3xl font-bold text-on-surface">18:45</p>
+<p class="text-xs text-secondary mt-1">Target: &lt; 20 Menit</p>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-tertiary-container/10 rounded-lg text-tertiary">
+<span class="material-symbols-outlined">error</span>
+</div>
+<span class="text-xs font-bold text-tertiary bg-tertiary-container/20 px-2 py-1 rounded-md">-4%</span>
+</div>
+<h4 class="text-secondary text-sm font-medium mb-1">Kuesioner Belum Lengkap</h4>
+<p class="text-3xl font-bold text-on-surface">2</p>
+<p class="text-xs text-secondary mt-1">Perlu tinjauan segera</p>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Interactive elements effect
+        document.querySelectorAll('button, .bg-white').forEach(el => {
+            if(el.tagName === 'BUTTON' || el.classList.contains('hover:shadow-md')) {
+                el.addEventListener('mousedown', () => { el.style.transform = 'scale(0.98)'; });
+                el.addEventListener('mouseup', () => { el.style.transform = 'scale(1)'; });
+                el.addEventListener('mouseleave', () => { el.style.transform = 'scale(1)'; });
+            }
+        });
+
+        // Search logic simulation
+        const searchInput = document.querySelector('input[placeholder="Cari nama kuesioner..."]');
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.grid > .flex-col');
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                if (title.includes(val)) {
+                    card.style.display = '';
+                    card.classList.add('ring-2', 'ring-primary/20');
+                    setTimeout(() => card.classList.remove('ring-2', 'ring-primary/20'), 1500);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body></html>

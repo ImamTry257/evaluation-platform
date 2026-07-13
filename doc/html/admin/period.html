@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manajemen Periode Evaluasi - PolicyEval</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#a43a3a",
+                    "surface-dim": "#d4dcd5",
+                    "primary-fixed": "#6ffbbe",
+                    "on-tertiary-container": "#711419",
+                    "outline-variant": "#bbcabf",
+                    "on-primary-fixed": "#002113",
+                    "surface-tint": "#006c49",
+                    "surface-container-high": "#e3eae3",
+                    "error-container": "#ffdad6",
+                    "background": "#f4fbf4",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#ebf3eb",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-primary-container": "#00422b",
+                    "on-surface": "#161d19",
+                    "inverse-primary": "#4edea3",
+                    "tertiary-container": "#fc7c78",
+                    "surface-bright": "#f4fbf4",
+                    "on-surface-variant": "#3c4a42",
+                    "inverse-surface": "#2b322d",
+                    "surface-container-low": "#eef6ee",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "surface-variant": "#dde4dd",
+                    "surface": "#f4fbf4",
+                    "primary-container": "#10b981",
+                    "surface-container": "#e8f0e9",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#161d19",
+                    "secondary-container": "#dfe0e0",
+                    "on-tertiary-fixed": "#410005",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#005236",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "primary": "#006c49",
+                    "tertiary-fixed": "#ffdad7",
+                    "outline": "#6c7a71",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-container-highest": "#dde4dd",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#616363",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "secondary": "#5d5f5f",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "0.25rem",
+                    "xl": "2rem",
+                    "gutter": "1.5rem",
+                    "margin": "2rem",
+                    "lg": "1.5rem",
+                    "sm": "0.5rem",
+                    "2xl": "3rem",
+                    "base": "4px",
+                    "md": "1rem"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "title-md": ["Inter"],
+                    "body-base": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4fbf4; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        .nav-active-indicator { position: absolute; left: 0; height: 100%; width: 4px; background-color: #006c49; }
+        .data-table-scroll::-webkit-scrollbar { height: 6px; }
+        .data-table-scroll::-webkit-scrollbar-thumb { background: #bbcabf; border-radius: 10px; }
+        .glass-header { backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[280px] z-50 py-6 bg-surface-container-low border-r border-outline-variant/30 hidden md:flex flex-col">
+<div class="px-6 mb-10">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">PolicyEval</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-1">Environmental Admin</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-base text-body-base">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-surface-container-high text-primary font-bold border-l-4 border-primary py-3 px-6" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-body-base text-body-base">Period</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-base text-body-base">Questionnaire</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-body-base text-body-base">Aspect</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-body-base text-body-base">Question</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-base text-body-base">Respondent</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="font-body-base text-body-base">Recommendation</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-base text-body-base">Reports</span>
+</a>
+<div class="pt-4 mt-4 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-base text-body-base">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-[280px] min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 w-full h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-lg z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-xl pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm" placeholder="Cari data evaluasi..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="font-label-caps text-label-caps text-on-surface">Admin Utama</p>
+<p class="text-[10px] text-on-surface-variant">System Master</p>
+</div>
+<img class="w-9 h-9 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a corporate administrator, minimalist style, clean background, soft lighting, 4k high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV8jU_Ux58fsdINUMIhuKW5V3ln1Uz0Fw_LkVZes6LeNGcTFMOnTIT7ZneDBiQCoa03PuMLjvMqtMHrmzdZXColUokzKOL_IK8BIeEnqsnamtdDj5phLlrsDXs__FyWqtDoJfbjzu9uizJt8waHmyxwxq35kl8bZ1f1Lt_77RqR7hrY69CYiy5KCFd-AJ6ZozSyZ0Zz4Uv25U8Vhe8KbPGh6BkP2wpDu7QDmtU5Vlukirpi5s7EQ"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-8 max-w-[1440px] w-full mx-auto">
+<!-- Header Section -->
+<section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Periode Evaluasi</h2>
+<p class="font-body-base text-body-base text-on-surface-variant mt-2 max-w-2xl">
+                        Kelola periode waktu pelaksanaan evaluasi kebijakan lingkungan sekolah secara sistematis untuk memantau progres keberlanjutan instansi.
+                    </p>
+</div>
+<div>
+<button class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                        Tambah Periode
+                    </button>
+</div>
+</section>
+<!-- Action Bar & Content Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<!-- Action Bar -->
+<div class="p-6 border-b border-outline-variant/10 flex flex-col sm:flex-row gap-4 bg-surface-container-low/30">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm" placeholder="Cari nama periode..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative min-w-[160px]">
+<select class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-primary-container outline-none text-body-sm font-body-sm cursor-pointer">
+<option value="">Semua Status</option>
+<option value="aktif">Aktif</option>
+<option value="non-aktif">Non-Aktif</option>
+<option value="mendatang">Mendatang</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+<button class="bg-white border border-outline-variant/50 text-on-surface px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+<span class="text-body-sm font-body-sm">Filter Lanjut</span>
+</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto data-table-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Nama Periode</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Mulai</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Selesai</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Dibuat Pada</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1: Active -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">event</span>
+</div>
+<span class="font-body-base font-semibold text-on-surface">Ganjil 2023/2024</span>
+</div>
+</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">01 Sep 2023</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">31 Jan 2024</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-container/20 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mr-1.5 animate-pulse"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-6 py-5 text-body-sm text-outline font-body-sm">15 Aug 2023, 09:12</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors" title="Hapus">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Upcoming -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">event</span>
+</div>
+<span class="font-body-base font-semibold text-on-surface">Genap 2023/2024</span>
+</div>
+</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">01 Feb 2024</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">30 Jun 2024</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-container text-on-secondary-container">
+                                        Mendatang
+                                    </span>
+</td>
+<td class="px-6 py-5 text-body-sm text-outline font-body-sm">12 Dec 2023, 14:45</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-2">
+<button class="bg-primary/5 hover:bg-primary/10 text-primary text-[11px] font-bold px-3 py-1.5 rounded-lg border border-primary/20 transition-all">
+                                            Aktifkan
+                                        </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Inactive -->
+<tr class="hover:bg-surface-container-low/30 transition-colors opacity-75">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-[20px]">history</span>
+</div>
+<span class="font-body-base font-semibold text-on-surface">Khusus Musim Panas 2023</span>
+</div>
+</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">01 Jul 2023</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">25 Aug 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-outline-variant/30 text-on-surface-variant">
+                                        Non-Aktif
+                                    </span>
+</td>
+<td class="px-6 py-5 text-body-sm text-outline font-body-sm">20 Jun 2023, 10:00</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-2">
+<button class="bg-primary/5 hover:bg-primary/10 text-primary text-[11px] font-bold px-3 py-1.5 rounded-lg border border-primary/20 transition-all">
+                                            Aktifkan
+                                        </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- More placeholder rows... -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-[20px]">history</span>
+</div>
+<span class="font-body-base font-semibold text-on-surface">Genap 2022/2023</span>
+</div>
+</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">01 Feb 2023</td>
+<td class="px-6 py-5 text-body-sm text-on-surface-variant font-body-sm">30 Jun 2023</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-outline-variant/30 text-on-surface-variant">
+                                        Non-Aktif
+                                    </span>
+</td>
+<td class="px-6 py-5 text-body-sm text-outline font-body-sm">10 Jan 2023, 16:30</td>
+<td class="px-6 py-5 text-center">
+<div class="flex items-center justify-center gap-2">
+<button class="bg-primary/5 hover:bg-primary/10 text-primary text-[11px] font-bold px-3 py-1.5 rounded-lg border border-primary/20 transition-all">
+                                            Aktifkan
+                                        </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                        Menampilkan <span class="font-semibold text-on-surface">1-10</span> dari <span class="font-semibold text-on-surface">25</span> entri
+                    </p>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold text-body-sm">1</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container border border-transparent text-body-sm font-medium transition-colors">2</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container border border-transparent text-body-sm font-medium transition-colors">3</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Information (Bento Style Sub-section) -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 shadow-sm flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<h4 class="font-title-md text-title-md text-on-surface mb-2">Statistik Periode</h4>
+<p class="text-body-sm text-on-surface-variant">Total 25 periode telah dibuat sejak sistem aktif pada tahun 2021.</p>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant/10 flex justify-between items-end">
+<span class="text-display-lg font-display-lg text-primary tracking-tighter">25</span>
+<span class="text-label-caps text-label-caps text-outline mb-2">PERIODE TOTAL</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 shadow-sm col-span-1 md:col-span-2 overflow-hidden relative">
+<div class="relative z-10">
+<h4 class="font-title-md text-title-md text-on-surface mb-2">Panduan Aktivasi</h4>
+<p class="text-body-base text-on-surface-variant max-w-lg mb-6">
+                            Pastikan periode sebelumnya telah ditutup sebelum mengaktifkan periode baru. Sistem hanya mengizinkan <strong>satu periode aktif</strong> dalam satu waktu untuk menjaga integritas data evaluasi.
+                        </p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-body-sm hover:underline" href="#">
+                            Lihat SOP Manajemen Data
+                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Decorative Background Element -->
+<div class="absolute -right-12 -bottom-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-auto py-8 px-8 border-t border-outline-variant/10 text-center">
+<p class="text-label-caps text-label-caps text-outline uppercase tracking-widest">
+                PolicyEval © 2024 • Administrator Platform • v2.4.0
+            </p>
+</footer>
+</main>
+<!-- Simple Micro-interaction Script -->
+<script>
+        // Interactive row highlight or notification simulation
+        document.querySelectorAll('button[title="Hapus"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                if(confirm('Apakah Anda yakin ingin menghapus periode ini?')) {
+                    row.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => row.remove(), 300);
+                }
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[placeholder="Cari nama periode..."]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

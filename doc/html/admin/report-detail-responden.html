@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hasil Evaluasi Kebijakan - EcoPolicy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#ebf3eb",
+                        "surface-container": "#e8f0e9",
+                        "tertiary": "#a43a3a",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#fc7c78",
+                        "inverse-primary": "#4edea3",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#006c49",
+                        "on-surface": "#161d19",
+                        "primary": "#006c49",
+                        "on-tertiary-container": "#711419",
+                        "surface-variant": "#dde4dd",
+                        "on-primary-fixed": "#002113",
+                        "on-tertiary-fixed-variant": "#842225",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#00422b",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e3eae3",
+                        "on-primary-fixed-variant": "#005236",
+                        "tertiary-fixed-dim": "#ffb3af",
+                        "surface-dim": "#d4dcd5",
+                        "surface-container-low": "#eef6ee",
+                        "surface-container-highest": "#dde4dd",
+                        "secondary-container": "#dfe0e0",
+                        "primary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#454747",
+                        "background": "#f4fbf4",
+                        "on-surface-variant": "#3c4a42",
+                        "on-background": "#161d19",
+                        "inverse-surface": "#2b322d",
+                        "surface": "#f4fbf4",
+                        "tertiary-fixed": "#ffdad7",
+                        "secondary": "#5d5f5f",
+                        "outline-variant": "#bbcabf",
+                        "on-secondary-container": "#616363",
+                        "primary-container": "#10b981",
+                        "outline": "#6c7a71",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#6ffbbe",
+                        "on-tertiary-fixed": "#410005",
+                        "surface-bright": "#f4fbf4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "0.25rem",
+                        "margin": "2rem",
+                        "2xl": "3rem",
+                        "md": "1rem",
+                        "base": "4px",
+                        "xl": "2rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "body-base": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "title-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+        }
+        .radar-grid {
+            stroke: #e5e7eb;
+            stroke-width: 1;
+        }
+        .radar-area {
+            fill: rgba(16, 185, 129, 0.2);
+            stroke: #006c49;
+            stroke-width: 2;
+        }
+        .transition-all {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-base min-h-screen">
+<!-- SideNavBar -->
+<aside class="w-[280px] h-screen fixed left-0 top-0 bg-surface border-r border-outline-variant flex flex-col py-xl z-50">
+<div class="px-6 mb-10">
+<h1 class="text-title-md font-title-md font-bold text-primary">EcoPolicy</h1>
+<p class="text-body-sm font-body-sm text-secondary">Institutional Portal</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-caps font-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-label-caps font-label-caps">Evaluations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">schema</span>
+<span class="text-label-caps font-label-caps">Questionnaires</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-caps font-label-caps">Respondents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container/10 text-primary border-l-4 border-primary font-medium" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-caps font-label-caps">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-caps font-label-caps">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 border-t border-outline-variant pt-6 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-caps font-label-caps">Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-caps font-label-caps">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-[280px] min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant px-gutter py-md flex justify-between items-center">
+<div class="flex items-center gap-xl">
+<div class="flex flex-col">
+<div class="flex items-center gap-xs text-secondary text-label-caps mb-1">
+<span>Dashboard</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Laporan</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Hasil Evaluasi</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="flex items-center gap-sm px-4 py-2 bg-surface border border-outline-variant rounded-xl text-secondary hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="text-label-caps font-label-caps">Kembali</span>
+</button>
+<button class="flex items-center gap-sm px-4 py-2 bg-surface border border-outline-variant rounded-xl text-secondary hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">print</span>
+<span class="text-label-caps font-label-caps">Cetak</span>
+</button>
+<button class="flex items-center gap-sm px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+<span class="text-label-caps font-label-caps">Download PDF</span>
+</button>
+</div>
+</header>
+<div class="max-w-[1440px] mx-auto p-gutter space-y-lg">
+<!-- Header Title Section -->
+<div class="mb-lg">
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Hasil Evaluasi Kebijakan Lingkungan</h2>
+<p class="text-body-base text-secondary mt-1">Periode Penilaian: Januari - Desember 2023 • ID: EVAL-2023-0892</p>
+</div>
+<!-- Summary Section (Top Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Overall Score Card -->
+<div class="md:col-span-4 bg-white rounded-xl card-shadow p-lg flex flex-col items-center justify-center text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4">
+<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-label-caps font-label-caps">Sangat Baik</span>
+</div>
+<div class="relative w-40 h-40 mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="52.8" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-display-lg font-display-lg text-on-surface">88</span>
+<span class="text-label-caps font-label-caps text-secondary">Skor Total</span>
+</div>
+</div>
+<p class="text-body-sm text-secondary max-w-[200px]">Institusi Anda memenuhi standar keberlanjutan kategori Platinum.</p>
+</div>
+<!-- Verdict Summary Card -->
+<div class="md:col-span-4 bg-white rounded-xl card-shadow p-lg flex flex-col">
+<h3 class="text-title-md font-title-md text-on-surface mb-md">Kesimpulan Performa</h3>
+<div class="flex-1 space-y-md">
+<div class="p-4 bg-primary/5 rounded-xl border border-primary/10">
+<p class="text-body-base text-on-surface-variant italic">
+                                "Secara keseluruhan, implementasi kebijakan lingkungan menunjukkan komitmen yang sangat kuat terutama pada aspek efisiensi energi dan edukasi publik."
+                            </p>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-body-sm">
+<span class="text-secondary">Peringkat Global</span>
+<span class="font-semibold text-on-surface">Top 5%</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-secondary">Target Periode Ini</span>
+<span class="font-semibold text-on-surface">85/100</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-secondary">Pertumbuhan Skor</span>
+<span class="font-semibold text-primary">+12% vs 2022</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Radar Chart Card -->
+<div class="md:col-span-4 bg-white rounded-xl card-shadow p-lg">
+<h3 class="text-title-md font-title-md text-on-surface mb-md">Visualisasi Radar</h3>
+<div class="flex items-center justify-center h-[200px]">
+<svg class="overflow-visible" height="200" viewbox="0 0 200 200" width="200">
+<!-- Hexagon Background -->
+<polygon class="radar-grid fill-none" points="100,20 170,60 170,140 100,180 30,140 30,60"></polygon>
+<polygon class="radar-grid fill-none" points="100,60 135,80 135,120 100,140 65,120 65,80"></polygon>
+<!-- Axis Lines -->
+<line class="radar-grid" x1="100" x2="100" y1="100" y2="20"></line>
+<line class="radar-grid" x1="100" x2="170" y1="100" y2="60"></line>
+<line class="radar-grid" x1="100" x2="170" y1="100" y2="140"></line>
+<line class="radar-grid" x1="100" x2="100" y1="100" y2="180"></line>
+<line class="radar-grid" x1="100" x2="30" y1="100" y2="140"></line>
+<line class="radar-grid" x1="100" x2="30" y1="100" y2="60"></line>
+<!-- Data Polygon -->
+<polygon class="radar-area" points="100,35 155,75 140,125 100,165 50,130 45,75"></polygon>
+<!-- Labels -->
+<text class="text-[8px] font-semibold fill-secondary" text-anchor="middle" x="100" y="10">MANAJEMEN SAMPAH</text>
+<text class="text-[8px] font-semibold fill-secondary" text-anchor="start" x="175" y="55">ENERGI</text>
+<text class="text-[8px] font-semibold fill-secondary" text-anchor="start" x="175" y="150">AIR</text>
+<text class="text-[8px] font-semibold fill-secondary" text-anchor="middle" x="100" y="195">PENGHIJAUAN</text>
+<text class="text-[8px] font-semibold fill-secondary" text-anchor="end" x="25" y="150">EDUKASI</text>
+<text class="text-[8px] font-semibold fill-secondary" text-anchor="end" x="25" y="55">KEBIJAKAN</text>
+</svg>
+</div>
+</div>
+</div>
+<!-- Detailed Breakdown (Accordion) -->
+<div class="space-y-md">
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-on-surface">Rincian Komponen Evaluasi</h3>
+<span class="text-body-sm text-secondary">Klik pada komponen untuk melihat detail</span>
+</div>
+<div class="space-y-sm">
+<!-- Level 1 Component -->
+<div class="bg-white rounded-xl card-shadow overflow-hidden group">
+<button class="w-full flex items-center justify-between p-lg hover:bg-surface-container transition-all" onclick="toggleAccordion('comp-1')">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">delete_sweep</span>
+</div>
+<div class="text-left">
+<h4 class="font-semibold text-on-surface">Manajemen Sampah</h4>
+<p class="text-body-sm text-secondary">6 Sub-Komponen • 24 Indikator</p>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<div class="text-right">
+<span class="text-title-md font-bold text-on-surface">92/100</span>
+<div class="w-32 h-1.5 bg-surface-container rounded-full mt-1">
+<div class="h-full bg-primary rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<span class="material-symbols-outlined transition-transform duration-300" id="comp-1-icon">expand_more</span>
+</div>
+</button>
+<!-- Level 2 Sub-Components -->
+<div class="hidden border-t border-outline-variant bg-surface/30" id="comp-1-content">
+<div class="p-lg space-y-md">
+<div class="bg-white rounded-lg border border-outline-variant p-md">
+<div class="flex items-center justify-between mb-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+<span class="font-medium text-on-surface">Pemisahan Sampah Organik & Anorganik</span>
+</div>
+<span class="text-body-sm font-semibold text-on-surface">95/100</span>
+</div>
+<!-- Level 3 Indicators -->
+<div class="pl-8 space-y-xs mt-md">
+<div class="flex justify-between items-center text-body-sm p-sm rounded hover:bg-surface-container-low">
+<span class="text-secondary">Penyediaan wadah sampah terpilah di setiap lantai</span>
+<span class="font-medium text-primary">10.0 / 10.0</span>
+</div>
+<div class="flex justify-between items-center text-body-sm p-sm rounded hover:bg-surface-container-low">
+<span class="text-secondary">Papan informasi tata cara pemilahan sampah</span>
+<span class="font-medium text-primary">5.0 / 5.0</span>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg border border-outline-variant p-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+<span class="font-medium text-on-surface">Kerjasama dengan Pihak Ketiga (Pengolah Sampah)</span>
+</div>
+<span class="text-body-sm font-semibold text-on-surface">88/100</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Level 1 Component 2 -->
+<div class="bg-white rounded-xl card-shadow overflow-hidden">
+<button class="w-full flex items-center justify-between p-lg hover:bg-surface-container transition-all" onclick="toggleAccordion('comp-2')">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div class="text-left">
+<h4 class="font-semibold text-on-surface">Kebijakan Energi</h4>
+<p class="text-body-sm text-secondary">4 Sub-Komponen • 18 Indikator</p>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<div class="text-right">
+<span class="text-title-md font-bold text-on-surface">78/100</span>
+<div class="w-32 h-1.5 bg-surface-container rounded-full mt-1">
+<div class="h-full bg-primary rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<span class="material-symbols-outlined transition-transform duration-300" id="comp-2-icon">expand_more</span>
+</div>
+</button>
+<div class="hidden border-t border-outline-variant bg-surface/30" id="comp-2-content">
+<!-- Content placeholder -->
+<div class="p-lg text-body-sm text-secondary">Detil komponen kebijakan energi akan ditampilkan di sini.</div>
+</div>
+</div>
+<!-- Level 1 Component 3 -->
+<div class="bg-white rounded-xl card-shadow overflow-hidden">
+<button class="w-full flex items-center justify-between p-lg hover:bg-surface-container transition-all" onclick="toggleAccordion('comp-3')">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div class="text-left">
+<h4 class="font-semibold text-on-surface">Konservasi Air</h4>
+<p class="text-body-sm text-secondary">5 Sub-Komponen • 15 Indikator</p>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<div class="text-right">
+<span class="text-title-md font-bold text-on-surface">85/100</span>
+<div class="w-32 h-1.5 bg-surface-container rounded-full mt-1">
+<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<span class="material-symbols-outlined transition-transform duration-300" id="comp-3-icon">expand_more</span>
+</div>
+</button>
+<div class="hidden border-t border-outline-variant bg-surface/30" id="comp-3-content">
+<!-- Content placeholder -->
+<div class="p-lg text-body-sm text-secondary">Detil komponen konservasi air akan ditampilkan di sini.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Actionable Conclusion -->
+<section class="bg-white rounded-xl card-shadow overflow-hidden">
+<div class="bg-primary px-lg py-md">
+<h3 class="text-title-md font-title-md text-white flex items-center gap-sm">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+                        Kesimpulan & Rekomendasi
+                    </h3>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-xl">
+<div class="space-y-md">
+<h4 class="font-semibold text-primary flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">thumb_up</span>
+                            Kekuatan Utama
+                        </h4>
+<ul class="space-y-sm">
+<li class="flex gap-sm items-start text-body-sm text-on-surface-variant">
+<span class="text-primary mt-0.5">•</span>
+<span>Sistem pengelolaan sampah mandiri sudah berjalan 100% efektif di seluruh area institusi.</span>
+</li>
+<li class="flex gap-sm items-start text-body-sm text-on-surface-variant">
+<span class="text-primary mt-0.5">•</span>
+<span>Tingginya partisipasi civitas dalam program edukasi lingkungan (target tercapai 120%).</span>
+</li>
+</ul>
+</div>
+<div class="space-y-md">
+<h4 class="font-semibold text-tertiary flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">priority_high</span>
+                            Area Peningkatan Kritis
+                        </h4>
+<div class="p-4 bg-tertiary/5 rounded-xl border border-tertiary/20">
+<p class="text-body-sm text-on-surface-variant mb-md">
+                                Aspek <span class="font-bold">Efisiensi Energi</span> memerlukan perhatian segera. Penggunaan energi fosil masih mendominasi operasional gedung utama.
+                            </p>
+<button class="text-label-caps font-label-caps text-tertiary flex items-center gap-xs hover:gap-sm transition-all">
+                                LIHAT RENCANA AKSI <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-lg bg-surface-container border-t border-outline-variant flex justify-end gap-md">
+<button class="px-6 py-2.5 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition-all">
+                        Tandai Selesai & Kirim Laporan
+                    </button>
+</div>
+</section>
+</div>
+<!-- Footer Spacer -->
+<div class="h-xl"></div>
+</main>
+<script>
+        function toggleAccordion(id) {
+            const content = document.getElementById(`${id}-content`);
+            const icon = document.getElementById(`${id}-icon`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Initialize micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

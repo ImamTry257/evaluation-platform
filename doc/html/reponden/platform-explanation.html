@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPolicy - Platform Evaluasi Kebijakan Lingkungan Sekolah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#bbcabf",
+                        "inverse-primary": "#4edea3",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-tint": "#006c49",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#002113",
+                        "background": "#f4fbf4",
+                        "tertiary-container": "#fc7c78",
+                        "surface-bright": "#f4fbf4",
+                        "on-tertiary-fixed-variant": "#842225",
+                        "tertiary": "#a43a3a",
+                        "on-surface": "#161d19",
+                        "surface-variant": "#dde4dd",
+                        "surface-container-low": "#eef6ee",
+                        "surface-container-highest": "#dde4dd",
+                        "primary": "#006c49",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface": "#f4fbf4",
+                        "surface-dim": "#d4dcd5",
+                        "inverse-surface": "#2b322d",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#6ffbbe",
+                        "secondary-container": "#dfe0e0",
+                        "on-background": "#161d19",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-secondary-container": "#616363",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#e8f0e9",
+                        "on-primary-fixed-variant": "#005236",
+                        "inverse-on-surface": "#ebf3eb",
+                        "surface-container-high": "#e3eae3",
+                        "on-tertiary-fixed": "#410005",
+                        "on-surface-variant": "#3c4a42",
+                        "on-primary-container": "#00422b",
+                        "on-error-container": "#93000a",
+                        "secondary": "#5d5f5f",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#4edea3",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb3af",
+                        "on-tertiary-container": "#711419",
+                        "primary-container": "#10b981",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#c6c6c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "1rem",
+                        "margin": "2rem",
+                        "sm": "0.5rem",
+                        "xs": "0.25rem",
+                        "2xl": "3rem",
+                        "xl": "2rem",
+                        "lg": "1.5rem",
+                        "base": "4px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-base": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .scale-segment:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+        .custom-shadow {
+            shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+        }
+        /* Material symbols style override */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Sticky Header -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center h-16 px-gutter max-w-[1440px] mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">eco</span>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">EcoPolicy</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="A professional circular avatar portrait of an Asian educational administrator in a modern minimalist office environment, soft high-key lighting, corporate stewardship aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8g0ZQfuZ05pOzHiAb6SoPDylE5O1Av_-NMy47kc-XejbNtB2oOSofTvfPXHqX01jv3_jqLjJVidyXRNkBEeB4Nzhl2-dmYJU37styOAhFTFafC_eZYr_yJkl2n9_Di-filh3na00U3Nj0U1XSXPW-RU7i8Gy5h8M1dJ0qxwbTuoD_YFFTf4JuQTB2gwYr0piG-uck4564JZdwu0lsmlKwab9pEo2m8IwVJtHSZYeOXjDBVcQAlA"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 max-w-[1440px] mx-auto px-gutter grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left: Hero Illustration Section -->
+<section class="lg:col-span-5 flex flex-col justify-center sticky top-24 h-fit">
+<div class="relative rounded-xl overflow-hidden mb-8 group">
+<img class="w-full h-auto object-cover rounded-xl shadow-lg transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLto_RxkojkMMekLRCQw_iF369gAptsSl64Hw4f4XCl-vmJl1q4_HWX5Yq27_oDuLOz2Wppj2Jzf_n2zDgL1AkRXKX6w8PPJr9Y1p-2pInnS6veaS5V69NS1bwbrCxl8iJWpnhO6UsEdhVrquyRB0feakg4Sj-PAD8bKhIqn48SnM0eeK5RJSVkNg9E9N_yYNMdZlGe3qPBWUmhm21CClpWtrOBJKUbL9RYZQSR7wK5RRRcZeMoRDLk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent"></div>
+</div>
+<div class="space-y-4">
+<h2 class="font-display-lg text-display-lg text-primary tracking-tight">Platform Evaluasi Kebijakan Lingkungan Sekolah</h2>
+<p class="font-body-base text-body-base text-on-surface-variant max-w-md">
+                    Selamat Datang. Platform ini digunakan untuk mengevaluasi implementasi kebijakan lingkungan di satuan pendidikan guna menciptakan masa depan berkelanjutan.
+                </p>
+</div>
+</section>
+<!-- Right: Content Cards -->
+<section class="lg:col-span-7 space-y-8">
+<!-- Tentang Platform -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">info</span>
+<h3 class="font-title-md text-title-md text-on-surface">Tentang Platform</h3>
+</div>
+<p class="font-body-base text-body-base text-secondary leading-relaxed">
+                    Evaluasi ini merupakan langkah strategis untuk mengukur efektivitas kebijakan lingkungan yang telah diterapkan. Kami menjamin **kerahasiaan data** Anda sepenuhnya; hasil evaluasi akan dianonimkan dan digunakan murni untuk kepentingan riset pengembangan sekolah hijau. Kejujuran Anda adalah kunci perbaikan kualitas lingkungan pendidikan kita.
+                </p>
+</div>
+<!-- Informasi Evaluasi Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-md rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors duration-200">
+<span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">calendar_today</span>
+<span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Periode</span>
+<span class="font-body-base font-bold text-on-surface group-hover:text-white">Ganjil 2023/24</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors duration-200">
+<span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">assignment</span>
+<span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Kuesioner</span>
+<span class="font-body-base font-bold text-on-surface group-hover:text-white">Evaluasi Mandiri</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors duration-200">
+<span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">quiz</span>
+<span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Pertanyaan</span>
+<span class="font-body-base font-bold text-on-surface group-hover:text-white">48 Butir</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors duration-200">
+<span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">timer</span>
+<span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Estimasi</span>
+<span class="font-body-base font-bold text-on-surface group-hover:text-white">20 Menit</span>
+</div>
+</div>
+<!-- Instruksi Pengisian -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">rule</span>
+<h3 class="font-title-md text-title-md text-on-surface">Instruksi Pengisian</h3>
+</div>
+<ul class="space-y-4">
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="font-body-base font-medium text-on-surface">Baca Pertanyaan dengan Teliti</span>
+<p class="text-body-sm text-secondary">Pastikan Anda memahami konteks setiap butir pernyataan sebelum memilih jawaban.</p>
+</div>
+</li>
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="font-body-base font-medium text-on-surface">Jawaban Tersimpan Otomatis</span>
+<p class="text-body-sm text-secondary">Jangan khawatir kehilangan data, platform akan menyimpan progres Anda setiap kali bergeser halaman.</p>
+</div>
+</li>
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="font-body-base font-medium text-on-surface">Hasil Langsung Tersedia</span>
+<p class="text-body-sm text-secondary">Setelah selesai, sistem akan menampilkan ringkasan skor evaluasi secara real-time.</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Skala Penilaian -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">straighten</span>
+<h3 class="font-title-md text-title-md text-on-surface">Skala Penilaian (Likert 1-7)</h3>
+</div>
+<div class="flex flex-wrap md:flex-nowrap gap-2 w-full">
+<div class="flex-1 min-w-[80px] scale-segment bg-red-50 p-3 rounded-lg border border-red-100 text-center">
+<span class="block text-2xl font-bold text-red-600">1</span>
+<span class="text-[10px] font-bold text-red-800 uppercase leading-tight">Sangat Tidak Sesuai</span>
+</div>
+<div class="flex-1 min-w-[80px] scale-segment bg-orange-50 p-3 rounded-lg border border-orange-100 text-center">
+<span class="block text-2xl font-bold text-orange-600">2</span>
+</div>
+<div class="flex-1 min-w-[80px] scale-segment bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-center">
+<span class="block text-2xl font-bold text-yellow-600">3</span>
+</div>
+<div class="flex-1 min-w-[80px] scale-segment bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
+<span class="block text-2xl font-bold text-gray-500">4</span>
+<span class="text-[10px] font-bold text-gray-600 uppercase leading-tight">Netral</span>
+</div>
+<div class="flex-1 min-w-[80px] scale-segment bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center">
+<span class="block text-2xl font-bold text-emerald-600">5</span>
+</div>
+<div class="flex-1 min-w-[80px] scale-segment bg-primary-container/10 p-3 rounded-lg border border-primary-container/30 text-center">
+<span class="block text-2xl font-bold text-primary-container">6</span>
+</div>
+<div class="flex-1 min-w-[80px] scale-segment bg-primary p-3 rounded-lg border border-primary/20 text-center">
+<span class="block text-2xl font-bold text-white">7</span>
+<span class="text-[10px] font-bold text-white uppercase leading-tight">Sangat Sesuai Sekali</span>
+</div>
+</div>
+</div>
+<!-- Developer Info Footer (Mobile Only or Bottom) -->
+<div class="pt-4 flex justify-center lg:justify-start">
+<div class="flex items-center gap-2 text-outline">
+<span class="material-symbols-outlined text-sm">terminal</span>
+<span class="text-body-sm">Dikembangkan oleh: Tim Riset Universitas Pendidikan • Versi 1.2.0</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Confirmation Bar -->
+<footer class="fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-gutter py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+<div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative">
+<input class="peer hidden" id="confirmCheckbox" type="checkbox"/>
+<div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+<span class="material-symbols-outlined text-white text-lg scale-0 transition-transform peer-checked:scale-100">check</span>
+</div>
+</div>
+<span class="font-body-base text-on-surface group-hover:text-primary transition-colors">Saya telah membaca dan memahami seluruh instruksi</span>
+</label>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-xl h-12 rounded-xl border border-outline text-secondary font-medium hover:bg-surface-variant transition-colors active:scale-95 duration-150">
+                    Kembali
+                </button>
+<button class="flex-1 md:flex-none px-xl h-12 rounded-xl bg-primary-container text-white font-bold opacity-50 cursor-not-allowed transition-all active:scale-95 duration-150 flex items-center justify-center gap-2" disabled="" id="startBtn">
+                    Mulai Evaluasi
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</footer>
+<script>
+        // Simple Interaction Logic
+        const checkbox = document.getElementById('confirmCheckbox');
+        const startBtn = document.getElementById('startBtn');
+
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                startBtn.disabled = false;
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                startBtn.classList.add('hover:bg-primary', 'shadow-md');
+            } else {
+                startBtn.disabled = true;
+                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                startBtn.classList.remove('hover:bg-primary', 'shadow-md');
+            }
+        });
+
+        // Atmosphere interaction: Parallax effect for the hero image on scroll
+        window.addEventListener('scroll', () => {
+            const scrollValue = window.scrollY;
+            const heroImg = document.querySelector('section.lg\\:col-span-5 img');
+            if(heroImg) {
+                heroImg.style.transform = `translateY(${scrollValue * 0.05}px)`;
+            }
+        });
+
+        // Hover animation for scale segments
+        document.querySelectorAll('.scale-segment').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body></html>
