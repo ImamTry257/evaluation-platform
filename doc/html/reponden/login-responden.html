@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login Responden - Platform Evaluasi Kebijakan Lingkungan Sekolah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#3c4a42",
+                        "on-secondary": "#ffffff",
+                        "outline": "#6c7a71",
+                        "inverse-surface": "#2b322d",
+                        "surface-tint": "#006c49",
+                        "surface-variant": "#dde4dd",
+                        "secondary-container": "#dfe0e0",
+                        "on-tertiary-fixed": "#410005",
+                        "tertiary": "#a43a3a",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d4dcd5",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#161d19",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#002113",
+                        "primary-container": "#10b981",
+                        "tertiary-fixed-dim": "#ffb3af",
+                        "on-primary": "#ffffff",
+                        "on-background": "#161d19",
+                        "tertiary-fixed": "#ffdad7",
+                        "primary-fixed": "#6ffbbe",
+                        "primary-fixed-dim": "#4edea3",
+                        "outline-variant": "#bbcabf",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "secondary-fixed": "#e2e2e2",
+                        "background": "#f4fbf4",
+                        "secondary": "#5d5f5f",
+                        "inverse-primary": "#4edea3",
+                        "surface": "#f4fbf4",
+                        "on-secondary-container": "#616363",
+                        "surface-container-high": "#e3eae3",
+                        "surface-container": "#e8f0e9",
+                        "on-tertiary-fixed-variant": "#842225",
+                        "on-primary-container": "#00422b",
+                        "inverse-on-surface": "#ebf3eb",
+                        "surface-bright": "#f4fbf4",
+                        "tertiary-container": "#fc7c78",
+                        "primary": "#006c49",
+                        "on-tertiary-container": "#711419",
+                        "on-primary-fixed-variant": "#005236",
+                        "surface-container-low": "#eef6ee",
+                        "surface-container-highest": "#dde4dd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "2xl": "3rem",
+                        "xs": "0.25rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "margin": "2rem",
+                        "xl": "2rem",
+                        "md": "1rem",
+                        "base": "4px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "body-base": ["Poppins"],
+                        "headline-xl": ["Poppins"],
+                        "display-lg": ["Poppins"],
+                        "title-md": ["Poppins"],
+                        "label-caps": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "headline-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface selection:bg-primary-fixed selection:text-on-primary-fixed min-h-screen flex flex-col">
+<!-- Split Screen Main Content -->
+<main class="flex-grow flex flex-col md:flex-row min-h-[calc(100vh-80px)] overflow-hidden">
+<!-- Left Side: Illustration & Branding -->
+<section class="md:w-1/2 bg-surface-container-low flex flex-col justify-center items-center px-margin py-xl relative overflow-hidden">
+<!-- Background Atmospheric Glow -->
+<div class="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-container blur-[120px] rounded-full"></div>
+</div>
+<div class="relative z-10 max-w-xl text-center md:text-left space-y-lg">
+<div class="rounded-xl overflow-hidden shadow-sm bg-white/50 backdrop-blur-sm p-4">
+<img alt="Environmental Education Illustration" class="w-full h-auto object-contain max-h-[400px]" src="https://lh3.googleusercontent.com/aida/AP1WRLto_RxkojkMMekLRCQw_iF369gAptsSl64Hw4f4XCl-vmJl1q4_HWX5Yq27_oDuLOz2Wppj2Jzf_n2zDgL1AkRXKX6w8PPJr9Y1p-2pInnS6veaS5V69NS1bwbrCxl8iJWpnhO6UsEdhVrquyRB0feakg4Sj-PAD8bKhIqn48SnM0eeK5RJSVkNg9E9N_yYNMdZlGe3qPBWUmhm21CClpWtrOBJKUbL9RYZQSR7wK5RRRcZeMoRDLk"/>
+</div>
+<div class="space-y-md">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary leading-tight">
+                        Platform Evaluasi Kebijakan Lingkungan Sekolah
+                    </h1>
+<p class="font-body-base text-body-base text-on-surface-variant">
+                        Evaluate the implementation of environmental policies in educational institutions through a structured evaluation questionnaire.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Right Side: Login Form -->
+<section class="md:w-1/2 bg-surface flex flex-col justify-center items-center px-margin py-xl">
+<div class="w-full max-w-md space-y-lg">
+<!-- Login Card -->
+<div class="bg-white p-lg md:p-xl rounded-xl shadow-sm border border-outline-variant/20">
+<div class="mb-lg">
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-surface mb-2">Welcome</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                            Please enter your registered email address to begin the evaluation.
+                        </p>
+</div>
+<form action="#" class="space-y-lg" method="POST" onsubmit="event.preventDefault();">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant block uppercase tracking-wider" for="email">
+                                Email Address
+                            </label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<input class="w-full h-12 pl-10 pr-4 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-base text-body-base focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 outline-none placeholder:text-outline/50" id="email" name="email" placeholder="Enter your registered email address" required="" type="email"/>
+</div>
+</div>
+<button class="w-full h-12 bg-primary hover:bg-primary-fixed-dim text-white font-title-md text-title-md rounded-lg flex items-center justify-center gap-2 transition-all duration-150 active:scale-[0.98] shadow-sm" type="submit">
+<span>Start Evaluation</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</form>
+<!-- Information List Card -->
+<div class="mt-xl p-md bg-secondary-container/10 border border-outline-variant/30 rounded-lg space-y-3">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Only registered respondents can access</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Limited completion time</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Answers auto-saved</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cannot be changed after submission</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Instant results &amp; recommendations</span>
+</div>
+</div>
+</div>
+<!-- Help Text -->
+<div class="text-center px-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Need help? If you experience login issues, please contact the <a class="text-primary font-semibold hover:underline" href="#">system administrator</a>.
+                    </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="w-full px-margin py-lg flex flex-col md:flex-row justify-between items-center gap-md bg-surface-container-low border-t border-outline-variant">
+<div class="flex flex-col items-center md:items-start gap-1">
+<span class="font-title-md text-title-md font-bold text-on-surface">Platform Evaluasi Kebijakan Lingkungan Sekolah</span>
+<span class="font-body-sm text-body-sm text-on-secondary-container">© 2024 Platform Evaluasi Kebijakan Lingkungan Sekolah. Semua Hak Dilindungi.</span>
+</div>
+<div class="flex items-center gap-lg">
+<a class="font-body-sm text-body-sm text-on-secondary-container hover:text-primary transition-colors cursor-pointer" href="#">Kebijakan Privasi</a>
+<a class="font-body-sm text-body-sm text-on-secondary-container hover:text-primary transition-colors cursor-pointer" href="#">Syarat &amp; Ketentuan</a>
+<a class="font-body-sm text-body-sm text-on-secondary-container hover:text-primary transition-colors cursor-pointer" href="#">Bantuan</a>
+</div>
+</footer>
+<script>
+        // Micro-interaction for input focus effects
+        const emailInput = document.getElementById('email');
+        const iconWrapper = emailInput?.previousElementSibling;
+
+        emailInput?.addEventListener('focus', () => {
+            iconWrapper?.classList.remove('text-outline');
+            iconWrapper?.classList.add('text-primary');
+        });
+
+        emailInput?.addEventListener('blur', () => {
+            iconWrapper?.classList.remove('text-primary');
+            iconWrapper?.classList.add('text-outline');
+        });
+    </script>
+</body></html>

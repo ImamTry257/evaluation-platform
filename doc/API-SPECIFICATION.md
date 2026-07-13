@@ -18,7 +18,7 @@ Semua request dan response menggunakan format JSON dengan status HTTP standard.
 # 2. Authentication
 
 ## Login
-Authenticate user dan mendapatkan Bearer token.
+Authenticate user dan mendapatkan Bearer token. Unified endpoint untuk semua role dengan parameter type untuk forward-compatibility.
 
 **Endpoint:** `POST /auth/login`
 
@@ -26,7 +26,24 @@ Authenticate user dan mendapatkan Bearer token.
 ```json
 {
   "email": "user@example.com",
-  "password": "password123"
+  "password": "password123",
+  "type": "ADMIN"
+}
+```
+
+**Type values:**
+- `ADMIN` - Admin user (requires email + password)
+- `RESPONDENT` - Responden user (email only, auto-register if not exists)
+
+### Admin Login Flow
+Admin login memerlukan email + password verification.
+
+**Request:**
+```json
+{
+  "email": "admin@example.com",
+  "password": "password123",
+  "type": "ADMIN"
 }
 ```
 
@@ -39,7 +56,7 @@ Authenticate user dan mendapatkan Bearer token.
     "user": {
       "id": 1,
       "name": "John Doe",
-      "email": "user@example.com",
+      "email": "admin@example.com",
       "role": "admin"
     }
   }
@@ -50,9 +67,72 @@ Authenticate user dan mendapatkan Bearer token.
 ```json
 {
   "success": false,
-  "message": "Email atau password salah"
+  "message": "Email not found"
 }
 ```
+
+atau
+
+```json
+{
+  "success": false,
+  "message": "Password salah"
+}
+```
+
+### Responden Login Flow
+Responden login hanya memerlukan email. Jika email belum terdaftar di sistem, akan otomatis di-register sebagai responden.
+
+**Request:**
+```json
+{
+  "email": "responden@example.com",
+  "type": "RESPONDENT"
+}
+```
+
+**Response (200 OK) - Existing Responden:**
+```json
+{
+  "success": true,
+  "data": {
+    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
+    "user": {
+      "id": 10,
+      "email": "responden@example.com",
+      "role": "respondent",
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  }
+}
+```
+
+**Response (201 Created) - New Responden (Auto-registered):**
+```json
+{
+  "success": true,
+  "message": "Responden berhasil didaftarkan",
+  "data": {
+    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
+    "user": {
+      "id": 11,
+      "email": "responden_baru@example.com",
+      "role": "respondent",
+      "created_at": "2024-01-01T10:05:00Z"
+    }
+  }
+}
+```
+
+**Error Response (401 Unauthorized) - Responden not eligible:**
+```json
+{
+  "success": false,
+  "message": "Email not found"
+}
+```
+
+Note: Responden dianggap NOT FOUND jika email tidak terdaftar DAN tidak ada active evaluation period.
 
 ---
 

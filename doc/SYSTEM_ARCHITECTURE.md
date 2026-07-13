@@ -75,7 +75,7 @@ Administrator bertanggung jawab terhadap pengelolaan seluruh data sistem.
 
 ### Hak Akses
 
-- Login
+- Login (Email + Password)
 - Dashboard
 - Master Periode
 - Master Kuesioner
@@ -98,7 +98,7 @@ Responden merupakan pengguna yang mengisi instrumen evaluasi.
 
 ### Hak Akses
 
-- Login
+- Login (Email only, auto-register jika belum terdaftar)
 - Melihat Penjelasan Platform
 - Memilih Evaluasi Aktif
 - Mengisi Angket
@@ -107,6 +107,21 @@ Responden merupakan pengguna yang mengisi instrumen evaluasi.
 - Submit
 - Melihat Hasil Evaluasi
 - Melihat Rekomendasi
+
+---
+
+## Authentication
+
+**Unified Endpoint:** `POST /auth/login` dengan parameter `type` (ADMIN/RESPONDENT)
+
+**Admin Flow:**
+- Email + Password verification
+- Error: "Email not found" atau "Password salah"
+
+**Responden Flow:**
+- Email only verification
+- Auto-register jika email belum ada di sistem
+- Error: "Email not found" jika tidak eligible untuk evaluasi aktif
 
 ---
 

@@ -83,18 +83,33 @@ Recommendation
 
 ## users
 
-Menyimpan seluruh akun pengguna.
+Menyimpan seluruh akun pengguna (admin dan responden).
 
-| Field | Type |
-|--------|------|
-| id | bigint |
-| role | enum(admin, respondent) |
-| name | varchar |
-| email | varchar |
-| password | varchar |
-| is_active | boolean |
-| created_at | timestamp |
-| updated_at | timestamp |
+**Authentication:**
+- **Admin:** Email + Password required
+- **Responden:** Email only (password nullable, auto-registered jika belum ada)
+
+| Field | Type | Notes |
+|--------|------|-------|
+| id | bigint | |
+| role | enum(admin, respondent) | Menentukan tipe authentikasi |
+| name | varchar | Nullable untuk responden (auto-generated dari email jika kosong) |
+| email | varchar | Unique, case-insensitive |
+| password | varchar | **Nullable** - hanya untuk admin, responden login email-only |
+| is_active | boolean | Default: true |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Admin User Requirements:**
+- Email, password harus terisi
+- role = 'admin'
+- is_active = true
+
+**Responden User (Auto-registered):**
+- Email terisi (unique, case-insensitive)
+- Password nullable (tidak digunakan)
+- role = 'respondent'
+- is_active = true (default)
 
 ---
 
