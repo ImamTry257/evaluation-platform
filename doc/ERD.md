@@ -37,134 +37,134 @@ erDiagram
         varchar name
         varchar email
         varchar password
-        boolean is_active
-        timestamp created_at
-        timestamp updated_at
+        boolean isActive
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     EVALUATION_PERIODS {
         bigint id PK
         varchar name
         text description
-        datetime start_date
-        datetime end_date
-        boolean is_active
-        timestamp created_at
-        timestamp updated_at
+        datetime startDate
+        datetime endDate
+        boolean isActive
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     QUESTIONNAIRES {
         bigint id PK
-        bigint evaluation_period_id FK
+        bigint evaluationPeriodId FK
         varchar title
         text description
-        integer duration_minutes
+        integer durationMinutes
         enum status "draft, published, closed"
-        timestamp created_at
-        timestamp updated_at
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     COMPONENTS {
         bigint id PK
-        bigint questionnaire_id FK
+        bigint questionnaireId FK
         varchar name
         text description
-        integer order_number
-        timestamp created_at
-        timestamp updated_at
+        integer orderNumber
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     SUB_COMPONENTS {
         bigint id PK
-        bigint component_id FK
+        bigint componentId FK
         varchar name
         text description
-        integer order_number
-        timestamp created_at
-        timestamp updated_at
+        integer orderNumber
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     INDICATORS {
         bigint id PK
-        bigint sub_component_id FK
+        bigint subComponentId FK
         varchar name
         text description
-        integer order_number
-        timestamp created_at
-        timestamp updated_at
+        integer orderNumber
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     QUESTIONS {
         bigint id PK
-        bigint indicator_id FK
+        bigint indicatorId FK
         text question
         decimal weight "5,2"
-        integer order_number
-        timestamp created_at
-        timestamp updated_at
+        integer orderNumber
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     RESPONSE_SESSIONS {
         bigint id PK
-        bigint user_id FK
-        bigint questionnaire_id FK
-        bigint evaluation_period_id FK
-        datetime started_at
-        datetime submitted_at
-        integer remaining_seconds
-        enum status "in_progress, submitted, timeout"
-        timestamp created_at
-        timestamp updated_at
+        bigint userId FK
+        bigint questionnaireId FK
+        bigint evaluationPeriodId FK
+        datetime startedAt
+        datetime submittedAt
+        integer remainingSeconds
+        enum status "inProgress, submitted, timeout"
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     RESPONSE_ANSWERS {
         bigint id PK
-        bigint response_session_id FK
-        bigint question_id FK
+        bigint responseSessionId FK
+        bigint questionId FK
         tinyint score "1-7 Likert Scale"
-        timestamp created_at
-        timestamp updated_at
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     EVALUATION_RESULTS {
         bigint id PK
-        bigint response_session_id FK
-        decimal total_score "10,2"
+        bigint responseSessionId FK
+        decimal totalScore "10,2"
         decimal percentage "5,2"
         varchar category
         text conclusion
-        timestamp created_at
-        timestamp updated_at
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     EVALUATION_RESULT_DETAILS {
         bigint id PK
-        bigint evaluation_result_id FK
-        bigint indicator_id FK
+        bigint evaluationResultId FK
+        bigint indicatorId FK
         decimal score "10,2"
         decimal percentage "5,2"
         varchar category
-        timestamp created_at
-        timestamp updated_at
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     RECOMMENDATIONS {
         bigint id PK
-        bigint indicator_id FK
-        decimal min_score "5,2"
-        decimal max_score "5,2"
+        bigint indicatorId FK
+        decimal minScore "5,2"
+        decimal maxScore "5,2"
         varchar category
         text recommendation
-        timestamp created_at
-        timestamp updated_at
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     SETTINGS {
         bigint id PK
         varchar key
         text value
-        timestamp created_at
-        timestamp updated_at
+        timestamp createdAt
+        timestamp updatedAt
     }
 ```
 
@@ -248,7 +248,7 @@ Menggunakan sistem weight untuk pembobotan pertanyaan.
 ## Response Sessions
 Sesi pengisian kuesioner oleh responden.
 
-Menyimpan status pengerjaan (in_progress, submitted, timeout) dan waktu sisa.
+Menyimpan status pengerjaan (inProgress, submitted, timeout) dan waktu sisa.
 
 **Relationships:**
 - N : 1 dengan Users
@@ -356,12 +356,12 @@ Display Results & Recommendations
 Semua tabel menggunakan `id` sebagai primary key (bigint).
 
 ## Foreign Keys
-Semua foreign keys mengikuti format `table_id`.
+Semua foreign keys mengikuti format `tableId`.
 
 Contoh:
-- `user_id` referensi ke `users.id`
-- `questionnaire_id` referensi ke `questionnaires.id`
-- `indicator_id` referensi ke `indicators.id`
+- `userId` referensi ke `users.id`
+- `questionnaireId` referensi ke `questionnaires.id`
+- `indicatorId` referensi ke `indicators.id`
 
 ## Unique Constraints
 - `users.email` harus unik
@@ -370,7 +370,7 @@ Contoh:
 ## Enum Fields
 - `users.role` → ('admin', 'respondent')
 - `questionnaires.status` → ('draft', 'published', 'closed')
-- `response_sessions.status` → ('in_progress', 'submitted', 'timeout')
+- `response_sessions.status` → ('inProgress', 'submitted', 'timeout')
 
 ---
 
@@ -385,27 +385,27 @@ users
 
 questionnaires
   - id (PRIMARY)
-  - evaluation_period_id (FOREIGN)
+  - evaluationPeriodId (FOREIGN)
   - status
 
 response_sessions
   - id (PRIMARY)
-  - user_id (FOREIGN)
-  - questionnaire_id (FOREIGN)
+  - userId (FOREIGN)
+  - questionnaireId (FOREIGN)
   - status
 
 response_answers
   - id (PRIMARY)
-  - response_session_id (FOREIGN)
-  - question_id (FOREIGN)
+  - responseSessionId (FOREIGN)
+  - questionId (FOREIGN)
 
 evaluation_results
   - id (PRIMARY)
-  - response_session_id (UNIQUE FOREIGN)
+  - responseSessionId (UNIQUE FOREIGN)
 
 recommendations
   - id (PRIMARY)
-  - indicator_id (FOREIGN)
+  - indicatorId (FOREIGN)
   - category
 ```
 

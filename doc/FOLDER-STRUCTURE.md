@@ -275,9 +275,9 @@ backend/
   - Example: `response_sessions`, `evaluation_results`
 
 ### Database Columns
-- snake_case
-- Foreign keys: `{singular_table}_id`
-  - Example: `response_session_id`, `indicator_id`
+- camelCase (untuk API parameters)
+- Foreign keys: `{singularTable}Id`
+  - Example: `responseSessionId`, `indicatorId`
 
 ---
 

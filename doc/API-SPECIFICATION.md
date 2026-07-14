@@ -11,7 +11,7 @@
 
 API mengikuti prinsip RESTful dan JSON sebagai format data.
 
-Semua request dan response menggunakan format JSON dengan status HTTP standard.
+Semua request dan response menggunakan format JSON dengan status HTTP standard. Parameter menggunakan camelCase format.
 
 ---
 
@@ -101,7 +101,7 @@ Responden login hanya memerlukan email. Jika email belum terdaftar di sistem, ak
       "id": 10,
       "email": "responden@example.com",
       "role": "respondent",
-      "created_at": "2024-01-01T10:00:00Z"
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   }
 }
@@ -118,7 +118,7 @@ Responden login hanya memerlukan email. Jika email belum terdaftar di sistem, ak
       "id": 11,
       "email": "responden_baru@example.com",
       "role": "respondent",
-      "created_at": "2024-01-01T10:05:00Z"
+      "createdAt": "2024-01-01T10:05:00Z"
     }
   }
 }
@@ -169,7 +169,7 @@ Get current user profile.
     "name": "John Doe",
     "email": "user@example.com",
     "role": "admin",
-    "created_at": "2024-01-01T10:00:00Z"
+    "createdAt": "2024-01-01T10:00:00Z"
   }
 }
 ```
@@ -187,7 +187,7 @@ Get current user profile.
 
 **Query Parameters:**
 - `page` (optional) - default: 1
-- `per_page` (optional) - default: 15
+- `perPage` (optional) - default: 15
 
 **Response (200 OK):**
 ```json
@@ -198,17 +198,17 @@ Get current user profile.
       "id": 1,
       "name": "Evaluasi 2024",
       "description": "Periode evaluasi tahun 2024",
-      "start_date": "2024-01-01",
-      "end_date": "2024-12-31",
-      "is_active": true,
-      "created_at": "2024-01-01T10:00:00Z"
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "isActive": true,
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ],
   "pagination": {
     "total": 10,
-    "per_page": 15,
-    "current_page": 1,
-    "last_page": 1
+    "perPage": 15,
+    "currentPage": 1,
+    "lastPage": 1
   }
 }
 ```
@@ -223,9 +223,9 @@ Get current user profile.
 {
   "name": "Evaluasi 2024",
   "description": "Periode evaluasi tahun 2024",
-  "start_date": "2024-01-01",
-  "end_date": "2024-12-31",
-  "is_active": true
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31",
+  "isActive": true
 }
 ```
 
@@ -237,10 +237,10 @@ Get current user profile.
     "id": 1,
     "name": "Evaluasi 2024",
     "description": "Periode evaluasi tahun 2024",
-    "start_date": "2024-01-01",
-    "end_date": "2024-12-31",
-    "is_active": true,
-    "created_at": "2024-01-01T10:00:00Z"
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31",
+    "isActive": true,
+    "createdAt": "2024-01-01T10:00:00Z"
   }
 }
 ```
@@ -258,11 +258,11 @@ Get current user profile.
     "id": 1,
     "name": "Evaluasi 2024",
     "description": "Periode evaluasi tahun 2024",
-    "start_date": "2024-01-01",
-    "end_date": "2024-12-31",
-    "is_active": true,
-    "created_at": "2024-01-01T10:00:00Z",
-    "updated_at": "2024-01-01T10:00:00Z"
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31",
+    "isActive": true,
+    "createdAt": "2024-01-01T10:00:00Z",
+    "updatedAt": "2024-01-01T10:00:00Z"
   }
 }
 ```
@@ -276,7 +276,7 @@ Get current user profile.
 ```json
 {
   "name": "Evaluasi 2024 - Updated",
-  "is_active": false
+  "isActive": false
 }
 ```
 
@@ -303,10 +303,10 @@ Get current user profile.
 **Endpoint:** `GET /questionnaires`
 
 **Query Parameters:**
-- `evaluation_period_id` (optional) - filter by period
+- `evaluationPeriodId` (optional) - filter by period
 - `status` (optional) - draft, published, closed
 - `page` (optional)
-- `per_page` (optional)
+- `perPage` (optional)
 
 **Response (200 OK):**
 ```json
@@ -315,12 +315,12 @@ Get current user profile.
   "data": [
     {
       "id": 1,
-      "evaluation_period_id": 1,
+      "evaluationPeriodId": 1,
       "title": "Kuesioner Kebijakan Lingkungan",
       "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
-      "duration_minutes": 60,
+      "durationMinutes": 60,
       "status": "published",
-      "created_at": "2024-01-01T10:00:00Z"
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ],
   "pagination": {}
@@ -335,10 +335,10 @@ Get current user profile.
 **Request:**
 ```json
 {
-  "evaluation_period_id": 1,
+  "evaluationPeriodId": 1,
   "title": "Kuesioner Kebijakan Lingkungan",
   "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
-  "duration_minutes": 60,
+  "durationMinutes": 60,
   "status": "draft"
 }
 ```
@@ -349,12 +349,12 @@ Get current user profile.
   "success": true,
   "data": {
     "id": 1,
-    "evaluation_period_id": 1,
+    "evaluationPeriodId": 1,
     "title": "Kuesioner Kebijakan Lingkungan",
     "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
-    "duration_minutes": 60,
+    "durationMinutes": 60,
     "status": "draft",
-    "created_at": "2024-01-01T10:00:00Z"
+    "createdAt": "2024-01-01T10:00:00Z"
   }
 }
 ```
@@ -386,7 +386,7 @@ Get current user profile.
 ## 3.3 Components
 
 ### List Components
-**Endpoint:** `GET /questionnaires/{questionnaire_id}/components`
+**Endpoint:** `GET /questionnaires/{questionnaireId}/components`
 
 **Response (200 OK):**
 ```json
@@ -395,11 +395,11 @@ Get current user profile.
   "data": [
     {
       "id": 1,
-      "questionnaire_id": 1,
+      "questionnaireId": 1,
       "name": "Kebijakan Struktural",
       "description": "Komponen kebijakan struktural",
-      "order_number": 1,
-      "created_at": "2024-01-01T10:00:00Z"
+      "orderNumber": 1,
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
 }
@@ -408,14 +408,14 @@ Get current user profile.
 ---
 
 ### Create Component
-**Endpoint:** `POST /questionnaires/{questionnaire_id}/components`
+**Endpoint:** `POST /questionnaires/{questionnaireId}/components`
 
 **Request:**
 ```json
 {
   "name": "Kebijakan Struktural",
   "description": "Komponen kebijakan struktural",
-  "order_number": 1
+  "orderNumber": 1
 }
 ```
 
@@ -430,7 +430,7 @@ Get current user profile.
 ```json
 {
   "name": "Kebijakan Struktural - Updated",
-  "order_number": 2
+  "orderNumber": 2
 }
 ```
 
@@ -454,7 +454,7 @@ Get current user profile.
 ## 3.4 Sub Components
 
 ### List Sub Components
-**Endpoint:** `GET /components/{component_id}/sub-components`
+**Endpoint:** `GET /components/{componentId}/sub-components`
 
 **Response (200 OK):**
 ```json
@@ -463,11 +463,11 @@ Get current user profile.
   "data": [
     {
       "id": 1,
-      "component_id": 1,
+      "componentId": 1,
       "name": "Kerangka Organisasi",
       "description": "Sub komponen kerangka organisasi",
-      "order_number": 1,
-      "created_at": "2024-01-01T10:00:00Z"
+      "orderNumber": 1,
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
 }
@@ -476,14 +476,14 @@ Get current user profile.
 ---
 
 ### Create Sub Component
-**Endpoint:** `POST /components/{component_id}/sub-components`
+**Endpoint:** `POST /components/{componentId}/sub-components`
 
 **Request:**
 ```json
 {
   "name": "Kerangka Organisasi",
   "description": "Sub komponen kerangka organisasi",
-  "order_number": 1
+  "orderNumber": 1
 }
 ```
 
@@ -494,7 +494,7 @@ Get current user profile.
 ## 3.5 Indicators
 
 ### List Indicators
-**Endpoint:** `GET /sub-components/{sub_component_id}/indicators`
+**Endpoint:** `GET /sub-components/{subComponentId}/indicators`
 
 **Response (200 OK):**
 ```json
@@ -503,11 +503,11 @@ Get current user profile.
   "data": [
     {
       "id": 1,
-      "sub_component_id": 1,
+      "subComponentId": 1,
       "name": "Keberadaan organisasi, struktur dan tugas",
       "description": "Indicator keberadaan organisasi",
-      "order_number": 1,
-      "created_at": "2024-01-01T10:00:00Z"
+      "orderNumber": 1,
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
 }
@@ -516,14 +516,14 @@ Get current user profile.
 ---
 
 ### Create Indicator
-**Endpoint:** `POST /sub-components/{sub_component_id}/indicators`
+**Endpoint:** `POST /sub-components/{subComponentId}/indicators`
 
 **Request:**
 ```json
 {
   "name": "Keberadaan organisasi, struktur dan tugas",
   "description": "Indicator keberadaan organisasi",
-  "order_number": 1
+  "orderNumber": 1
 }
 ```
 
@@ -534,7 +534,7 @@ Get current user profile.
 ## 3.6 Questions
 
 ### List Questions
-**Endpoint:** `GET /indicators/{indicator_id}/questions`
+**Endpoint:** `GET /indicators/{indicatorId}/questions`
 
 **Response (200 OK):**
 ```json
@@ -543,11 +543,11 @@ Get current user profile.
   "data": [
     {
       "id": 1,
-      "indicator_id": 1,
+      "indicatorId": 1,
       "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
       "weight": 1.5,
-      "order_number": 1,
-      "created_at": "2024-01-01T10:00:00Z"
+      "orderNumber": 1,
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
 }
@@ -556,14 +556,14 @@ Get current user profile.
 ---
 
 ### Create Question
-**Endpoint:** `POST /indicators/{indicator_id}/questions`
+**Endpoint:** `POST /indicators/{indicatorId}/questions`
 
 **Request:**
 ```json
 {
   "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
   "weight": 1.5,
-  "order_number": 1
+  "orderNumber": 1
 }
 ```
 
@@ -578,7 +578,7 @@ Get current user profile.
 
 **Query Parameters:**
 - `page` (optional)
-- `per_page` (optional)
+- `perPage` (optional)
 - `search` (optional) - search by name or email
 
 **Response (200 OK):**
@@ -590,8 +590,8 @@ Get current user profile.
       "id": 1,
       "name": "Responden 1",
       "email": "responden@example.com",
-      "is_active": true,
-      "created_at": "2024-01-01T10:00:00Z"
+      "isActive": true,
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ],
   "pagination": {}
@@ -609,7 +609,7 @@ Get current user profile.
   "name": "Responden 1",
   "email": "responden@example.com",
   "password": "password123",
-  "is_active": true
+  "isActive": true
 }
 ```
 
@@ -652,7 +652,7 @@ Responden 2,responden2@example.com,password123
 **Endpoint:** `GET /recommendations`
 
 **Query Parameters:**
-- `indicator_id` (optional) - filter by indicator
+- `indicatorId` (optional) - filter by indicator
 
 **Response (200 OK):**
 ```json
@@ -661,12 +661,12 @@ Responden 2,responden2@example.com,password123
   "data": [
     {
       "id": 1,
-      "indicator_id": 1,
-      "min_score": 1.0,
-      "max_score": 2.33,
+      "indicatorId": 1,
+      "minScore": 1.0,
+      "maxScore": 2.33,
       "category": "Kurang",
       "recommendation": "Perlu perbaikan dalam implementasi...",
-      "created_at": "2024-01-01T10:00:00Z"
+      "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
 }
@@ -680,9 +680,9 @@ Responden 2,responden2@example.com,password123
 **Request:**
 ```json
 {
-  "indicator_id": 1,
-  "min_score": 1.0,
-  "max_score": 2.33,
+  "indicatorId": 1,
+  "minScore": 1.0,
+  "maxScore": 2.33,
   "category": "Kurang",
   "recommendation": "Perlu perbaikan dalam implementasi..."
 }
@@ -702,7 +702,7 @@ Mulai sesi evaluasi baru.
 **Request:**
 ```json
 {
-  "questionnaire_id": 1
+  "questionnaireId": 1
 }
 ```
 
@@ -711,17 +711,17 @@ Mulai sesi evaluasi baru.
 {
   "success": true,
   "data": {
-    "session_id": 1,
-    "questionnaire_id": 1,
-    "status": "in_progress",
-    "started_at": "2024-01-01T10:00:00Z",
-    "remaining_seconds": 3600,
+    "sessionId": 1,
+    "questionnaireId": 1,
+    "status": "inProgress",
+    "startedAt": "2024-01-01T10:00:00Z",
+    "remainingSeconds": 3600,
     "questions": [
       {
         "id": 1,
-        "indicator_id": 1,
+        "indicatorId": 1,
         "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
-        "order_number": 1
+        "orderNumber": 1
       }
     ]
   }
@@ -733,23 +733,23 @@ Mulai sesi evaluasi baru.
 ## Resume Evaluation
 Resume sesi evaluasi yang belum selesai.
 
-**Endpoint:** `GET /evaluations/{session_id}/resume`
+**Endpoint:** `GET /evaluations/{sessionId}/resume`
 
 **Response (200 OK):**
 ```json
 {
   "success": true,
   "data": {
-    "session_id": 1,
-    "status": "in_progress",
-    "remaining_seconds": 2800,
-    "answered_count": 15,
-    "total_questions": 50,
+    "sessionId": 1,
+    "status": "inProgress",
+    "remainingSeconds": 2800,
+    "answeredCount": 15,
+    "totalQuestions": 50,
     "questions": [
       {
         "id": 1,
         "question": "Apakah ada bukti tertulis?",
-        "answered_at": "2024-01-01T10:05:00Z",
+        "answeredAt": "2024-01-01T10:05:00Z",
         "score": 5
       }
     ]
@@ -762,18 +762,18 @@ Resume sesi evaluasi yang belum selesai.
 ## Auto Save Answer
 Simpan jawaban otomatis (periodic save).
 
-**Endpoint:** `POST /evaluations/{session_id}/auto-save`
+**Endpoint:** `POST /evaluations/{sessionId}/auto-save`
 
 **Request:**
 ```json
 {
   "answers": [
     {
-      "question_id": 1,
+      "questionId": 1,
       "score": 5
     },
     {
-      "question_id": 2,
+      "questionId": 2,
       "score": 6
     }
   ]
@@ -786,8 +786,8 @@ Simpan jawaban otomatis (periodic save).
   "success": true,
   "message": "Jawaban tersimpan",
   "data": {
-    "saved_at": "2024-01-01T10:05:00Z",
-    "answers_saved": 2
+    "savedAt": "2024-01-01T10:05:00Z",
+    "answersSaved": 2
   }
 }
 ```
@@ -797,12 +797,12 @@ Simpan jawaban otomatis (periodic save).
 ## Save Single Answer
 Simpan satu jawaban (as respondent fills).
 
-**Endpoint:** `POST /evaluations/{session_id}/answers`
+**Endpoint:** `POST /evaluations/{sessionId}/answers`
 
 **Request:**
 ```json
 {
-  "question_id": 1,
+  "questionId": 1,
   "score": 5
 }
 ```
@@ -812,10 +812,10 @@ Simpan satu jawaban (as respondent fills).
 {
   "success": true,
   "data": {
-    "response_answer_id": 1,
-    "question_id": 1,
+    "responseAnswerId": 1,
+    "questionId": 1,
     "score": 5,
-    "saved_at": "2024-01-01T10:05:00Z"
+    "savedAt": "2024-01-01T10:05:00Z"
   }
 }
 ```
@@ -825,7 +825,7 @@ Simpan satu jawaban (as respondent fills).
 ## Submit Evaluation
 Submit sesi evaluasi (final submission).
 
-**Endpoint:** `POST /evaluations/{session_id}/submit`
+**Endpoint:** `POST /evaluations/{sessionId}/submit`
 
 **Request:**
 ```json
@@ -838,9 +838,9 @@ Submit sesi evaluasi (final submission).
   "success": true,
   "message": "Evaluasi berhasil disubmit",
   "data": {
-    "session_id": 1,
+    "sessionId": 1,
     "status": "submitted",
-    "submitted_at": "2024-01-01T10:30:00Z"
+    "submittedAt": "2024-01-01T10:30:00Z"
   }
 }
 ```
@@ -854,32 +854,32 @@ Dapatkan hasil evaluasi setelah submit.
 
 Evaluation dihitung per Indicator dengan kategori A-E berdasarkan Standar Baku Ideal dan Rerata Ideal.
 
-**Endpoint:** `GET /evaluations/{session_id}/results`
+**Endpoint:** `GET /evaluations/{sessionId}/results`
 
 **Response (200 OK):**
 ```json
 {
   "success": true,
   "data": {
-    "evaluation_result_id": 1,
-    "session_id": 1,
-    "overall_score": 312.5,
-    "overall_percentage": 75.5,
-    "overall_category": "B",
+    "evaluationResultId": 1,
+    "sessionId": 1,
+    "overallScore": 312.5,
+    "overallPercentage": 75.5,
+    "overallCategory": "B",
     "conclusion": "Implementasi kebijakan lingkungan sudah baik...",
-    "submitted_at": "2024-01-01T10:30:00Z",
-    "indicator_results": [
+    "submittedAt": "2024-01-01T10:30:00Z",
+    "indicatorResults": [
       {
-        "indicator_id": 1,
-        "indicator_name": "Keberadaan organisasi, struktur dan tugas",
+        "indicatorId": 1,
+        "indicatorName": "Keberadaan organisasi, struktur dan tugas",
         "score": 6.5,
         "percentage": 92.86,
         "category": "A",
         "recommendation": "Pertahankan implementasi saat ini..."
       },
       {
-        "indicator_id": 2,
-        "indicator_name": "Peran dan fungsi organisasi",
+        "indicatorId": 2,
+        "indicatorName": "Peran dan fungsi organisasi",
         "score": 5.2,
         "percentage": 74.29,
         "category": "B",
@@ -907,10 +907,10 @@ Monitor semua sesi evaluasi.
 **Endpoint:** `GET /admin/sessions`
 
 **Query Parameters:**
-- `questionnaire_id` (optional)
-- `status` (optional) - in_progress, submitted, timeout
+- `questionnaireId` (optional)
+- `status` (optional) - inProgress, submitted, timeout
 - `page` (optional)
-- `per_page` (optional)
+- `perPage` (optional)
 
 **Response (200 OK):**
 ```json
@@ -919,13 +919,13 @@ Monitor semua sesi evaluasi.
   "data": [
     {
       "id": 1,
-      "user_id": 10,
-      "user_name": "Responden 1",
-      "questionnaire_id": 1,
+      "userId": 10,
+      "userName": "Responden 1",
+      "questionnaireId": 1,
       "status": "submitted",
-      "started_at": "2024-01-01T10:00:00Z",
-      "submitted_at": "2024-01-01T10:30:00Z",
-      "duration_minutes": 30,
+      "startedAt": "2024-01-01T10:00:00Z",
+      "submittedAt": "2024-01-01T10:30:00Z",
+      "durationMinutes": 30,
       "progress": 100
     }
   ],
@@ -936,7 +936,7 @@ Monitor semua sesi evaluasi.
 ---
 
 ## Get Session Detail
-**Endpoint:** `GET /admin/sessions/{session_id}`
+**Endpoint:** `GET /admin/sessions/{sessionId}`
 
 **Response (200 OK):**
 ```json
@@ -949,13 +949,13 @@ Monitor semua sesi evaluasi.
       "name": "Responden 1",
       "email": "responden@example.com"
     },
-    "questionnaire_id": 1,
+    "questionnaireId": 1,
     "status": "submitted",
-    "started_at": "2024-01-01T10:00:00Z",
-    "submitted_at": "2024-01-01T10:30:00Z",
-    "answers_count": 50,
-    "evaluation_result": {
-      "total_score": 312.5,
+    "startedAt": "2024-01-01T10:00:00Z",
+    "submittedAt": "2024-01-01T10:30:00Z",
+    "answersCount": 50,
+    "evaluationResult": {
+      "totalScore": 312.5,
       "percentage": 75.5,
       "category": "Baik"
     }
@@ -969,8 +969,8 @@ Monitor semua sesi evaluasi.
 **Endpoint:** `POST /admin/reports/export-excel`
 
 **Query Parameters:**
-- `questionnaire_id` (required)
-- `evaluation_period_id` (optional)
+- `questionnaireId` (required)
+- `evaluationPeriodId` (optional)
 
 **Response:** Excel file download
 
@@ -980,7 +980,7 @@ Monitor semua sesi evaluasi.
 **Endpoint:** `POST /admin/reports/export-pdf`
 
 **Query Parameters:**
-- `session_id` (required)
+- `sessionId` (required)
 
 **Response:** PDF file download
 
@@ -996,11 +996,11 @@ Monitor semua sesi evaluasi.
 {
   "success": true,
   "data": {
-    "active_period_id": 1,
-    "evaluation_duration_minutes": 60,
-    "auto_save_interval_seconds": 30,
-    "allow_resume_session": true,
-    "timeout_after_minutes": 120
+    "activePeriodId": 1,
+    "evaluationDurationMinutes": 60,
+    "autoSaveIntervalSeconds": 30,
+    "allowResumeSession": true,
+    "timeoutAfterMinutes": 120
   }
 }
 ```
@@ -1013,11 +1013,11 @@ Monitor semua sesi evaluasi.
 **Request:**
 ```json
 {
-  "active_period_id": 1,
-  "evaluation_duration_minutes": 60,
-  "auto_save_interval_seconds": 30,
-  "allow_resume_session": true,
-  "timeout_after_minutes": 120
+  "activePeriodId": 1,
+  "evaluationDurationMinutes": 60,
+  "autoSaveIntervalSeconds": 30,
+  "allowResumeSession": true,
+  "timeoutAfterMinutes": 120
 }
 ```
 
@@ -1033,7 +1033,7 @@ Monitor semua sesi evaluasi.
   "success": false,
   "message": "Error message",
   "errors": {
-    "field_name": ["Error detail 1", "Error detail 2"]
+    "fieldName": ["Error detail 1", "Error detail 2"]
   }
 }
 ```
@@ -1073,9 +1073,9 @@ Default pagination settings:
 ```json
 {
   "total": 100,
-  "per_page": 15,
-  "current_page": 1,
-  "last_page": 7,
+  "perPage": 15,
+  "currentPage": 1,
+  "lastPage": 7,
   "from": 1,
   "to": 15
 }

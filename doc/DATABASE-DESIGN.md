@@ -96,20 +96,20 @@ Menyimpan seluruh akun pengguna (admin dan responden).
 | name | varchar | Nullable untuk responden (auto-generated dari email jika kosong) |
 | email | varchar | Unique, case-insensitive |
 | password | varchar | **Nullable** - hanya untuk admin, responden login email-only |
-| is_active | boolean | Default: true |
-| created_at | timestamp | |
-| updated_at | timestamp | |
+| isActive | boolean | Default: true |
+| createdAt | timestamp | |
+| updatedAt | timestamp | |
 
 **Admin User Requirements:**
 - Email, password harus terisi
 - role = 'admin'
-- is_active = true
+- isActive = true
 
 **Responden User (Auto-registered):**
 - Email terisi (unique, case-insensitive)
 - Password nullable (tidak digunakan)
 - role = 'respondent'
-- is_active = true (default)
+- isActive = true (default)
 
 ---
 
@@ -122,11 +122,11 @@ Periode pelaksanaan evaluasi.
 | id | bigint |
 | name | varchar |
 | description | text |
-| start_date | datetime |
-| end_date | datetime |
-| is_active | boolean |
-| created_at | timestamp |
-| updated_at | timestamp |
+| startDate | datetime |
+| endDate | datetime |
+| isActive | boolean |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -137,13 +137,13 @@ Master Kuesioner.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| evaluation_period_id | FK |
+| evaluationPeriodId | FK |
 | title | varchar |
 | description | text |
-| duration_minutes | integer |
+| durationMinutes | integer |
 | status | enum(draft,published,closed) |
-| created_at | timestamp |
-| updated_at | timestamp |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -160,12 +160,12 @@ Contoh:
 | Field | Type |
 |--------|------|
 | id | bigint |
-| questionnaire_id | FK |
+| questionnaireId | FK |
 | name | varchar |
 | description | text |
-| order_number | integer |
-| created_at | timestamp |
-| updated_at | timestamp |
+| orderNumber | integer |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -181,12 +181,12 @@ Contoh:
 | Field | Type |
 |--------|------|
 | id | bigint |
-| component_id | FK |
+| componentId | FK |
 | name | varchar |
 | description | text |
-| order_number | integer |
-| created_at | timestamp |
-| updated_at | timestamp |
+| orderNumber | integer |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -201,12 +201,12 @@ Contoh:
 | Field | Type |
 |--------|------|
 | id | bigint |
-| sub_component_id | FK |
+| subComponentId | FK |
 | name | varchar |
 | description | text |
-| order_number | integer |
-| created_at | timestamp |
-| updated_at | timestamp |
+| orderNumber | integer |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -217,12 +217,12 @@ Master Pertanyaan.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| indicator_id | FK |
+| indicatorId | FK |
 | question | text |
 | weight | decimal(5,2) |
-| order_number | integer |
-| created_at | timestamp |
-| updated_at | timestamp |
+| orderNumber | integer |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -233,15 +233,15 @@ Satu sesi pengisian responden.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| user_id | FK |
-| questionnaire_id | FK |
-| evaluation_period_id | FK |
-| started_at | datetime |
-| submitted_at | datetime |
-| remaining_seconds | integer |
-| status | enum(in_progress,submitted,timeout) |
-| created_at | timestamp |
-| updated_at | timestamp |
+| userId | FK |
+| questionnaireId | FK |
+| evaluationPeriodId | FK |
+| startedAt | datetime |
+| submittedAt | datetime |
+| remainingSeconds | integer |
+| status | enum(inProgress,submitted,timeout) |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -252,11 +252,11 @@ Jawaban responden.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| response_session_id | FK |
-| question_id | FK |
+| responseSessionId | FK |
+| questionId | FK |
 | score | tinyint |
-| created_at | timestamp |
-| updated_at | timestamp |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 Nilai menggunakan skala Likert 1 - 7.
 
@@ -269,13 +269,13 @@ Ringkasan hasil evaluasi.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| response_session_id | FK |
-| total_score | decimal(10,2) |
+| responseSessionId | FK |
+| totalScore | decimal(10,2) |
 | percentage | decimal(5,2) |
 | category | varchar |
 | conclusion | text |
-| created_at | timestamp |
-| updated_at | timestamp |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -286,13 +286,13 @@ Hasil evaluasi per indikator.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| evaluation_result_id | FK |
-| indicator_id | FK |
+| evaluationResultId | FK |
+| indicatorId | FK |
 | score | decimal(10,2) |
 | percentage | decimal(5,2) |
 | category | varchar |
-| created_at | timestamp |
-| updated_at | timestamp |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -303,13 +303,13 @@ Master rekomendasi.
 | Field | Type |
 |--------|------|
 | id | bigint |
-| indicator_id | FK |
-| min_score | decimal(5,2) |
-| max_score | decimal(5,2) |
+| indicatorId | FK |
+| minScore | decimal(5,2) |
+| maxScore | decimal(5,2) |
 | category | varchar |
 | recommendation | text |
-| created_at | timestamp |
-| updated_at | timestamp |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -322,8 +322,8 @@ Konfigurasi aplikasi.
 | id | bigint |
 | key | varchar |
 | value | text |
-| created_at | timestamp |
-| updated_at | timestamp |
+| createdAt | timestamp |
+| updatedAt | timestamp |
 
 ---
 
@@ -456,17 +456,17 @@ Contoh:
 
 Seluruh Foreign Key menggunakan format:
 
-table_id
+tableId
 
 Contoh:
 
-questionnaire_id
+questionnaireId
 
-indicator_id
+indicatorId
 
-question_id
+questionId
 
-response_session_id
+responseSessionId
 
 ---
 
