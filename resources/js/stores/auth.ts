@@ -8,14 +8,23 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!token.value)
 
-  async function login(email: string, password?: string, type: string = 'RESPONDENT') {
-    const response = await api.post('/auth/login', { email, password, type })
+  async function login(username: string, password: string) {
+    const response = await api.post('/auth/login', { username, password })
     token.value = response.data.data.token
     user.value = response.data.data.user
     localStorage.setItem('token', token.value!)
   }
 
-  function logout() {
+  async function register(data: { name: string; username: string; email: string; password: string; password_confirmation: string }) {
+    await api.post('/auth/register', data)
+  }
+
+  async function logout() {
+    try {
+      await api.post('/auth/logout')
+    } catch (e) {
+      // Ignore error - token will be cleared locally anyway
+    }
     token.value = null
     user.value = null
     localStorage.removeItem('token')
@@ -26,5 +35,5 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = response.data.data
   }
 
-  return { token, user, isAuthenticated, login, logout, fetchProfile }
+  return { token, user, isAuthenticated, login, register, logout, fetchProfile }
 })

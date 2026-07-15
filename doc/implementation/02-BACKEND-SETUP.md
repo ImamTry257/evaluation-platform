@@ -1,7 +1,7 @@
 # Backend Setup Guide
-## Laravel 12 Installation & Configuration
+## Laravel 13 Installation & Configuration
 
-**Target:** Setup Laravel 12 backend untuk Platform Evaluasi Kebijakan Lingkungan Sekolah
+**Target:** Setup Laravel 13 backend untuk Platform Evaluasi Kebijakan Lingkungan Sekolah
 
 **Note:** Vue.js frontend berada di dalam Laravel project (`resources/js/`), bukan project terpisah.
 
@@ -11,7 +11,7 @@
 
 | Software | Version | Notes |
 |----------|---------|-------|
-| PHP | 8.3+ | Required by Laravel 12 |
+| PHP | 8.3+ | Required by Laravel 13 |
 | Composer | 2.x | PHP dependency manager |
 | MySQL | 8.0+ | Database |
 | Node.js | 18+ | For Vite asset compilation |
@@ -168,7 +168,7 @@ php artisan migrate
 ### 7.1 Create Route Files
 
 ```bash
-# Routes directory already exists in Laravel 12
+# Routes directory already exists in Laravel 13
 # Create API route groups
 ```
 

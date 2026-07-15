@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detail Komponen - PolicyEval</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-indicator {
+            box-shadow: inset 4px 0 0 0 currentColor;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bbcabf;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c7a71;
+        }
+
+        /* ===== INTERACTIVE CSS STYLING (from platform-explanation) ===== */
+        /* ===== SIDEBAR NAV ===== */
+        .sidebar-nav {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 4px solid transparent;
+        }
+        .sidebar-nav:hover {
+            background-color: #f0fdf4;
+            border-left-color: #10b981;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+        .sidebar-nav:hover .material-symbols-outlined {
+            animation: navIconPop 0.4s ease;
+        }
+        @keyframes navIconPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .sidebar-nav.active {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left-color: #006c49;
+            box-shadow: 0 2px 8px rgba(0, 108, 73, 0.1);
+        }
+
+        /* ===== HEADER BUTTONS (from platform-explanation) ===== */
+        .header-btn-rotate {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        .header-btn-rotate:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            transform: rotate(15deg) scale(1.1);
+        }
+        .header-btn-rotate:active {
+            transform: rotate(0deg) scale(0.95);
+        }
+
+        /* ===== SEARCH INPUT ===== */
+        .search-input {
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+            border-color: #10b981;
+        }
+
+        /* ===== GLASS CARD (from platform-explanation) ===== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 108, 73, 0.1);
+            border-color: #10b981;
+        }
+
+        /* ===== CONTENT CARD (from platform-explanation) ===== */
+        .content-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12);
+            border-color: #10b981;
+        }
+        .content-card:hover .content-icon {
+            animation: contentIconPulse 0.5s ease;
+        }
+        @keyframes contentIconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15) rotate(5deg); }
+        }
+
+        /* ===== SCALE SEGMENT (from platform-explanation) ===== */
+        .scale-segment {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .scale-segment:hover {
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.18);
+            z-index: 10;
+        }
+        .scale-segment:active {
+            transform: translateY(-3px) scale(1.03);
+        }
+
+        /* ===== INFO GRID ITEM (from platform-explanation) ===== */
+        .info-grid-item {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .info-grid-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25);
+        }
+        .info-grid-item:hover .grid-icon {
+            animation: gridIconBounce 0.4s ease;
+        }
+        @keyframes gridIconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ===== CARDS ===== */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12);
+            border-color: #10b981;
+        }
+        .card-hover:hover .icon-bounce {
+            animation: iconBounce 0.5s ease;
+        }
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+
+        /* ===== TABLE ===== */
+        .table-row {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .table-row:hover {
+            background-color: rgba(16, 185, 129, 0.05);
+            transform: scale(1.02) translateX(4px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        }
+        .table-row:hover td {
+            color: #161d19;
+        }
+        .table-row:active {
+            transform: scale(0.99);
+        }
+
+        /* ===== TABLE BUTTONS ===== */
+        .table-btn {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 0.5rem;
+        }
+        .table-btn:hover {
+            background-color: #f0fdf4;
+            color: #006c49;
+            transform: translateY(-2px) scale(1.1);
+        }
+        .table-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* ===== MORE VERT BUTTON ===== */
+        .more-btn {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 50%;
+        }
+        .more-btn:hover {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #006c49;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* ===== STATUS BADGES ===== */
+        .status-badge {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .status-badge:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* ===== FOOTER BUTTONS (from platform-explanation) ===== */
+        .btn-back {
+            transition: all 0.4s ease;
+            border-color: #6c7a71;
+        }
+        .btn-back:hover {
+            background-color: #dde4dd;
+            transform: translateY(-2px);
+            border-color: #10b981;
+        }
+        .btn-back:active {
+            transform: scale(0.96);
+        }
+
+        .btn-start {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-start:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            background-color: #006c49;
+        }
+        .btn-start:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        /* ===== HEADER BUTTON (from platform-explanation) ===== */
+        .header-btn-rotate {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        .header-btn-rotate:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            transform: rotate(15deg) scale(1.1);
+        }
+        .header-btn-rotate:active {
+            transform: rotate(0deg) scale(0.95);
+        }
+
+        /* ===== INSTRUCTION ITEM (from platform-explanation) ===== */
+        .instruction-item {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin: 0 -0.75rem;
+        }
+        .instruction-item:hover {
+            background-color: rgba(16, 185, 129, 0.05);
+            transform: translateX(6px);
+        }
+        .instruction-item:hover .material-symbols-outlined {
+            animation: checkBounce 0.4s ease;
+        }
+        @keyframes checkBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+
+        /* ===== DROPDOWN SELECT ===== */
+        .custom-select {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .custom-select:hover {
+            background-color: #f0fdf4;
+        }
+        .custom-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        /* ===== FADE IN ANIMATIONS ===== */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .fade-in-delay {
+            animation: fadeIn 0.6s ease-out 0.15s forwards;
+            opacity: 0;
+        }
+        .fade-in-delay-2 {
+            animation: fadeIn 0.6s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+        .fade-in-delay-3 {
+            animation: fadeIn 0.6s ease-out 0.45s forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== HEADER SCROLL (from platform-explanation) ===== */
+        header {
+            transition: all 0.3s ease;
+        }
+        header.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: rgba(244, 251, 244, 0.95);
+        }
+
+        /* ===== LINK HOVER ===== */
+        a {
+            transition: all 0.3s ease;
+        }
+
+        /* ===== GROUP HOVER ICON ===== */
+        .group:hover .group-icon {
+            animation: iconScale 0.4s ease;
+        }
+        @keyframes iconScale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ===== BREADCRUMB ===== */
+        .breadcrumb-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .breadcrumb-item:hover {
+            color: #006c49;
+            transform: translateX(2px);
+        }
+
+        /* ===== EDIT/DELETE BUTTONS ===== */
+        .edit-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .edit-btn:hover {
+            color: #006c49;
+            transform: scale(1.2) rotate(5deg);
+        }
+        .edit-btn:active {
+            transform: scale(0.9);
+        }
+        .delete-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .delete-btn:hover {
+            color: #ba1a1a;
+            transform: scale(1.2) rotate(-5deg);
+        }
+        .delete-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* ===== WEIGHT BADGE ===== */
+        .weight-badge {
+            transition: all 0.3s ease;
+        }
+        .weight-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#bbcabf",
+                      "primary-fixed-dim": "#4edea3",
+                      "surface-variant": "#dde4dd",
+                      "surface-tint": "#006c49",
+                      "error": "#ba1a1a",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#005236",
+                      "tertiary-fixed": "#ffdad7",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "on-tertiary-fixed": "#410005",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#f4fbf4",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#dde4dd",
+                      "secondary-fixed": "#e2e2e2",
+                      "on-tertiary-container": "#711419",
+                      "tertiary-container": "#fc7c78",
+                      "surface-dim": "#d4dcd5",
+                      "on-tertiary-fixed-variant": "#842225",
+                      "primary-fixed": "#6ffbbe",
+                      "on-surface-variant": "#3c4a42",
+                      "tertiary": "#a43a3a",
+                      "inverse-on-surface": "#ebf3eb",
+                      "primary": "#006c49",
+                      "on-secondary-container": "#616363",
+                      "inverse-primary": "#4edea3",
+                      "background": "#f4fbf4",
+                      "primary-container": "#10b981",
+                      "surface-container-lowest": "#ffffff",
+                      "outline": "#6c7a71",
+                      "surface": "#f4fbf4",
+                      "on-secondary-fixed-variant": "#454747",
+                      "on-primary-container": "#00422b",
+                      "on-surface": "#161d19",
+                      "surface-container-high": "#e3eae3",
+                      "secondary": "#5d5f5f",
+                      "on-background": "#161d19",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#ffb3af",
+                      "surface-container": "#e8f0e9",
+                      "inverse-surface": "#2b322d",
+                      "on-primary-fixed": "#002113",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#eef6ee",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "secondary-container": "#dfe0e0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "1.5rem",
+                      "gutter": "1.5rem",
+                      "margin": "2rem",
+                      "sm": "0.5rem",
+                      "base": "4px",
+                      "md": "1rem",
+                      "xs": "0.25rem",
+                      "xl": "2rem",
+                      "2xl": "3rem"
+              },
+              "fontFamily": {
+                      "headline-xl": ["Poppins"],
+                      "body-base": ["Poppins"],
+                      "display-lg": ["Poppins"],
+                      "headline-lg": ["Poppins"],
+                      "body-sm": ["Poppins"],
+                      "title-md": ["Poppins"],
+                      "headline-lg-mobile": ["Poppins"],
+                      "label-caps": ["Poppins"]
+              },
+              "fontSize": {
+                      "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-base antialiased min-h-screen">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface border-r border-outline-variant flex flex-col py-6 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">eco</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">PolicyEval</h1>
+<p class="text-xs text-secondary tracking-wider font-semibold uppercase">Environmental SaaS</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Period</span>
+</a>
+<!-- Active State for Questionnaire -->
+<a class="sidebar-nav active flex items-center gap-3 px-4 py-3 font-semibold" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span>Questionnaire</span>
+</a>
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">category</span>
+<span>Aspect</span>
+</a>
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span>Question</span>
+</a>
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Respondent</span>
+</a>
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span>Recommendation</span>
+</a>
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="px-4 mt-auto pt-4 border-t border-outline-variant">
+<a class="sidebar-nav flex items-center gap-3 px-4 py-3 text-secondary rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header id="navbar" class="fixed top-0 right-0 left-[280px] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary">search</span>
+<input class="search-input w-full h-10 pl-10 pr-4 bg-surface-container rounded-full border-none text-sm" placeholder="Cari data evaluasi..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="header-btn-rotate text-secondary relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="header-btn-rotate text-secondary">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<button class="btn-back flex items-center gap-3 pl-2 pr-1 py-1 rounded-full">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a school administrator in a bright office setting, high-trust institutional photography style with soft emerald green lighting accents and a clean modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPFR4zr4uy1JBUwvTMRF2Bq8bwGyeXsU1fyI0KnLVrTyd4LqvVO8XCFsauWPzxaBsnIDIACFaYTIByPmvHtv05TnXzSQ3eJacgVmxZdwbOF6IEcP8AOSKTEKfQqf5YhyQOvBamcQGbslvQtmM6vOLgPFrJNHhqbJVHIlnlqNeGp68SpMye3H_F8xCEGS8UaRzf4N73MYNuFvu55DY6YDNPXkKsF6lSKTEYgooTTJefgRmoO0twIw"/>
+</div>
+<span class="material-symbols-outlined text-secondary">expand_more</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-16 min-h-screen">
+<div class="max-w-[1440px] mx-auto p-gutter lg:p-margin">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-sm text-secondary mb-6 fade-in">
+<a class="breadcrumb-item flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+                    Questionnaire
+                </a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="breadcrumb-item" href="#">Management Sampah</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface font-medium">Pengelolaan Sampah</span>
+</nav>
+<!-- Header Section -->
+<section class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
+<div class="max-w-3xl">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2 fade-in">Pengelolaan Sampah</h2>
+<p class="text-body-base text-secondary fade-in-delay">Evaluasi sistem pengelolaan limbah padat di lingkungan sekolah termasuk pemilahan, pengangkutan, dan pengolahan untuk menciptakan ekosistem hijau yang berkelanjutan.</p>
+</div>
+<div class="flex items-center gap-3 fade-in-delay-2">
+<button class="btn-back px-5 py-2.5 rounded-xl border border-outline text-on-surface font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+                        Edit Component
+                    </button>
+<button class="edit-btn px-5 py-2.5 rounded-xl border border-error/20 text-error font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+                        Delete
+                    </button>
+</div>
+</section>
+<!-- Statistics Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-xl">
+<!-- Stat Card 1 -->
+<div class="info-grid-item bg-surface-container-lowest p-6 rounded-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] border border-outline-variant/30 fade-in glass-card">
+<p class="font-label-caps text-secondary mb-2">TOTAL SUB KOMPONEN</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold text-on-surface">4</span>
+<span class="text-primary text-sm font-medium">+1 per tahun</span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="info-grid-item bg-surface-container-lowest p-6 rounded-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] border border-outline-variant/30 fade-in-delay glass-card">
+<p class="font-label-caps text-secondary mb-2">TOTAL INDIKATOR</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold text-on-surface">12</span>
+<span class="text-secondary text-sm">Target: 15</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="info-grid-item bg-surface-container-lowest p-6 rounded-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] border border-outline-variant/30 fade-in-delay-2 glass-card">
+<p class="font-label-caps text-secondary mb-2">TOTAL PERTANYAAN</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold text-on-surface">36</span>
+<span class="text-secondary text-sm">Aktif</span>
+</div>
+</div>
+<!-- Stat Card 4 (Progress) -->
+<div class="content-card bg-primary text-on-primary p-6 rounded-xl shadow-lg flex items-center justify-between fade-in-delay-3 glass-card">
+<div>
+<p class="font-label-caps text-primary-fixed/80 mb-2">KELENGKAPAN DATA</p>
+<span class="text-[32px] font-bold">85%</span>
+</div>
+<div class="relative w-16 h-16">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="white" stroke-dasharray="85, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold">85%</span>
+</div>
+</div>
+</section>
+<!-- Toolbar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 fade-in-delay-2">
+<div class="flex items-center gap-3 flex-1 max-w-2xl">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-11 pl-10 pr-4 bg-surface-container-lowest rounded-xl border border-outline-variant/30 focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm" placeholder="Cari sub-komponen..." type="text"/>
+</div>
+<div class="relative min-w-[160px]">
+<select class="w-full h-11 px-4 bg-surface-container-lowest rounded-xl border border-outline-variant/30 focus:ring-2 focus:ring-primary text-sm appearance-none cursor-pointer">
+<option>Urutkan: Nama</option>
+<option>Urutkan: Terbaru</option>
+<option>Urutkan: Indikator</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+<button class="btn-start bg-primary-container text-on-primary h-11 px-6 rounded-xl font-medium shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                    Tambah Sub Komponen
+                </button>
+</div>
+<!-- Main Content - Sub Component Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="content-card group bg-surface-container-lowest rounded-xl border border-outline-variant/30 flex flex-col fade-in glass-card">
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary content-icon">
+<span class="material-symbols-outlined text-[28px]">delete_sweep</span>
+</div>
+<button class="more-btn p-2 text-secondary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Pemilahan Sampah Organik</h3>
+<p class="text-body-sm text-secondary line-clamp-2 mb-6">Ketersediaan tempat sampah terpisah dan tingkat kepatuhan warga sekolah dalam memisahkan limbah organik harian.</p>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-outline-variant/20 mb-6">
+<div>
+<p class="text-[10px] font-bold text-secondary tracking-widest uppercase mb-1">INDIKATOR</p>
+<p class="text-lg font-semibold text-on-surface">3</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-secondary tracking-widest uppercase mb-1">PERTANYAAN</p>
+<p class="text-lg font-semibold text-on-surface">10</p>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low mt-auto rounded-b-xl flex justify-between items-center">
+<span class="status-badge text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-md">80% Selesai</span>
+<a class="text-primary font-semibold text-sm flex items-center gap-1 hover:underline" href="#">
+                            Lihat Detail
+                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="content-card group bg-surface-container-lowest rounded-xl border border-outline-variant/30 flex flex-col fade-in-delay">
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary content-icon">
+<span class="material-symbols-outlined text-[28px]">recycling</span>
+</div>
+<button class="more-btn p-2 text-secondary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Unit Pengolah Sampah (UPS)</h3>
+<p class="text-body-sm text-secondary line-clamp-2 mb-6">Efektivitas operasional pusat pengolahan sampah internal sekolah termasuk teknik pengomposan.</p>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-outline-variant/20 mb-6">
+<div>
+<p class="text-[10px] font-bold text-secondary tracking-widest uppercase mb-1">INDIKATOR</p>
+<p class="text-lg font-semibold text-on-surface">4</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-secondary tracking-widest uppercase mb-1">PERTANYAAN</p>
+<p class="text-lg font-semibold text-on-surface">12</p>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low mt-auto rounded-b-xl flex justify-between items-center">
+<span class="status-badge text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-md">100% Selesai</span>
+<a class="text-primary font-semibold text-sm flex items-center gap-1 hover:underline" href="#">
+                            Lihat Detail
+                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="content-card group bg-surface-container-lowest rounded-xl border border-outline-variant/30 flex flex-col fade-in-delay-2">
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary content-icon">
+<span class="material-symbols-outlined text-[28px]">local_shipping</span>
+</div>
+<button class="more-btn p-2 text-secondary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Manajemen Pengangkutan</h3>
+<p class="text-body-sm text-secondary line-clamp-2 mb-6">Penjadwalan dan koordinasi dengan dinas kebersihan terkait residu sampah yang tidak bisa diolah.</p>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-outline-variant/20 mb-6">
+<div>
+<p class="text-[10px] font-bold text-secondary tracking-widest uppercase mb-1">INDIKATOR</p>
+<p class="text-lg font-semibold text-on-surface">2</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-secondary tracking-widest uppercase mb-1">PERTANYAAN</p>
+<p class="text-lg font-semibold text-on-surface">8</p>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low mt-auto rounded-b-xl flex justify-between items-center">
+<span class="status-badge text-xs font-medium text-tertiary bg-tertiary/10 px-2 py-1 rounded-md">45% Selesai</span>
+<a class="text-primary font-semibold text-sm flex items-center gap-1 hover:underline" href="#">
+                            Lihat Detail
+                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 4 (Add New - Skeleton Style) -->
+<button class="content-card group bg-transparent border-2 border-dashed border-outline-variant/40 rounded-xl flex flex-col items-center justify-center p-12 min-h-[340px] fade-in-delay-3 glass-card">
+<div class="w-14 h-14 bg-surface-container rounded-full flex items-center justify-center text-outline group-hover:text-primary group-hover:bg-primary/10 mb-4 transition-all content-icon">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</div>
+<p class="font-semibold text-secondary group-hover:text-primary">Tambah Sub Komponen</p>
+<p class="text-xs text-outline text-center mt-2 px-4 italic">Gunakan ini untuk menambah kategori evaluasi baru pada komponen pengolahan sampah</p>
+</button>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = '';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+
+        // Header scroll effect
+        const header = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body></html>

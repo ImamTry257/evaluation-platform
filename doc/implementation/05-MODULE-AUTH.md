@@ -4,15 +4,42 @@
 **Referensi:**
 - [API Specification - Auth](../API-SPECIFICATION.md)
 - [Business Process - Proses 10](../BUSINESS-PROCESS.md)
-- ADR-002 (Email-only Auth)
+- HTML Reference: `doc/html/login.html`
 
 ---
 
 ## 1. Overview
 
-Autentikasi menggunakan Laravel Sanctum dengan dua tipe pengguna:
-- **Admin:** Email + Password
-- **Respondent:** Email only (auto-register jika belum ada)
+Autentikasi menggunakan Laravel Sanctum dengan **Unified Login** untuk semua tipe pengguna:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    LOGIN UNIFIED                         │
+│                   (login.html)                           │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│   ┌─────────────┐      ┌─────────────┐                 │
+│   │   Admin     │      │  Respondent │                 │
+│   │ Username +  │      │  Username + │                 │
+│   │  Password   │      │  Password   │                 │
+│   └──────┬──────┘      └──────┬──────┘                 │
+│          │                     │                        │
+│          ▼                     ▼                        │
+│   ┌─────────────┐      ┌─────────────┐                 │
+│   │   /admin    │      │ /respondent │                 │
+│   │  Dashboard  │      │  Angket     │                 │
+│   └─────────────┘      └─────────────┘                 │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Flow:**
+1. User mengakses `/login`
+2. Memasukkan **Username** dan **Password**
+3. Sistem mengidentifikasi role berdasarkan credential
+4. Redirect ke dashboard sesuai role:
+   - Admin → `/admin`
+   - Respondent → `/respondent`
 
 ---
 
@@ -20,9 +47,84 @@ Autentikasi menggunakan Laravel Sanctum dengan dua tipe pengguna:
 
 | Method | Endpoint | Deskripsi | Auth |
 |--------|----------|-----------|------|
-| POST | `/api/v1/auth/login` | Login (admin/responden) | No |
+| POST | `/api/v1/auth/login` | Login unified (admin/responden) | No |
 | POST | `/api/v1/auth/logout` | Logout | Yes |
 | GET | `/api/v1/auth/profile` | Get user profile | Yes |
+
+**Login Request:**
+```json
+{
+  "username": "user@sekolah.id",
+  "password": "password123"
+}
+```
+
+**Response Format (Standard):**
+
+Success:
+```json
+{
+  "status": true,
+  "message": "Success",
+  "data": {}
+}
+```
+
+Error:
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": []
+}
+```
+
+**Login Response (Success):**
+```json
+{
+  "status": true,
+  "message": "Login successful",
+  "data": {
+    "token": "1|abc123...",
+    "user": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@sekolah.id",
+      "role": "ADMIN"
+    }
+  }
+}
+```
+
+**Login Response (Error - Invalid Credentials):**
+```json
+{
+  "status": false,
+  "message": "Username atau password salah",
+  "errors": []
+}
+```
+
+**Login Response (Error - Validation):**
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "username": ["The username field is required."],
+    "password": ["The password field is required."]
+  }
+}
+```
+
+**Login Response (Error - Inactive Account):**
+```json
+{
+  "status": false,
+  "message": "Akun tidak aktif",
+  "errors": []
+}
+```
 
 ---
 
@@ -46,56 +148,41 @@ class LoginController extends Controller
 {
     use HasApiResponse;
 
+    /**
+     * Unified login for Admin and Respondent
+     * 
+     * Flow:
+     * 1. Validate username & password
+     * 2. Find user by username (which is email)
+     * 3. Verify password
+     * 4. Return token with user role
+     * 5. Frontend redirects based on role
+     */
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'type' => 'required|in:ADMIN,RESPONDENT',
-            'password' => 'required_if:type,ADMIN|nullable|string',
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $email = strtolower($request->email);
-        $type = strtolower($request->type);
+        $username = strtolower($request->username);
+        $password = $request->password;
 
-        // Check if active period exists
-        if (!$this->hasActivePeriod()) {
-            return $this->errorResponse('Email not found', 401);
-        }
-
-        // Find or create user
-        $user = User::where('email', $email)->first();
-
-        if (!$user && $type === 'respondent') {
-            // Auto-register respondent
-            $user = User::create([
-                'role' => 'respondent',
-                'email' => $email,
-                'name' => explode('@', $email)[0],
-                'isActive' => true,
-            ]);
-        }
+        // Find user by email (username = email)
+        $user = User::where('email', $username)->first();
 
         if (!$user) {
-            return $this->errorResponse('Email not found', 401);
+            return $this->errorResponse('Username atau password salah', 401);
         }
 
-        // Verify password for admin
-        if ($type === 'admin') {
-            if (!$request->password || !Hash::check($request->password, $user->password)) {
-                throw ValidationException::withMessages([
-                    'email' => ['The provided credentials are incorrect.'],
-                ]);
-            }
+        // Verify password
+        if (!Hash::check($password, $user->password)) {
+            return $this->errorResponse('Username atau password salah', 401);
         }
 
         // Check if user is active
         if (!$user->isActive) {
-            return $this->errorResponse('Account is inactive', 403);
-        }
-
-        // Check role matches
-        if ($user->role !== $type) {
-            return $this->errorResponse('Invalid role for this account', 403);
+            return $this->errorResponse('Akun tidak aktif', 403);
         }
 
         // Create token
@@ -128,11 +215,6 @@ class LoginController extends Controller
             'role' => $user->role,
         ]);
     }
-
-    private function hasActivePeriod(): bool
-    {
-        return \App\Models\EvaluationPeriod::where('isActive', true)->exists();
-    }
 }
 ```
 
@@ -154,8 +236,9 @@ class VerifyAdminRole
     {
         if (!$request->user() || $request->user()->role !== 'admin') {
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'message' => 'Unauthorized. Admin access required.',
+                'errors' => [],
             ], 403);
         }
 
@@ -180,8 +263,9 @@ class VerifyRespondentRole
     {
         if (!$request->user() || $request->user()->role !== 'respondent') {
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'message' => 'Unauthorized. Respondent access required.',
+                'errors' => [],
             ], 403);
         }
 
@@ -206,31 +290,44 @@ class VerifyRespondentRole
 
 ## 4. Frontend Implementation
 
-### 4.1 Login Page (Respondent)
+### 4.1 Login Page (Unified)
 
-Convert from `doc/html/reponden/login-responden.html`:
+Convert from `doc/html/login.html`:
 
 ```vue
 <!-- src/views/auth/LoginView.vue -->
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
 
-const email = ref('')
+const showPassword = ref(false)
 const isLoading = ref(false)
 const error = ref('')
+
+const form = reactive({
+  username: '',
+  password: '',
+  rememberMe: false
+})
 
 async function handleLogin() {
   isLoading.value = true
   error.value = ''
 
   try {
-    await authStore.login(email.value, undefined, 'RESPONDENT')
-    router.push('/respondent')
+    const response = await authStore.login(form.username, form.password)
+    
+    // Redirect based on user role
+    const role = response.user.role
+    if (role === 'ADMIN') {
+      router.push('/admin')
+    } else if (role === 'RESPONDENT') {
+      router.push('/respondent')
+    }
   } catch (e: any) {
     error.value = e.response?.data?.message || 'Login failed'
   } finally {
@@ -238,6 +335,60 @@ async function handleLogin() {
   }
 }
 </script>
+
+<template>
+  <div class="login-container">
+    <!-- Left Column: Illustration -->
+    <section class="hidden lg:flex ...">
+      <!-- Illustration content from login.html -->
+    </section>
+
+    <!-- Right Column: Login Form -->
+    <main class="w-full lg:w-1/2 ...">
+      <form @submit.prevent="handleLogin">
+        <!-- Username Field -->
+        <div class="space-y-1.5">
+          <label>Nama Pengguna</label>
+          <input 
+            v-model="form.username"
+            type="text"
+            placeholder="nama@sekolah.id"
+            required
+          />
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5">
+          <label>Kata Sandi</label>
+          <input 
+            v-model="form.password"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            required
+          />
+          <button @click="showPassword = !showPassword" type="button">
+            {{ showPassword ? 'visibility' : 'visibility_off' }}
+          </button>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="flex items-center justify-between">
+          <label>
+            <input v-model="form.rememberMe" type="checkbox" />
+            <span>Ingat Saya</span>
+          </label>
+          <a href="#">Lupa Kata Sandi?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" :disabled="isLoading">
+          <span v-if="isLoading">Memproses...</span>
+          <span v-else>Masuk ke Platform</span>
+        </button>
+      </form>
+    </main>
+  </div>
+</template>
 ```
 
 ### 4.2 Auth Store
@@ -250,15 +401,18 @@ import api from '@/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
-  const user = ref<any>(null)
+  const user = ref<{ id: number; name: string; email: string; role: string } | null>(null)
 
   const isAuthenticated = computed(() => !!token.value)
+  const isAdmin = computed(() => user.value?.role === 'ADMIN')
+  const isRespondent = computed(() => user.value?.role === 'RESPONDENT')
 
-  async function login(email: string, password?: string, type: string = 'RESPONDENT') {
-    const response = await api.post('/auth/login', { email, password, type })
+  async function login(username: string, password: string) {
+    const response = await api.post('/auth/login', { username, password })
     token.value = response.data.data.token
     user.value = response.data.data.user
     localStorage.setItem('token', token.value!)
+    return response.data.data
   }
 
   function logout() {
@@ -267,7 +421,15 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
-  return { token, user, isAuthenticated, login, logout }
+  return { 
+    token, 
+    user, 
+    isAuthenticated, 
+    isAdmin,
+    isRespondent,
+    login, 
+    logout 
+  }
 })
 ```
 
@@ -278,11 +440,20 @@ export const useAuthStore = defineStore('auth', () => {
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
+  // Redirect to login if not authenticated
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
-  } else if (to.meta.guest && authStore.isAuthenticated) {
+  }
+  // Redirect to dashboard if already logged in
+  else if (to.meta.guest && authStore.isAuthenticated) {
     next(authStore.user?.role === 'ADMIN' ? '/admin' : '/respondent')
-  } else {
+  }
+  // Check role-based access
+  else if (to.meta.role && to.meta.role !== authStore.user?.role) {
+    // Unauthorized - redirect to appropriate dashboard
+    next(authStore.user?.role === 'ADMIN' ? '/admin' : '/respondent')
+  }
+  else {
     next()
   }
 })
@@ -304,34 +475,140 @@ Route::post('/auth/login', [LoginController::class, 'login'])
 
 ```php
 // tests/Feature/Auth/LoginTest.php
-public function test_respondent_can_login_with_email_only()
+public function test_admin_can_login_with_username_password()
 {
-    // Create active period first
-    EvaluationPeriod::factory()->create(['isActive' => true]);
+    $user = User::factory()->admin()->create([
+        'email' => 'admin@test.com',
+        'password' => Hash::make('password123'),
+    ]);
 
     $response = $this->postJson('/api/v1/auth/login', [
-        'email' => 'respondent@test.com',
-        'type' => 'RESPONDENT',
+        'username' => 'admin@test.com',
+        'password' => 'password123',
     ]);
 
     $response->assertStatus(200)
-        ->assertJsonStructure(['data' => ['token', 'user']]);
+        ->assertJsonStructure([
+            'status',
+            'message',
+            'data' => ['token', 'user' => ['id', 'name', 'email', 'role']]
+        ])
+        ->assertJson([
+            'status' => true,
+            'message' => 'Login successful',
+        ]);
+
+    $this->assertEquals('ADMIN', $response->json('data.user.role'));
 }
 
-public function test_admin_can_login_with_password()
+public function test_respondent_can_login_with_username_password()
 {
-    $user = User::factory()->admin()->create([
-        'password' => Hash::make('password'),
+    $user = User::factory()->respondent()->create([
+        'email' => 'respondent@test.com',
+        'password' => Hash::make('password123'),
     ]);
 
     $response = $this->postJson('/api/v1/auth/login', [
-        'email' => $user->email,
-        'password' => 'password',
-        'type' => 'ADMIN',
+        'username' => 'respondent@test.com',
+        'password' => 'password123',
     ]);
 
-    $response->assertStatus(200);
+    $response->assertStatus(200)
+        ->assertJson([
+            'status' => true,
+            'data' => ['user' => ['role' => 'RESPONDENT']]
+        ]);
 }
+
+public function test_wrong_password_returns_error()
+{
+    $user = User::factory()->admin()->create([
+        'password' => Hash::make('password123'),
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/login', [
+        'username' => 'admin@test.com',
+        'password' => 'wrongpassword',
+    ]);
+
+    $response->assertStatus(401)
+        ->assertJson([
+            'status' => false,
+            'message' => 'Username atau password salah',
+        ]);
+}
+
+public function test_validation_error_returns_errors_array()
+{
+    $response = $this->postJson('/api/v1/auth/login', [
+        'username' => '',
+        'password' => '',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonStructure([
+            'status',
+            'message',
+            'errors'
+        ])
+        ->assertJson([
+            'status' => false,
+        ]);
+}
+```
+
+---
+
+## 7. HTML Reference Files
+
+| File | Deskripsi | Status |
+|------|-----------|--------|
+| `doc/html/login.html` | Halaman login unified (Admin & Respondent) | ✅ Active |
+| `doc/html/register.html` | Halaman registrasi respondent | ✅ Active |
+| `doc/html/about-us.html` | Halaman About Us / Tim Pengembang | ✅ Active |
+| `doc/html/reponden/login-tidak-dipakai.html` | Login respondent lama (email only) | ❌ Deprecated |
+
+### 7.1 Login Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        USER ACCESS                          │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    /login (login.html)                      │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Username: [_______________]                        │   │
+│  │  Password: [_______________]                        │   │
+│  │                                                     │   │
+│  │  [ ] Ingat Saya        Lupa Kata Sandi?            │   │
+│  │                                                     │   │
+│  │  ┌─────────────────────────────────────────────┐   │   │
+│  │  │        Masuk ke Platform →                  │   │   │
+│  │  └─────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    API VALIDATION                           │
+│  • Check username (email) exists                           │
+│  • Verify password                                         │
+│  • Return token + user role                                │
+└─────────────────────────────────────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+┌──────────────────────┐    ┌──────────────────────┐
+│   role === 'ADMIN'   │    │ role === 'RESPONDENT' │
+└──────────┬───────────┘    └──────────┬───────────┘
+           │                           │
+           ▼                           ▼
+┌──────────────────────┐    ┌──────────────────────┐
+│      /admin          │    │     /respondent       │
+│   Admin Dashboard    │    │   Angket & Hasil      │
+└──────────────────────┘    └──────────────────────┘
 ```
 
 ---

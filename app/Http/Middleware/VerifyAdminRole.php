@@ -11,8 +11,9 @@ class VerifyAdminRole
     {
         if (!$request->user() || $request->user()->role !== 'admin') {
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'message' => 'Unauthorized. Admin access required.',
+                'errors' => [],
             ], 403);
         }
 

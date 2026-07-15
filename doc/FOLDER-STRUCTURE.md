@@ -1,7 +1,7 @@
 # Folder Structure
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.0.0
+**Version:** 1.2.0
 
 ---
 
@@ -34,7 +34,7 @@ cbt/
 
 ---
 
-# 3. Backend Structure (Laravel 12)
+# 3. Backend Structure (Laravel 13)
 
 ```
 backend/
@@ -669,9 +669,9 @@ VITE_API_BASE_URL=https://api.example.com/api/v1
 
 # 11. Dependencies & Versions
 
-## Backend (Laravel 12)
+## Backend (Laravel 13)
 - PHP 8.3+
-- Laravel 12
+- Laravel 13
 - Laravel Sanctum
 - Laravel Excel
 - DomPDF

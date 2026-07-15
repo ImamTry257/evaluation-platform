@@ -12,6 +12,48 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+
+        /* ===== INTERACTIVE CSS STYLING ===== */
+        .sidebar-nav { transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .sidebar-nav:hover { background-color: #e3eae3; border-left-color: #10b981; transform: translateX(4px); }
+        .sidebar-nav:hover .material-symbols-outlined { animation: navIconPop 0.3s ease; }
+        @keyframes navIconPop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .sidebar-nav.active { background-color: rgba(16, 185, 129, 0.1); border-left-color: #006c49; }
+        .header-btn { transition: all 0.3s ease; border-radius: 50%; }
+        .header-btn:hover { background-color: #e3eae3; transform: scale(1.1); }
+        .header-btn:active { transform: scale(0.95); }
+        .search-input { transition: all 0.3s ease; }
+        .search-input:focus { box-shadow: 0 0 0 3px rgba(0, 108, 73, 0.15); transform: translateY(-1px); }
+        .card-hover { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        .card-hover:hover .icon-bounce { animation: iconBounce 0.4s ease; }
+        @keyframes iconBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .table-row { transition: all 0.3s ease; cursor: pointer; }
+        .table-row:hover { background-color: rgba(238, 246, 238, 0.5); transform: scale(1.01); }
+        .table-row:hover td { color: #161d19; }
+        .table-btn { transition: all 0.3s ease; border-radius: 0.5rem; }
+        .table-btn:hover { background-color: #eef6ee; color: #006c49; transform: translateY(-1px); }
+        .more-btn { transition: all 0.3s ease; border-radius: 50%; }
+        .more-btn:hover { background-color: rgba(16, 185, 129, 0.1); color: #006c49; transform: rotate(90deg); }
+        .status-badge { transition: all 0.3s ease; }
+        .status-badge:hover { transform: scale(1.1); }
+        .page-btn { transition: all 0.3s ease; }
+        .page-btn:hover:not(:disabled) { background-color: #e3eae3; transform: translateY(-1px); }
+        .page-btn:active:not(:disabled) { transform: scale(0.95); }
+        .action-btn { transition: all 0.3s ease; }
+        .action-btn:hover { background-color: #eef6ee; border-color: #10b981; transform: translateY(-1px); }
+        .action-btn:active { transform: scale(0.97); }
+        .custom-select { transition: all 0.3s ease; cursor: pointer; }
+        .custom-select:hover { background-color: #e3eae3; }
+        .custom-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(0, 108, 73, 0.2); }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .fade-in-delay { animation: fadeIn 0.5s ease-out 0.1s forwards; opacity: 0; }
+        .fade-in-delay-2 { animation: fadeIn 0.5s ease-out 0.2s forwards; opacity: 0; }
+        .fade-in-delay-3 { animation: fadeIn 0.5s ease-out 0.3s forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        a:hover { transition: all 0.3s ease; }
+        .group:hover .group-icon { animation: iconScale 0.3s ease; }
+        @keyframes iconScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
     </style>
 <script id="tailwind-config">
       tailwind.config = {

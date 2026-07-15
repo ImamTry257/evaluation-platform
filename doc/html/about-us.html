@@ -93,17 +93,85 @@
           },
         },
       }
-    }catch(_e){}</script></head><body class="text-on-surface flex flex-col min-h-screen">
+    }catch(_e){}</script><style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* ===== INTERACTIVE CSS STYLING (from platform-explanation) ===== */
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+
+        /* ===== HEADER BUTTONS ===== */
+        .header-btn-rotate { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 0.5rem; padding: 0.5rem; }
+        .header-btn-rotate:hover { background-color: rgba(16, 185, 129, 0.1); transform: rotate(15deg) scale(1.1); }
+        .header-btn-rotate:active { transform: rotate(0deg) scale(0.95); }
+
+        /* ===== GLASS CARD ===== */
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(229, 231, 235, 0.5); transition: all 0.3s ease; }
+        .glass-card:hover { box-shadow: 0 8px 30px rgba(0, 108, 73, 0.1); border-color: #10b981; }
+
+        /* ===== CONTENT CARD ===== */
+        .content-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .content-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12); border-color: #10b981; }
+        .content-card:hover .content-icon { animation: contentIconPulse 0.5s ease; }
+        @keyframes contentIconPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15) rotate(5deg); } }
+
+        /* ===== PROFILE CARD ===== */
+        .profile-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .profile-card:hover { transform: translateY(-6px); box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12); border-color: #10b981; }
+        .profile-card:hover .profile-avatar { transform: scale(1.05); border-color: #10b981; }
+        .profile-avatar { transition: all 0.3s ease; }
+
+        /* ===== INFO GRID ITEM ===== */
+        .info-grid-item { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .info-grid-item:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25); }
+        .info-grid-item:hover .grid-icon { animation: gridIconBounce 0.4s ease; }
+        @keyframes gridIconBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        /* ===== FOOTER BUTTONS ===== */
+        .btn-back { transition: all 0.4s ease; border-color: #6c7a71; }
+        .btn-back:hover { background-color: #dde4dd; transform: translateY(-2px); border-color: #10b981; }
+        .btn-back:active { transform: scale(0.96); }
+        .btn-start { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-start:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); background-color: #006c49; }
+        .btn-start:active:not(:disabled) { transform: scale(0.96); }
+
+        /* ===== FADE IN ANIMATIONS ===== */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .fade-in-delay { animation: fadeIn 0.6s ease-out 0.15s forwards; opacity: 0; }
+        .fade-in-delay-2 { animation: fadeIn 0.6s ease-out 0.3s forwards; opacity: 0; }
+        .fade-in-delay-3 { animation: fadeIn 0.6s ease-out 0.45s forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== HEADER SCROLL ===== */
+        header { transition: all 0.3s ease; }
+        header.scrolled { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); background: rgba(255, 255, 255, 0.95); }
+
+        /* ===== LINK HOVER ===== */
+        a { transition: all 0.3s ease; }
+
+        /* ===== MAIL LINK ===== */
+        .mail-link { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .mail-link:hover { color: #006c49; transform: translateX(4px); }
+        .mail-link:hover .material-symbols-outlined { animation: mailBounce 0.4s ease; }
+        @keyframes mailBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        /* ===== ROLE BADGE ===== */
+        .role-badge { transition: all 0.3s ease; }
+        .profile-card:hover .role-badge { transform: scale(1.05); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    </style>
+</head><body class="text-on-surface flex flex-col min-h-screen">
     <!-- Top Navigation Bar -->
-    <header class="fixed top-0 left-0 right-0 z-50 glass-header border-b border-outline-variant">
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-header border-b border-outline-variant">
         <nav class="max-w-[1440px] mx-auto flex justify-between items-center px-margin py-4">
             <div class="flex items-center gap-sm">
                 <span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">PEKLS</span>
                 <span class="hidden md:block font-title-md text-title-md font-bold text-primary border-l-2 border-outline-variant pl-sm">Platform Evaluasi Kebijakan Lingkungan Sekolah</span>
             </div>
             <div class="flex items-center gap-md">
-                <button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-low rounded-full transition-colors">help_outline</button>
-                <button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-low rounded-full transition-colors">info</button>
+                <button class="header-btn-rotate material-symbols-outlined text-on-surface-variant">help_outline</button>
+                <button class="header-btn-rotate material-symbols-outlined text-on-surface-variant">info</button>
             </div>
         </nav>
     </header>
@@ -112,58 +180,58 @@
         <!-- Header / Hero Section -->
         <section class="mb-2xl flex flex-col md:flex-row items-center gap-xl">
             <div class="flex-1 text-center md:text-left">
-                <h1 class="font-display-lg text-display-lg text-on-surface mb-md">About Us</h1>
-                <p class="font-title-md text-title-md text-on-surface-variant max-w-xl">
+                <h1 class="font-display-lg text-display-lg text-on-surface mb-md fade-in">About Us</h1>
+                <p class="font-title-md text-title-md text-on-surface-variant max-w-xl fade-in-delay">
                     Meet the team behind the development of the Environmental Policy Evaluation Platform.
                 </p>
             </div>
             <div class="flex-1 w-full max-w-lg">
-                
+
             </div>
         </section>
 
         <!-- Development Team -->
         <section class="mb-2xl">
-            <h2 class="font-headline-lg text-headline-lg mb-xl text-center">Development Team</h2>
+            <h2 class="font-headline-lg text-headline-lg mb-xl text-center fade-in-delay">Development Team</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
                 <!-- Member 1: Project Leader -->
-                <div class="bg-white p-lg rounded-card card-shadow profile-card border border-outline-variant flex flex-col items-center text-center relative overflow-hidden">
+                <div class="profile-card bg-white p-lg rounded-card card-shadow border border-outline-variant flex flex-col items-center text-center relative overflow-hidden fade-in glass-card">
                     <div class="absolute top-4 right-4">
-                        <span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Project Leader</span>
+                        <span class="role-badge bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Project Leader</span>
                     </div>
-                    <div class="w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
+                    <div class="profile-avatar w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
                         <img class="w-full h-full object-cover" alt="Dr. Ahmad Santoso" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNmtksYuft2A8zk2L9e4R1u4iBmAPS6xt5GzI9QQdF3-PIqklWefXhvj2GK6AuT5OhM2gQuQK6t6SOcRWDa5s35nB2I7QxbL94pxGqhJTxjWY1YpwbgoYIQZSgHQkozrjHM0iVk8VtXCJepmvcI6CLZ839kAJWldjb2Nqt0gvyS4CN_D_fbABrJq8pax6B3Wefz-lGESIN-SChmWqpjh1mG4crA6eWUjrxtIHsQAwcsOK-xXQ2fA">
                     </div>
                     <h4 class="font-title-md text-title-md text-on-surface mb-xs">Dr. Ahmad Santoso</h4>
                     <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Ketua Peneliti</p>
                     <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Universitas Indonesia</p>
-                    <a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:underline" href="mailto:ahmad@pekls.ac.id">
+                    <a class="mail-link inline-flex items-center gap-xs font-body-sm text-body-sm text-primary" href="mailto:ahmad@pekls.ac.id">
                         <span class="material-symbols-outlined text-[18px]">mail</span> ahmad@pekls.ac.id
                     </a>
                 </div>
 
                 <!-- Member 2 -->
-                <div class="bg-white p-lg rounded-card card-shadow profile-card border border-outline-variant flex flex-col items-center text-center">
-                    <div class="w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
+                <div class="profile-card bg-white p-lg rounded-card card-shadow border border-outline-variant flex flex-col items-center text-center fade-in-delay glass-card">
+                    <div class="profile-avatar w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
                         <img class="w-full h-full object-cover" alt="Siti Aminah" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLYVhL5N2sGc0hk-BzT7u384LhUjibDPNmAwyuCZBVRTHuozJNfwnUcQIXRHXcVv87s0JmoCAcwlMdAHVD-jTwRzhTeov3AQa9piLnOtRk85ADHaRs5bgZMbz-zSRZv4W3E37fkDsJrp2oTtWMzTUCjfaTdSKcrzSslnHl7MnVkJNkgoHsIld4OaEo2BTeXFWC2IbooyZp368U32Sia_oGY9eLDI548XfVoYsRflwswSpNKJ3Ybg">
                     </div>
                     <h4 class="font-title-md text-title-md text-on-surface mb-xs">Siti Aminah, M.T.</h4>
                     <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Sistem Arsitek</p>
                     <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Lembaga Riset Teknologi</p>
-                    <a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:underline" href="mailto:siti@pekls.ac.id">
+                    <a class="mail-link inline-flex items-center gap-xs font-body-sm text-body-sm text-primary" href="mailto:siti@pekls.ac.id">
                         <span class="material-symbols-outlined text-[18px]">mail</span> siti@pekls.ac.id
                     </a>
                 </div>
 
                 <!-- Member 3 -->
-                <div class="bg-white p-lg rounded-card card-shadow profile-card border border-outline-variant flex flex-col items-center text-center">
-                    <div class="w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
+                <div class="profile-card bg-white p-lg rounded-card card-shadow border border-outline-variant flex flex-col items-center text-center fade-in-delay-2 glass-card">
+                    <div class="profile-avatar w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
                         <img class="w-full h-full object-cover" alt="Budi Hartono" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCftTUzyyWp_BfmIdsEG6zuhOl5an2tz1oYsV39LgQyJckf-efctbX0TCsSGPAraVIWlVkv7jTFfPP9OcqnJGmX0ZZ7SIRQtirSbBYyP-SWfDOmhFtwBFwSQA3QM6CyvLTuafX8jfQAsEAdp8PBCTx6CZvSTb5pAGrVQYXxXxI7CpximnnhqHK222DgNWHtbHXW3gAU7GwGo1XKKXI1_mZNVqAJgJXTkxgcu8zOiF2NYCi4jwt-LQ">
                     </div>
                     <h4 class="font-title-md text-title-md text-on-surface mb-xs">Budi Hartono, M.Sc</h4>
                     <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Pakar Lingkungan</p>
                     <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Institut Ekologi Nasional</p>
-                    <a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:underline" href="mailto:budi@pekls.ac.id">
+                    <a class="mail-link inline-flex items-center gap-xs font-body-sm text-body-sm text-primary" href="mailto:budi@pekls.ac.id">
                         <span class="material-symbols-outlined text-[18px]">mail</span> budi@pekls.ac.id
                     </a>
                 </div>
@@ -179,4 +247,17 @@
                 <p class="font-body-sm text-body-sm text-on-secondary-container">Universitas Negeri Yogyakarta</p>
             </div>
             <div class="flex flex-col items-center md:items-end gap-xs">
-                </div></div></footer></body></html>
+                </div></div></footer>
+
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body></html>

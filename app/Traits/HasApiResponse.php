@@ -2,28 +2,50 @@
 
 namespace App\Traits;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
 trait HasApiResponse
 {
+    /**
+     * Return a success JSON response.
+     */
     protected function successResponse($data = null, string $message = 'Success', int $code = 200)
     {
         return response()->json([
-            'success' => true,
+            'status' => true,
             'message' => $message,
             'data' => $data,
         ], $code);
     }
 
-    protected function errorResponse(string $message = 'Error', int $code = 400, $errors = null)
+    /**
+     * Return a paginated list response.
+     */
+    protected function listResponse(LengthAwarePaginator $paginator, string $message = 'Data retrieved successfully')
     {
-        $response = [
-            'success' => false,
+        return response()->json([
+            'status' => true,
             'message' => $message,
-        ];
+            'data' => [
+                'contents' => $paginator->items(),
+                'meta' => [
+                    'page' => $paginator->currentPage(),
+                    'limit' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                ],
+            ],
+        ]);
+    }
 
-        if ($errors) {
-            $response['errors'] = $errors;
-        }
-
-        return response()->json($response, $code);
+    /**
+     * Return an error JSON response.
+     */
+    protected function errorResponse(string $message = 'Error', int $code = 400, $errors = [])
+    {
+        return response()->json([
+            'status' => false,
+            'message' => $message,
+            'errors' => $errors,
+        ], $code);
     }
 }

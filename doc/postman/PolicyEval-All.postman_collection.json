@@ -1,0 +1,408 @@
+{
+  "info": {
+    "name": "PolicyEval - All API",
+    "_postman_id": "policyeval-all-collection",
+    "description": "Complete API Collection untuk Platform Evaluasi Kebijakan Lingkungan Sekolah.\n\n## Base URL\nSemua request menggunakan base URL: `{{baseUrl}}/api/v1`\n\n## Response Format\n\n**Success (List):**\n```json\n{\n  \"status\": true,\n  \"message\": \"...\",\n  \"data\": {\n    \"contents\": [],\n    \"meta\": { \"page\": 1, \"limit\": 10, \"total\": 100 }\n  }\n}\n```\n\n**Success (Single):**\n```json\n{\n  \"status\": true,\n  \"message\": \"...\",\n  \"data\": {}\n}\n```\n\n**Error:**\n```json\n{\n  \"status\": false,\n  \"message\": \"...\",\n  \"errors\": []\n}\n```",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints (Login, Logout, Profile)",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin@cbt.com\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Login Success (Admin)",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|abc123...\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"Administrator\",\n      \"email\": \"admin@cbt.com\",\n      \"role\": \"ADMIN\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Login Failed - Wrong Password",
+              "code": 401,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Username atau password salah\",\n  \"errors\": []\n}"
+            },
+            {
+              "name": "Login Failed - Validation",
+              "code": 422,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"username\": [\"The username field is required.\"],\n    \"password\": [\"The password field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          },
+          "response": [
+            {
+              "name": "Logout Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Logged out successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "profile"]
+            }
+          },
+          "response": [
+            {
+              "name": "Profile Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Periode",
+      "description": "CRUD endpoints untuk Evaluasi Periode (Admin only)",
+      "item": [
+        {
+          "name": "List Periods",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/periods?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "periods"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "isActive", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Periods retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"name\": \"Periode 2026 Ganjil\",\n        \"description\": \"Evaluasi semester ganjil\",\n        \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n        \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n        \"isActive\": true,\n        \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            },
+            {
+              "name": "List Empty",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Periods retrieved successfully\",\n  \"data\": {\n    \"contents\": [],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 0\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Period",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Periode 2026 Ganjil\",\n  \"description\": \"Evaluasi semester ganjil\",\n  \"startDate\": \"2026-08-01\",\n  \"endDate\": \"2026-12-31\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/periods",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "periods"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Period created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil\",\n    \"description\": \"Evaluasi semester ganjil\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true,\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"name\": [\"The name field is required.\"],\n    \"startDate\": [\"The start date field is required.\"],\n    \"endDate\": [\"The end date field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Period",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/periods/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "periods", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Period retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil\",\n    \"description\": \"Evaluasi semester ganjil\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Period not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Period",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Periode 2026 Ganjil (Updated)\",\n  \"description\": \"Evaluasi semester ganjil updated\",\n  \"startDate\": \"2026-08-01\",\n  \"endDate\": \"2026-12-31\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/periods/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "periods", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Period updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil (Updated)\",\n    \"description\": \"Evaluasi semester ganjil updated\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true\n  }\n}"
+            },
+            {
+              "name": "Update Not Found",
+              "code": 404,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Period not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Period",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/periods/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "periods", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Period deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Delete Not Found",
+              "code": 404,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Period not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Kuesioner",
+      "description": "CRUD endpoints untuk Kuesioner (Admin only). Includes evaluationPeriod relation.",
+      "item": [
+        {
+          "name": "List Questionnaires",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questionnaires?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questionnaires"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "status", "value": "", "disabled": true },
+                { "key": "evaluationPeriodId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaires retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"evaluationPeriodId\": 4,\n        \"title\": \"Kuesioner Evaluasi 2026\",\n        \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n        \"durationMinutes\": 90,\n        \"status\": \"draft\",\n        \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"evaluation_period\": {\n          \"id\": 4,\n          \"name\": \"Periode 2026 Ganjil\",\n          \"description\": \"Evaluasi semester ganjil\",\n          \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n          \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n          \"isActive\": true\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Questionnaire",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"evaluationPeriodId\": 4,\n  \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n  \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n  \"durationMinutes\": 90,\n  \"status\": \"draft\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questionnaires",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questionnaires"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n    \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n    \"durationMinutes\": 90,\n    \"status\": \"draft\",\n    \"evaluation_period\": {\n      \"id\": 4,\n      \"name\": \"Periode 2026 Ganjil\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"evaluationPeriodId\": [\"The evaluation period id field is required.\"],\n    \"title\": [\"The title field is required.\"],\n    \"durationMinutes\": [\"The duration minutes field is required.\"],\n    \"status\": [\"The status field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Questionnaire",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questionnaires/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questionnaires", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n    \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n    \"durationMinutes\": 90,\n    \"status\": \"draft\",\n    \"evaluation_period\": { ... }\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "body": "{\n  \"status\": false,\n  \"message\": \"Questionnaire not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Questionnaire",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"evaluationPeriodId\": 4,\n  \"title\": \"Kuesioner Updated\",\n  \"description\": \"Updated description\",\n  \"durationMinutes\": 120,\n  \"status\": \"published\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questionnaires/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questionnaires", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire updated successfully\",\n  \"data\": { ... }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Questionnaire",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questionnaires/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questionnaires", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire deleted successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

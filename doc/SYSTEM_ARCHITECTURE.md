@@ -1,7 +1,7 @@
 # System Architecture
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.0.0
+**Version:** 1.2.0
 
 ---
 
@@ -40,7 +40,7 @@ Platform ini bertujuan untuk:
 
 ## Backend
 
-- Laravel 12
+- Laravel 13
 - PHP 8.3+
 - Laravel Sanctum
 - RESTful API

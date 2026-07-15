@@ -1,0 +1,677 @@
+<!DOCTYPE html><html class="light" lang="id"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-surface-variant": "#3c4a42",
+                "inverse-primary": "#4edea3",
+                "error": "#ba1a1a",
+                "on-primary-container": "#00422b",
+                "surface-container-lowest": "#ffffff",
+                "tertiary-container": "#fc7c78",
+                "inverse-on-surface": "#ebf3eb",
+                "secondary-fixed-dim": "#c6c6c7",
+                "on-tertiary-container": "#711419",
+                "tertiary": "#a43a3a",
+                "background": "#f4fbf4",
+                "primary-fixed-dim": "#4edea3",
+                "primary": "#006c49",
+                "on-primary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "on-surface": "#161d19",
+                "surface-container-low": "#eef6ee",
+                "primary-fixed": "#6ffbbe",
+                "on-primary-fixed": "#002113",
+                "surface": "#f4fbf4",
+                "outline-variant": "#bbcabf",
+                "surface-dim": "#d4dcd5",
+                "surface-variant": "#dde4dd",
+                "on-error-container": "#93000a",
+                "surface-tint": "#006c49",
+                "outline": "#6c7a71",
+                "on-tertiary-fixed-variant": "#842225",
+                "surface-container-highest": "#dde4dd",
+                "secondary-container": "#dfe0e0",
+                "secondary": "#5d5f5f",
+                "on-secondary-fixed-variant": "#454747",
+                "on-primary-fixed-variant": "#005236",
+                "error-container": "#ffdad6",
+                "on-error": "#ffffff",
+                "inverse-surface": "#2b322d",
+                "surface-bright": "#f4fbf4",
+                "surface-container-high": "#e3eae3",
+                "primary-container": "#10b981",
+                "on-secondary": "#ffffff",
+                "tertiary-fixed": "#ffdad7",
+                "surface-container": "#e8f0e9",
+                "tertiary-fixed-dim": "#ffb3af",
+                "on-secondary-fixed": "#1a1c1c",
+                "on-secondary-container": "#616363",
+                "secondary-fixed": "#e2e2e2",
+                "on-background": "#161d19",
+                "on-tertiary-fixed": "#410005"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px",
+                "card": "12px"
+            },
+            "spacing": {
+                "xs": "0.25rem",
+                "xl": "2rem",
+                "lg": "1.5rem",
+                "sm": "0.5rem",
+                "gutter": "1.5rem",
+                "base": "4px",
+                "md": "1rem",
+                "margin": "2rem",
+                "2xl": "3rem"
+            },
+            "fontFamily": {
+                "body-base": ["Inter"],
+                "label-caps": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-sm": ["Inter"],
+                "headline-xl": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "title-md": ["Inter"],
+                "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    }catch(_e){}</script><style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* ===== INTERACTIVE CSS STYLING (from platform-explanation) ===== */
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+
+        /* ===== HEADER BUTTONS ===== */
+        .header-btn-rotate { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 0.5rem; padding: 0.5rem; }
+        .header-btn-rotate:hover { background-color: rgba(16, 185, 129, 0.1); transform: rotate(15deg) scale(1.1); }
+        .header-btn-rotate:active { transform: rotate(0deg) scale(0.95); }
+
+        /* ===== GLASS CARD ===== */
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(229, 231, 235, 0.5); transition: all 0.3s ease; }
+        .glass-card:hover { box-shadow: 0 8px 30px rgba(0, 108, 73, 0.1); border-color: #10b981; }
+
+        /* ===== CONTENT CARD ===== */
+        .content-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .content-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12); border-color: #10b981; }
+        .content-card:hover .content-icon { animation: contentIconPulse 0.5s ease; }
+        @keyframes contentIconPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15) rotate(5deg); } }
+
+        /* ===== PROFILE CARD (enhanced) ===== */
+        .profile-card {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+        .profile-card:hover::before {
+            left: 100%;
+        }
+        .profile-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 108, 73, 0.15);
+            border-color: #10b981;
+        }
+        .profile-card:hover .profile-avatar {
+            transform: scale(1.1);
+            border-color: #10b981;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        .profile-card:hover .profile-name {
+            color: #006c49;
+        }
+        .profile-card:hover .role-badge {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        .profile-avatar {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .profile-name {
+            transition: all 0.3s ease;
+        }
+
+        /* ===== INFO GRID ITEM ===== */
+        .info-grid-item { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .info-grid-item:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25); }
+        .info-grid-item:hover .grid-icon { animation: gridIconBounce 0.4s ease; }
+        @keyframes gridIconBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        /* ===== FOOTER BUTTONS ===== */
+        .btn-back { transition: all 0.4s ease; border-color: #6c7a71; }
+        .btn-back:hover { background-color: #dde4dd; transform: translateY(-2px); border-color: #10b981; }
+        .btn-back:active { transform: scale(0.96); }
+        .btn-start { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-start:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); background-color: #006c49; }
+        .btn-start:active:not(:disabled) { transform: scale(0.96); }
+
+        /* ===== FADE IN ANIMATIONS ===== */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .fade-in-delay { animation: fadeIn 0.6s ease-out 0.15s forwards; opacity: 0; }
+        .fade-in-delay-2 { animation: fadeIn 0.6s ease-out 0.3s forwards; opacity: 0; }
+        .fade-in-delay-3 { animation: fadeIn 0.6s ease-out 0.45s forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== HEADER SCROLL ===== */
+        header { transition: all 0.3s ease; }
+        header.scrolled { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); background: rgba(255, 255, 255, 0.95); }
+
+        /* ===== LINK HOVER ===== */
+        a { transition: all 0.3s ease; }
+
+        /* ===== MAIL LINK (enhanced) ===== */
+        .mail-link {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+        }
+        .mail-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mail-link:hover::before {
+            opacity: 1;
+        }
+        .mail-link:hover {
+            color: #006c49;
+            transform: translateX(4px);
+        }
+        .mail-link:hover .material-symbols-outlined {
+            animation: mailBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes mailBounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-5deg); }
+            50% { transform: scale(1.3) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-3deg); }
+        }
+
+        /* ===== ROLE BADGE (enhanced) ===== */
+        .role-badge {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .profile-card:hover .role-badge {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* ===== HERO SECTION (enhanced) ===== */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            border-radius: 50%;
+            animation: heroFloat 8s ease-in-out infinite;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+            bottom: -50px;
+            left: -50px;
+            border-radius: 50%;
+            animation: heroFloat 10s ease-in-out infinite reverse;
+        }
+        @keyframes heroFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+        }
+
+        /* ===== HERO TITLE ===== */
+        .hero-title {
+            transition: all 0.4s ease;
+        }
+        .hero-title:hover {
+            letter-spacing: 0.02em;
+        }
+
+        /* ===== HERO SUBTITLE ===== */
+        .hero-subtitle {
+            transition: all 0.3s ease;
+        }
+        .hero-subtitle:hover {
+            color: #161d19;
+        }
+
+        /* ===== TEAM SECTION ===== */
+        .team-section {
+            position: relative;
+        }
+        .team-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ===== TEAM TITLE ===== */
+        .team-title {
+            transition: all 0.3s ease;
+        }
+        .team-title:hover {
+            color: #006c49;
+        }
+
+        /* ===== FOOTER (enhanced) ===== */
+        .footer-section {
+            transition: all 0.4s ease;
+        }
+        .footer-section:hover {
+            background-color: #e8f0e9;
+        }
+
+        /* ===== INSTITUTION NAME ===== */
+        .institution-name {
+            transition: all 0.3s ease;
+        }
+        .institution-name:hover {
+            color: #006c49;
+        }
+
+        /* ===== LOGO TEXT ===== */
+        .logo-text {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .logo-text:hover {
+            transform: scale(1.05);
+        }
+        .logo-text:hover + .logo-divider {
+            width: 40px;
+        }
+        .logo-divider {
+            transition: all 0.3s ease;
+        }
+
+        /* ===== PROFILE IMAGE CONTAINER ===== */
+        .profile-image-container {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .profile-card:hover .profile-image-container {
+            transform: scale(1.05);
+        }
+
+        /* ===== PROFILE RING ===== */
+        .profile-ring {
+            transition: all 0.4s ease;
+        }
+        .profile-card:hover .profile-ring {
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        /* ===== PROFILE INFO ===== */
+        .profile-info {
+            transition: all 0.3s ease;
+        }
+        .profile-card:hover .profile-info {
+            transform: translateY(2px);
+        }
+
+        /* ===== SOCIAL LINK ===== */
+        .social-link {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .social-link:hover {
+            transform: translateY(-3px);
+            color: #006c49;
+        }
+
+        /* ===== CARD OVERLAY ===== */
+        .card-overlay {
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+        .profile-card:hover .card-overlay {
+            opacity: 1;
+        }
+
+        /* ===== FLOATING ELEMENTS ===== */
+        .floating-element {
+            animation: floatingElement 6s ease-in-out infinite;
+        }
+        @keyframes floatingElement {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ===== PULSE RING ===== */
+        .pulse-ring {
+            animation: pulseRing 2s ease-in-out infinite;
+        }
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* ===== GRADIENT TEXT ===== */
+        .gradient-text {
+            background: linear-gradient(135deg, #006c49, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        .gradient-text:hover {
+            background: linear-gradient(135deg, #10b981, #006c49);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        /* ===== BORDER ANIMATION ===== */
+        .border-animated {
+            position: relative;
+        }
+        .border-animated::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #006c49, #10b981);
+            transition: width 0.4s ease;
+        }
+        .border-animated:hover::after {
+            width: 100%;
+        }
+
+        /* ===== ICON HOVER ===== */
+        .icon-hover {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .icon-hover:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* ===== SCALE HOVER ===== */
+        .scale-hover {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .scale-hover:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== LIFT HOVER ===== */
+        .lift-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .lift-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head><body class="text-on-surface flex flex-col min-h-screen">
+    <!-- Top Navigation Bar -->
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-header border-b border-outline-variant">
+        <nav class="max-w-[1440px] mx-auto flex justify-between items-center px-margin py-4">
+            <div class="flex items-center gap-sm">
+                <span class="logo-text font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">PEKLS</span>
+                <span class="logo-divider hidden md:block w-2 h-2 bg-primary rounded-full mx-2"></span>
+                <span class="hidden md:block font-title-md text-title-md font-bold text-primary">Platform Evaluasi Kebijakan Lingkungan Sekolah</span>
+            </div>
+            <div class="flex items-center gap-md">
+                <button class="header-btn-rotate material-symbols-outlined text-on-surface-variant">help_outline</button>
+                <button class="header-btn-rotate material-symbols-outlined text-on-surface-variant">info</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow pt-32 pb-2xl max-w-[1440px] mx-auto px-margin w-full">
+        <!-- Header / Hero Section -->
+        <section class="hero-section mb-2xl flex flex-col md:flex-row items-center gap-xl relative">
+            <div class="flex-1 text-center md:text-left relative z-10">
+                <h1 class="hero-title font-display-lg text-display-lg text-on-surface mb-md fade-in gradient-text">About Us</h1>
+                <p class="hero-subtitle font-title-md text-title-md text-on-surface-variant max-w-xl fade-in-delay">
+                    Meet the team behind the development of the Environmental Policy Evaluation Platform.
+                </p>
+            </div>
+            <div class="flex-1 w-full max-w-lg relative z-10">
+
+            </div>
+        </section>
+
+        <!-- Development Team -->
+        <section class="team-section mb-2xl">
+            <h2 class="team-title font-headline-lg text-headline-lg mb-xl text-center fade-in-delay border-animated pb-2">Development Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                <!-- Member 1: Project Leader -->
+                <div class="profile-card bg-white p-lg rounded-card card-shadow border border-outline-variant flex flex-col items-center text-center relative fade-in glass-card">
+                    <div class="absolute top-4 right-4">
+                        <span class="role-badge bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider pulse-ring">Project Leader</span>
+                    </div>
+                    <div class="profile-image-container mb-md">
+                        <div class="profile-avatar profile-ring w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20">
+                            <img class="w-full h-full object-cover" alt="Dr. Ahmad Santoso" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNmtksYuft2A8zk2L9e4R1u4iBmAPS6xt5GzI9QQdF3-PIqklWefXhvj2GK6AuT5OhM2gQuQK6t6SOcRWDa5s35nB2I7QxbL94pxGqhJTxjWY1YpwbgoYIQZSgHQkozrjHM0iVk8VtXCJepmvcI6CLZ839kAJWldjb2Nqt0gvyS4CN_D_fbABrJq8pax6B3Wefz-lGESIN-SChmWqpjh1mG4crA6eWUjrxtIHsQAwcsOK-xXQ2fA">
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h4 class="profile-name font-title-md text-title-md text-on-surface mb-xs">Dr. Ahmad Santoso</h4>
+                        <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Ketua Peneliti</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Universitas Indonesia</p>
+                    </div>
+                    <a class="mail-link social-link inline-flex items-center gap-xs font-body-sm text-body-sm text-primary" href="mailto:ahmad@pekls.ac.id">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> ahmad@pekls.ac.id
+                    </a>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="profile-card bg-white p-lg rounded-card card-shadow border border-outline-variant flex flex-col items-center text-center fade-in-delay glass-card">
+                    <div class="profile-image-container mb-md">
+                        <div class="profile-avatar profile-ring w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20">
+                            <img class="w-full h-full object-cover" alt="Siti Aminah" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLYVhL5N2sGc0hk-BzT7u384LhUjibDPNmAwyuCZBVRTHuozJNfwnUcQIXRHXcVv87s0JmoCAcwlMdAHVD-jTwRzhTeov3AQa9piLnOtRk85ADHaRs5bgZMbz-zSRZv4W3E37fkDsJrp2oTtWMzTUCjfaTdSKcrzSslnHl7MnVkJNkgoHsIld4OaEo2BTeXFWC2IbooyZp368U32Sia_oGY9eLDI548XfVoYsRflwswSpNKJ3Ybg">
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h4 class="profile-name font-title-md text-title-md text-on-surface mb-xs">Siti Aminah, M.T.</h4>
+                        <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Sistem Arsitek</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Lembaga Riset Teknologi</p>
+                    </div>
+                    <a class="mail-link social-link inline-flex items-center gap-xs font-body-sm text-body-sm text-primary" href="mailto:siti@pekls.ac.id">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> siti@pekls.ac.id
+                    </a>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="profile-card bg-white p-lg rounded-card card-shadow border border-outline-variant flex flex-col items-center text-center fade-in-delay-2 glass-card">
+                    <div class="profile-image-container mb-md">
+                        <div class="profile-avatar profile-ring w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20">
+                            <img class="w-full h-full object-cover" alt="Budi Hartono" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCftTUzyyWp_BfmIdsEG6zuhOl5an2tz1oYsV39LgQyJckf-efctbX0TCsSGPAraVIWlVkv7jTFfPP9OcqnJGmX0ZZ7SIRQtirSbBYyP-SWfDOmhFtwBFwSQA3QM6CyvLTuafX8jfQAsEAdp8PBCTx6CZvSTb5pAGrVQYXxXxI7CpximnnhqHK222DgNWHtbHXW3gAU7GwGo1XKKXI1_mZNVqAJgJXTkxgcu8zOiF2NYCi4jwt-LQ">
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h4 class="profile-name font-title-md text-title-md text-on-surface mb-xs">Budi Hartono, M.Sc</h4>
+                        <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Pakar Lingkungan</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Institut Ekologi Nasional</p>
+                    </div>
+                    <a class="mail-link social-link inline-flex items-center gap-xs font-body-sm text-body-sm text-primary" href="mailto:budi@pekls.ac.id">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> budi@pekls.ac.id
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-section bg-surface-container-low border-t border-outline-variant w-full px-margin py-lg">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left">
+            <div>
+                <span class="institution-name font-title-md text-title-md font-bold text-on-surface block mb-xs cursor-default">Platform Evaluasi Kebijakan Lingkungan Sekolah</span>
+                <p class="font-body-sm text-body-sm text-on-secondary-container">Universitas Negeri Yogyakarta</p>
+            </div>
+            <div class="flex items-center gap-md">
+                <a href="#" class="social-link icon-hover w-10 h-10 bg-surface-container-high rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10">
+                    <span class="material-symbols-outlined text-xl">language</span>
+                </a>
+                <a href="#" class="social-link icon-hover w-10 h-10 bg-surface-container-high rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10">
+                    <span class="material-symbols-outlined text-xl">mail</span>
+                </a>
+                <a href="#" class="social-link icon-hover w-10 h-10 bg-surface-container-high rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-primary/10">
+                    <span class="material-symbols-outlined text-xl">chat</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Profile card tilt effect
+        document.querySelectorAll('.profile-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // Fade in on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .fade-in-delay, .fade-in-delay-2, .fade-in-delay-3').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(16, 185, 129, 0.3);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+
+                button.style.position = 'relative';
+                button.style.overflow = 'hidden';
+                button.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to { transform: scale(4); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Animate profile cards on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.profile-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 * (index + 1));
+            });
+        });
+    </script>
+</body></html>

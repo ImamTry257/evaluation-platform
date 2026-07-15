@@ -11,8 +11,9 @@ class VerifyRespondentRole
     {
         if (!$request->user() || $request->user()->role !== 'respondent') {
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'message' => 'Unauthorized. Respondent access required.',
+                'errors' => [],
             ], 403);
         }
 

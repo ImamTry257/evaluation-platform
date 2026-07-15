@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPolicy | Manajemen Pertanyaan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#fc7c78",
+                    "surface-dim": "#d4dcd5",
+                    "on-error-container": "#93000a",
+                    "outline": "#6c7a71",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f4fbf4",
+                    "on-tertiary-fixed": "#410005",
+                    "inverse-primary": "#4edea3",
+                    "outline-variant": "#bbcabf",
+                    "on-primary-fixed-variant": "#005236",
+                    "inverse-surface": "#2b322d",
+                    "on-background": "#161d19",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#00422b",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "primary-fixed": "#6ffbbe",
+                    "tertiary": "#a43a3a",
+                    "surface-tint": "#006c49",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "secondary-container": "#dfe0e0",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container-highest": "#dde4dd",
+                    "primary-fixed-dim": "#4edea3",
+                    "surface-variant": "#dde4dd",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f4fbf4",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#eef6ee",
+                    "surface-container-high": "#e3eae3",
+                    "on-primary-fixed": "#002113",
+                    "on-surface-variant": "#3c4a42",
+                    "primary-container": "#10b981",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#616363",
+                    "inverse-on-surface": "#ebf3eb",
+                    "on-secondary-fixed-variant": "#454747",
+                    "error-container": "#ffdad6",
+                    "background": "#f4fbf4",
+                    "on-primary": "#ffffff",
+                    "primary": "#006c49",
+                    "surface-container": "#e8f0e9",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-surface": "#161d19",
+                    "on-tertiary-container": "#711419",
+                    "secondary": "#5d5f5f",
+                    "on-secondary-fixed": "#1a1c1c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "1.5rem",
+                    "2xl": "3rem",
+                    "margin": "2rem",
+                    "gutter": "1.5rem",
+                    "xs": "0.25rem",
+                    "md": "1rem",
+                    "sm": "0.5rem",
+                    "xl": "2rem",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Poppins"],
+                    "display-lg": ["Poppins"],
+                    "body-base": ["Poppins"],
+                    "title-md": ["Poppins"],
+                    "headline-lg": ["Poppins"],
+                    "headline-xl": ["Poppins"],
+                    "body-sm": ["Poppins"],
+                    "label-caps": ["Poppins"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4fbf4; color: #161d19; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #bbcabf; border-radius: 10px; }
+
+        /* ===== SIDEBAR NAVIGATION ===== */
+        .sidebar-nav { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-left: 4px solid transparent; }
+        .sidebar-nav:hover { background-color: #f0fdf4; border-left-color: #10b981; transform: translateX(4px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
+        .sidebar-nav:hover .material-symbols-outlined { animation: navIconPop 0.4s ease; }
+        @keyframes navIconPop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .sidebar-nav.active { background-color: rgba(16, 185, 129, 0.1); border-left-color: #006c49; box-shadow: 0 2px 8px rgba(0, 108, 73, 0.1); }
+
+        /* ===== HEADER BUTTONS ===== */
+        .header-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 50%; }
+        .header-btn:hover { background-color: #f0fdf4; transform: scale(1.15); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .header-btn:active { transform: scale(0.9); }
+
+        /* ===== SEARCH INPUT ===== */
+        .search-input { transition: all 0.3s ease; }
+        .search-input:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); transform: translateY(-2px); border-color: #10b981; }
+
+        /* ===== CARD HOVER ===== */
+        .card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12); }
+        .card-hover:hover .icon-bounce { animation: iconBounce 0.5s ease; }
+        @keyframes iconBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+
+        /* ===== TABLE ROWS ===== */
+        .table-row { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .table-row:hover { background-color: rgba(16, 185, 129, 0.05); transform: scale(1.02) translateX(4px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        .table-row:hover td { color: #161d19; }
+        .table-row:active { transform: scale(0.99); }
+
+        /* ===== MORE BUTTON ===== */
+        .more-btn { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 50%; }
+        .more-btn:hover { background-color: rgba(16, 185, 129, 0.15); color: #006c49; transform: rotate(90deg) scale(1.1); }
+
+        /* ===== STATUS BADGE ===== */
+        .status-badge { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .status-badge:hover { transform: scale(1.15); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+
+        /* ===== CUSTOM SELECT ===== */
+        .custom-select { transition: all 0.3s ease; cursor: pointer; }
+        .custom-select:hover { background-color: #f0fdf4; }
+        .custom-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+
+        /* ===== FADE IN ANIMATIONS ===== */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .fade-in-delay { animation: fadeIn 0.6s ease-out 0.15s forwards; opacity: 0; }
+        .fade-in-delay-2 { animation: fadeIn 0.6s ease-out 0.3s forwards; opacity: 0; }
+        .fade-in-delay-3 { animation: fadeIn 0.6s ease-out 0.45s forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== QUESTION OPTIONS ===== */
+        .option-item { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .option-item:hover { transform: translateX(8px); border-color: #10b981; background-color: #f0fdf4; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15); }
+        .option-item:active { transform: scale(0.98); }
+
+        /* ===== PREVIEW PANEL ===== */
+        .preview-panel { transition: all 0.3s ease; }
+        .preview-panel:hover { box-shadow: 0 12px 40px rgba(0, 108, 73, 0.1); }
+
+        /* ===== DETAIL BUTTONS ===== */
+        .detail-btn { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .detail-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25); }
+        .detail-btn:active { transform: scale(0.95); }
+
+        /* ===== LINKS ===== */
+        a { transition: all 0.3s ease; }
+        .group:hover .group-icon { animation: iconScale 0.4s ease; }
+        @keyframes iconScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        /* ===== BREADCRUMB ===== */
+        .breadcrumb-item { transition: all 0.3s ease; cursor: pointer; }
+        .breadcrumb-item:hover { color: #006c49; transform: translateX(2px); }
+
+        /* ===== EDIT/DELETE BUTTONS ===== */
+        .edit-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .edit-btn:hover { color: #006c49; transform: scale(1.2) rotate(5deg); }
+        .edit-btn:active { transform: scale(0.9); }
+        .delete-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .delete-btn:hover { color: #ba1a1a; transform: scale(1.2) rotate(-5deg); }
+        .delete-btn:active { transform: scale(0.9); }
+
+        /* ===== WEIGHT BADGE ===== */
+        .weight-badge { transition: all 0.3s ease; }
+        .weight-badge:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+
+        /* ===== GLASS CARD (from platform-explanation) ===== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 108, 73, 0.1);
+            border-color: #10b981;
+        }
+
+        /* ===== CONTENT CARD (from platform-explanation) ===== */
+        .content-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 108, 73, 0.12);
+            border-color: #10b981;
+        }
+        .content-card:hover .content-icon {
+            animation: contentIconPulse 0.5s ease;
+        }
+        @keyframes contentIconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15) rotate(5deg); }
+        }
+
+        /* ===== SCALE SEGMENT (from platform-explanation) ===== */
+        .scale-segment {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .scale-segment:hover {
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.18);
+            z-index: 10;
+        }
+        .scale-segment:active {
+            transform: translateY(-3px) scale(1.03);
+        }
+
+        /* ===== INFO GRID ITEM (from platform-explanation) ===== */
+        .info-grid-item {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .info-grid-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25);
+        }
+        .info-grid-item:hover .grid-icon {
+            animation: gridIconBounce 0.4s ease;
+        }
+        @keyframes gridIconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ===== HERO ILLUSTRATION (from platform-explanation) ===== */
+        .hero-illustration {
+            transition: all 0.4s ease;
+        }
+        .hero-illustration:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(0, 108, 73, 0.18);
+        }
+        .hero-illustration:hover .material-symbols-outlined {
+            animation: ecoPulse 0.6s ease;
+        }
+        @keyframes ecoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+
+        /* ===== INSTRUCTION ITEM (from platform-explanation) ===== */
+        .instruction-item {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin: 0 -0.75rem;
+        }
+        .instruction-item:hover {
+            background-color: rgba(16, 185, 129, 0.05);
+            transform: translateX(6px);
+        }
+        .instruction-item:hover .material-symbols-outlined {
+            animation: checkBounce 0.4s ease;
+        }
+        @keyframes checkBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+
+        /* ===== HEADER BUTTON (from platform-explanation) ===== */
+        .header-btn-rotate {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        .header-btn-rotate:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            transform: rotate(15deg) scale(1.1);
+        }
+        .header-btn-rotate:active {
+            transform: rotate(0deg) scale(0.95);
+        }
+
+        /* ===== FOOTER BUTTONS (from platform-explanation) ===== */
+        .btn-back {
+            transition: all 0.4s ease;
+            border-color: #6c7a71;
+        }
+        .btn-back:hover {
+            background-color: #dde4dd;
+            transform: translateY(-2px);
+            border-color: #10b981;
+        }
+        .btn-back:active {
+            transform: scale(0.96);
+        }
+
+        .btn-start {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-start:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            background-color: #006c49;
+        }
+        .btn-start:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        /* ===== CHECKBOX LABEL (from platform-explanation) ===== */
+        .checkbox-label {
+            transition: all 0.3s ease;
+        }
+        .checkbox-label:hover {
+            color: #006c49;
+            transform: translateX(2px);
+        }
+
+        /* ===== DEVELOPER INFO (from platform-explanation) ===== */
+        .developer-info {
+            transition: all 0.3s ease;
+        }
+        .developer-info:hover {
+            color: #006c49;
+        }
+
+        /* ===== HEADER SCROLL (from platform-explanation) ===== */
+        header {
+            transition: all 0.3s ease;
+        }
+        header.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: rgba(244, 251, 244, 0.95);
+        }
+
+        /* ===== QUESTION CARD (enhanced) ===== */
+        .question-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .question-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 35px rgba(0, 108, 73, 0.1);
+            border-color: #10b981;
+        }
+
+        /* ===== OPTION ITEM (enhanced) ===== */
+        .option-item {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .option-item:hover {
+            transform: translateX(10px) scale(1.02);
+            border-color: #10b981;
+            background-color: #f0fdf4;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.18);
+        }
+        .option-item:active {
+            transform: scale(0.98);
+        }
+
+        /* ===== PREVIEW PANEL (enhanced) ===== */
+        .preview-panel {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .preview-panel:hover {
+            box-shadow: 0 15px 50px rgba(0, 108, 73, 0.12);
+            transform: translateY(-2px);
+        }
+
+        /* ===== TABLE ROW (enhanced) ===== */
+        .table-row {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .table-row:hover {
+            background-color: rgba(16, 185, 129, 0.05);
+            transform: scale(1.02) translateX(4px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        }
+        .table-row:hover td {
+            color: #161d19;
+        }
+        .table-row:active {
+            transform: scale(0.99);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-[280px] h-screen fixed left-0 top-0 flex flex-col bg-surface border-r border-outline-variant shadow-sm z-50">
+<div class="p-lg flex items-center gap-3 card-hover">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white icon-bounce">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">EcoPolicy</h1>
+<p class="text-[10px] uppercase tracking-widest text-secondary font-bold">Institutional Evaluation</p>
+</div>
+</div>
+<nav class="flex-1 mt-4 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+<!-- Navigation Items -->
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-base text-body-base">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-body-base text-body-base">Period</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-2 bg-primary-container/10 text-primary border-l-4 border-primary font-medium rounded-r-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-body-base text-body-base">Questionnaire</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-body-base text-body-base">Aspect</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-body-base text-body-base">Question</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-base text-body-base">Respondent</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-base text-body-base">Recommendation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-base text-body-base">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-surface-container transition-colors duration-200 rounded-xl group mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-base text-body-base">Settings</span>
+</a>
+</nav>
+<div class="p-lg border-t border-outline-variant bg-surface-container-low/50 card-hover cursor-pointer">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border-2 border-white shadow-sm icon-bounce" data-alt="A clean, minimalist profile photograph of a professional woman with a friendly expression, set against a soft blurred office background with green plants. The lighting is bright and natural, reinforcing the eco-friendly corporate theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw0W7KPZrY3d1ah4zicqmzm1KIKN89vehupIRxlqeSy1p5dEbTdP7ob0P0NpOKhJsUL1EqSPMSPm3uqXbj3f2VNFmVrbZ4CUBcGkWPfx6--28Ss-ozXd7UpgqKmO3ZoInZCpaJM8lurg5XQKqXJs-hnxEnrRYPEy61XQuBWCq_OqGuLRxrNI9hNPd3E4nGhde9MxPHIDKb7H_2ZSAU7hppWElUr-e7PfC49EWJLqOzo_d7kUMKQ"/>
+<div class="flex-1 overflow-hidden">
+<p class="font-body-sm text-body-sm font-semibold truncate">Dr. Sarah Green</p>
+<p class="text-[11px] text-secondary truncate">Policy Administrator</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 ml-[280px] flex flex-col h-screen bg-background relative overflow-hidden">
+<!-- Top Navigation / Header -->
+<header class="h-16 flex items-center px-lg bg-surface/80 backdrop-blur-md border-b border-outline-variant z-40 sticky top-0">
+<div class="flex items-center gap-2 overflow-hidden">
+<span class="material-symbols-outlined text-secondary text-sm">home</span>
+<span class="material-symbols-outlined text-outline-variant text-sm">chevron_right</span>
+<nav class="flex items-center gap-1 text-[13px] font-medium text-secondary whitespace-nowrap overflow-hidden">
+<span class="breadcrumb-item">Questionnaire</span>
+<span class="material-symbols-outlined text-outline-variant text-xs">chevron_right</span>
+<span class="breadcrumb-item">Manajemen Sampah</span>
+<span class="material-symbols-outlined text-outline-variant text-xs">chevron_right</span>
+<span class="breadcrumb-item">Sampah Organik</span>
+<span class="material-symbols-outlined text-outline-variant text-xs">chevron_right</span>
+<span class="breadcrumb-item">Pemilahan Sampah Organik</span>
+<span class="material-symbols-outlined text-outline-variant text-xs">chevron_right</span>
+<span class="text-primary truncate">Ketersediaan Tempat Sampah</span>
+</nav>
+</div>
+<div class="ml-auto flex items-center gap-4">
+<button class="header-btn-rotate w-10 h-10 flex items-center justify-center text-secondary relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full border-2 border-white"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<button class="btn-back flex items-center gap-2 px-3 py-1.5 rounded-lg border border-outline text-secondary font-medium text-sm">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+<span>Support</span>
+</button>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 p-lg overflow-y-auto custom-scrollbar">
+<!-- Page Title & Toolbar -->
+<div class="mb-lg space-y-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-background tracking-tight fade-in">Manajemen Pertanyaan</h2>
+<p class="text-secondary mt-1 flex items-center gap-2 fade-in-delay">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+                            Indikator: Ketersediaan Tempat Sampah
+                        </p>
+</div>
+<div class="flex items-center gap-3 fade-in-delay-2">
+<button class="btn-back px-4 py-2 bg-white border border-outline rounded-xl text-secondary font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">upload</span>
+                            Impor
+                        </button>
+<button class="btn-back px-4 py-2 bg-white border border-outline rounded-xl text-secondary font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                            Ekspor
+                        </button>
+<button class="btn-start px-5 py-2.5 bg-primary-container text-white rounded-xl font-semibold text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                            Tambah Pertanyaan
+                        </button>
+</div>
+</div>
+<div class="flex items-center gap-4 fade-in-delay-3">
+<div class="relative flex-1 max-w-md">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="search-input w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant rounded-xl text-sm placeholder:text-outline-variant" placeholder="Cari pertanyaan berdasarkan teks..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="btn-back p-2.5 bg-white border border-outline rounded-xl text-outline">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Bento / Columns -->
+<div class="flex flex-col lg:flex-row gap-lg">
+<!-- Left Column: High-Fidelity Table (70%) -->
+<div class="lg:w-[70%] space-y-4 fade-in-delay-2">
+<div class="bg-white border border-outline-variant rounded-2xl shadow-sm overflow-hidden card-hover">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50 border-b border-outline-variant">
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary uppercase tracking-widest w-16">No</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary uppercase tracking-widest">Pertanyaan</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary uppercase tracking-widest w-24">Bobot</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary uppercase tracking-widest w-32">Status</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary uppercase tracking-widest w-28 text-center">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="table-row">
+<td class="px-6 py-5 text-sm font-medium text-secondary">01</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-background group-hover:text-primary transition-colors line-clamp-1">Apakah sekolah memiliki tempat sampah organik khusus di setiap kelas?</p>
+<p class="text-[12px] text-outline mt-0.5">Tipe: Pilihan Ganda</p>
+</td>
+<td class="px-6 py-5">
+<span class="weight-badge px-2.5 py-1 bg-primary-container/10 text-primary font-bold text-xs rounded-full border border-primary/20">25%</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="status-badge w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+<span class="text-xs font-semibold text-primary">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-3">
+<button class="edit-btn text-secondary"><span class="content-icon material-symbols-outlined text-[20px]">edit_note</span></button>
+<button class="delete-btn text-secondary"><span class="content-icon material-symbols-outlined text-[20px]">delete_outline</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Selected state) -->
+<tr class="table-row bg-primary-container/10 border-l-4 border-l-primary">
+<td class="px-6 py-5 text-sm font-bold text-primary">02</td>
+<td class="px-6 py-5">
+<p class="text-sm font-bold text-primary line-clamp-1">Berapakah jumlah tempat sampah komunal yang tersedia di area kantin?</p>
+<p class="text-[12px] text-primary/70 mt-0.5">Tipe: Pilihan Ganda</p>
+</td>
+<td class="px-6 py-5">
+<span class="weight-badge px-2.5 py-1 bg-primary text-white font-bold text-xs rounded-full">35%</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="status-badge w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+<span class="text-xs font-semibold text-primary">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-3">
+<button class="edit-btn text-primary"><span class="content-icon material-symbols-outlined text-[20px]">edit_note</span></button>
+<button class="delete-btn text-primary"><span class="content-icon material-symbols-outlined text-[20px]">delete_outline</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row">
+<td class="px-6 py-5 text-sm font-medium text-secondary">03</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-background group-hover:text-primary transition-colors line-clamp-1">Apakah terdapat petunjuk visual (poster) pemilahan sampah pada setiap unit tempat sampah?</p>
+<p class="text-[12px] text-outline mt-0.5">Tipe: Ya/Tidak</p>
+</td>
+<td class="px-6 py-5">
+<span class="weight-badge px-2.5 py-1 bg-primary-container/10 text-primary font-bold text-xs rounded-full border border-primary/20">20%</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="status-badge w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+<span class="text-xs font-semibold text-primary">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-3">
+<button class="edit-btn text-secondary"><span class="content-icon material-symbols-outlined text-[20px]">edit_note</span></button>
+<button class="delete-btn text-secondary"><span class="content-icon material-symbols-outlined text-[20px]">delete_outline</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 (Draft) -->
+<tr class="table-row">
+<td class="px-6 py-5 text-sm font-medium text-secondary">04</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-background group-hover:text-primary transition-colors line-clamp-1">Kapan terakhir kali dilakukan evaluasi terhadap kebersihan tempat sampah organik?</p>
+<p class="text-[12px] text-outline mt-0.5">Tipe: Isian Bebas</p>
+</td>
+<td class="px-6 py-5">
+<span class="weight-badge px-2.5 py-1 bg-outline-variant/20 text-secondary font-bold text-xs rounded-full border border-outline-variant/30">20%</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="status-badge w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(93,95,95,0.3)]"></span>
+<span class="text-xs font-semibold text-secondary">Draft</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-center gap-3">
+<button class="edit-btn text-secondary"><span class="content-icon material-symbols-outlined text-[20px]">edit_note</span></button>
+<button class="delete-btn text-secondary"><span class="content-icon material-symbols-outlined text-[20px]">delete_outline</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
+<span class="text-xs text-secondary font-medium">Menampilkan 1-4 dari 12 pertanyaan</span>
+<div class="flex gap-2">
+<button class="btn-back p-1.5 rounded-lg border border-outline text-outline disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="btn-back p-1.5 rounded-lg border border-outline text-outline">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Question Preview Panel (30%) -->
+<div class="lg:w-[30%] fade-in-delay-3">
+<div class="preview-panel glass-card sticky top-[88px] rounded-2xl shadow-lg overflow-hidden flex flex-col h-[calc(100vh-140px)]">
+<div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container-low/20">
+<h3 class="font-title-md text-title-md text-on-background">Detail Pertanyaan</h3>
+<span class="content-icon material-symbols-outlined text-primary">visibility</span>
+</div>
+<div class="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-8">
+<!-- Question Info -->
+<section class="space-y-4 question-card p-4 rounded-xl">
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-outline uppercase">Teks Pertanyaan</label>
+<p class="font-body-base text-body-base font-semibold leading-relaxed">Berapakah jumlah tempat sampah komunal yang tersedia di area kantin?</p>
+</div>
+<div class="flex flex-wrap gap-4">
+<div class="space-y-1 flex-1 min-w-[120px]">
+<label class="font-label-caps text-label-caps text-outline uppercase">Tipe</label>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[18px]">radio_button_checked</span>
+<span class="text-sm font-medium">Pilihan Ganda</span>
+</div>
+</div>
+<div class="space-y-1 flex-1 min-w-[120px]">
+<label class="font-label-caps text-label-caps text-outline uppercase">Bobot</label>
+<p class="text-sm font-bold">35% dari Indikator</p>
+</div>
+</div>
+</section>
+<!-- Options -->
+<section class="space-y-4">
+<label class="font-label-caps text-label-caps text-outline uppercase">Opsi Jawaban &amp; Skor</label>
+<div class="space-y-3">
+<div class="option-item p-3 border border-outline-variant rounded-xl flex items-center justify-between bg-surface-container-low/10">
+<span class="text-sm">A. Lebih dari 5 unit</span>
+<span class="weight-badge grid-icon px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded-full">4 Poin</span>
+</div>
+<div class="option-item p-3 border border-outline-variant rounded-xl flex items-center justify-between">
+<span class="text-sm">B. 3 - 5 unit</span>
+<span class="weight-badge grid-icon px-2 py-0.5 bg-primary-container/20 text-primary text-[10px] font-bold rounded-full">3 Poin</span>
+</div>
+<div class="option-item p-3 border border-outline-variant rounded-xl flex items-center justify-between">
+<span class="text-sm">C. 1 - 2 unit</span>
+<span class="weight-badge grid-icon px-2 py-0.5 bg-primary-container/20 text-primary text-[10px] font-bold rounded-full">1 Poin</span>
+</div>
+<div class="option-item p-3 border border-outline-variant rounded-xl flex items-center justify-between">
+<span class="text-sm">D. Tidak tersedia</span>
+<span class="weight-badge grid-icon px-2 py-0.5 bg-primary-container/20 text-primary text-[10px] font-bold rounded-full">0 Poin</span>
+</div>
+</div>
+</section>
+<!-- Metadata -->
+<section class="pt-6 border-t border-outline-variant space-y-4 content-card p-4 rounded-xl">
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-outline uppercase">Indikator Terkait</label>
+<p class="text-sm font-medium text-secondary italic">"Ketersediaan Tempat Sampah dalam Radius 20m"</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] text-secondary">person</span>
+</div>
+<div>
+<p class="text-xs font-bold">Terakhir diubah oleh Admin</p>
+<p class="text-[10px] text-outline">12 Oktober 2023, 14:30 WIB</p>
+</div>
+</div>
+</section>
+</div>
+<div class="p-6 bg-surface-container-low/50 border-t border-outline-variant grid grid-cols-2 gap-3">
+<button class="btn-back w-full px-xl h-12 rounded-xl border border-outline text-secondary font-medium">Duplikat</button>
+<button class="btn-start w-full px-xl h-12 rounded-xl bg-primary-container text-white font-bold">Edit Detail</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Atmospheric Elements (Subtle) -->
+<div class="fixed bottom-0 right-0 w-[500px] h-[500px] pointer-events-none opacity-10">
+
+</div>
+<script>
+        // Simple Micro-interactions
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', function() {
+                // Remove active classes from all rows
+                document.querySelectorAll('tbody tr').forEach(r => {
+                    r.classList.remove('bg-primary-container/10', 'border-l-4', 'border-l-primary');
+                    r.querySelector('td:first-child').classList.remove('text-primary', 'font-bold');
+                    r.querySelector('td:nth-child(2) p:first-child').classList.remove('text-primary', 'font-bold');
+                    r.querySelector('td:nth-child(3) span').classList.replace('bg-primary', 'bg-primary-container/10');
+                    r.querySelector('td:nth-child(3) span').classList.replace('text-white', 'text-primary');
+                });
+                
+                // Add active classes to clicked row
+                this.classList.add('bg-primary-container/10', 'border-l-4', 'border-l-primary');
+                this.querySelector('td:first-child').classList.add('text-primary', 'font-bold');
+                this.querySelector('td:nth-child(2) p:first-child').classList.add('text-primary', 'font-bold');
+                this.querySelector('td:nth-child(3) span').classList.replace('bg-primary-container/10', 'bg-primary');
+                this.querySelector('td:nth-child(3) span').classList.replace('text-primary', 'text-white');
+            });
+        });
+    </script>
+</body></html>

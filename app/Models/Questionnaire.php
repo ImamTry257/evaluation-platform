@@ -28,7 +28,7 @@ class Questionnaire extends Model
 
     public function evaluationPeriod(): BelongsTo
     {
-        return $this->belongsTo(EvaluationPeriod::class);
+        return $this->belongsTo(EvaluationPeriod::class, 'evaluationPeriodId');
     }
 
     public function components(): HasMany

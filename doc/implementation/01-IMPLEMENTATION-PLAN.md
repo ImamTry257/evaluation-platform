@@ -1,7 +1,7 @@
 # Implementation Plan
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.0.0
+**Version:** 1.4.0
 **Status:** In Progress
 **Start Date:** 14 Juli 2026
 
@@ -9,7 +9,7 @@
 
 ## 1. Overview
 
-Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi Kebijakan Lingkungan Sekolah. Project ini menggunakan Laravel 12 (backend) dan Vue 3 (frontend) dengan arsitektur REST API.
+Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi Kebijakan Lingkungan Sekolah. Project ini menggunakan Laravel 13 (backend) dan Vue 3 (frontend) dengan arsitektur REST API.
 
 **Referensi Dokumentasi:**
 - [System Architecture](../SYSTEM_ARCHITECTURE.md)
@@ -19,13 +19,18 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 - [Database Design](../DATABASE-DESIGN.md)
 - [Business Process](../BUSINESS-PROCESS.md)
 
+**HTML Reference:**
+- `doc/html/login.html` - Login unified (Admin & Respondent)
+- `doc/html/register.html` - Register Respondent
+- `doc/html/about-us.html` - About Us
+
 ---
 
 ## 2. Technology Stack
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Backend | Laravel | 12 |
+| Backend | Laravel | 13 |
 | PHP | PHP | 8.3+ |
 | Auth | Laravel Sanctum | - |
 | Frontend | Vue.js | 3 |
@@ -78,20 +83,64 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 ---
 
 ### Phase 3: Authentication (Q3 2026 - Agustus Minggu 1)
-**Target:** Sistem autentikasi Admin dan Responden
+**Target:** Sistem autentikasi Admin dan Responden dengan Unified Login
 
 | Task | Deskripsi | Status |
 |------|-----------|--------|
-| Login endpoint | POST /auth/login (admin + respondent) | ⬜ |
-| Middleware | VerifyAdminRole, VerifyRespondentRole | ⬜ |
-| Auto-register | Responden auto-register via email | ⬜ |
-| Rate limiting | 5 attempts per 15 minutes | ⬜ |
-| Frontend login pages | login-admin.html → Vue, login-responden.html → Vue | ⬜ |
-| Route guards | Auth guard, role guard | ⬜ |
+| Login endpoint | POST /auth/login (unified: admin + respondent) | ✅ |
+| Logout endpoint | POST /auth/logout (revoke token) | ✅ |
+| Profile endpoint | GET /auth/profile (get user data) | ✅ |
+| Middleware | VerifyAdminRole, VerifyRespondentRole | ✅ |
+| ~~Auto-register~~ | ~~Responden auto-register via email~~ (dihapus) | ❌ |
+| Rate limiting | 5 attempts per 15 minutes | ✅ |
+| Frontend login page | login.html → LoginView.vue (unified) | ✅ |
+| Route guards | Auth guard, role-based redirect | ✅ |
+| Response format | Standard: `{ status, message, data/errors }` | ✅ |
+| Sanctum setup | Personal access tokens migration | ✅ |
 
-**Deliverable:** Login berfungsi untuk kedua role
+**Deliverable:** Login berfungsi untuk kedua role dengan satu halaman login
 
-**Referensi:** [05-MODULE-AUTH](05-MODULE-AUTH.md), ADR-002
+**Referensi:** [05-MODULE-AUTH](05-MODULE-AUTH.md)
+
+#### Login Flow (New - Unified)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    /login (Unified)                      │
+│                                                         │
+│   Username: [_______________]                           │
+│   Password: [_______________]                           │
+│                                                         │
+│   [Masuk ke Platform →]                                 │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│              Backend: /api/v1/auth/login                 │
+│  • Find user by username (email)                        │
+│  • Verify password                                      │
+│  • Return token + role                                  │
+└─────────────────────────────────────────────────────────┘
+                          │
+            ┌─────────────┴─────────────┐
+            ▼                           ▼
+    role === 'ADMIN'           role === 'RESPONDENT'
+            │                           │
+            ▼                           ▼
+┌──────────────────────┐    ┌──────────────────────┐
+│      /admin          │    │     /respondent       │
+│   Admin Dashboard    │    │   Angket & Hasil      │
+└──────────────────────┘    └──────────────────────┘
+```
+
+#### Perubahan dari Flow Lama
+
+| Aspek | Flow Lama | Flow Baru |
+|-------|-----------|-----------|
+| Input | Email only (respondent), Email + Password (admin) | Username (email) + Password (semua) |
+| Halaman Login | Terpisah (login-admin, login-responden) | **Unified** (login.html) |
+| Auto-register | ✅ Respondent auto-register | ❌ **Dihapus** - harus daftar manual |
+| Frontend | 2 file HTML terpisah | 1 file HTML unified |
 
 ---
 
@@ -100,8 +149,8 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 
 | Task | Deskripsi | Status |
 |------|-----------|--------|
-| Periode | Controller, Service, Repository, Frontend | ⬜ |
-| Kuesioner | Controller, Service, Repository, Frontend | ⬜ |
+| Periode | Controller, Routes, Validation, Pagination | ✅ |
+| Kuesioner | Controller, Routes, Validation, Relations | ✅ |
 | Komponen | Controller, Service, Repository, Frontend | ⬜ |
 | Sub Komponen | Controller, Service, Repository, Frontend | ⬜ |
 | Indikator | Controller, Service, Repository, Frontend | ⬜ |
@@ -195,7 +244,7 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────┐
-│                    BACKEND (Laravel 12)                  │
+│                    BACKEND (Laravel 13)                  │
 │  Middleware → Controller → Service → Repository → Eloquent│
 └─────────────────────────────────────────────────────────┘
                             │
@@ -223,7 +272,7 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 
 | Guide | File | Deskripsi |
 |-------|------|-----------|
-| Backend Setup | [02-BACKEND-SETUP](02-BACKEND-SETUP.md) | Laravel 12 installation |
+| Backend Setup | [02-BACKEND-SETUP](02-BACKEND-SETUP.md) | Laravel 13 installation |
 | Frontend Setup | [03-FRONTEND-SETUP](03-FRONTEND-SETUP.md) | Vue 3 + Vite setup |
 | Database Setup | [04-DATABASE-SETUP](04-DATABASE-SETUP.md) | MySQL, migrations, seeding |
 
@@ -257,6 +306,131 @@ Setiap task dianggap selesai jika:
 3. Tidak ada error di console/log
 4. Konsisten dengan dokumentasi (API spec, ERD)
 5. Mengikuti naming conventions dari FOLDER-STRUCTURE.md
+
+---
+
+## 9. Changelog & Notes
+
+### v1.1.0 - Flow Login Unified (15 Juli 2026)
+
+**Perubahan:**
+1. Login flow diubah dari **email-only** menjadi **username + password**
+2. **Auto-register respondent dihapus** - respondent harus didaftarkan manual oleh admin
+3. Frontend login **digabung** menjadi satu halaman unified (`login.html`)
+4. Referensi HTML lama (`login-admin.html`, `login-responden.html`) tidak lagi digunakan
+
+**File yang Diupdate:**
+- `doc/implementation/05-MODULE-AUTH.md` - Updated auth module docs
+- `doc/implementation/01-IMPLEMENTATION-PLAN.md` - Updated implementation plan
+
+**HTML References (Aktif):**
+| File | Status | Deskripsi |
+|------|--------|-----------|
+| `doc/html/login.html` | ✅ Aktif | Login unified untuk admin & respondent |
+| `doc/html/register.html` | ✅ Aktif | Form registrasi respondent |
+| `doc/html/about-us.html` | ✅ Aktif | Halaman About Us |
+| `doc/html/reponden/login-tidak-dipakai.html` | ❌ Deprecated | Login respondent lama (email only) |
+| `doc/html/reponden/platform-explanation.html` | ✅ Aktif | Penjelasan platform untuk respondent |
+| `doc/html/reponden/input-angket.html` | ✅ Aktif | Halaman pengisian angket |
+| `doc/html/reponden/result-and-recomendation-angket.html` | ✅ Aktif | Hasil & rekomendasi |
+
+**ADR Documents:**
+- `doc/ADR/ADR-002-Responden-Email-Only-Authentication.md` → **DEPRECATED** (flow lama)
+
+### v1.2.0 - Auth API Implementation (15 Juli 2026)
+
+**Backend Implementation:**
+1. `routes/api.php` - API routes untuk auth (login, logout, profile)
+2. `app/Http/Controllers/Api/Auth/AuthController.php` - Auth controller
+3. `app/Traits/HasApiResponse.php` - Standard response format
+4. `app/Http/Middleware/VerifyAdminRole.php` - Admin role check
+5. `app/Http/Middleware/VerifyRespondentRole.php` - Respondent role check
+6. `bootstrap/app.php` - Register API routes + custom exception handler
+
+**Frontend Implementation:**
+1. `resources/js/stores/auth.ts` - Updated login/logout functions
+2. `resources/js/views/auth/LoginView.vue` - Full login form implementation
+
+**Response Format:**
+```json
+// Success
+{
+  "status": true,
+  "message": "Success",
+  "data": {}
+}
+
+// Error
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": []
+}
+```
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-Auth.postman_collection.json`
+- `doc/postman/PolicyEval-Local.postman_environment.json`
+
+### v1.3.0 - Periode API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/PeriodeController.php` - CRUD controller
+2. `app/Traits/HasApiResponse.php` - Added `listResponse()` for paginated data
+3. `routes/api.php` - Added admin periode routes
+4. `bootstrap/app.php` - Added rate limit error handler
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/periods` | List periods (paginated) |
+| POST | `/api/v1/admin/periods` | Create period |
+| GET | `/api/v1/admin/periods/{id}` | Get single period |
+| PUT | `/api/v1/admin/periods/{id}` | Update period |
+| DELETE | `/api/v1/admin/periods/{id}` | Delete period |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by name
+- Filter by isActive status
+- Validation (name, startDate, endDate)
+- Date validation (endDate >= startDate)
+- Admin-only access (middleware)
+
+**Bug Fixes:**
+- Added max limit on pagination (max 100)
+- Fixed rate limit error format to match standard response
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - All endpoints
+
+### v1.4.0 - Kuesioner API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/KuesionerController.php` - CRUD controller
+2. `app/Models/Questionnaire.php` - Fixed relationship foreign key
+3. `routes/api.php` - Added kuesioner routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/questionnaires` | List questionnaires (paginated) |
+| POST | `/api/v1/admin/questionnaires` | Create questionnaire |
+| GET | `/api/v1/admin/questionnaires/{id}` | Get single questionnaire |
+| PUT | `/api/v1/admin/questionnaires/{id}` | Update questionnaire |
+| DELETE | `/api/v1/admin/questionnaires/{id}` | Delete questionnaire |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by title
+- Filter by status (draft/published/closed)
+- Filter by evaluationPeriodId
+- Relation: evaluationPeriod (belongsTo)
+- Validation (evaluationPeriodId, title, durationMinutes, status)
+- Status enum validation (draft, published, closed)
+
+**Bug Fix:**
+- Fixed Questionnaire model relationship (evaluationPeriodId foreign key)
 
 ---
 
