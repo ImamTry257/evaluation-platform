@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Platform Evaluasi Kebijakan Lingkungan Sekolah</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#059669",
+            "primary-light": "#34d399",
+            "primary-dark": "#047857",
+            "accent": "#8b5cf6",
+            "background": "#f0fdf4",
+            "surface": "#ffffff",
+            "on-surface": "#1e293b",
+            "on-surface-variant": "#64748b",
+            "on-primary": "#ffffff",
+            "outline": "#e2e8f0",
+          },
+          fontFamily: {
+            "inter": ["Inter", "sans-serif"],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+
+  <!-- ===== STICKY NAV ===== -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-outline">
+    <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-white" style="font-size: 22px;">eco</span>
+        </div>
+        <span class="font-bold text-lg text-on-surface-variant hidden md:block leading-tight max-w-[300px]">
+          Platform Evaluasi Lingkungan
+        </span>
+      </div>
+
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="#home" class="text-primary font-semibold border-b-2 border-primary pb-1 hover:-translate-y-0.5 transition-all duration-300">Home</a>
+        <a href="#features" class="text-on-surface-variant hover:text-primary hover:-translate-y-0.5 transition-all duration-300 font-medium">Features</a>
+        <a href="#about" class="text-on-surface-variant hover:text-primary hover:-translate-y-0.5 transition-all duration-300 font-medium">About Us</a>
+        <div class="h-6 w-px bg-outline"></div>
+        <div class="flex gap-3">
+          <button class="px-5 py-2.5 text-primary font-semibold border-2 border-primary rounded-xl hover:bg-primary hover:text-white hover:-translate-y-0.5 transition-all duration-300">
+            Login
+          </button>
+          <button class="px-5 py-2.5 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark hover:-translate-y-0.5 transition-all duration-300">
+            Register
+          </button>
+        </div>
+      </div>
+
+      <button class="lg:hidden p-2 text-on-surface rounded-xl hover:bg-outline/50 transition-colors">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="flex-1 flex flex-col">
+
+    <!-- ===== HERO SECTION ===== -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, #054b35 0%, #059669 50%, #34d399 100%);">
+      <div class="max-w-12xl mx-auto px-6 text-center">
+
+          <!-- Title -->
+          <h1 class="text-12xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-6">
+            Evaluasi Kebijakan Lingkungan Sekolah
+          </h1>
+
+          <!-- Description -->
+          <p class="text-lg text-emerald-100 mx-auto mb-8 leading-relaxed">
+            Platform digital untuk mengevaluasi implementasi kebijakan lingkungan di sekolah melalui assessmen berbasis kuesioner terstruktur. 
+            <br/> 
+            Pertumbuhan keberlanjutan institusi Anda dengan mudah.
+          </p>
+
+          <!-- Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+            <button class="group px-8 py-4 bg-white text-emerald-700 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3">
+              Mulai Evaluasi
+              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+            </button>
+            <button class="px-8 py-4 border-2 border-white/60 text-white rounded-2xl font-bold text-lg hover:bg-white/15 hover:-translate-y-1 transition-all duration-300">
+              Daftar Sekolah
+            </button>
+          </div>
+
+        </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

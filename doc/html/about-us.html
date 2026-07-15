@@ -1,0 +1,182 @@
+<!DOCTYPE html><html class="light" lang="id"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-surface-variant": "#3c4a42",
+                "inverse-primary": "#4edea3",
+                "error": "#ba1a1a",
+                "on-primary-container": "#00422b",
+                "surface-container-lowest": "#ffffff",
+                "tertiary-container": "#fc7c78",
+                "inverse-on-surface": "#ebf3eb",
+                "secondary-fixed-dim": "#c6c6c7",
+                "on-tertiary-container": "#711419",
+                "tertiary": "#a43a3a",
+                "background": "#f4fbf4",
+                "primary-fixed-dim": "#4edea3",
+                "primary": "#006c49",
+                "on-primary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "on-surface": "#161d19",
+                "surface-container-low": "#eef6ee",
+                "primary-fixed": "#6ffbbe",
+                "on-primary-fixed": "#002113",
+                "surface": "#f4fbf4",
+                "outline-variant": "#bbcabf",
+                "surface-dim": "#d4dcd5",
+                "surface-variant": "#dde4dd",
+                "on-error-container": "#93000a",
+                "surface-tint": "#006c49",
+                "outline": "#6c7a71",
+                "on-tertiary-fixed-variant": "#842225",
+                "surface-container-highest": "#dde4dd",
+                "secondary-container": "#dfe0e0",
+                "secondary": "#5d5f5f",
+                "on-secondary-fixed-variant": "#454747",
+                "on-primary-fixed-variant": "#005236",
+                "error-container": "#ffdad6",
+                "on-error": "#ffffff",
+                "inverse-surface": "#2b322d",
+                "surface-bright": "#f4fbf4",
+                "surface-container-high": "#e3eae3",
+                "primary-container": "#10b981",
+                "on-secondary": "#ffffff",
+                "tertiary-fixed": "#ffdad7",
+                "surface-container": "#e8f0e9",
+                "tertiary-fixed-dim": "#ffb3af",
+                "on-secondary-fixed": "#1a1c1c",
+                "on-secondary-container": "#616363",
+                "secondary-fixed": "#e2e2e2",
+                "on-background": "#161d19",
+                "on-tertiary-fixed": "#410005"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px",
+                "card": "12px"
+            },
+            "spacing": {
+                "xs": "0.25rem",
+                "xl": "2rem",
+                "lg": "1.5rem",
+                "sm": "0.5rem",
+                "gutter": "1.5rem",
+                "base": "4px",
+                "md": "1rem",
+                "margin": "2rem",
+                "2xl": "3rem"
+            },
+            "fontFamily": {
+                "body-base": ["Inter"],
+                "label-caps": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-sm": ["Inter"],
+                "headline-xl": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "title-md": ["Inter"],
+                "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                "body-base": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "headline-xl": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    }catch(_e){}</script></head><body class="text-on-surface flex flex-col min-h-screen">
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-header border-b border-outline-variant">
+        <nav class="max-w-[1440px] mx-auto flex justify-between items-center px-margin py-4">
+            <div class="flex items-center gap-sm">
+                <span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">PEKLS</span>
+                <span class="hidden md:block font-title-md text-title-md font-bold text-primary border-l-2 border-outline-variant pl-sm">Platform Evaluasi Kebijakan Lingkungan Sekolah</span>
+            </div>
+            <div class="flex items-center gap-md">
+                <button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-low rounded-full transition-colors">help_outline</button>
+                <button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-low rounded-full transition-colors">info</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow pt-32 pb-2xl max-w-[1440px] mx-auto px-margin w-full">
+        <!-- Header / Hero Section -->
+        <section class="mb-2xl flex flex-col md:flex-row items-center gap-xl">
+            <div class="flex-1 text-center md:text-left">
+                <h1 class="font-display-lg text-display-lg text-on-surface mb-md">About Us</h1>
+                <p class="font-title-md text-title-md text-on-surface-variant max-w-xl">
+                    Meet the team behind the development of the Environmental Policy Evaluation Platform.
+                </p>
+            </div>
+            <div class="flex-1 w-full max-w-lg">
+                
+            </div>
+        </section>
+
+        <!-- Development Team -->
+        <section class="mb-2xl">
+            <h2 class="font-headline-lg text-headline-lg mb-xl text-center">Development Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                <!-- Member 1: Project Leader -->
+                <div class="bg-white p-lg rounded-card card-shadow profile-card border border-outline-variant flex flex-col items-center text-center relative overflow-hidden">
+                    <div class="absolute top-4 right-4">
+                        <span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Project Leader</span>
+                    </div>
+                    <div class="w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
+                        <img class="w-full h-full object-cover" alt="Dr. Ahmad Santoso" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNmtksYuft2A8zk2L9e4R1u4iBmAPS6xt5GzI9QQdF3-PIqklWefXhvj2GK6AuT5OhM2gQuQK6t6SOcRWDa5s35nB2I7QxbL94pxGqhJTxjWY1YpwbgoYIQZSgHQkozrjHM0iVk8VtXCJepmvcI6CLZ839kAJWldjb2Nqt0gvyS4CN_D_fbABrJq8pax6B3Wefz-lGESIN-SChmWqpjh1mG4crA6eWUjrxtIHsQAwcsOK-xXQ2fA">
+                    </div>
+                    <h4 class="font-title-md text-title-md text-on-surface mb-xs">Dr. Ahmad Santoso</h4>
+                    <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Ketua Peneliti</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Universitas Indonesia</p>
+                    <a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:underline" href="mailto:ahmad@pekls.ac.id">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> ahmad@pekls.ac.id
+                    </a>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="bg-white p-lg rounded-card card-shadow profile-card border border-outline-variant flex flex-col items-center text-center">
+                    <div class="w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
+                        <img class="w-full h-full object-cover" alt="Siti Aminah" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLYVhL5N2sGc0hk-BzT7u384LhUjibDPNmAwyuCZBVRTHuozJNfwnUcQIXRHXcVv87s0JmoCAcwlMdAHVD-jTwRzhTeov3AQa9piLnOtRk85ADHaRs5bgZMbz-zSRZv4W3E37fkDsJrp2oTtWMzTUCjfaTdSKcrzSslnHl7MnVkJNkgoHsIld4OaEo2BTeXFWC2IbooyZp368U32Sia_oGY9eLDI548XfVoYsRflwswSpNKJ3Ybg">
+                    </div>
+                    <h4 class="font-title-md text-title-md text-on-surface mb-xs">Siti Aminah, M.T.</h4>
+                    <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Sistem Arsitek</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Lembaga Riset Teknologi</p>
+                    <a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:underline" href="mailto:siti@pekls.ac.id">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> siti@pekls.ac.id
+                    </a>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="bg-white p-lg rounded-card card-shadow profile-card border border-outline-variant flex flex-col items-center text-center">
+                    <div class="w-24 h-24 mb-md rounded-full overflow-hidden border-2 border-primary/20">
+                        <img class="w-full h-full object-cover" alt="Budi Hartono" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCftTUzyyWp_BfmIdsEG6zuhOl5an2tz1oYsV39LgQyJckf-efctbX0TCsSGPAraVIWlVkv7jTFfPP9OcqnJGmX0ZZ7SIRQtirSbBYyP-SWfDOmhFtwBFwSQA3QM6CyvLTuafX8jfQAsEAdp8PBCTx6CZvSTb5pAGrVQYXxXxI7CpximnnhqHK222DgNWHtbHXW3gAU7GwGo1XKKXI1_mZNVqAJgJXTkxgcu8zOiF2NYCi4jwt-LQ">
+                    </div>
+                    <h4 class="font-title-md text-title-md text-on-surface mb-xs">Budi Hartono, M.Sc</h4>
+                    <p class="font-label-caps text-label-caps text-primary mb-xs uppercase">Pakar Lingkungan</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Institut Ekologi Nasional</p>
+                    <a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:underline" href="mailto:budi@pekls.ac.id">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> budi@pekls.ac.id
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-surface-container-low border-t border-outline-variant w-full px-margin py-lg">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left">
+            <div>
+                <span class="font-title-md text-title-md font-bold text-on-surface block mb-xs">Platform Evaluasi Kebijakan Lingkungan Sekolah</span>
+                <p class="font-body-sm text-body-sm text-on-secondary-container">Universitas Negeri Yogyakarta</p>
+            </div>
+            <div class="flex flex-col items-center md:items-end gap-xs">
+                </div></div></footer></body></html>
