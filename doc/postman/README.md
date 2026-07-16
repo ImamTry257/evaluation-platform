@@ -12,6 +12,7 @@
 ```
 PolicyEval - All API
 ├── Auth
+│   ├── Register
 │   ├── Login
 │   ├── Logout
 │   └── Get Profile
@@ -21,9 +22,24 @@ PolicyEval - All API
 │   ├── Get Period
 │   ├── Update Period
 │   └── Delete Period
-├── Admin - Kuesioner (comming soon)
-├── Admin - Komponen (coming soon)
-├── Admin - Sub Komponen (coming soon)
+├── Admin - Kuesioner
+│   ├── List Questionnaires
+│   ├── Create Questionnaire
+│   ├── Get Questionnaire
+│   ├── Update Questionnaire
+│   └── Delete Questionnaire
+├── Admin - Komponen
+│   ├── List Components
+│   ├── Create Component
+│   ├── Get Component
+│   ├── Update Component
+│   └── Delete Component
+├── Admin - Sub Komponen
+│   ├── List Sub-Components
+│   ├── Create Sub-Component
+│   ├── Get Sub-Component
+│   ├── Update Sub-Component
+│   └── Delete Sub-Component
 ├── Admin - Indikator (coming soon)
 ├── Admin - Pertanyaan (coming soon)
 ├── Admin - Responden (coming soon)

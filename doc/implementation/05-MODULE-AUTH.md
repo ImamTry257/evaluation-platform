@@ -47,9 +47,29 @@ Autentikasi menggunakan Laravel Sanctum dengan **Unified Login** untuk semua tip
 
 | Method | Endpoint | Deskripsi | Auth |
 |--------|----------|-----------|------|
+| POST | `/api/v1/auth/register` | Register respondent baru | No |
 | POST | `/api/v1/auth/login` | Login unified (admin/responden) | No |
 | POST | `/api/v1/auth/logout` | Logout | Yes |
 | GET | `/api/v1/auth/profile` | Get user profile | Yes |
+
+**Register Request:**
+```json
+{
+  "name": "Budi Santoso",
+  "username": "budi_santoso",
+  "email": "budi@sekolah.id",
+  "password": "password123",
+  "passwordConfirmation": "password123"
+}
+```
+
+**Register Validation:**
+| Field | Rules |
+|-------|-------|
+| name | required, string, max:255 |
+| username | required, string, max:255, unique:users,username |
+| email | required, email, unique:users,email |
+| password | required, string, min:8, same:passwordConfirmation |
 
 **Login Request:**
 ```json
@@ -89,6 +109,7 @@ Error:
     "user": {
       "id": 1,
       "name": "Admin User",
+      "username": "admin",
       "email": "admin@sekolah.id",
       "role": "ADMIN"
     }
@@ -168,8 +189,8 @@ class LoginController extends Controller
         $username = strtolower($request->username);
         $password = $request->password;
 
-        // Find user by email (username = email)
-        $user = User::where('email', $username)->first();
+        // Find user by username
+        $user = User::where('username', $username)->first();
 
         if (!$user) {
             return $this->errorResponse('Username atau password salah', 401);
@@ -193,6 +214,7 @@ class LoginController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'username' => $user->username,
                 'email' => $user->email,
                 'role' => $user->role,
             ],
@@ -211,6 +233,7 @@ class LoginController extends Controller
         return $this->successResponse([
             'id' => $user->id,
             'name' => $user->name,
+            'username' => $user->username,
             'email' => $user->email,
             'role' => $user->role,
         ]);

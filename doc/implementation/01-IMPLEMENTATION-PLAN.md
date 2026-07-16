@@ -1,7 +1,7 @@
 # Implementation Plan
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.4.0
+**Version:** 1.11.0
 **Status:** In Progress
 **Start Date:** 14 Juli 2026
 
@@ -88,6 +88,7 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 | Task | Deskripsi | Status |
 |------|-----------|--------|
 | Login endpoint | POST /auth/login (unified: admin + respondent) | ✅ |
+| Register endpoint | POST /auth/register (respondent only) | ✅ |
 | Logout endpoint | POST /auth/logout (revoke token) | ✅ |
 | Profile endpoint | GET /auth/profile (get user data) | ✅ |
 | Middleware | VerifyAdminRole, VerifyRespondentRole | ✅ |
@@ -151,12 +152,12 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 |------|-----------|--------|
 | Periode | Controller, Routes, Validation, Pagination | ✅ |
 | Kuesioner | Controller, Routes, Validation, Relations | ✅ |
-| Komponen | Controller, Service, Repository, Frontend | ⬜ |
-| Sub Komponen | Controller, Service, Repository, Frontend | ⬜ |
-| Indikator | Controller, Service, Repository, Frontend | ⬜ |
-| Pertanyaan | Controller, Service, Repository, Frontend | ⬜ |
-| Responden | Controller, Service, Repository, Frontend | ⬜ |
-| Rekomendasi | Controller, Service, Repository, Frontend | ⬜ |
+| Komponen | Controller, Routes, Validation, Relations | ✅ |
+| Sub Komponen | Controller, Routes, Validation, Relations | ✅ |
+| Indikator | Controller, Routes, Validation, Relations | ✅ |
+| Pertanyaan | Controller, Routes, Validation, Relations | ✅ |
+| Responden | Controller, Routes, Validation, Relations | ✅ |
+| Rekomendasi | Controller, Routes, Validation, Relations | ✅ |
 
 **Deliverable:** Semua master data bisa di-CRUD
 
@@ -431,6 +432,213 @@ Setiap task dianggap selesai jika:
 
 **Bug Fix:**
 - Fixed Questionnaire model relationship (evaluationPeriodId foreign key)
+
+### v1.5.0 - Komponen API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/KomponenController.php` - CRUD controller
+2. `app/Models/Component.php` - Fixed relationship foreign key
+3. `routes/api.php` - Added komponen routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/components` | List components (paginated) |
+| POST | `/api/v1/admin/components` | Create component |
+| GET | `/api/v1/admin/components/{id}` | Get single component |
+| PUT | `/api/v1/admin/components/{id}` | Update component |
+| DELETE | `/api/v1/admin/components/{id}` | Delete component |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by name
+- Filter by questionnaireId
+- Relation: questionnaire (belongsTo)
+- Sorted by orderNumber
+
+### v1.6.0 - Sub Komponen API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/SubKomponenController.php` - CRUD controller
+2. `app/Models/SubComponent.php` - Fixed relationship foreign key
+3. `routes/api.php` - Added sub-components routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/sub-components` | List sub-components (paginated) |
+| POST | `/api/v1/admin/sub-components` | Create sub-component |
+| GET | `/api/v1/admin/sub-components/{id}` | Get single sub-component |
+| PUT | `/api/v1/admin/sub-components/{id}` | Update sub-component |
+| DELETE | `/api/v1/admin/sub-components/{id}` | Delete sub-component |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by name
+- Filter by componentId
+- Relation: component (belongsTo)
+- Sorted by orderNumber
+
+### v1.7.0 - Register API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Auth/AuthController.php` - Added register method
+2. `routes/api.php` - Added register route
+
+**API Endpoint:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/register` | Register new respondent |
+
+**Request Body:**
+```json
+{
+  "name": "Budi Santoso",
+  "email": "budi@sekolah.id",
+  "password": "password123",
+  "passwordConfirmation": "password123"
+}
+```
+
+**Validation Rules:**
+| Field | Rules |
+|-------|-------|
+| name | required, string, max:255 |
+| email | required, email, unique:users,email |
+| password | required, string, min:8, same:passwordConfirmation |
+
+**Features:**
+- Auto-generate token after registration
+- Auto-set role to `respondent`
+- Auto-set isActive to `true`
+- Email unique validation
+- Password confirmation validation
+- Rate limit: 10 requests per 15 minutes
+
+### v1.8.0 - Indikator API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/IndikatorController.php` - CRUD controller
+2. `routes/api.php` - Added indicators routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/indicators` | List indicators (paginated) |
+| POST | `/api/v1/admin/indicators` | Create indicator |
+| GET | `/api/v1/admin/indicators/{id}` | Get single indicator |
+| PUT | `/api/v1/admin/indicators/{id}` | Update indicator |
+| DELETE | `/api/v1/admin/indicators/{id}` | Delete indicator |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by name
+- Filter by subComponentId
+- Relation: subComponent (belongsTo), questions (hasMany), recommendations (hasMany)
+- Sorted by orderNumber
+- Validation (subComponentId, name, orderNumber)
+
+**Bug Fixes - Explicit Foreign Key in Relationships:**
+All Eloquent models updated to use explicit foreign keys (camelCase) matching migration column names:
+- `Indicator` - subComponent(), questions(), recommendations(), evaluationResultDetails()
+- `Question` - indicator(), responseAnswers()
+- `Component` - subComponents()
+- `SubComponent` - indicators()
+- `EvaluationResult` - responseSession(), details()
+- `EvaluationResultDetail` - evaluationResult(), indicator()
+- `Recommendation` - indicator()
+- `ResponseAnswer` - responseSession(), question()
+- `ResponseSession` - user(), questionnaire(), answers()
+- `EvaluationPeriod` - questionnaires()
+- `User` - responseSessions()
+- `Questionnaire` - components(), responseSessions()
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - Added Indikator endpoints
+
+### v1.9.0 - Question API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/PertanyaanController.php` - CRUD controller
+2. `routes/api.php` - Added questions routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/questions` | List questions (paginated) |
+| POST | `/api/v1/admin/questions` | Create question |
+| GET | `/api/v1/admin/questions/{id}` | Get single question |
+| PUT | `/api/v1/admin/questions/{id}` | Update question |
+| DELETE | `/api/v1/admin/questions/{id}` | Delete question |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by questionText
+- Filter by indicatorId
+- Relation: indicator (belongsTo)
+- Sorted by orderNumber
+- Validation (indicatorId, questionText, weight, orderNumber)
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - Added Question endpoints
+
+### v1.10.0 - Respondent API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/RespondenController.php` - CRUD controller
+2. `routes/api.php` - Added respondents routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/respondents` | List respondents (paginated) |
+| POST | `/api/v1/admin/respondents` | Create respondent |
+| GET | `/api/v1/admin/respondents/{id}` | Get single respondent |
+| PUT | `/api/v1/admin/respondents/{id}` | Update respondent |
+| DELETE | `/api/v1/admin/respondents/{id}` | Delete respondent |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by name, username, or email
+- Filter by isActive status
+- Password is optional on update (only updated if provided)
+- Delete protection: cannot delete respondent with existing evaluation sessions
+- Password hashed on create/update
+- Username/email unique validation (ignore self on update)
+- Response excludes password field
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - Added Respondent endpoints
+
+### v1.11.0 - Recommendation API Implementation (16 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Admin/RekomendasiController.php` - CRUD controller
+2. `routes/api.php` - Added recommendations routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/recommendations` | List recommendations (paginated) |
+| POST | `/api/v1/admin/recommendations` | Create recommendation |
+| GET | `/api/v1/admin/recommendations/{id}` | Get single recommendation |
+| PUT | `/api/v1/admin/recommendations/{id}` | Update recommendation |
+| DELETE | `/api/v1/admin/recommendations/{id}` | Delete recommendation |
+
+**Features:**
+- Pagination with max limit (100 items)
+- Search by recommendationText
+- Filter by indicatorId
+- Filter by category (A/B/C/D/E)
+- Relation: indicator (belongsTo)
+- Sorted by minScore
+- Validation:
+  - minScore/maxScore required, numeric, min:0
+  - maxScore must be >= minScore (gte validation)
+  - category must be single char A-E (size:1 + in validation)
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - Added Recommendation endpoints
 
 ---
 

@@ -20,8 +20,86 @@
   "item": [
     {
       "name": "Auth",
-      "description": "Authentication endpoints (Login, Logout, Profile)",
+      "description": "Authentication endpoints (Register, Login, Logout, Profile)",
       "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"username\": \"budi_santoso\",\n  \"email\": \"budi@sekolah.id\",\n  \"password\": \"password123\",\n  \"passwordConfirmation\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// === REGISTER & SAVE TOKEN ===",
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var response = pm.response.json();",
+                  "    if (response.status && response.data && response.data.token) {",
+                  "        var token = response.data.token;",
+                  "        ",
+                  "        // Set to BOTH environment and collection variables",
+                  "        pm.environment.set('authToken', token);",
+                  "        pm.collectionVariables.set('authToken', token);",
+                  "        ",
+                  "        // Save user info",
+                  "        if (response.data.user) {",
+                  "            pm.environment.set('userId', response.data.user.id);",
+                  "            pm.environment.set('userName', response.data.user.name);",
+                  "            pm.environment.set('userRole', response.data.user.role);",
+                  "            pm.collectionVariables.set('userId', response.data.user.id);",
+                  "            pm.collectionVariables.set('userName', response.data.user.name);",
+                  "            pm.collectionVariables.set('userRole', response.data.user.role);",
+                  "        }",
+                  "        ",
+                  "        console.log('✅ Registration successful! Token saved.');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Register Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Registration successful\",\n  \"data\": {\n    \"token\": \"21|abc123...\",\n    \"user\": {\n      \"id\": 3,\n      \"name\": \"Budi Santoso\",\n      \"username\": \"budi_santoso\",\n      \"email\": \"budi@sekolah.id\",\n      \"role\": \"RESPONDENT\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Register Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"name\": [\"The name field is required.\"],\n    \"username\": [\"The username field is required.\"],\n    \"email\": [\"The email field is required.\"],\n    \"password\": [\"The password field is required.\"]\n  }\n}"
+            },
+            {
+              "name": "Register Duplicate Email",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"email\": [\"The email has already been taken.\"]\n  }\n}"
+            },
+            {
+              "name": "Register Duplicate Username",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"username\": [\"The username has already been taken.\"]\n  }\n}"
+            }
+          ]
+        },
         {
           "name": "Login",
           "request": {
@@ -40,20 +118,113 @@
               "path": ["api", "v1", "auth", "login"]
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// === LOGIN SUCCESS VALIDATION ===",
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has success status', function () {",
+                  "    var response = pm.response.json();",
+                  "    pm.expect(response.status).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response has token', function () {",
+                  "    var response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('token');",
+                  "    pm.expect(response.data.token).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response has user data', function () {",
+                  "    var response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('user');",
+                  "    pm.expect(response.data.user).to.have.property('id');",
+                  "    pm.expect(response.data.user).to.have.property('name');",
+                  "    pm.expect(response.data.user).to.have.property('email');",
+                  "    pm.expect(response.data.user).to.have.property('role');",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// === AUTO-CLEAR TOKEN ON LOGIN ===",
+                  "// Clear old token before login to ensure fresh session",
+                  "pm.environment.unset('authToken');",
+                  "pm.collectionVariables.unset('authToken');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// === SAVE TOKEN FOR PROTECTED ROUTES ===",
+                  "if (pm.response.code === 200) {",
+                  "    var response = pm.response.json();",
+                  "    if (response.status && response.data && response.data.token) {",
+                  "        var token = response.data.token;",
+                  "        ",
+                  "        // Set to BOTH environment and collection variables",
+                  "        // so protected routes can access the token",
+                  "        pm.environment.set('authToken', token);",
+                  "        pm.collectionVariables.set('authToken', token);",
+                  "        ",
+                  "        // Also save user info for reference",
+                  "        if (response.data.user) {",
+                  "            pm.environment.set('userId', response.data.user.id);",
+                  "            pm.environment.set('userName', response.data.user.name);",
+                  "            pm.environment.set('userRole', response.data.user.role);",
+                  "            pm.collectionVariables.set('userId', response.data.user.id);",
+                  "            pm.collectionVariables.set('userName', response.data.user.name);",
+                  "            pm.collectionVariables.set('userRole', response.data.user.role);",
+                  "        }",
+                  "        ",
+                  "        console.log('✅ Token saved successfully!');",
+                  "        console.log('Token: ' + token.substring(0, 20) + '...');",
+                  "        console.log('User: ' + response.data.user.name + ' (' + response.data.user.role + ')');",
+                  "    } else {",
+                  "        console.log('⚠️ Login response missing token');",
+                  "    }",
+                  "} else {",
+                  "    console.log('❌ Login failed with status: ' + pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "response": [
             {
               "name": "Login Success (Admin)",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|abc123...\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"Administrator\",\n      \"email\": \"admin@cbt.com\",\n      \"role\": \"ADMIN\"\n    }\n  }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|abc123def456ghi789jkl012mno345pqr678stu901\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"Administrator\",\n      \"username\": \"admin\",\n      \"email\": \"admin@cbt.com\",\n      \"role\": \"ADMIN\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Login Success (Respondent)",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"2|xyz789abc012def345ghi678jkl901mno234pqr567\",\n    \"user\": {\n      \"id\": 2,\n      \"name\": \"Budi Santoso\",\n      \"username\": \"budi_santoso\",\n      \"email\": \"respondent@sekolah.id\",\n      \"role\": \"RESPONDENT\"\n    }\n  }\n}"
             },
             {
               "name": "Login Failed - Wrong Password",
               "code": 401,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": false,\n  \"message\": \"Username atau password salah\",\n  \"errors\": []\n}"
             },
             {
               "name": "Login Failed - Validation",
               "code": 422,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"username\": [\"The username field is required.\"],\n    \"password\": [\"The password field is required.\"]\n  }\n}"
             }
           ]
@@ -72,10 +243,42 @@
               "path": ["api", "v1", "auth", "logout"]
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// === LOGOUT & CLEAR TOKEN ===",
+                  "if (pm.response.code === 200) {",
+                  "    var response = pm.response.json();",
+                  "    if (response.status) {",
+                  "        // Clear ALL auth variables",
+                  "        pm.environment.unset('authToken');",
+                  "        pm.environment.unset('userId');",
+                  "        pm.environment.unset('userName');",
+                  "        pm.environment.unset('userRole');",
+                  "        pm.collectionVariables.unset('authToken');",
+                  "        pm.collectionVariables.unset('userId');",
+                  "        pm.collectionVariables.unset('userName');",
+                  "        pm.collectionVariables.unset('userRole');",
+                  "        ",
+                  "        console.log('✅ Logged out successfully. Token cleared.');",
+                  "    } else {",
+                  "        console.log('⚠️ Logout response unexpected');",
+                  "    }",
+                  "} else {",
+                  "    console.log('❌ Logout failed with status: ' + pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "response": [
             {
               "name": "Logout Success",
               "code": 200,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": true,\n  \"message\": \"Logged out successfully\",\n  \"data\": null\n}"
             }
           ]
@@ -98,7 +301,8 @@
             {
               "name": "Profile Success",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\"\n  }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"username\": \"admin\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\"\n  }\n}"
             }
           ]
         }
@@ -132,12 +336,8 @@
             {
               "name": "List Success",
               "code": 200,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": true,\n  \"message\": \"Periods retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"name\": \"Periode 2026 Ganjil\",\n        \"description\": \"Evaluasi semester ganjil\",\n        \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n        \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n        \"isActive\": true,\n        \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
-            },
-            {
-              "name": "List Empty",
-              "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Periods retrieved successfully\",\n  \"data\": {\n    \"contents\": [],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 0\n    }\n  }\n}"
             }
           ]
         },
@@ -164,11 +364,13 @@
             {
               "name": "Create Success",
               "code": 201,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": true,\n  \"message\": \"Period created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil\",\n    \"description\": \"Evaluasi semester ganjil\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true,\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n  }\n}"
             },
             {
               "name": "Create Validation Error",
               "code": 422,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"name\": [\"The name field is required.\"],\n    \"startDate\": [\"The start date field is required.\"],\n    \"endDate\": [\"The end date field is required.\"]\n  }\n}"
             }
           ]
@@ -191,11 +393,13 @@
             {
               "name": "Get Success",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Period retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil\",\n    \"description\": \"Evaluasi semester ganjil\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true\n  }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Period retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil\",\n    \"description\": \"Evaluasi semester ganjil\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true,\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n  }\n}"
             },
             {
               "name": "Get Not Found",
               "code": 404,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": false,\n  \"message\": \"Period not found\",\n  \"errors\": []\n}"
             }
           ]
@@ -223,12 +427,8 @@
             {
               "name": "Update Success",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Period updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil (Updated)\",\n    \"description\": \"Evaluasi semester ganjil updated\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true\n  }\n}"
-            },
-            {
-              "name": "Update Not Found",
-              "code": 404,
-              "body": "{\n  \"status\": false,\n  \"message\": \"Period not found\",\n  \"errors\": []\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Period updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Periode 2026 Ganjil (Updated)\",\n    \"description\": \"Evaluasi semester ganjil updated\",\n    \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n    \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n    \"isActive\": true,\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n  }\n}"
             }
           ]
         },
@@ -250,12 +450,8 @@
             {
               "name": "Delete Success",
               "code": 200,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": true,\n  \"message\": \"Period deleted successfully\",\n  \"data\": null\n}"
-            },
-            {
-              "name": "Delete Not Found",
-              "code": 404,
-              "body": "{\n  \"status\": false,\n  \"message\": \"Period not found\",\n  \"errors\": []\n}"
             }
           ]
         }
@@ -290,7 +486,8 @@
             {
               "name": "List Success",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaires retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"evaluationPeriodId\": 4,\n        \"title\": \"Kuesioner Evaluasi 2026\",\n        \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n        \"durationMinutes\": 90,\n        \"status\": \"draft\",\n        \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"evaluation_period\": {\n          \"id\": 4,\n          \"name\": \"Periode 2026 Ganjil\",\n          \"description\": \"Evaluasi semester ganjil\",\n          \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n          \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n          \"isActive\": true\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaires retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"evaluationPeriodId\": 4,\n        \"title\": \"Kuesioner Evaluasi 2026\",\n        \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n        \"durationMinutes\": 90,\n        \"status\": \"draft\",\n        \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-15T00:00:00.000000Z\",\n        \"evaluation_period\": {\n          \"id\": 4,\n          \"name\": \"Periode 2026 Ganjil\",\n          \"description\": \"Evaluasi semester ganjil\",\n          \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n          \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n          \"isActive\": true,\n          \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
             }
           ]
         },
@@ -317,11 +514,13 @@
             {
               "name": "Create Success",
               "code": 201,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n    \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n    \"durationMinutes\": 90,\n    \"status\": \"draft\",\n    \"evaluation_period\": {\n      \"id\": 4,\n      \"name\": \"Periode 2026 Ganjil\"\n    }\n  }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n    \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n    \"durationMinutes\": 90,\n    \"status\": \"draft\",\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"evaluation_period\": {\n      \"id\": 4,\n      \"name\": \"Periode 2026 Ganjil\"\n    }\n  }\n}"
             },
             {
               "name": "Create Validation Error",
               "code": 422,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"evaluationPeriodId\": [\"The evaluation period id field is required.\"],\n    \"title\": [\"The title field is required.\"],\n    \"durationMinutes\": [\"The duration minutes field is required.\"],\n    \"status\": [\"The status field is required.\"]\n  }\n}"
             }
           ]
@@ -344,11 +543,13 @@
             {
               "name": "Get Success",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n    \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n    \"durationMinutes\": 90,\n    \"status\": \"draft\",\n    \"evaluation_period\": { ... }\n  }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Evaluasi Lingkungan 2026\",\n    \"description\": \"Kuesioner untuk evaluasi kebijakan lingkungan\",\n    \"durationMinutes\": 90,\n    \"status\": \"draft\",\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"evaluation_period\": {\n      \"id\": 4,\n      \"name\": \"Periode 2026 Ganjil\",\n      \"description\": \"Evaluasi semester ganjil\",\n      \"startDate\": \"2026-08-01T00:00:00.000000Z\",\n      \"endDate\": \"2026-12-31T00:00:00.000000Z\",\n      \"isActive\": true\n    }\n  }\n}"
             },
             {
               "name": "Get Not Found",
               "code": 404,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": false,\n  \"message\": \"Questionnaire not found\",\n  \"errors\": []\n}"
             }
           ]
@@ -376,7 +577,8 @@
             {
               "name": "Update Success",
               "code": 200,
-              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire updated successfully\",\n  \"data\": { ... }\n}"
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"evaluationPeriodId\": 4,\n    \"title\": \"Kuesioner Updated\",\n    \"description\": \"Updated description\",\n    \"durationMinutes\": 120,\n    \"status\": \"published\",\n    \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-15T00:00:00.000000Z\",\n    \"evaluation_period\": {\n      \"id\": 4,\n      \"name\": \"Periode 2026 Ganjil\"\n    }\n  }\n}"
             }
           ]
         },
@@ -398,7 +600,927 @@
             {
               "name": "Delete Success",
               "code": 200,
+              "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire deleted successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Komponen",
+      "description": "CRUD endpoints untuk Komponen (Admin only). Includes questionnaire relation.",
+      "item": [
+        {
+          "name": "List Components",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/components?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "components"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "questionnaireId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Components retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"questionnaireId\": 4,\n        \"name\": \"Komponen Kebijakan\",\n        \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"questionnaire\": {\n          \"id\": 4,\n          \"evaluationPeriodId\": 4,\n          \"title\": \"Kuesioner Valid\",\n          \"description\": null,\n          \"durationMinutes\": 60,\n          \"status\": \"draft\",\n          \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Component",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Kebijakan\",\n  \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n  \"orderNumber\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/components",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "components"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Component created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Kebijakan\",\n    \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"questionnaireId\": [\"The questionnaire id field is required.\"],\n    \"name\": [\"The name field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Component",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/components/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "components", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Component retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Kebijakan\",\n    \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Component not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Component",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/components/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "components", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Component updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Updated\",\n    \"description\": \"Updated\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Component",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/components/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "components", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Component deleted successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Sub Komponen",
+      "description": "CRUD endpoints untuk Sub Komponen (Admin only). Includes component relation.",
+      "item": [
+        {
+          "name": "List Sub-Components",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sub-components?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sub-components"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "componentId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Sub-components retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"componentId\": 3,\n        \"name\": \"Sub Komponen 1\",\n        \"description\": \"Deskripsi sub komponen\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"component\": {\n          \"id\": 3,\n          \"questionnaireId\": 4,\n          \"name\": \"Component 1\",\n          \"description\": null,\n          \"orderNumber\": 1,\n          \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Sub-Component",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"componentId\": 3,\n  \"name\": \"Sub Komponen 1\",\n  \"description\": \"Deskripsi sub komponen\",\n  \"orderNumber\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sub-components",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sub-components"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"componentId\": 3,\n    \"name\": \"Sub Komponen 1\",\n    \"description\": \"Deskripsi sub komponen\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"component\": {\n      \"id\": 3,\n      \"questionnaireId\": 4,\n      \"name\": \"Component 1\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"componentId\": [\"The component id field is required.\"],\n    \"name\": [\"The name field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Sub-Component",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sub-components/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sub-components", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"componentId\": 3,\n    \"name\": \"Sub Komponen 1\",\n    \"description\": \"Deskripsi sub komponen\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"component\": {\n      \"id\": 3,\n      \"questionnaireId\": 4,\n      \"name\": \"Component 1\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Sub-component not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Sub-Component",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"componentId\": 3,\n  \"name\": \"Sub Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sub-components/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sub-components", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"componentId\": 3,\n    \"name\": \"Sub Komponen Updated\",\n    \"description\": \"Updated\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"component\": {\n      \"id\": 3,\n      \"questionnaireId\": 4,\n      \"name\": \"Component 1\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Sub-Component",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sub-components/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sub-components", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component deleted successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Indikator",
+      "description": "CRUD endpoints untuk Indikator (Admin only). Includes subComponent relation.",
+      "item": [
+        {
+          "name": "List Indicators",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/indicators?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "indicators"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "subComponentId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Indicators retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"subComponentId\": 2,\n        \"name\": \"Indikator Kualitas Udara\",\n        \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"sub_component\": {\n          \"id\": 2,\n          \"componentId\": 3,\n          \"name\": \"Sub Komponen 1\",\n          \"description\": null,\n          \"orderNumber\": 1,\n          \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Indicator",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subComponentId\": 2,\n  \"name\": \"Indikator Kualitas Udara\",\n  \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n  \"orderNumber\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/indicators",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "indicators"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Indicator created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"subComponentId\": 2,\n    \"name\": \"Indikator Kualitas Udara\",\n    \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"sub_component\": {\n      \"id\": 2,\n      \"componentId\": 3,\n      \"name\": \"Sub Komponen 1\",\n      \"description\": null,\n      \"orderNumber\": 1\n    }\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"subComponentId\": [\"The sub component id field is required.\"],\n    \"name\": [\"The name field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Indicator",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/indicators/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "indicators", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Indicator retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"subComponentId\": 2,\n    \"name\": \"Indikator Kualitas Udara\",\n    \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"sub_component\": {\n      \"id\": 2,\n      \"componentId\": 3,\n      \"name\": \"Sub Komponen 1\"\n    },\n    \"questions\": [],\n    \"recommendations\": []\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Indicator not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Indicator",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subComponentId\": 2,\n  \"name\": \"Indikator Kualitas Udara Updated\",\n  \"description\": \"Updated description\",\n  \"orderNumber\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/indicators/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "indicators", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Indicator updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"subComponentId\": 2,\n    \"name\": \"Indikator Kualitas Udara Updated\",\n    \"description\": \"Updated description\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"sub_component\": {\n      \"id\": 2,\n      \"componentId\": 3,\n      \"name\": \"Sub Komponen 1\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Indicator",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/indicators/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "indicators", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Indicator deleted successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Pertanyaan",
+      "description": "CRUD endpoints untuk Pertanyaan/Question (Admin only). Includes indicator relation.",
+      "item": [
+        {
+          "name": "List Questions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "indicatorId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questions retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"indicatorId\": 4,\n        \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n        \"weight\": \"1.50\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"indicator\": {\n          \"id\": 4,\n          \"subComponentId\": 2,\n          \"name\": \"Indikator Kualitas Udara\",\n          \"description\": \"Mengukur kualitas udara\",\n          \"orderNumber\": 1\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indicatorId\": 4,\n  \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n  \"weight\": 1.50,\n  \"orderNumber\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questions"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Question created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 4,\n    \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n    \"weight\": \"1.50\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 4,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Kualitas Udara\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"indicatorId\": [\"The indicator id field is required.\"],\n    \"questionText\": [\"The question text field is required.\"],\n    \"weight\": [\"The weight field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Question",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questions", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Question retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 4,\n    \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n    \"weight\": \"1.50\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 4,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Kualitas Udara\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Question not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Question",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indicatorId\": 4,\n  \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah? (Updated)\",\n  \"weight\": 2.00,\n  \"orderNumber\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questions", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Question updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 4,\n    \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah? (Updated)\",\n    \"weight\": \"2.00\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 4,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Kualitas Udara\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Question",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questions", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Question deleted successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Responden",
+      "description": "CRUD endpoints untuk Responden (Admin only). Manage respondents with role-based access.",
+      "item": [
+        {
+          "name": "List Respondents",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/respondents?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "respondents"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "isActive", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Respondents retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 2,\n        \"name\": \"Budi Santoso\",\n        \"username\": \"budi_santoso\",\n        \"email\": \"budi@sekolah.id\",\n        \"isActive\": true,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Respondent",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"username\": \"budi_santoso\",\n  \"email\": \"budi@sekolah.id\",\n  \"password\": \"password123\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/respondents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "respondents"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Respondent created successfully\",\n  \"data\": {\n    \"id\": 2,\n    \"name\": \"Budi Santoso\",\n    \"username\": \"budi_santoso\",\n    \"email\": \"budi@sekolah.id\",\n    \"isActive\": true,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"name\": [\"The name field is required.\"],\n    \"username\": [\"The username field is required.\"],\n    \"email\": [\"The email field is required.\"],\n    \"password\": [\"The password field is required.\"]\n  }\n}"
+            },
+            {
+              "name": "Create Duplicate Username",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"username\": [\"The username has already been taken.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Respondent",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/respondents/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "respondents", "2"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Respondent retrieved successfully\",\n  \"data\": {\n    \"id\": 2,\n    \"name\": \"Budi Santoso\",\n    \"username\": \"budi_santoso\",\n    \"email\": \"budi@sekolah.id\",\n    \"isActive\": true,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Respondent not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Respondent",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Budi Santoso Updated\",\n  \"username\": \"budi_updated\",\n  \"email\": \"budi_updated@sekolah.id\",\n  \"password\": \"newpassword123\",\n  \"isActive\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/respondents/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "respondents", "2"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Respondent updated successfully\",\n  \"data\": {\n    \"id\": 2,\n    \"name\": \"Budi Santoso Updated\",\n    \"username\": \"budi_updated\",\n    \"email\": \"budi_updated@sekolah.id\",\n    \"isActive\": false,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Respondent",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/respondents/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "respondents", "2"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Respondent deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Delete Has Sessions Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Cannot delete respondent with existing evaluation sessions\",\n  \"errors\": []\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Rekomendasi",
+      "description": "CRUD endpoints untuk Rekomendasi (Admin only). Includes indicator relation with score categories.",
+      "item": [
+        {
+          "name": "List Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/recommendations?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "recommendations"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "indicatorId", "value": "", "disabled": true },
+                { "key": "category", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Recommendations retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"indicatorId\": 5,\n        \"minScore\": \"0.00\",\n        \"maxScore\": \"20.00\",\n        \"category\": \"E\",\n        \"recommendationText\": \"Kualitas udara sangat buruk, perlu perbaikan segera\",\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"indicator\": {\n          \"id\": 5,\n          \"subComponentId\": 2,\n          \"name\": \"Indikator Test\",\n          \"description\": \"Test\",\n          \"orderNumber\": 1\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Recommendation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indicatorId\": 5,\n  \"minScore\": 0,\n  \"maxScore\": 20,\n  \"category\": \"E\",\n  \"recommendationText\": \"Kualitas udara sangat buruk, perlu perbaikan segera\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/recommendations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "recommendations"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Recommendation created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 5,\n    \"minScore\": \"0.00\",\n    \"maxScore\": \"20.00\",\n    \"category\": \"E\",\n    \"recommendationText\": \"Kualitas udara sangat buruk, perlu perbaikan segera\",\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 5,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Test\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"indicatorId\": [\"The indicator id field is required.\"],\n    \"minScore\": [\"The min score field is required.\"],\n    \"maxScore\": [\"The max score field is required.\"],\n    \"category\": [\"The category field is required.\"],\n    \"recommendationText\": [\"The recommendation text field is required.\"]\n  }\n}"
+            },
+            {
+              "name": "Create Invalid Category",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"category\": [\"The selected category is invalid.\"]\n  }\n}"
+            },
+            {
+              "name": "Create MaxScore Less Than MinScore",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"maxScore\": [\"The max score field must be greater than or equal to 50.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Recommendation",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/recommendations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "recommendations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Recommendation retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 5,\n    \"minScore\": \"0.00\",\n    \"maxScore\": \"20.00\",\n    \"category\": \"E\",\n    \"recommendationText\": \"Kualitas udara sangat buruk, perlu perbaikan segera\",\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 5,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Test\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Recommendation not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Recommendation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indicatorId\": 5,\n  \"minScore\": 0,\n  \"maxScore\": 25,\n  \"category\": \"D\",\n  \"recommendationText\": \"Kualitas udara perlu perbaikan\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/recommendations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "recommendations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Recommendation updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 5,\n    \"minScore\": \"0.00\",\n    \"maxScore\": \"25.00\",\n    \"category\": \"D\",\n    \"recommendationText\": \"Kualitas udara perlu perbaikan\",\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 5,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Test\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Recommendation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/recommendations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "recommendations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Recommendation deleted successfully\",\n  \"data\": null\n}"
             }
           ]
         }
