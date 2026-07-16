@@ -41,62 +41,6 @@ import { RouterLink } from 'vue-router'
         </div>
       </div>
     </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-20 bg-white">
-      <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center text-on-surface mb-12">
-          Fitur Utama
-        </h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <!-- Feature 1 -->
-          <div class="float-hover p-6 bg-background rounded-2xl border border-outline text-center">
-            <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span class="material-symbols-outlined text-primary text-3xl">assessment</span>
-            </div>
-            <h3 class="text-xl font-semibold text-on-surface mb-2">Evaluasi Terstruktur</h3>
-            <p class="text-on-surface-variant">
-              Instrumen evaluasi berbasis kuesioner dengan skala Likert untuk pengukuran yang akurat.
-            </p>
-          </div>
-
-          <!-- Feature 2 -->
-          <div class="float-hover p-6 bg-background rounded-2xl border border-outline text-center">
-            <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span class="material-symbols-outlined text-primary text-3xl">analytics</span>
-            </div>
-            <h3 class="text-xl font-semibold text-on-surface mb-2">Analisis Otomatis</h3>
-            <p class="text-on-surface-variant">
-              Perhitungan skor, kategori, dan rekomendasi dilakukan secara otomatis oleh sistem.
-            </p>
-          </div>
-
-          <!-- Feature 3 -->
-          <div class="float-hover p-6 bg-background rounded-2xl border border-outline text-center">
-            <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span class="material-symbols-outlined text-primary text-3xl">download</span>
-            </div>
-            <h3 class="text-xl font-semibold text-on-surface mb-2">Export Laporan</h3>
-            <p class="text-on-surface-variant">
-              Hasil evaluasi dapat di-export dalam format Excel dan PDF untuk dokumentasi.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-20 bg-background">
-      <div class="max-w-7xl mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold text-on-surface mb-6">Tentang Platform</h2>
-        <p class="text-on-surface-variant max-w-3xl mx-auto text-lg leading-relaxed">
-          Platform Evaluasi Kebijakan Lingkungan Sekolah dirancang untuk membantu institusi pendidikan
-          dalam mengukur dan meningkatkan implementasi kebijakan lingkungan. Dengan instrumen evaluasi
-          yang terstruktur dan analisis otomatis, platform ini memudahkan proses assessment keberlanjutan
-          di sekolah.
-        </p>
-      </div>
-    </section>
   </div>
 </template>
 

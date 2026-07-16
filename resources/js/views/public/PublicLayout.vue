@@ -22,7 +22,7 @@ onUnmounted(() => {
   <div class="min-h-screen bg-background text-on-surface flex flex-col">
     <!-- Sticky Navbar -->
     <header
-      class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-outline transition-all duration-300"
+      class="fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-300"
       :class="{ 'nav-scrolled': isScrolled }"
     >
       <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -41,12 +41,9 @@ onUnmounted(() => {
           <RouterLink to="/" class="nav-link text-primary font-semibold border-b-2 border-primary pb-1 hover:-translate-y-0.5 transition-all duration-300">
             Home
           </RouterLink>
-          <a href="#features" class="nav-link text-on-surface-variant hover:text-primary hover:-translate-y-0.5 transition-all duration-300 font-medium">
-            Features
-          </a>
-          <a href="#about" class="nav-link text-on-surface-variant hover:text-primary hover:-translate-y-0.5 transition-all duration-300 font-medium">
+          <RouterLink to="/about" class="nav-link text-on-surface-variant hover:text-primary hover:-translate-y-0.5 transition-all duration-300 font-medium">
             About Us
-          </a>
+          </RouterLink>
           <div class="h-6 w-px bg-outline"></div>
           <div class="flex gap-3">
             <RouterLink
@@ -76,18 +73,15 @@ onUnmounted(() => {
       <!-- Mobile Menu -->
       <div
         v-if="isMobileMenuOpen"
-        class="lg:hidden bg-white border-t border-outline px-6 py-4 space-y-4"
+        class="lg:hidden bg-white px-6 py-4 space-y-4"
       >
         <RouterLink to="/" class="block text-primary font-semibold" @click="isMobileMenuOpen = false">
           Home
         </RouterLink>
-        <a href="#features" class="block text-on-surface-variant hover:text-primary font-medium" @click="isMobileMenuOpen = false">
-          Features
-        </a>
-        <a href="#about" class="block text-on-surface-variant hover:text-primary font-medium" @click="isMobileMenuOpen = false">
+        <RouterLink to="/about" class="block text-on-surface-variant hover:text-primary font-medium" @click="isMobileMenuOpen = false">
           About Us
-        </a>
-        <div class="pt-4 border-t border-outline flex flex-col gap-3">
+        </RouterLink>
+        <div class="pt-4 flex flex-col gap-3">
           <RouterLink
             to="/login"
             class="press-scale px-5 py-2.5 text-primary font-semibold border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all duration-500 text-center"
@@ -112,10 +106,10 @@ onUnmounted(() => {
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-outline py-8">
+    <footer class="bg-white py-8">
       <div class="max-w-7xl mx-auto px-6 text-center">
-        <p class="text-on-surface-variant text-sm">
-          © 2026 Platform Evaluasi Kebijakan Lingkungan Sekolah. All rights reserved.
+        <p class="text-on-surface-variant text-sm font-bold">
+          © 2026 All rights reserved.
         </p>
       </div>
     </footer>

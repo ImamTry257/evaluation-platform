@@ -45,6 +45,46 @@ const router = createRouter({
           name: 'admin-dashboard',
           component: () => import('@/views/admin/DashboardView.vue'),
         },
+        {
+          path: 'period',
+          name: 'admin-period',
+          component: () => import('@/views/admin/PeriodView.vue'),
+        },
+        {
+          path: 'component',
+          name: 'admin-component',
+          component: () => import('@/views/admin/MasterComponentView.vue'),
+        },
+        {
+          path: 'questionnaire',
+          name: 'admin-questionnaire',
+          component: () => import('@/views/admin/MasterQuestionnairesView.vue'),
+        },
+        {
+          path: 'sub-component',
+          name: 'admin-sub-component',
+          component: () => import('@/views/admin/MasterSubComponentView.vue'),
+        },
+        {
+          path: 'indicator',
+          name: 'admin-indicator',
+          component: () => import('@/views/admin/MasterIndicatorView.vue'),
+        },
+        {
+          path: 'question',
+          name: 'admin-question',
+          component: () => import('@/views/admin/MasterQuestionView.vue'),
+        },
+        {
+          path: 'question/add',
+          name: 'admin-question-add',
+          component: () => import('@/views/admin/AddQuestionView.vue'),
+        },
+        {
+          path: 'question/:id/edit',
+          name: 'admin-question-edit',
+          component: () => import('@/views/admin/EditQuestionView.vue'),
+        },
       ],
     },
     // Respondent routes
