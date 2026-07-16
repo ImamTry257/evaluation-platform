@@ -69,9 +69,9 @@ async function handleRegister() {
 <template>
   <div class="h-full flex flex-col md:flex-row overflow-hidden bg-surface">
     <!-- Left Column: Illustration -->
-    <section class="hidden lg:flex relative w-1/2 h-full login-illustration-container items-center justify-center p-8 overflow-hidden border-r border-outline-variant/30">
-      <div class="relative z-10 w-full flex flex-col items-center">
-        <div class="mt-8 text-center px-6">
+    <section class="hidden lg:flex relative flex-1 login-illustration-container items-center justify-center p-8 overflow-hidden border-r border-outline-variant/30">
+      <div class="relative z-10 w-full flex flex-col items-center justify-center">
+        <div class="text-center px-6">
           <h2 class="text-3xl font-semibold text-on-surface mb-2 fade-in gradient-text">
             Bergabung Bersama Kami
           </h2>
