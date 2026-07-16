@@ -86,8 +86,9 @@ async function handleRegister() {
     </section>
 
     <!-- Right Column: Register Form -->
-    <main class="flex-1 h-full bg-surface-container-lowest flex flex-col justify-center items-center px-6 md:px-8 relative overflow-y-auto">
-      <div class="w-full max-w-md py-8">
+    <main class="flex-1 h-full bg-surface-container-lowest flex flex-col px-6 md:px-8 relative overflow-y-auto">
+      <div class="flex-1 flex flex-col justify-center items-center">
+        <div class="w-full max-w-md py-8">
         <!-- Brand Header -->
         <header class="mb-6 text-center">
           <div class="flex items-center justify-center gap-2.5 mb-4 fade-in">
@@ -250,20 +251,21 @@ async function handleRegister() {
             </template>
           </button>
         </form>
-
-        <!-- Secondary Actions -->
-        <footer class="mt-6 pt-6 border-t border-outline-variant/30 text-center">
-          <p class="text-sm text-on-surface-variant">
-            Sudah punya akun?
-            <router-link to="/login" class="login-link text-primary font-bold">Masuk</router-link>
-          </p>
-          <div class="opacity-50 mt-4">
-            <p class="text-xs uppercase text-outline" style="letter-spacing: 0.15em;">
-              Developed by Environmental Policy Support Team
-            </p>
-          </div>
-        </footer>
+        </div>
       </div>
+
+      <!-- Footer -->
+      <footer class="py-6 text-center">
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+          Sudah punya akun?
+          <router-link to="/login" class="login-link text-primary font-bold">Masuk</router-link>
+        </p>
+        <div class="opacity-50">
+          <p class="font-label-caps text-[10px] uppercase tracking-[0.15em] text-outline">
+            Developed by Environmental Policy Support Team
+          </p>
+        </div>
+      </footer>
 
       <!-- Mobile background icon -->
       <div class="lg:hidden absolute bottom-6 right-6 opacity-5 pointer-events-none">

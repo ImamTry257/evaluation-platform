@@ -54,8 +54,9 @@ async function handleLogin() {
     </section>
 
     <!-- Right Column: Login Form -->
-    <main class="w-full lg:w-1/2 h-full bg-surface-container-lowest flex flex-col justify-center items-center px-6 md:px-8 relative">
-      <div class="w-full max-w-[440px] py-8">
+    <main class="w-full lg:w-1/2 h-full bg-surface-container-lowest flex flex-col px-6 md:px-8 relative">
+      <div class="flex-1 flex flex-col justify-center items-center">
+        <div class="w-full max-w-[440px] py-8">
         <!-- Brand Header -->
         <header class="mb-8 text-center">
           <div class="flex items-center justify-center gap-2.5 mb-6 fade-in">
@@ -154,20 +155,20 @@ async function handleLogin() {
             </template>
           </button>
         </form>
-
-        <!-- Secondary Actions -->
-        <footer class="mt-12 pt-8 border-t border-outline-variant/30 text-center">
-          <p class="font-body-sm text-body-sm text-on-surface-variant mb-6">
-            Butuh bantuan akses? <a class="help-link text-primary font-bold" href="#">Hubungi Admin</a>
-          </p>
-          <!-- Developer attribution -->
-          <div class="opacity-50">
-            <p class="font-label-caps text-[10px] uppercase tracking-[0.15em] text-outline">
-              Developed by Environmental Policy Support Team
-            </p>
-          </div>
-        </footer>
+        </div>
       </div>
+
+      <!-- Footer -->
+      <footer class="py-6 text-center">
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+          Butuh bantuan akses? <a class="help-link text-primary font-bold" href="#">Hubungi Admin</a>
+        </p>
+        <div class="opacity-50">
+          <p class="font-label-caps text-[10px] uppercase tracking-[0.15em] text-outline">
+            Developed by Environmental Policy Support Team
+          </p>
+        </div>
+      </footer>
 
       <!-- Mobile subtle background icon -->
       <div class="lg:hidden absolute bottom-6 right-6 opacity-5 pointer-events-none mobile-icon">
