@@ -9,6 +9,7 @@ const authStore = useAuthStore()
 const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
+const fieldErrors = reactive<Record<string, string[]>>({})
 
 const form = reactive({
   username: '',
@@ -16,9 +17,16 @@ const form = reactive({
   rememberMe: false,
 })
 
+function clearFieldError(field: string) {
+  if (fieldErrors[field]) {
+    delete fieldErrors[field]
+  }
+}
+
 async function handleLogin() {
   isLoading.value = true
   errorMessage.value = ''
+  Object.keys(fieldErrors).forEach(k => delete fieldErrors[k])
 
   try {
     await authStore.login(form.username, form.password)
@@ -29,7 +37,12 @@ async function handleLogin() {
       router.push('/respondent')
     }
   } catch (error: any) {
-    errorMessage.value = error?.response?.data?.message || 'Terjadi kesalahan. Silakan coba lagi.'
+    const data = error?.response?.data
+    if (data?.errors) {
+      Object.assign(fieldErrors, data.errors)
+    } else {
+      errorMessage.value = data?.message || 'Terjadi kesalahan. Silakan coba lagi.'
+    }
   } finally {
     isLoading.value = false
   }
@@ -59,12 +72,12 @@ async function handleLogin() {
         <div class="w-full max-w-[440px] py-8">
         <!-- Brand Header -->
         <header class="mb-8 text-center">
-          <div class="flex items-center justify-center gap-2.5 mb-6 fade-in">
+          <!-- <div class="flex items-center justify-center gap-2.5 mb-6 fade-in">
             <div class="brand-logo w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-sm pulse-ring">
               <span class="material-symbols-outlined text-white text-[28px]" style="font-variation-settings: 'FILL' 1;">eco</span>
             </div>
             <span class="brand-name font-headline-lg text-[24px] tracking-tight text-primary font-bold">PolicyEval</span>
-          </div>
+          </div> -->
           <h1 class="font-headline-lg text-headline-lg text-on-surface leading-tight mb-2 fade-in-delay">
             Selamat Datang Kembali
           </h1>
@@ -95,10 +108,14 @@ async function handleLogin() {
                 v-model="form.username"
                 type="text"
                 placeholder="nama@sekolah.id"
-                required
-                class="form-input w-full h-12 pl-12 pr-4 bg-surface border border-outline-variant rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60"
+                @input="clearFieldError('username')"
+                :class="['form-input w-full h-12 pl-12 pr-4 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60', fieldErrors.username ? 'border-error' : 'border-outline-variant']"
               />
             </div>
+            <p v-if="fieldErrors.username" class="text-error font-body-sm text-body-sm flex items-center gap-1 mt-1">
+              <span class="material-symbols-outlined text-[16px]">error</span>
+              {{ fieldErrors.username[0] }}
+            </p>
           </div>
 
           <!-- Password Field -->
@@ -115,8 +132,8 @@ async function handleLogin() {
                 v-model="form.password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
-                required
-                class="form-input w-full h-12 pl-12 pr-12 bg-surface border border-outline-variant rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60"
+                @input="clearFieldError('password')"
+                :class="['form-input w-full h-12 pl-12 pr-12 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60', fieldErrors.password ? 'border-error' : 'border-outline-variant']"
               />
               <button
                 type="button"
@@ -126,17 +143,15 @@ async function handleLogin() {
                 <span class="material-symbols-outlined text-[20px]">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
               </button>
             </div>
+            <p v-if="fieldErrors.password" class="text-error font-body-sm text-body-sm flex items-center gap-1 mt-1">
+              <span class="material-symbols-outlined text-[16px]">error</span>
+              {{ fieldErrors.password[0] }}
+            </p>
           </div>
 
           <!-- Remember Me & Forgot Password -->
           <div class="flex items-center justify-between font-body-sm text-body-sm">
             <label class="flex items-center cursor-pointer group">
-              <input
-                v-model="form.rememberMe"
-                type="checkbox"
-                class="checkbox-custom peer h-4.5 w-4.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer"
-              />
-              <span class="ml-2.5 text-on-surface-variant group-hover:text-on-surface select-none transition-colors">Ingat Saya</span>
             </label>
             <a class="forgot-link text-primary font-semibold" href="#">Lupa Kata Sandi?</a>
           </div>
@@ -155,17 +170,18 @@ async function handleLogin() {
             </template>
           </button>
         </form>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pt-4">
+          Belum punya akun?
+          <router-link to="/register" class="login-link text-primary font-bold">Register</router-link>
+        </p>
         </div>
       </div>
 
       <!-- Footer -->
-      <footer class="py-6 text-center">
-        <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
-          Butuh bantuan akses? <a class="help-link text-primary font-bold" href="#">Hubungi Admin</a>
-        </p>
-        <div class="opacity-50">
-          <p class="font-label-caps text-[10px] uppercase tracking-[0.15em] text-outline">
-            Developed by Environmental Policy Support Team
+      <footer class="bg-white py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+          <p class="text-on-surface-variant text-sm font-bold">
+            © 2026 All rights reserved.
           </p>
         </div>
       </footer>
