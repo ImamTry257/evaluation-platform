@@ -25,11 +25,11 @@ class ResponseAnswer extends Model
 
     public function responseSession(): BelongsTo
     {
-        return $this->belongsTo(ResponseSession::class);
+        return $this->belongsTo(ResponseSession::class, 'responseSessionId');
     }
 
     public function question(): BelongsTo
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class, 'questionId');
     }
 }

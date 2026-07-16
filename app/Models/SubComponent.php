@@ -27,11 +27,11 @@ class SubComponent extends Model
 
     public function component(): BelongsTo
     {
-        return $this->belongsTo(Component::class);
+        return $this->belongsTo(Component::class, 'componentId');
     }
 
     public function indicators(): HasMany
     {
-        return $this->hasMany(Indicator::class);
+        return $this->hasMany(Indicator::class, 'subComponentId');
     }
 }

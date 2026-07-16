@@ -28,6 +28,6 @@ class Recommendation extends Model
 
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(Indicator::class);
+        return $this->belongsTo(Indicator::class, 'indicatorId');
     }
 }

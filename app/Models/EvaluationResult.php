@@ -29,11 +29,11 @@ class EvaluationResult extends Model
 
     public function responseSession(): BelongsTo
     {
-        return $this->belongsTo(ResponseSession::class);
+        return $this->belongsTo(ResponseSession::class, 'responseSessionId');
     }
 
     public function details(): HasMany
     {
-        return $this->hasMany(EvaluationResultDetail::class);
+        return $this->hasMany(EvaluationResultDetail::class, 'evaluationResultId');
     }
 }

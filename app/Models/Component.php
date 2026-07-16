@@ -27,11 +27,11 @@ class Component extends Model
 
     public function questionnaire(): BelongsTo
     {
-        return $this->belongsTo(Questionnaire::class);
+        return $this->belongsTo(Questionnaire::class, 'questionnaireId');
     }
 
     public function subComponents(): HasMany
     {
-        return $this->hasMany(SubComponent::class);
+        return $this->hasMany(SubComponent::class, 'componentId');
     }
 }

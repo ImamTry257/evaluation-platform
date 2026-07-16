@@ -27,21 +27,21 @@ class Indicator extends Model
 
     public function subComponent(): BelongsTo
     {
-        return $this->belongsTo(SubComponent::class);
+        return $this->belongsTo(SubComponent::class, 'subComponentId');
     }
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Question::class, 'indicatorId');
     }
 
     public function recommendations(): HasMany
     {
-        return $this->hasMany(Recommendation::class);
+        return $this->hasMany(Recommendation::class, 'indicatorId');
     }
 
     public function evaluationResultDetails(): HasMany
     {
-        return $this->hasMany(EvaluationResultDetail::class);
+        return $this->hasMany(EvaluationResultDetail::class, 'indicatorId');
     }
 }

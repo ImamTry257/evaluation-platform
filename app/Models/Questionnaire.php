@@ -33,12 +33,12 @@ class Questionnaire extends Model
 
     public function components(): HasMany
     {
-        return $this->hasMany(Component::class);
+        return $this->hasMany(Component::class, 'questionnaireId');
     }
 
     public function responseSessions(): HasMany
     {
-        return $this->hasMany(ResponseSession::class);
+        return $this->hasMany(ResponseSession::class, 'questionnaireId');
     }
 
     public function scopePublished($query)

@@ -14,6 +14,46 @@ class AuthController extends Controller
     use HasApiResponse;
 
     /**
+     * POST /api/v1/auth/register
+     * Register new respondent.
+     */
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|same:passwordConfirmation',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed', 422, $validator->errors());
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'username' => strtolower($request->username),
+            'email' => strtolower($request->email),
+            'password' => Hash::make($request->password),
+            'role' => 'respondent',
+            'isActive' => true,
+        ]);
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return $this->successResponse([
+            'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => strtoupper($user->role),
+            ],
+        ], 'Registration successful', 201);
+    }
+
+    /**
      * POST /api/v1/auth/login
      * Unified login for admin and respondent.
      */
@@ -29,7 +69,7 @@ class AuthController extends Controller
         }
 
         $username = strtolower($request->username);
-        $user = User::where('email', $username)->first();
+        $user = User::where('username', $username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->errorResponse('Username atau password salah', 401);
@@ -46,6 +86,7 @@ class AuthController extends Controller
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
+                'username' => $user->username,
                 'email' => $user->email,
                 'role' => strtoupper($user->role),
             ],
@@ -74,6 +115,7 @@ class AuthController extends Controller
         return $this->successResponse([
             'id' => $user->id,
             'name' => $user->name,
+            'username' => $user->username,
             'email' => $user->email,
             'role' => strtoupper($user->role),
         ]);

@@ -29,11 +29,11 @@ class EvaluationResultDetail extends Model
 
     public function evaluationResult(): BelongsTo
     {
-        return $this->belongsTo(EvaluationResult::class);
+        return $this->belongsTo(EvaluationResult::class, 'evaluationResultId');
     }
 
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(Indicator::class);
+        return $this->belongsTo(Indicator::class, 'indicatorId');
     }
 }

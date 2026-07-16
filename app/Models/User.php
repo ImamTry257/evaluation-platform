@@ -16,6 +16,7 @@ class User extends Authenticatable
     protected $fillable = [
         'role',
         'name',
+        'username',
         'email',
         'password',
         'isActive',
@@ -38,7 +39,7 @@ class User extends Authenticatable
     // Relationships
     public function responseSessions(): HasMany
     {
-        return $this->hasMany(ResponseSession::class);
+        return $this->hasMany(ResponseSession::class, 'userId');
     }
 
     // Scopes

@@ -28,11 +28,11 @@ class Question extends Model
 
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(Indicator::class);
+        return $this->belongsTo(Indicator::class, 'indicatorId');
     }
 
     public function responseAnswers(): HasMany
     {
-        return $this->hasMany(ResponseAnswer::class);
+        return $this->hasMany(ResponseAnswer::class, 'questionId');
     }
 }

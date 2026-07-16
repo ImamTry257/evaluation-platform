@@ -32,17 +32,17 @@ class ResponseSession extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'userId');
     }
 
     public function questionnaire(): BelongsTo
     {
-        return $this->belongsTo(Questionnaire::class);
+        return $this->belongsTo(Questionnaire::class, 'questionnaireId');
     }
 
     public function answers(): HasMany
     {
-        return $this->hasMany(ResponseAnswer::class);
+        return $this->hasMany(ResponseAnswer::class, 'responseSessionId');
     }
 
     public function result(): HasOne
