@@ -39,9 +39,9 @@ async function handleLogin() {
 <template>
   <div class="h-full flex flex-col md:flex-row overflow-hidden bg-surface selection:bg-primary-fixed selection:text-on-primary-container">
     <!-- Left Column: Illustration -->
-    <section class="hidden lg:flex relative w-1/2 h-full login-illustration-container items-center justify-center p-8 overflow-hidden border-r border-outline-variant/30">
-      <div class="relative z-10 w-full max-w-2xl flex flex-col items-center">
-        <div class="mt-8 text-center px-6">
+    <section class="hidden lg:flex relative flex-1 login-illustration-container items-center justify-center p-8 overflow-hidden border-r border-outline-variant/30">
+      <div class="relative z-10 w-full max-w-2xl flex flex-col items-center justify-center">
+        <div class="text-center px-6">
           <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2 fade-in gradient-text">Mewujudkan Sekolah Hijau</h2>
           <p class="font-body-base text-body-base text-on-surface-variant max-w-md mx-auto fade-in-delay">
             Mendorong transformasi institusi pendidikan melalui instrumen evaluasi kebijakan yang presisi dan berkelanjutan.
