@@ -475,7 +475,7 @@ function handleActivate(id: number) {
               :disabled="!form.name || !form.startDate || !form.endDate"
               class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ formMode === 'add' ? 'Simpan Periode' : 'Simpan Perubahan' }}
+              {{ formMode === 'add' ? 'Simpan Periode' : 'Ubah' }}
             </button>
           </div>
         </div>

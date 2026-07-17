@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
 
             // Respondents
             Route::apiResource('respondents', RespondenController::class);
+            Route::post('/respondents/import', [RespondenController::class, 'import']);
 
             // Recommendations
             Route::apiResource('recommendations', RekomendasiController::class);

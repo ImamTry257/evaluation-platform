@@ -8,6 +8,7 @@ use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class RespondenController extends Controller
 {
@@ -161,5 +162,130 @@ class RespondenController extends Controller
         $respondent->delete();
 
         return $this->successResponse(null, 'Respondent deleted successfully');
+    }
+
+    /**
+     * POST /api/v1/admin/respondents/import
+     * Bulk import respondents from CSV file.
+     */
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:csv,txt|max:1024',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed', 422, $validator->errors());
+        }
+
+        $file = $request->file('file');
+        $handle = fopen($file->getPathname(), 'r');
+
+        if (!$handle) {
+            return $this->errorResponse('Failed to read CSV file', 500);
+        }
+
+        // Read header
+        $header = fgetcsv($handle);
+
+        // Validate header columns
+        $requiredColumns = ['name', 'email', 'password'];
+        $headerLower = array_map('strtolower', array_map('trim', $header));
+
+        foreach ($requiredColumns as $col) {
+            if (!in_array($col, $headerLower)) {
+                fclose($handle);
+                return $this->errorResponse('CSV must have columns: name, email, password', 422);
+            }
+        }
+
+        $nameIndex = array_search('name', $headerLower);
+        $emailIndex = array_search('email', $headerLower);
+        $passwordIndex = array_search('password', $headerLower);
+
+        $imported = 0;
+        $failed = 0;
+        $errors = [];
+        $rowNumber = 1;
+
+        \Illuminate\Support\Facades\DB::beginTransaction();
+
+        try {
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowNumber++;
+
+                // Skip empty rows
+                if (empty(array_filter($row))) {
+                    continue;
+                }
+
+                $name = trim($row[$nameIndex] ?? '');
+                $email = trim($row[$emailIndex] ?? '');
+                $password = trim($row[$passwordIndex] ?? '');
+
+                // Validate row data
+                if (empty($name) || empty($email) || empty($password)) {
+                    $failed++;
+                    $errors[] = "Row {$rowNumber}: Name, email, and password are required";
+                    continue;
+                }
+
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $failed++;
+                    $errors[] = "Row {$rowNumber}: Invalid email format ({$email})";
+                    continue;
+                }
+
+                if (strlen($password) < 8) {
+                    $failed++;
+                    $errors[] = "Row {$rowNumber}: Password must be at least 8 characters";
+                    continue;
+                }
+
+                // Check if email already exists
+                if (User::where('email', strtolower($email))->exists()) {
+                    $failed++;
+                    $errors[] = "Row {$rowNumber}: Email already exists ({$email})";
+                    continue;
+                }
+
+                // Generate username from email
+                $username = strtolower(explode('@', $email)[0]);
+
+                // Ensure username is unique
+                $baseUsername = $username;
+                $counter = 1;
+                while (User::where('username', $username)->exists()) {
+                    $username = $baseUsername . $counter;
+                    $counter++;
+                }
+
+                // Create user
+                User::create([
+                    'name' => $name,
+                    'username' => $username,
+                    'email' => strtolower($email),
+                    'password' => Hash::make($password),
+                    'role' => 'respondent',
+                    'isActive' => true,
+                ]);
+
+                $imported++;
+            }
+
+            fclose($handle);
+            \Illuminate\Support\Facades\DB::commit();
+
+            return $this->successResponse([
+                'imported' => $imported,
+                'failed' => $failed,
+                'errors' => $errors,
+            ], "{$imported} respondents successfully imported");
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            fclose($handle);
+            return $this->errorResponse('Import failed: ' . $e->getMessage(), 500);
+        }
     }
 }

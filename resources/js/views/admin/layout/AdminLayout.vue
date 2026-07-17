@@ -27,7 +27,7 @@ const navGroups = [
     label: 'Lainnya',
     items: [
       { path: '/admin/reports', icon: 'assessment', label: 'Reports', badge: null },
-      { path: '/admin/settings', icon: 'settings', label: 'Settings', badge: null },
+      // { path: '/admin/settings', icon: 'settings', label: 'Settings', badge: null },
     ],
   },
 ]
@@ -109,24 +109,9 @@ const navGroups = [
       <!-- Top Navigation Bar -->
       <header class="sticky top-0 w-full h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-lg z-40">
         <div class="flex items-center gap-4 flex-1">
-          <div class="relative w-full max-w-md hidden sm:block">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-            <input
-              class="search-input w-full bg-surface-container-low border border-outline-variant rounded-xl pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
-              placeholder="Cari data evaluasi..."
-              type="text"
-            />
-          </div>
         </div>
         <div class="flex items-center gap-4">
-          <button class="header-btn w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
-            <span class="material-symbols-outlined">notifications</span>
-          </button>
-          <button class="header-btn w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
-            <span class="material-symbols-outlined">help_outline</span>
-          </button>
-          <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 px-8">
             <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
             </div>

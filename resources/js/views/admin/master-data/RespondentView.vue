@@ -480,7 +480,7 @@ onMounted(() => {
               class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="formLoading" class="material-symbols-outlined text-[18px] animate-spin mr-1">progress_activity</span>
-              {{ formMode === 'add' ? 'Simpan Responden' : 'Simpan Perubahan' }}
+              {{ formMode === 'add' ? 'Simpan Responden' : 'Ubah' }}
             </button>
           </div>
         </div>

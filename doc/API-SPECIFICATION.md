@@ -18,46 +18,31 @@ Semua request dan response menggunakan format JSON dengan status HTTP standard. 
 # 2. Authentication
 
 ## Login
-Authenticate user dan mendapatkan Bearer token. Unified endpoint untuk semua role dengan parameter type untuk forward-compatibility.
+Authenticate user dan mendapatkan Bearer token.
 
 **Endpoint:** `POST /auth/login`
 
 **Request:**
 ```json
 {
-  "email": "user@example.com",
-  "password": "password123",
-  "type": "ADMIN"
-}
-```
-
-**Type values:**
-- `ADMIN` - Admin user (requires email + password)
-- `RESPONDENT` - Responden user (email only, auto-register if not exists)
-
-### Admin Login Flow
-Admin login memerlukan email + password verification.
-
-**Request:**
-```json
-{
-  "email": "admin@example.com",
-  "password": "password123",
-  "type": "ADMIN"
+  "username": "admin",
+  "password": "password123"
 }
 ```
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Login successful",
   "data": {
     "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
     "user": {
       "id": 1,
-      "name": "John Doe",
-      "email": "admin@example.com",
-      "role": "admin"
+      "name": "Administrator",
+      "username": "admin",
+      "email": "admin@cbt.com",
+      "role": "ADMIN"
     }
   }
 }
@@ -66,73 +51,93 @@ Admin login memerlukan email + password verification.
 **Error Response (401 Unauthorized):**
 ```json
 {
-  "success": false,
-  "message": "Email not found"
+  "status": false,
+  "message": "Username atau password salah",
+  "errors": []
 }
 ```
 
-atau
-
+**Error Response (403 Forbidden) - Inactive Account:**
 ```json
 {
-  "success": false,
-  "message": "Password salah"
+  "status": false,
+  "message": "Akun tidak aktif",
+  "errors": []
 }
 ```
 
-### Responden Login Flow
-Responden login hanya memerlukan email. Jika email belum terdaftar di sistem, akan otomatis di-register sebagai responden.
+**Error Response (422 Validation Error):**
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "username": ["The username field is required."],
+    "password": ["The password field is required."]
+  }
+}
+```
+
+---
+
+## Register
+Register new respondent account.
+
+**Endpoint:** `POST /auth/register`
 
 **Request:**
 ```json
 {
-  "email": "responden@example.com",
-  "type": "RESPONDENT"
+  "name": "Budi Santoso",
+  "username": "budi_santoso",
+  "email": "budi@sekolah.id",
+  "password": "password123",
+  "passwordConfirmation": "password123"
 }
 ```
 
-**Response (200 OK) - Existing Responden:**
+**Response (201 Created):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Registration successful",
   "data": {
     "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
     "user": {
-      "id": 10,
-      "email": "responden@example.com",
-      "role": "respondent",
-      "createdAt": "2024-01-01T10:00:00Z"
+      "id": 3,
+      "name": "Budi Santoso",
+      "username": "budi_santoso",
+      "email": "budi@sekolah.id",
+      "role": "RESPONDENT"
     }
   }
 }
 ```
 
-**Response (201 Created) - New Responden (Auto-registered):**
+**Error Response (422 Validation Error):**
 ```json
 {
-  "success": true,
-  "message": "Responden berhasil didaftarkan",
-  "data": {
-    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
-    "user": {
-      "id": 11,
-      "email": "responden_baru@example.com",
-      "role": "respondent",
-      "createdAt": "2024-01-01T10:05:00Z"
-    }
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "name": ["The name field is required."],
+    "username": ["The username field is required."],
+    "email": ["The email field is required."],
+    "password": ["The password field is required."]
   }
 }
 ```
 
-**Error Response (401 Unauthorized) - Responden not eligible:**
+**Error Response (422 Duplicate):**
 ```json
 {
-  "success": false,
-  "message": "Email not found"
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "email": ["The email has already been taken."]
+  }
 }
 ```
-
-Note: Responden dianggap NOT FOUND jika email tidak terdaftar DAN tidak ada active evaluation period.
 
 ---
 
@@ -141,13 +146,23 @@ Revoke user token.
 
 **Endpoint:** `POST /auth/logout`
 
-**Headers:** `Authorization: Bearer {token}`
+**Headers:** `Authorization: Bearer ***`
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "message": "Logout berhasil"
+  "status": true,
+  "message": "Logged out successfully",
+  "data": null
+}
+```
+
+**Error Response (401 Unauthorized):**
+```json
+{
+  "status": false,
+  "message": "Unauthenticated.",
+  "errors": []
 }
 ```
 
@@ -158,19 +173,29 @@ Get current user profile.
 
 **Endpoint:** `GET /auth/profile`
 
-**Headers:** `Authorization: Bearer {token}`
+**Headers:** `Authorization: Bearer ***`
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Success",
   "data": {
     "id": 1,
-    "name": "John Doe",
-    "email": "user@example.com",
-    "role": "admin",
-    "createdAt": "2024-01-01T10:00:00Z"
+    "name": "Administrator",
+    "username": "admin",
+    "email": "admin@cbt.com",
+    "role": "ADMIN"
   }
+}
+```
+
+**Error Response (401 Unauthorized):**
+```json
+{
+  "status": false,
+  "message": "Unauthenticated.",
+  "errors": []
 }
 ```
 

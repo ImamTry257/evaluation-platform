@@ -168,7 +168,7 @@ function handleSubmit() {
           :disabled="!form.text || !form.indicator"
           class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Simpan Perubahan
+          Ubah
         </button>
       </div>
     </div>

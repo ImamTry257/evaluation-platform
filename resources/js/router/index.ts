@@ -37,63 +37,73 @@ const router = createRouter({
     // Admin routes
     {
       path: '/admin',
-      component: () => import('@/views/admin/AdminLayout.vue'),
+      component: () => import('@/views/admin/layout/AdminLayout.vue'),
       meta: { requiresAuth: true, role: 'ADMIN' },
       children: [
         {
           path: '',
           name: 'admin-dashboard',
-          component: () => import('@/views/admin/DashboardView.vue'),
+          component: () => import('@/views/admin/dashboard/DashboardView.vue'),
         },
         {
           path: 'period',
           name: 'admin-period',
-          component: () => import('@/views/admin/PeriodView.vue'),
-        },
-        {
-          path: 'component',
-          name: 'admin-component',
-          component: () => import('@/views/admin/MasterComponentView.vue'),
+          component: () => import('@/views/admin/master-data/PeriodView.vue'),
         },
         {
           path: 'instrument',
           name: 'admin-instrument',
-          component: () => import('@/views/admin/MasterQuestionnairesView.vue'),
+          component: () => import('@/views/admin/master-data/QuestionnaireView.vue'),
         },
         {
-          path: 'sub-component',
+          path: 'component',
+          name: 'admin-component',
+          component: () => import('@/views/admin/master-data/ComponentView.vue'),
+        },
+        {
+          path: 'component/:componentId/sub-component',
           name: 'admin-sub-component',
-          component: () => import('@/views/admin/MasterSubComponentView.vue'),
+          component: () => import('@/views/admin/master-data/SubComponentView.vue'),
         },
         {
-          path: 'indicator',
+          path: 'component/:componentId/sub-component/:subComponentId/indicator',
           name: 'admin-indicator',
-          component: () => import('@/views/admin/MasterIndicatorView.vue'),
+          component: () => import('@/views/admin/master-data/IndicatorView.vue'),
         },
         {
-          path: 'question',
+          path: 'component/:componentId/sub-component/:subComponentId/indicator/:indicatorId/question',
           name: 'admin-question',
-          component: () => import('@/views/admin/question/MasterQuestionView.vue'),
+          component: () => import('@/views/admin/master-data/QuestionView.vue'),
+        },
+        {
+          path: 'sub-component/:subComponentId/indicator',
+          name: 'admin-sub-component-indicator',
+          component: () => import('@/views/admin/master-data/IndicatorView.vue'),
+        },
+        {
+          path: 'indicator/:indicatorId/question',
+          name: 'admin-indicator-question',
+          component: () => import('@/views/admin/master-data/QuestionView.vue'),
         },
         {
           path: 'question/add',
           name: 'admin-question-add',
-          component: () => import('@/views/admin/question/AddQuestionView.vue'),
+          component: () => import('@/views/admin/master-data/QuestionAddView.vue'),
         },
         {
           path: 'question/:id/edit',
           name: 'admin-question-edit',
-          component: () => import('@/views/admin/question/EditQuestionView.vue'),
+          component: () => import('@/views/admin/master-data/QuestionEditView.vue'),
         },
         {
           path: 'respondent',
           name: 'admin-respondent',
-          component: () => import('@/views/admin/MasterRespondentView.vue'),
+          component: () => import('@/views/admin/master-data/RespondentView.vue'),
         },
         {
           path: 'settings',
           name: 'admin-settings',
-          component: () => import('@/views/admin/SettingView.vue'),
+          component: () => import('@/views/admin/settings/SettingView.vue'),
         },
       ],
     },
@@ -110,7 +120,7 @@ const router = createRouter({
         },
         {
           path: 'result/:sessionId',
-          name: 'admin-result',
+          name: 'respondent-result',
           component: () => import('@/views/respondent/ResultRecommendationView.vue'),
         },
       ],

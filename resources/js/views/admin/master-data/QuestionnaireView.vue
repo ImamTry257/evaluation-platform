@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { RouterLink } from 'vue-router'
 
 // State
 const searchQuery = ref('')
@@ -231,12 +232,9 @@ function handleDelete(item: any) {
     </nav>
 
     <!-- Page Header -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 fade-in">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div>
         <h2 class="font-headline-xl text-headline-xl text-on-surface">Instrument Penelitian</h2>
-        <p class="font-body-base text-body-base text-on-surface-variant mt-2">
-          Kelola instrumen penelitian evaluasi kebijakan lingkungan sekolah.
-        </p>
       </div>
       <button
         @click="openAddModal"
@@ -333,8 +331,10 @@ function handleDelete(item: any) {
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-2">
                   <span class="action-link text-xs font-semibold text-primary cursor-pointer hover:bg-primary/10 px-2 py-1 rounded-lg">
-                    <span class="material-symbols-outlined text-[14px]">subdirectory_arrow_right</span>
+                    <RouterLink to="/admin/component">
+                      <span class="material-symbols-outlined text-[14px]">subdirectory_arrow_right</span>
                     Lihat Component
+                    </RouterLink>
                   </span>
                   <div class="relative more-wrapper">
                     <button class="more-btn w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
@@ -511,7 +511,7 @@ function handleDelete(item: any) {
               :disabled="!form.name || !form.description || !form.period"
               class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ formMode === 'add' ? 'Simpan Instrument' : 'Simpan Perubahan' }}
+              {{ formMode === 'add' ? 'Simpan' : 'Ubah' }}
             </button>
           </div>
         </div>
