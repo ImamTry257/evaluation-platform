@@ -184,11 +184,11 @@ function confirmDelete() {
 </script>
 
 <template>
-  <div class="p-8 max-w-[1440px] w-full mx-auto">
+  <div class="p-12 max-w-[1840px] w-full mx-auto">
     <!-- Header Section -->
     <section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 fade-in">
       <div>
-        <h2 class="font-headline-xl text-headline-xl text-on-surface">Manajemen Pertanyaan</h2>
+        <h2 class="font-headline-xl font-bold text-headline-xl text-on-surface">Manajemen Pertanyaan</h2>
         <p class="font-body-base text-body-base text-on-surface-variant mt-2 max-w-2xl">
           Kelola pertanyaan evaluasi kebijakan lingkungan sekolah secara sistematis untuk memantau progres keberlanjutan instansi.
         </p>

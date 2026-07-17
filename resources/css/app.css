@@ -4,7 +4,7 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
     /* Colors */
@@ -52,13 +52,13 @@
     --text-label-caps--line-height: 1;
 
     /* Font families - use --font-* namespace for font-* utilities */
-    --font-headline-xl: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-headline-lg: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-display-lg: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-title-md: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-body-base: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-body-sm: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-label-caps: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-headline-xl: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-headline-lg: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-display-lg: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-title-md: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-body-base: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-body-sm: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-label-caps: 'Poppins', ui-sans-serif, system-ui, sans-serif;
 
     /* Border radius */
     --radius-lg: 0.75rem;
@@ -77,7 +77,7 @@ html {
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

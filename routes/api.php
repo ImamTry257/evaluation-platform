@@ -56,6 +56,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/start', [EvaluasiController::class, 'start']);
             Route::get('/{sessionId}', [EvaluasiController::class, 'show']);
             Route::post('/{sessionId}/answers', [EvaluasiController::class, 'saveAnswer']);
+            Route::post('/{sessionId}/autosave', [EvaluasiController::class, 'autoSave']);
             Route::post('/{sessionId}/submit', [EvaluasiController::class, 'submit']);
             Route::get('/{sessionId}/results', [EvaluasiController::class, 'results']);
         });

@@ -254,12 +254,12 @@ function handleRestore(q: any) {
 </script>
 
 <template>
-  <div class="max-w-[1440px] mx-auto">
+  <div class="p-12 max-w-[1840px] w-full mx-auto">
     <!-- Page Header -->
     <div class="px-gutter lg:px-margin pt-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div class="max-w-2xl">
-          <h2 class="font-headline-xl text-headline-xl text-on-surface mb-2 fade-in">Manajemen Kuesioner</h2>
+          <h2 class="font-headline-xl text-headline-xl font-bold text-on-surface mb-2 fade-in">Manajemen Kuesioner</h2>
           <p class="font-body-base text-body-base text-secondary fade-in-delay">
             Kelola instrumen evaluasi kebijakan lingkungan sekolah secara komprehensif. Sesuaikan pertanyaan, periode, dan target responden untuk mendapatkan data yang akurat.
           </p>

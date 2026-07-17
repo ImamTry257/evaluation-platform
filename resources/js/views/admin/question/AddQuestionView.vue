@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 
 const form = ref({
   text: '',
@@ -33,48 +32,21 @@ const indicatorOptions = [
   'Kondisi Vegetasi Taman',
 ]
 
-// Mock data - in real app, fetch from API by route.params.id
-const mockQuestions: Record<string, any> = {
-  '1': { text: 'Apakah sekolah memiliki tempat sampah organik khusus di setiap kelas?', type: 'pilihan_ganda', weight: 25, indicator: 'Ketersediaan Tempat Sampah Terpisah', status: 'aktif' },
-  '2': { text: 'Berapakah jumlah tempat sampah komunal yang tersedia di area kantin?', type: 'pilihan_ganda', weight: 35, indicator: 'Ketersediaan Tempat Sampah Terpisah', status: 'aktif' },
-  '3': { text: 'Apakah terdapat petunjuk visual (poster) pemilahan sampah pada setiap unit tempat sampah?', type: 'ya_tidak', weight: 20, indicator: 'Ketersediaan Tempat Sampah Terpisah', status: 'aktif' },
-  '4': { text: 'Kapan terakhir kali dilakukan evaluasi terhadap kebersihan tempat sampah organik?', type: 'isian_bebas', weight: 20, indicator: 'Ketersediaan Tempat Sampah Terpisah', status: 'draft' },
-}
-
-const questionId = route.params.id as string
-
-onMounted(() => {
-  const data = mockQuestions[questionId]
-  if (data) {
-    form.value = { ...data }
-  }
-})
-
 function handleSubmit() {
   // In real app, this would call an API
-  console.log('Updating:', form.value)
+  console.log('Submitting:', form.value)
   router.push('/admin/question')
 }
 </script>
 
 <template>
-  <div class="p-8 max-w-[1440px] w-full mx-auto">
+  <div class="p-12 max-w-[1840px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6 fade-in">
       <router-link to="/admin/question" class="hover:text-primary transition-colors cursor-pointer">Question</router-link>
       <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-      <span class="text-on-surface font-medium">Edit Pertanyaan</span>
+      <span class="text-on-surface font-medium">Tambah Pertanyaan</span>
     </nav>
-
-    <!-- Header Section -->
-    <section class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 fade-in">
-      <div>
-        <h2 class="font-headline-xl text-headline-xl text-on-surface">Edit Pertanyaan</h2>
-        <p class="font-body-base text-body-base text-on-surface-variant mt-2 max-w-2xl">
-          Ubah data pertanyaan evaluasi kebijakan lingkungan sekolah.
-        </p>
-      </div>
-    </section>
 
     <!-- Form Card -->
     <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay max-w-3xl">
@@ -168,7 +140,7 @@ function handleSubmit() {
           :disabled="!form.text || !form.indicator"
           class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Simpan Perubahan
+          Simpan Pertanyaan
         </button>
       </div>
     </div>

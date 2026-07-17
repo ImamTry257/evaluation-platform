@@ -73,22 +73,27 @@ const router = createRouter({
         {
           path: 'question',
           name: 'admin-question',
-          component: () => import('@/views/admin/MasterQuestionView.vue'),
+          component: () => import('@/views/admin/question/MasterQuestionView.vue'),
         },
         {
           path: 'question/add',
           name: 'admin-question-add',
-          component: () => import('@/views/admin/AddQuestionView.vue'),
+          component: () => import('@/views/admin/question/AddQuestionView.vue'),
         },
         {
           path: 'question/:id/edit',
           name: 'admin-question-edit',
-          component: () => import('@/views/admin/EditQuestionView.vue'),
+          component: () => import('@/views/admin/question/EditQuestionView.vue'),
         },
         {
           path: 'respondent',
           name: 'admin-respondent',
           component: () => import('@/views/admin/MasterRespondentView.vue'),
+        },
+        {
+          path: 'settings',
+          name: 'admin-settings',
+          component: () => import('@/views/admin/SettingView.vue'),
         },
       ],
     },
@@ -102,6 +107,11 @@ const router = createRouter({
           path: '',
           name: 'respondent-home',
           component: () => import('@/views/respondent/PlatformExplanationView.vue'),
+        },
+        {
+          path: 'result/:sessionId',
+          name: 'admin-result',
+          component: () => import('@/views/respondent/ResultRecommendationView.vue'),
         },
       ],
     },

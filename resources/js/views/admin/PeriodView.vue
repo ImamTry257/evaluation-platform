@@ -197,7 +197,7 @@ function handleActivate(id: number) {
 </script>
 
 <template>
-  <div class="p-8 max-w-[1440px] w-full mx-auto">
+  <div class="p-12 max-w-[1840px] w-full mx-auto">
     <!-- Header Section -->
     <section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 fade-in">
       <div>

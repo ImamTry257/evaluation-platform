@@ -1622,6 +1622,46 @@
           ]
         },
         {
+          "name": "Auto-Save",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"remainingSeconds\": 1200,\n  \"answers\": [\n    { \"questionId\": 5, \"score\": 4 },\n    { \"questionId\": 6, \"score\": 6 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/evaluations/1/autosave",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "evaluations", "1", "autosave"]
+            }
+          },
+          "response": [
+            {
+              "name": "Auto-Save Success (All Saved)",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Auto-save successful\",\n  \"data\": {\n    \"remainingSeconds\": 1200,\n    \"savedAt\": \"2026-07-17T02:12:38+00:00\",\n    \"savedAnswers\": [5, 6]\n  }\n}"
+            },
+            {
+              "name": "Auto-Save Success (Mixed - Some Skipped)",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Auto-save successful\",\n  \"data\": {\n    \"remainingSeconds\": 1200,\n    \"savedAt\": \"2026-07-17T02:12:38+00:00\",\n    \"savedAnswers\": [7],\n    \"skippedAnswers\": [2],\n    \"skippedReason\": \"Questions do not belong to this questionnaire\"\n  }\n}"
+            },
+            {
+              "name": "Auto-Save Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"remainingSeconds\": [\"The remaining seconds field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
           "name": "Submit Evaluation",
           "request": {
             "method": "POST",

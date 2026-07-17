@@ -12,7 +12,6 @@ const navItems = [
   { path: '/admin', icon: 'dashboard', label: 'Dashboard' },
   { path: '/admin/period', icon: 'calendar_today', label: 'Period' },
   { path: '/admin/questionnaire', icon: 'description', label: 'Questionnaire' },
-  { path: '/admin/aspect', icon: 'category', label: 'Aspect' },
   { path: '/admin/component', icon: 'widgets', label: 'Component' },
   { path: '/admin/sub-component', icon: 'view_list', label: 'Sub Component' },
   { path: '/admin/indicator', icon: 'analytics', label: 'Indicator' },

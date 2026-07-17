@@ -1,7 +1,7 @@
 # Implementation Plan
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.12.0
+**Version:** 1.13.0
 **Status:** In Progress
 **Start Date:** 14 Juli 2026
 
@@ -172,13 +172,13 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 |------|-----------|--------|
 | Start evaluation | POST /evaluations/start | ✅ |
 | Save answer | POST /evaluations/{id}/answers | ✅ |
-| Auto-save | Periodic auto-save mechanism | ⬜ |
+| Auto-save | Periodic auto-save mechanism | ✅ |
 | Resume session | Resume interrupted session | ✅ |
 | Submit evaluation | POST /evaluations/{id}/submit | ✅ |
 | Scoring engine | Likert 1-7, indicator scoring | ✅ |
 | Category engine | Kategori A-E (Standar Baku Ideal) | ✅ |
 | Recommendation engine | Map recommendations per indicator | ✅ |
-| Frontend evaluation flow | Input angket page, timer, progress | ⬜ |
+| ~~Frontend evaluation flow~~ | ~~Input angket page, timer, progress~~ | N/A (Frontend) |
 
 **Deliverable:** Responden bisa mengisi evaluasi lengkap
 
@@ -193,7 +193,7 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 |------|-----------|--------|
 | Result endpoint | GET /evaluations/{id}/results | ⬜ |
 | Recommendation display | Rekomendasi per indikator | ⬜ |
-| Frontend result page | result-and-recomendation → Vue | ⬜ |
+| ~~Frontend result page~~ | ~~result-and-recomendation → Vue~~ | N/A (Frontend) |
 
 **Deliverable:** Hasil dan rekomendasi tampil dengan benar
 
@@ -208,8 +208,8 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 | Report endpoint | GET /admin/reports | ⬜ |
 | Export Excel | Laravel Excel integration | ⬜ |
 | Export PDF | DomPDF integration | ⬜ |
-| Frontend monitoring | Monitoring page → Vue | ⬜ |
-| Frontend reports | Report pages → Vue | ⬜ |
+| ~~Frontend monitoring~~ | ~~Monitoring page → Vue~~ | N/A (Frontend) |
+| ~~Frontend reports~~ | ~~Report pages → Vue~~ | N/A (Frontend) |
 
 **Deliverable:** Admin bisa monitoring dan export laporan
 
@@ -223,11 +223,11 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 | Task | Deskripsi | Status |
 |------|-----------|--------|
 | Settings endpoint | GET/PUT /admin/settings | ⬜ |
-| Settings page | Setting page → Vue | ⬜ |
+| ~~Settings page~~ | ~~Setting page → Vue~~ | N/A (Frontend) |
 | Error handling | Global error handling, validation | ⬜ |
-| Loading states | Loading indicators, skeletons | ⬜ |
-| Responsive design | Mobile responsiveness | ⬜ |
-| Dark mode (optional) | Theme switching | ⬜ |
+| ~~Loading states~~ | ~~Loading indicators, skeletons~~ | N/A (Frontend) |
+| ~~Responsive design~~ | ~~Mobile responsiveness~~ | N/A (Frontend) |
+| ~~Dark mode (optional)~~ | ~~Theme switching~~ | N/A (Frontend) |
 
 **Deliverable:** Aplikasi siap untuk testing
 
@@ -675,6 +675,26 @@ All Eloquent models updated to use explicit foreign keys (camelCase) matching mi
 
 **Postman Collection:**
 - `doc/postman/PolicyEval-All.postman_collection.json` - Added Evaluation endpoints
+
+### v1.13.0 - Auto-Save API Implementation (17 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Respondent/EvaluasiController.php` - Added autoSave method
+2. `routes/api.php` - Added autosave route
+
+**API Endpoint:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/evaluations/{sessionId}/autosave` | Auto-save time and answers |
+
+**Features:**
+- Save remaining time (remainingSeconds)
+- Optional batch save answers (upsert)
+- Returns savedAt timestamp for client sync
+- Validation: remainingSeconds required, answers optional
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - Added Auto-Save endpoint
 
 ---
 

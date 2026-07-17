@@ -269,6 +269,81 @@ class EvaluasiController extends Controller
     }
 
     /**
+     * POST /api/v1/evaluations/{sessionId}/autosave
+     * Auto-save remaining time and optionally answers.
+     */
+    public function autoSave(Request $request, $sessionId)
+    {
+        $validator = Validator::make($request->all(), [
+            'remainingSeconds' => 'required|integer|min:0',
+            'answers' => 'nullable|array',
+            'answers.*.questionId' => 'required_with:answers|exists:questions,id',
+            'answers.*.score' => 'required_with:answers|integer|min:1|max:7',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed', 422, $validator->errors());
+        }
+
+        $session = ResponseSession::where('userId', $request->user()->id)
+            ->where('status', 'inProgress')
+            ->find($sessionId);
+
+        if (!$session) {
+            return $this->errorResponse('Session not found or not in progress', 404);
+        }
+
+        // Update remaining time
+        $session->update([
+            'remainingSeconds' => $request->remainingSeconds,
+        ]);
+
+        // Auto-save answers if provided
+        $savedAnswers = [];
+        $skippedAnswers = [];
+
+        if ($request->has('answers') && is_array($request->answers)) {
+            foreach ($request->answers as $answerData) {
+                // Verify question belongs to this questionnaire
+                $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
+                    $q->where('questionnaireId', $session->questionnaireId);
+                })->find($answerData['questionId']);
+
+                if ($question) {
+                    ResponseAnswer::updateOrCreate(
+                        [
+                            'responseSessionId' => $session->id,
+                            'questionId' => $answerData['questionId'],
+                        ],
+                        [
+                            'score' => $answerData['score'],
+                        ]
+                    );
+                    $savedAnswers[] = $answerData['questionId'];
+                } else {
+                    $skippedAnswers[] = $answerData['questionId'];
+                }
+            }
+        }
+
+        $response = [
+            'remainingSeconds' => $session->remainingSeconds,
+            'savedAt' => now()->toIso8601String(),
+        ];
+
+        if (!empty($savedAnswers)) {
+            $response['savedAnswers'] = $savedAnswers;
+        }
+
+        if (!empty($skippedAnswers)) {
+            $response['skippedAnswers'] = $skippedAnswers;
+            $response['skippedReason'] = 'Questions do not belong to this questionnaire';
+        }
+
+        return $this->successResponse($response, 'Auto-save successful');
+    }
+
+    /**
      * Calculate scores for each indicator.
      */
     private function calculateIndicatorScores(ResponseSession $session): array
