@@ -85,6 +85,11 @@ const router = createRouter({
           name: 'admin-question-edit',
           component: () => import('@/views/admin/EditQuestionView.vue'),
         },
+        {
+          path: 'respondent',
+          name: 'admin-respondent',
+          component: () => import('@/views/admin/MasterRespondentView.vue'),
+        },
       ],
     },
     // Respondent routes

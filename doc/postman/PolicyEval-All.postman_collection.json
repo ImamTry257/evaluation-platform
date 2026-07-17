@@ -1525,6 +1525,156 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Respondent - Evaluasi",
+      "description": "Evaluation engine endpoints for respondents. Start, answer, submit, and view results.",
+      "item": [
+        {
+          "name": "Start Evaluation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questionnaireId\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/evaluations/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "evaluations", "start"]
+            }
+          },
+          "response": [
+            {
+              "name": "Start Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Evaluation started successfully\",\n  \"data\": {\n    \"session\": {\n      \"id\": 5,\n      \"userId\": 7,\n      \"questionnaireId\": 5,\n      \"status\": \"inProgress\",\n      \"startedAt\": \"2026-07-16T00:00:00.000000Z\",\n      \"remainingSeconds\": 1800,\n      \"answers\": []\n    },\n    \"questionnaire\": {\n      \"id\": 5,\n      \"title\": \"Angket Evaluasi Lingkungan\",\n      \"durationMinutes\": 30,\n      \"components\": [...]\n    },\n    \"isResumed\": false\n  }\n}"
+            },
+            {
+              "name": "Resume Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Session resumed successfully\",\n  \"data\": {\n    \"session\": { ... },\n    \"questionnaire\": { ... },\n    \"isResumed\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Session",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/evaluations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "evaluations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Session retrieved successfully\",\n  \"data\": { \"session\": { ... } }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Save Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questionId\": 5,\n  \"score\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/evaluations/1/answers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "evaluations", "1", "answers"]
+            }
+          },
+          "response": [
+            {
+              "name": "Save Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Answer saved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"responseSessionId\": 1,\n    \"questionId\": 5,\n    \"score\": 5\n  }\n}"
+            },
+            {
+              "name": "Invalid Score",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"score\": [\"The score field must be between 1 and 7.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Submit Evaluation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/evaluations/1/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "evaluations", "1", "submit"]
+            }
+          },
+          "response": [
+            {
+              "name": "Submit Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Evaluation submitted successfully\",\n  \"data\": {\n    \"result\": {\n      \"id\": 1,\n      \"overallScore\": \"5.00\",\n      \"overallPercentage\": \"71.43\",\n      \"overallCategory\": \"C\",\n      \"conclusion\": \"Sedang - Kebijakan lingkungan sekolah masih perlu perbaikan\",\n      \"details\": [...]\n    }\n  }\n}"
+            },
+            {
+              "name": "Incomplete Answers",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Please answer all questions before submitting\",\n  \"errors\": {\n    \"answered\": 1,\n    \"total\": 3\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/evaluations/1/results",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "evaluations", "1", "results"]
+            }
+          },
+          "response": [
+            {
+              "name": "Results Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Results retrieved successfully\",\n  \"data\": {\n    \"result\": {\n      \"id\": 1,\n      \"overallScore\": \"5.00\",\n      \"overallPercentage\": \"71.43\",\n      \"overallCategory\": \"C\",\n      \"details\": [...]\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

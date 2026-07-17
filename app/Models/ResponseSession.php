@@ -47,7 +47,7 @@ class ResponseSession extends Model
 
     public function result(): HasOne
     {
-        return $this->hasOne(EvaluationResult::class);
+        return $this->hasOne(EvaluationResult::class, 'responseSessionId');
     }
 
     public function scopeInProgress($query)

@@ -182,7 +182,7 @@ class EvaluasiController extends Controller
             // Calculate indicator scores
             $indicatorScores = $this->calculateIndicatorScores($session);
 
-            // Calculate overall score
+            // Calculate overall score (weighted average)
             $overallScore = 0;
             $totalWeight = 0;
 
@@ -191,13 +191,15 @@ class EvaluasiController extends Controller
                 $totalWeight += $data['totalWeight'];
             }
 
-            $overallPercentage = $totalWeight > 0 ? ($overallScore / $totalWeight) * 100 : 0;
+            // Score is weighted average, percentage is score/maxScore(7) * 100
+            $weightedAverage = $totalWeight > 0 ? $overallScore / $totalWeight : 0;
+            $overallPercentage = ($weightedAverage / 7) * 100; // Likert 1-7 scale
             $overallCategory = $this->getCategory($overallPercentage);
 
             // Create evaluation result
             $result = EvaluationResult::create([
                 'responseSessionId' => $session->id,
-                'overallScore' => round($overallScore, 2),
+                'overallScore' => round($weightedAverage, 2),
                 'overallPercentage' => round($overallPercentage, 2),
                 'overallCategory' => $overallCategory,
                 'conclusion' => $this->getConclusion($overallCategory),
@@ -205,10 +207,10 @@ class EvaluasiController extends Controller
 
             // Create result details for each indicator
             foreach ($indicatorScores as $indicatorId => $data) {
-                $percentage = $data['totalWeight'] > 0 ? ($data['score'] / $data['totalWeight']) * 100 : 0;
+                $percentage = ($data['score'] / 7) * 100; // Likert 1-7 scale
                 $category = $this->getCategory($percentage);
 
-                // Find recommendation for this indicator and category
+                // Find recommendation for this indicator and score range
                 $recommendation = Recommendation::where('indicatorId', $indicatorId)
                     ->where('minScore', '<=', $data['score'])
                     ->where('maxScore', '>=', $data['score'])

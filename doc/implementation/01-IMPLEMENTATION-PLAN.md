@@ -1,7 +1,7 @@
 # Implementation Plan
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.11.0
+**Version:** 1.12.0
 **Status:** In Progress
 **Start Date:** 14 Juli 2026
 
@@ -170,14 +170,14 @@ Dokumen ini menjelaskan rencana implementasi development untuk Platform Evaluasi
 
 | Task | Deskripsi | Status |
 |------|-----------|--------|
-| Start evaluation | POST /evaluations/start | ⬜ |
-| Save answer | POST /evaluations/{id}/answers | ⬜ |
+| Start evaluation | POST /evaluations/start | ✅ |
+| Save answer | POST /evaluations/{id}/answers | ✅ |
 | Auto-save | Periodic auto-save mechanism | ⬜ |
-| Resume session | Resume interrupted session | ⬜ |
-| Submit evaluation | POST /evaluations/{id}/submit | ⬜ |
-| Scoring engine | Likert 1-7, indicator scoring | ⬜ |
-| Category engine | Kategori A-E (Standar Baku Ideal) | ⬜ |
-| Recommendation engine | Map recommendations per indicator | ⬜ |
+| Resume session | Resume interrupted session | ✅ |
+| Submit evaluation | POST /evaluations/{id}/submit | ✅ |
+| Scoring engine | Likert 1-7, indicator scoring | ✅ |
+| Category engine | Kategori A-E (Standar Baku Ideal) | ✅ |
+| Recommendation engine | Map recommendations per indicator | ✅ |
 | Frontend evaluation flow | Input angket page, timer, progress | ⬜ |
 
 **Deliverable:** Responden bisa mengisi evaluasi lengkap
