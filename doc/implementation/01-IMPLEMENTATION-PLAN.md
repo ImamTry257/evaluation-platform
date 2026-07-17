@@ -640,6 +640,42 @@ All Eloquent models updated to use explicit foreign keys (camelCase) matching mi
 **Postman Collection:**
 - `doc/postman/PolicyEval-All.postman_collection.json` - Added Recommendation endpoints
 
+### v1.12.0 - Evaluation Engine API Implementation (17 Juli 2026)
+
+**Backend Implementation:**
+1. `app/Http/Controllers/Api/Respondent/EvaluasiController.php` - Evaluation engine controller
+2. `routes/api.php` - Added evaluation routes
+
+**API Endpoints:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/evaluations/start` | Start or resume evaluation session |
+| GET | `/api/v1/evaluations/{sessionId}` | Get session details |
+| POST | `/api/v1/evaluations/{sessionId}/answers` | Save/update answer |
+| POST | `/api/v1/evaluations/{sessionId}/submit` | Submit evaluation |
+| GET | `/api/v1/evaluations/{sessionId}/results` | Get results |
+
+**Features:**
+- Start new session or resume existing inProgress session
+- Load full questionnaire structure (components → sub-components → indicators → questions)
+- Save answers with upsert (unique constraint: sessionId + questionId)
+- Score validation: Likert scale 1-7
+- Submit validation: all questions must be answered
+- Scoring engine:
+  - Indicator score: weighted average `Σ(score × weight) / Σ(weight)`
+  - Overall score: weighted average of all indicators
+  - Percentage: `(score / 7) × 100` (Likert 1-7 scale)
+- Category engine: A (≥90%), B (≥75%), C (≥60%), D (≥45%), E (<45%)
+- Recommendation engine: map recommendations per indicator based on score range
+- Conclusion text based on category
+
+**Bug Fixes:**
+- Fixed ResponseSession `result()` HasOne relationship - added explicit foreign key `responseSessionId`
+- Fixed scoring engine percentage calculation - was using wrong formula (now correctly divides by max score 7)
+
+**Postman Collection:**
+- `doc/postman/PolicyEval-All.postman_collection.json` - Added Evaluation endpoints
+
 ---
 
 **Catatan:** Dokumentasi ini akan diperbarui seiring progress development. Update dilakukan setelah setiap phase selesai.
