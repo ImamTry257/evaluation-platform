@@ -133,4 +133,43 @@ class KuesionerController extends Controller
 
         return $this->successResponse(null, 'Questionnaire deleted successfully');
     }
+
+    /**
+     * POST /api/v1/admin/questionnaires/{id}/publish
+     * Publish a questionnaire (change status from draft to published).
+     */
+    public function publish($id)
+    {
+        $questionnaire = Questionnaire::find($id);
+
+        if (!$questionnaire) {
+            return $this->errorResponse('Questionnaire not found', 404);
+        }
+
+        if ($questionnaire->status === 'published') {
+            return $this->errorResponse('Questionnaire is already published', 422);
+        }
+
+        if ($questionnaire->status === 'closed') {
+            return $this->errorResponse('Cannot publish a closed questionnaire', 422);
+        }
+
+        // Validate: must have at least one component with questions
+        $hasContent = $questionnaire->components()
+            ->whereHas('subComponents.indicators.questions')
+            ->exists();
+
+        if (!$hasContent) {
+            return $this->errorResponse('Cannot publish questionnaire without questions', 422, [
+                'message' => 'Questionnaire must have at least one component with questions',
+            ]);
+        }
+
+        $questionnaire->update(['status' => 'published']);
+
+        return $this->successResponse(
+            $questionnaire->load('evaluationPeriod'),
+            'Questionnaire published successfully'
+        );
+    }
 }

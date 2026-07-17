@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sidebar Concept — Before / After Empty / After Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Poppins', sans-serif; background: #f4fbf4; padding: 40px 32px; min-height: 100vh; }
+
+  .grid { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+
+  .concept { width: 280px; flex-shrink: 0; }
+  .concept-label {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid;
+  }
+  .label-before { color: #ba1a1a; border-color: #ffdad6; }
+  .label-after-empty { color: #d97706; border-color: #fef3c7; }
+  .label-after-data { color: #006c49; border-color: #10b981; }
+
+  .sidebar {
+    width: 280px; background: #fff; border-radius: 16px; border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; height: fit-content;
+  }
+
+  /* Header */
+  .sb-header {
+    padding: 20px 24px; border-bottom: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sb-logo {
+    width: 36px; height: 36px; background: #006c49; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .sb-logo span { color: #fff; font-size: 20px; }
+  .sb-header h1 { font-size: 18px; font-weight: 700; color: #006c49; line-height: 1.2; }
+  .sb-header p { font-size: 11px; color: #5d5f5f; }
+
+  .sb-nav { padding: 8px 0; }
+
+  /* Flat items */
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 24px;
+    font-size: 14px; color: #3c4a42; cursor: pointer; border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: #eef6ee; }
+  .nav-item.active { background: rgba(16,185,129,0.08); color: #006c49; font-weight: 600; border-left-color: #006c49; }
+  .nav-item .ico { font-size: 20px; }
+  .nav-item .badge {
+    margin-left: auto; background: #eef6ee; color: #006c49; font-size: 10px;
+    font-weight: 600; padding: 2px 8px; border-radius: 10px;
+  }
+  .nav-item.muted { color: #9ca3af; }
+  .nav-item.muted .ico { color: #d1d5db; }
+
+  .divider { height: 1px; background: #e5e7eb; margin: 4px 24px; }
+  .section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #6c7a71; padding: 12px 24px 4px;
+  }
+
+  /* Tree */
+  .tree-parent {
+    display: flex; align-items: center; gap: 10px; padding: 10px 24px;
+    font-size: 14px; color: #3c4a42; cursor: pointer; border-left: 3px solid transparent;
+  }
+  .tree-parent:hover { background: #eef6ee; }
+  .tree-parent .folder-ico { font-size: 20px; }
+  .tree-parent .expand { margin-left: auto; font-size: 18px; color: #6c7a71; transition: transform 0.2s; }
+  .tree-parent.open .expand { transform: rotate(90deg); }
+  .tree-parent.muted { color: #9ca3af; }
+  .tree-parent.muted .folder-ico { color: #d1d5db; }
+  .tree-parent.muted .expand { color: #d1d5db; }
+
+  .tree-children { padding-left: 28px; }
+  .tree-child {
+    display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 20px;
+    font-size: 13px; color: #3c4a42; position: relative;
+  }
+  .tree-child::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:#e5e7eb; }
+  .tree-child::after { content:''; position:absolute; left:0; top:50%; width:12px; height:1px; background:#e5e7eb; }
+  .tree-child .sub-ico { font-size: 16px; color: #6c7a71; }
+  .tree-child .count { margin-left: auto; font-size: 11px; color: #6c7a71; }
+  .tree-child.active { background: rgba(16,185,129,0.06); color: #006c49; font-weight: 500; }
+  .tree-child.active .sub-ico { color: #006c49; }
+
+  .tree-leaf { padding-left: 24px; }
+  .leaf-item {
+    display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 16px;
+    font-size: 12px; color: #5d5f5f; position: relative;
+  }
+  .leaf-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:#e5e7eb; }
+  .leaf-item::after { content:''; position:absolute; left:0; top:50%; width:10px; height:1px; background:#e5e7eb; }
+  .leaf-item .dot { width:6px; height:6px; border-radius:50%; background:#bbcabf; flex-shrink:0; }
+  .leaf-item.active { color: #006c49; font-weight: 500; }
+  .leaf-item.active .dot { background: #006c49; }
+
+  /* Empty state */
+  .empty-hint {
+    display: flex; align-items: center; gap: 8px; padding: 6px 24px 6px 52px;
+    font-size: 11px; color: #9ca3af; font-style: italic;
+  }
+  .empty-hint .material-symbols-outlined { font-size: 14px; }
+
+  /* Footer */
+  .sb-footer {
+    padding: 16px 24px; border-top: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sb-footer .avatar {
+    width: 36px; height: 36px; border-radius: 50%; background: #e3eae3;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; color: #006c49; flex-shrink: 0;
+  }
+  .sb-footer .name { font-size: 13px; font-weight: 600; color: #161d19; }
+  .sb-footer .role { font-size: 10px; color: #5d5f5f; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<div class="grid">
+
+<!-- ========== 1. BEFORE: CURRENT FLAT ========== -->
+<div class="concept">
+  <div class="concept-label label-before">❌ Before — Flat (Current)</div>
+  <div class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">eco</span></div>
+      <div><h1>PolicyEval</h1><p>Environmental Policy</p></div>
+    </div>
+    <div class="sb-nav">
+      <div class="nav-item active"><span class="ico material-symbols-outlined">dashboard</span>Dashboard</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">calendar_today</span>Period</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">assignment</span>Questionnaire</div>
+      <div class="nav-item muted"><span class="ico material-symbols-outlined">category</span>Aspect</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">widgets</span>Component</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">view_list</span>Sub Component</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">analytics</span>Indicator</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">quiz</span>Question</div>
+      <div class="divider"></div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">groups</span>Respondent</div>
+      <div class="nav-item muted"><span class="ico material-symbols-outlined">psychology</span>Recommendation</div>
+      <div class="nav-item muted"><span class="ico material-symbols-outlined">assessment</span>Reports</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">settings</span>Settings</div>
+    </div>
+    <div class="sb-footer">
+      <div class="avatar">AU</div>
+      <div><div class="name">Admin Utama</div><div class="role">Super Administrator</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 2. AFTER — EMPTY STATE ========== -->
+<div class="concept">
+  <div class="concept-label label-after-empty">⚠️ After — Hierarki (Belum Ada Data)</div>
+  <div class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">eco</span></div>
+      <div><h1>PolicyEval</h1><p>Environmental Policy</p></div>
+    </div>
+    <div class="sb-nav">
+      <div class="nav-item active"><span class="ico material-symbols-outlined">dashboard</span>Dashboard</div>
+
+      <div class="section-label">Master Data</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">calendar_today</span>Period<span class="badge">0</span></div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">assignment</span>Kuesioner<span class="badge">0</span></div>
+
+      <!-- Tree: empty, no data -->
+      <div class="tree-parent muted">
+        <span class="folder-ico material-symbols-outlined">folder_off</span>
+        <span>Belum ada komponen</span>
+      </div>
+      <div class="empty-hint">
+        <span class="material-symbols-outlined">info</span>
+        Buat periode & kuesioner terlebih dahulu
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Pelaksanaan</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">groups</span>Responden<span class="badge">0</span></div>
+      <div class="nav-item muted"><span class="ico material-symbols-outlined">monitoring</span>Monitoring</div>
+
+      <div class="divider"></div>
+      <div class="section-label">Lainnya</div>
+      <div class="nav-item muted"><span class="ico material-symbols-outlined">assessment</span>Reports</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">settings</span>Settings</div>
+    </div>
+    <div class="sb-footer">
+      <div class="avatar">AU</div>
+      <div><div class="name">Admin Utama</div><div class="role">Super Administrator</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 3. AFTER — HAS DATA ========== -->
+<div class="concept">
+  <div class="concept-label label-after-data">✅ After — Hierarki (Ada Data)</div>
+  <div class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">eco</span></div>
+      <div><h1>PolicyEval</h1><p>Environmental Policy</p></div>
+    </div>
+    <div class="sb-nav">
+      <div class="nav-item active"><span class="ico material-symbols-outlined">dashboard</span>Dashboard</div>
+
+      <div class="section-label">Master Data</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">calendar_today</span>Period<span class="badge">3</span></div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">assignment</span>Kuesioner<span class="badge">5</span></div>
+
+      <!-- Tree: has data -->
+      <div class="tree-parent open">
+        <span class="folder-ico material-symbols-outlined" style="color:#006c49">folder_open</span>
+        <span style="font-weight:500;color:#006c49">Kebijakan Struktural</span>
+        <span class="expand material-symbols-outlined">chevron_right</span>
+      </div>
+      <div class="tree-children">
+        <div class="tree-child active">
+          <span class="sub-ico material-symbols-outlined">subdirectory_arrow_right</span>
+          <span>Kerangka Organisasi</span>
+          <span class="count">3 indikator</span>
+        </div>
+        <div class="tree-leaf">
+          <div class="leaf-item active"><div class="dot"></div><span>Keberadaan organisasi</span></div>
+          <div class="leaf-item"><div class="dot"></div><span>Struktur & pembagian tugas</span></div>
+          <div class="leaf-item"><div class="dot"></div><span>Mekanisme koordinasi</span></div>
+        </div>
+        <div class="tree-child">
+          <span class="sub-ico material-symbols-outlined">subdirectory_arrow_right</span>
+          <span>Infrastruktur Pendukung</span>
+          <span class="count">2 indikator</span>
+        </div>
+      </div>
+
+      <div class="tree-parent">
+        <span class="folder-ico material-symbols-outlined" style="color:#6c7a71">folder</span>
+        <span>Program Utama</span>
+        <span class="expand material-symbols-outlined">chevron_right</span>
+      </div>
+
+      <div class="tree-parent">
+        <span class="folder-ico material-symbols-outlined" style="color:#6c7a71">folder</span>
+        <span>Operasional</span>
+        <span class="expand material-symbols-outlined">chevron_right</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Pelaksanaan</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">groups</span>Responden<span class="badge">150</span></div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">monitoring</span>Monitoring<span class="badge">12</span></div>
+
+      <div class="divider"></div>
+      <div class="section-label">Lainnya</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">assessment</span>Reports</div>
+      <div class="nav-item"><span class="ico material-symbols-outlined">settings</span>Settings</div>
+    </div>
+    <div class="sb-footer">
+      <div class="avatar">AU</div>
+      <div><div class="name">Admin Utama</div><div class="role">Super Administrator</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

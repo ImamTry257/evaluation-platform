@@ -8,17 +8,28 @@ const authStore = useAuthStore()
 
 const isActive = (path: string) => route.path === path
 
-const navItems = [
-  { path: '/admin', icon: 'dashboard', label: 'Dashboard' },
-  { path: '/admin/period', icon: 'calendar_today', label: 'Period' },
-  { path: '/admin/questionnaire', icon: 'description', label: 'Questionnaire' },
-  { path: '/admin/component', icon: 'widgets', label: 'Component' },
-  { path: '/admin/sub-component', icon: 'view_list', label: 'Sub Component' },
-  { path: '/admin/indicator', icon: 'analytics', label: 'Indicator' },
-  { path: '/admin/question', icon: 'quiz', label: 'Question' },
-  { path: '/admin/respondent', icon: 'group', label: 'Respondent' },
-  { path: '/admin/recommendation', icon: 'check_circle', label: 'Recommendation' },
-  { path: '/admin/reports', icon: 'assessment', label: 'Reports' },
+const navGroups = [
+  {
+    label: 'Master Data',
+    items: [
+      { path: '/admin/period', icon: 'calendar_today', label: 'Period', badge: null },
+      { path: '/admin/instrument', icon: 'assignment', label: 'Instrument Penelitian', badge: null },
+    ],
+  },
+  {
+    label: 'Pelaksanaan',
+    items: [
+      { path: '/admin/respondent', icon: 'groups', label: 'Responden', badge: null },
+      { path: '/admin/monitoring', icon: 'monitoring', label: 'Monitoring', badge: null },
+    ],
+  },
+  {
+    label: 'Lainnya',
+    items: [
+      { path: '/admin/reports', icon: 'assessment', label: 'Reports', badge: null },
+      { path: '/admin/settings', icon: 'settings', label: 'Settings', badge: null },
+    ],
+  },
 ]
 </script>
 
@@ -26,33 +37,71 @@ const navItems = [
   <div class="min-h-screen bg-background text-on-surface">
     <!-- Sidebar Navigation -->
     <aside class="fixed left-0 top-0 h-full w-[280px] z-50 py-6 bg-surface-container-low border-r border-outline-variant/30 hidden md:flex flex-col">
-      <div class="px-6 mb-10">
-        <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">PolicyEval</h1>
-        <p class="font-label-caps text-label-caps text-on-surface-variant mt-1">Environmental Admin</p>
+      <!-- Logo -->
+      <div class="px-6 mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
+          </div>
+          <div>
+            <h1 class="font-headline-lg text-headline-lg font-bold text-primary leading-none">PolicyEval</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Environmental Policy</p>
+          </div>
+        </div>
       </div>
-      <nav class="flex-1 space-y-1">
+
+      <!-- Navigation -->
+      <nav class="flex-1 space-y-1 px-4">
+        <!-- Dashboard -->
         <RouterLink
-          v-for="item in navItems"
-          :key="item.path"
-          :to="item.path"
-          class="flex items-center gap-3 py-3 px-6 transition-all"
-          :class="isActive(item.path)
-            ? 'bg-surface-container-high text-primary font-bold border-l-4 border-primary'
+          to="/admin"
+          class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all"
+          :class="isActive('/admin')
+            ? 'bg-primary-container/10 text-primary font-semibold border-l-4 border-primary'
             : 'text-on-surface-variant hover:bg-surface-container'"
         >
-          <span class="material-symbols-outlined">{{ item.icon }}</span>
-          <span class="font-body-base text-body-base">{{ item.label }}</span>
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="font-body-base text-body-base">Dashboard</span>
         </RouterLink>
-        <div class="pt-4 mt-4 border-t border-outline-variant/20">
+
+        <!-- Navigation Groups -->
+        <template v-for="group in navGroups" :key="group.label">
+          <div class="pt-4 pb-1 px-2">
+            <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">{{ group.label }}</p>
+          </div>
           <RouterLink
-            to="/admin/settings"
-            class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all"
+            v-for="item in group.items"
+            :key="item.path"
+            :to="item.path"
+            class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all"
+            :class="isActive(item.path)
+              ? 'bg-primary-container/10 text-primary font-semibold border-l-4 border-primary'
+              : 'text-on-surface-variant hover:bg-surface-container'"
           >
-            <span class="material-symbols-outlined">settings</span>
-            <span class="font-body-base text-body-base">Settings</span>
+            <span class="material-symbols-outlined">{{ item.icon }}</span>
+            <span class="font-body-base text-body-base">{{ item.label }}</span>
+            <span
+              v-if="item.badge"
+              class="ml-auto bg-primary-container/20 text-on-primary-container text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            >
+              {{ item.badge }}
+            </span>
           </RouterLink>
-        </div>
+        </template>
       </nav>
+
+      <!-- User Profile -->
+      <div class="mt-auto px-6 pt-4 border-t border-outline-variant/30">
+        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container transition-colors cursor-pointer">
+          <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">account_circle</span>
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <p class="font-body-sm text-body-sm font-semibold truncate">Admin Utama</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Administrator</p>
+          </div>
+        </div>
+      </div>
     </aside>
 
     <!-- Main Content Area -->
@@ -78,15 +127,10 @@ const navItems = [
           </button>
           <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
           <div class="flex items-center gap-3">
-            <div class="text-right hidden sm:block">
-              <p class="font-label-caps text-label-caps text-on-surface">Admin Utama</p>
-              <p class="text-[10px] text-on-surface-variant">System Master</p>
+            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
             </div>
-            <img
-              class="w-9 h-9 rounded-full object-cover border border-outline-variant"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV8jU_Ux58fsdINUMIhuKW5V3ln1Uz0Fw_LkVZes6LeNGcTFMOnTIT7ZneDBiQCoa03PuMLjvMqtMHrmzdZXColUokzKOL_IK8BIeEnqsnamtdDj5phLlrsDXs__FyWqtDoJfbjzu9uizJt8waHmyxwxq35kl8bZ1f1Lt_77RqR7hrY69CYiy5KCFd-AJ6ZozSyZ0Zz4Uv25U8Vhe8KbPGh6BkP2wpDu7QDmtU5Vlukirpi5s7EQ"
-              alt="Admin avatar"
-            />
+            <span class="font-body-sm text-body-sm font-medium hidden sm:block">Budi Santoso</span>
           </div>
         </div>
       </header>

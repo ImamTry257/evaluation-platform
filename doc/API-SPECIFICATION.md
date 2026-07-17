@@ -709,49 +709,68 @@ Mulai sesi evaluasi baru.
 **Response (201 Created):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Evaluation started successfully",
   "data": {
-    "sessionId": 1,
-    "questionnaireId": 1,
-    "status": "inProgress",
-    "startedAt": "2024-01-01T10:00:00Z",
-    "remainingSeconds": 3600,
-    "questions": [
-      {
-        "id": 1,
-        "indicatorId": 1,
-        "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
-        "orderNumber": 1
-      }
-    ]
+    "session": {
+      "id": 1,
+      "userId": 10,
+      "questionnaireId": 1,
+      "status": "inProgress",
+      "startedAt": "2024-01-01T10:00:00Z",
+      "remainingSeconds": 3600
+    },
+    "questionnaire": {
+      "id": 1,
+      "title": "Kuesioner Evaluasi 2026",
+      "components": [...]
+    },
+    "scoringLevels": [
+      {"id": 1, "title": "Sangat Tidak Sesuai", "value": "1", "is_active": 1, "description": "Sangat Tidak Sesuai"},
+      {"id": 2, "title": "Tidak Sesuai", "value": "2", "is_active": 1, "description": "Tidak Sesuai"},
+      {"id": 3, "title": "Kurang Sesuai", "value": "3", "is_active": 1, "description": "Kurang Sesuai"},
+      {"id": 4, "title": "Netral", "value": "4", "is_active": 1, "description": "Netral"},
+      {"id": 5, "title": "Cukup Sesuai", "value": "5", "is_active": 1, "description": "Cukup Sesuai"},
+      {"id": 6, "title": "Sesuai", "value": "6", "is_active": 1, "description": "Sesuai"},
+      {"id": 7, "title": "Sangat Sesuai", "value": "7", "is_active": 1, "description": "Sangat Sesuai"}
+    ],
+    "isResumed": false
   }
 }
 ```
+
+> **Note:** `scoringLevels` berisi data master level skor (Likert 1-7) yang digunakan responden untuk menjawab setiap pertanyaan. Frontend menggunakan data ini untuk menampilkan radio button/opsi jawaban dengan label yang benar.
 
 ---
 
 ## Resume Evaluation
 Resume sesi evaluasi yang belum selesai.
 
-**Endpoint:** `GET /evaluations/{sessionId}/resume`
+**Endpoint:** `GET /evaluations/{sessionId}`
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Session retrieved successfully",
   "data": {
-    "sessionId": 1,
-    "status": "inProgress",
-    "remainingSeconds": 2800,
-    "answeredCount": 15,
-    "totalQuestions": 50,
-    "questions": [
-      {
-        "id": 1,
-        "question": "Apakah ada bukti tertulis?",
-        "answeredAt": "2024-01-01T10:05:00Z",
-        "score": 5
-      }
+    "session": {
+      "id": 1,
+      "userId": 10,
+      "questionnaireId": 1,
+      "status": "inProgress",
+      "startedAt": "2024-01-01T10:00:00Z",
+      "remainingSeconds": 2800,
+      "answers": [...]
+    },
+    "scoringLevels": [
+      {"id": 1, "title": "Sangat Tidak Sesuai", "value": "1", "is_active": 1},
+      {"id": 2, "title": "Tidak Sesuai", "value": "2", "is_active": 1},
+      {"id": 3, "title": "Kurang Sesuai", "value": "3", "is_active": 1},
+      {"id": 4, "title": "Netral", "value": "4", "is_active": 1},
+      {"id": 5, "title": "Cukup Sesuai", "value": "5", "is_active": 1},
+      {"id": 6, "title": "Sesuai", "value": "6", "is_active": 1},
+      {"id": 7, "title": "Sangat Sesuai", "value": "7", "is_active": 1}
     ]
   }
 }

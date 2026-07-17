@@ -11,6 +11,7 @@ use App\Models\ResponseSession;
 use App\Models\EvaluationResult;
 use App\Models\EvaluationResultDetail;
 use App\Models\Recommendation;
+use App\Models\ScoringLevel;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +54,7 @@ class EvaluasiController extends Controller
             return $this->successResponse([
                 'session' => $existingSession->load(['answers.question.indicator']),
                 'questionnaire' => $questionnaire,
+                'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
                 'isResumed' => true,
             ], 'Session resumed successfully');
         }
@@ -69,6 +71,7 @@ class EvaluasiController extends Controller
         return $this->successResponse([
             'session' => $session->load(['answers.question.indicator']),
             'questionnaire' => $questionnaire,
+            'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
             'isResumed' => false,
         ], 'Evaluation started successfully', 201);
     }
@@ -89,6 +92,7 @@ class EvaluasiController extends Controller
 
         return $this->successResponse([
             'session' => $session,
+            'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
         ], 'Session retrieved successfully');
     }
 

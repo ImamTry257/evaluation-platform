@@ -10,6 +10,10 @@ use App\Http\Controllers\Api\Admin\IndikatorController;
 use App\Http\Controllers\Api\Admin\PertanyaanController;
 use App\Http\Controllers\Api\Admin\RespondenController;
 use App\Http\Controllers\Api\Admin\RekomendasiController;
+use App\Http\Controllers\Api\Admin\ScoringLevelController;
+use App\Http\Controllers\Api\Admin\SettingController;
+use App\Http\Controllers\Api\Admin\MonitoringController;
+use App\Http\Controllers\Api\Admin\ReportController;
 use App\Http\Controllers\Api\Respondent\EvaluasiController;
 
 Route::prefix('v1')->group(function () {
@@ -31,6 +35,7 @@ Route::prefix('v1')->group(function () {
 
             // Questionnaires
             Route::apiResource('questionnaires', KuesionerController::class);
+            Route::post('/questionnaires/{id}/publish', [KuesionerController::class, 'publish']);
 
             // Components
             Route::apiResource('components', KomponenController::class);
@@ -49,6 +54,22 @@ Route::prefix('v1')->group(function () {
 
             // Recommendations
             Route::apiResource('recommendations', RekomendasiController::class);
+
+            // Scoring Levels
+            Route::apiResource('scoring-levels', ScoringLevelController::class);
+
+            // Settings
+            Route::get('/settings', [SettingController::class, 'index']);
+            Route::put('/settings', [SettingController::class, 'update']);
+
+            // Monitoring
+            Route::get('/sessions', [MonitoringController::class, 'index']);
+            Route::get('/sessions/{sessionId}', [MonitoringController::class, 'show']);
+
+            // Reports
+            Route::get('/reports', [ReportController::class, 'index']);
+            Route::post('/reports/export-excel', [ReportController::class, 'exportExcel']);
+            Route::post('/reports/export-pdf', [ReportController::class, 'exportPdf']);
         });
 
         // Respondent routes

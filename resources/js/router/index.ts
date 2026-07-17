@@ -56,8 +56,8 @@ const router = createRouter({
           component: () => import('@/views/admin/MasterComponentView.vue'),
         },
         {
-          path: 'questionnaire',
-          name: 'admin-questionnaire',
+          path: 'instrument',
+          name: 'admin-instrument',
           component: () => import('@/views/admin/MasterQuestionnairesView.vue'),
         },
         {

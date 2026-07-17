@@ -561,11 +561,45 @@ Periode Evaluasi
 4. Auto save dilakukan secara periodik
 5. Resume hanya jika sesi masih "inProgress" dan waktu tersisa
 
-### 5.4 Aturan Kuesioner
+### 5.4 Aturan Kuesioner / Instrument Penelitian
 1. Kuesioner harus dalam status "draft" untuk diedit
 2. Setelah dipublish, kuesioner tidak dapat diubah
 3. Kuesioner yang sudah ada respons tidak dapat dihapus
 4. Struktur hierarki: Komponen → Sub Komponen → Indikator → Pertanyaan
+
+### 5.5 Aturan Status Data
+
+**Instrument Penelitian:**
+- Draft: Admin bebas menambah, mengedit, menghapus, dan mengubah status semua data
+- Published: Semua perubahan struktur terkunci (tidak dapat tambah/edit/hapus Component s.d. Pertanyaan)
+- Closed: Semua perubahan struktur terkunci, status data tidak berubah
+
+**Component s.d. Pertanyaan:**
+- Status: Active / Inactive
+- Mengubah status Component ke Inactive tidak cascade ke Sub Component, Indicator, atau Pertanyaan
+
+### 5.6 Aturan Navigasi Admin
+
+**Sidebar Navigation:**
+- Sidebar hanya menampilkan: Period, Instrument Penelitian, Responden, Monitoring, Reports, Settings
+- Component, Sub Component, Indicator, Pertanyaan diakses melalui **drill-down table** dari halaman Instrument Penelitian
+
+**Drill-Down Flow:**
+- Instrument Penelitian → Component → Sub Component → Indikator → Pertanyaan
+- Setiap halaman drill-down memiliki tombol "← Kembali" dan breadcrumbs klikable
+- Breadcrumbs berfungsi sebagai navigasi utama antar instrument
+
+**Context-Aware:**
+- Component table selalu menampilkan data dari instrument yang dipilih
+- Untuk melihat component instrument lain, klik "Instrument Penelitian" di breadcrumb → pilih instrument lain
+- Tidak ada dropdown filter untuk menghindari misleading navigation
+
+**Aksi CRUD:**
+- More menu (⋮) dengan hover dropdown untuk akses cepat ke View, Edit, Toggle Status, Hapus
+- Link drill-down terpisah dari more menu
+- Component tidak dapat di-set Inactive ketika Instrument Penelitian status Published
+- Item inactive tetap muncul di tabel dengan grey-out dan badge "Inactive"
+- Semua operasi hapus menggunakan soft delete (deleted_at timestamp)
 
 ### 5.5 Aturan Periode
 1. Hanya satu periode yang aktif pada satu waktu

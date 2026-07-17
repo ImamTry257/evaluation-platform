@@ -18,13 +18,15 @@ Module ini menangani:
 
 ## 2. API Endpoints
 
-| Method | Endpoint | Deskripsi | Auth |
-|--------|----------|-----------|------|
-| GET | `/admin/sessions` | List all sessions | Admin |
-| GET | `/admin/sessions/{sessionId}` | Get session detail | Admin |
-| GET | `/admin/reports` | Get report summary | Admin |
-| POST | `/admin/reports/export-excel` | Export Excel | Admin |
-| POST | `/admin/reports/export-pdf` | Export PDF | Admin |
+| Method | Endpoint | Deskripsi | Auth | Status |
+|--------|----------|-----------|------|--------|
+| GET | `/admin/sessions` | List all sessions | Admin | ✅ Implemented |
+| GET | `/admin/sessions/{sessionId}` | Get session detail | Admin | ✅ Implemented |
+| GET | `/admin/reports` | Get report summary | Admin | ❌ Belum |
+| POST | `/admin/reports/export-excel` | Export Excel | Admin | ❌ Belum |
+| POST | `/admin/reports/export-pdf` | Export PDF | Admin | ❌ Belum |
+
+> **Note:** Monitoring endpoints sudah diimplementasi di `MonitoringController`. Reports endpoints masih dalam pengembangan.
 
 ---
 

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Navigation Concept — Final (ADR-003)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Poppins', sans-serif; background: #f4fbf4; padding: 32px; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: #6c7a71; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .row { display: flex; gap: 20px; justify-content: center; flex-wrap: nowrap; margin-bottom: 24px; }
+  .row.scroll { overflow-x: auto; padding-bottom: 8px; }
+
+  .card { flex-shrink: 0; }
+  .card-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 8px; padding-bottom: 5px; border-bottom: 2px solid; line-height: 1.4;
+  }
+  .lbl-green { color: #006c49; border-color: #10b981; }
+  .lbl-blue { color: #2563eb; border-color: #bfdbfe; }
+  .lbl-purple { color: #7c3aed; border-color: #ddd6fe; }
+  .lbl-amber { color: #d97706; border-color: #fef3c7; }
+  .lbl-teal { color: #0d9488; border-color: #ccfbf1; }
+  .lbl-pink { color: #db2777; border-color: #fbcfe8; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 250px; background: #fff; border-radius: 12px; border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05); overflow: hidden; height: fit-content;
+  }
+  .sb-header {
+    padding: 14px 18px; border-bottom: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sb-logo {
+    width: 30px; height: 30px; background: #006c49; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .sb-logo span { color: #fff; font-size: 16px; }
+  .sb-header h1 { font-size: 15px; font-weight: 700; color: #006c49; line-height: 1.2; }
+  .sb-header p { font-size: 9px; color: #5d5f5f; }
+  .sb-nav { padding: 6px 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 18px;
+    font-size: 12px; color: #3c4a42; cursor: pointer; border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: #eef6ee; }
+  .nav-item.active { background: rgba(16,185,129,0.08); color: #006c49; font-weight: 600; border-left-color: #006c49; }
+  .nav-item .ico { font-size: 17px; }
+  .nav-item .badge {
+    margin-left: auto; background: #eef6ee; color: #006c49; font-size: 9px;
+    font-weight: 600; padding: 2px 6px; border-radius: 8px;
+  }
+  .divider { height: 1px; background: #e5e7eb; margin: 4px 18px; }
+  .section-label {
+    font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #6c7a71; padding: 8px 18px 3px;
+  }
+  .sb-footer {
+    padding: 10px 18px; border-top: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sb-footer .avatar {
+    width: 28px; height: 28px; border-radius: 50%; background: #e3eae3;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: #006c49; flex-shrink: 0;
+  }
+  .sb-footer .name { font-size: 11px; font-weight: 600; color: #161d19; }
+  .sb-footer .role { font-size: 8px; color: #5d5f5f; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ===== PANEL ===== */
+  .panel {
+    width: 500px; background: #fff; border-radius: 12px; border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05); overflow: hidden; height: fit-content;
+  }
+  .panel-header {
+    padding: 12px 18px; border-bottom: 1px solid #e5e7eb;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-header .left { display: flex; align-items: center; gap: 8px; }
+  .panel-header h2 { font-size: 14px; font-weight: 600; color: #161d19; }
+  .panel-header .btn {
+    font-size: 11px; font-weight: 600; background: #006c49; color: #fff;
+    padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer;
+  }
+
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 3px; font-size: 11px;
+    font-weight: 500; color: #006c49; cursor: pointer; padding: 3px 6px;
+    border-radius: 5px; border: none; background: none;
+  }
+  .back-btn:hover { background: #eef6ee; }
+  .back-btn .material-symbols-outlined { font-size: 16px; }
+
+  .breadcrumb {
+    padding: 8px 18px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;
+    font-size: 10px; color: #6c7a71; display: flex; align-items: center; gap: 5px;
+  }
+  .breadcrumb a {
+    color: #006c49; text-decoration: none; font-weight: 500;
+    padding: 2px 5px; border-radius: 3px;
+  }
+  .breadcrumb a:hover { background: #eef6ee; text-decoration: underline; }
+  .breadcrumb .sep { color: #bbcabf; }
+  .breadcrumb .current { color: #161d19; font-weight: 600; padding: 2px 5px; }
+
+  .filter-bar {
+    padding: 8px 18px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .filter-bar label { font-size: 11px; color: #6c7a71; font-weight: 500; }
+  .filter-select {
+    font-size: 11px; font-weight: 500; color: #161d19; padding: 4px 28px 4px 10px;
+    border: 1px solid #e5e7eb; border-radius: 6px; background: #fff;
+    appearance: none; cursor: pointer; outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24'%3E%3Cpath fill='%236c7a71' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 8px center;
+  }
+  .filter-select:hover { border-color: #10b981; }
+  .filter-count { font-size: 10px; color: #6c7a71; margin-left: auto; }
+
+  /* Table */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table thead { background: #f9fafb; }
+  .data-table th {
+    padding: 8px 14px; text-align: left; font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em; color: #6c7a71;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .data-table td {
+    padding: 10px 14px; font-size: 12px; color: #161d19;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .data-table tr:hover td { background: #f9fdf9; }
+  .data-table tr.inactive td { opacity: 0.5; }
+  .data-table .row-name { font-weight: 500; }
+  .data-table .row-sub { font-size: 10px; color: #6c7a71; }
+  .count-badge {
+    background: #eef6ee; color: #006c49; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 6px;
+  }
+  .action-link {
+    font-size: 11px; font-weight: 600; color: #006c49; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 3px 6px; border-radius: 5px;
+  }
+  .action-link:hover { background: #eef6ee; }
+  .action-link .material-symbols-outlined { font-size: 14px; }
+
+  /* More menu */
+  .more-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px; border: none; background: none;
+    cursor: pointer; color: #6c7a71; font-size: 18px;
+  }
+  .more-btn:hover { background: #eef6ee; color: #006c49; }
+
+  /* More menu dropdown */
+  .more-wrapper { position: relative; display: inline-block; }
+  .more-dropdown {
+    display: none; position: absolute; right: 0; top: 100%; margin-top: 4px;
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 50; min-width: 160px;
+    overflow: hidden;
+  }
+  .more-wrapper:hover .more-dropdown { display: block; }
+  .more-dropdown-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    font-size: 12px; color: #3c4a42; cursor: pointer; transition: background 0.15s;
+  }
+  .more-dropdown-item:hover { background: #f9fdf9; }
+  .more-dropdown-item .material-symbols-outlined { font-size: 16px; }
+  .more-dropdown-item.danger { color: #ba1a1a; }
+  .more-dropdown-item.danger:hover { background: #fef2f2; }
+  .more-dropdown-divider { height: 1px; background: #e5e7eb; margin: 2px 0; }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 7px;
+    border-radius: 6px; text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .status-draft { background: #fef9c3; color: #ca8a04; }
+  .status-published { background: #dcfce7; color: #16a34a; }
+  .status-closed { background: #e5e7eb; color: #6b7280; }
+  .status-active { background: #dcfce7; color: #16a34a; }
+  .status-inactive { background: #f3f4f6; color: #9ca3af; }
+
+  .instrument-tag {
+    display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 7px;
+    border-radius: 6px; background: #e0f2fe; color: #0369a1;
+  }
+
+  .panel-footer {
+    padding: 8px 18px; border-top: 1px solid #e5e7eb;
+    font-size: 10px; color: #6c7a71; display: flex; justify-content: space-between;
+  }
+
+  .flow-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: #006c49; font-size: 24px; flex-shrink: 0; padding: 0 2px;
+  }
+
+  .weight-bar { display: flex; align-items: center; gap: 5px; }
+  .weight-bar .bar { width: 40px; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden; }
+  .weight-bar .bar-fill { height: 100%; background: #006c49; border-radius: 2px; }
+  .weight-bar .val { font-size: 10px; color: #6c7a71; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- ===== SECTION 1: SIDEBAR + INSTRUMENT ===== -->
+<div class="section-title">① Navigasi: Sidebar → Instrument Penelitian</div>
+<div class="row">
+
+  <!-- SIDEBAR -->
+  <div class="card">
+    <div class="card-label lbl-green">Sidebar (Final)</div>
+    <div class="sidebar">
+      <div class="sb-header">
+        <div class="sb-logo"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">eco</span></div>
+        <div><h1>PolicyEval</h1><p>Environmental Policy</p></div>
+      </div>
+      <div class="sb-nav">
+        <div class="nav-item active"><span class="ico material-symbols-outlined">dashboard</span>Dashboard</div>
+        <div class="section-label">Master Data</div>
+        <div class="nav-item"><span class="ico material-symbols-outlined">calendar_today</span>Period<span class="badge">3</span></div>
+        <div class="nav-item"><span class="ico material-symbols-outlined">assignment</span>Instrument Penelitian<span class="badge">5</span></div>
+        <div class="divider"></div>
+        <div class="section-label">Pelaksanaan</div>
+        <div class="nav-item"><span class="ico material-symbols-outlined">groups</span>Responden<span class="badge">150</span></div>
+        <div class="nav-item"><span class="ico material-symbols-outlined">monitoring</span>Monitoring<span class="badge">12</span></div>
+        <div class="divider"></div>
+        <div class="section-label">Lainnya</div>
+        <div class="nav-item"><span class="ico material-symbols-outlined">assessment</span>Reports</div>
+        <div class="nav-item"><span class="ico material-symbols-outlined">settings</span>Settings</div>
+      </div>
+      <div class="sb-footer">
+        <div class="avatar">AU</div>
+        <div><div class="name">Admin Utama</div><div class="role">Super Admin</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTRUMENT TABLE -->
+  <div class="card">
+    <div class="card-label lbl-blue">📄 Instrument Penelitian</div>
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Instrument Penelitian</h2>
+        <button class="btn">+ Tambah</button>
+      </div>
+      <div class="breadcrumb"><span class="current">Instrument Penelitian</span></div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nama Instrument</th>
+            <th>Tahun</th>
+            <th>Status</th>
+            <th>Component</th>
+            <th style="text-align:center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="row-name">Kuesioner Kebijakan Lingkungan</div>
+              <div class="row-sub">Evaluasi kebijakan hijau sekolah</div>
+            </td>
+            <td><span class="instrument-tag">2024</span></td>
+            <td><span class="status-badge status-published">Published</span></td>
+            <td><span class="count-badge">5</span></td>
+            <td style="text-align:center">
+              <span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Component</span>
+              <div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="row-name">Evaluasi Pengelolaan Sampah</div>
+              <div class="row-sub">Instrument tahun sebelumnya</div>
+            </td>
+            <td><span class="instrument-tag">2022</span></td>
+            <td><span class="status-badge status-published">Published</span></td>
+            <td><span class="count-badge">4</span></td>
+            <td style="text-align:center">
+              <span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Component</span>
+              <div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="row-name">Instrumen Adiwiyata Mandiri</div>
+              <div class="row-sub">Draft instrument baru</div>
+            </td>
+            <td><span class="instrument-tag">2025</span></td>
+            <td><span class="status-badge status-draft">Draft</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center">
+              <span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Component</span>
+              <div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="panel-footer"><span>Menampilkan 3 dari 3 instrument</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: COMPONENT TABLE ===== -->
+<div class="section-title">② Component Table — dengan Dropdown Filter & Status</div>
+<div class="row">
+
+  <!-- COMPONENT TABLE -->
+  <div class="card">
+    <div class="card-label lbl-pink">📄 Component (context: Instrument 2024)</div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="left">
+          <button class="back-btn"><span class="material-symbols-outlined">arrow_back</span>Kembali</button>
+          <h2>Component</h2>
+        </div>
+        <button class="btn">+ Tambah</button>
+      </div>
+      <div class="breadcrumb">
+        <a href="#">Instrument Penelitian</a><span class="sep">›</span>
+        <a href="#">Kuesioner 2024</a><span class="sep">›</span>
+        <span class="current">Components</span>
+      </div>
+      <div style="padding:8px 18px;background:#eef6ee;border-bottom:1px solid #d1fae5;font-size:10px;color:#006c49;display:flex;align-items:center;gap:6px;">
+        <span class="material-symbols-outlined" style="font-size:14px;">info</span>
+        <span>Menampilkan component dari <strong>Instrument 2024</strong>. Klik breadcrumb untuk ganti instrument.</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nama Komponen</th>
+            <th>Instrument</th>
+            <th>Status</th>
+            <th>Sub</th>
+            <th style="text-align:center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="row-name">Kebijakan Struktural</div>
+              <div class="row-sub">Aspek kebijakan organisasi</div>
+            </td>
+            <td><span class="instrument-tag">2024</span></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center">
+              <span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Sub</span>
+              <div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="row-name">Program Utama</div>
+              <div class="row-sub">Program lingkungan sekolah</div>
+            </td>
+            <td><span class="instrument-tag">2024</span></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">2</span></td>
+            <td style="text-align:center">
+              <span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Sub</span>
+              <div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div>
+            </td>
+          </tr>
+
+
+        </tbody>
+      </table>
+      <div class="panel-footer"><span>Menampilkan 5 dari 5 komponen (Instrument 2024)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: DRILL-DOWN FLOW ===== -->
+<div class="section-title">③ Drill-Down: Sub Component → Indikator → Pertanyaan</div>
+<div class="row scroll">
+
+  <!-- SUB COMPONENT -->
+  <div class="card">
+    <div class="card-label lbl-purple">Sub Component</div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="left">
+          <button class="back-btn"><span class="material-symbols-outlined">arrow_back</span>Kembali</button>
+          <h2>Sub Component</h2>
+        </div>
+        <button class="btn">+ Tambah</button>
+      </div>
+      <div class="breadcrumb">
+        <a href="#">Instrument 2024</a><span class="sep">›</span>
+        <a href="#">Kebijakan Struktural</a><span class="sep">›</span>
+        <span class="current">Sub Components</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Nama Sub Komponen</th><th>Status</th><th>Indikator</th><th style="text-align:center">Aksi</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="row-name">Kerangka Organisasi</div><div class="row-sub">Struktur organisasi lingkungan</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center"><span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Indikator</span><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="row-name">Infrastruktur Pendukung</div><div class="row-sub">Fasilitas dan anggaran</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center"><span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Indikator</span><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+          <tr class="inactive">
+            <td><div class="row-name">Regulasi Internal</div><div class="row-sub">Kebijakan dan SOP</div></td>
+            <td><span class="status-badge status-inactive">Inactive</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center"><span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Indikator</span><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="panel-footer"><span>Menampilkan 3 dari 3 sub komponen</span></div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">→</div>
+
+  <!-- INDICATOR -->
+  <div class="card">
+    <div class="card-label lbl-amber">Indikator</div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="left">
+          <button class="back-btn"><span class="material-symbols-outlined">arrow_back</span>Kembali</button>
+          <h2>Indikator</h2>
+        </div>
+        <button class="btn">+ Tambah</button>
+      </div>
+      <div class="breadcrumb">
+        <a href="#">Kebijakan 2024</a><span class="sep">›</span>
+        <a href="#">Kebijakan Struktural</a><span class="sep">›</span>
+        <a href="#">Kerangka Organisasi</a><span class="sep">›</span>
+        <span class="current">Indikator</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Nama Indikator</th><th>Status</th><th>Pertanyaan</th><th style="text-align:center">Aksi</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="row-name">Keberadaan Organisasi</div><div class="row-sub">Ada/tidaknya organisasi lingkungan</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center"><span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Pertanyaan</span><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="row-name">Struktur & Pembagian Tugas</div><div class="row-sub">Pembagian wewenang anggota</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center"><span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Pertanyaan</span><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="row-name">Mekanisme Koordinasi</div><div class="row-sub">Alur komunikasi antar anggota</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="count-badge">3</span></td>
+            <td style="text-align:center"><span class="action-link"><span class="material-symbols-outlined">subdirectory_arrow_right</span>Lihat Pertanyaan</span><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="panel-footer"><span>Menampilkan 3 dari 3 indikator</span></div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">→</div>
+
+  <!-- PERTANYAAN -->
+  <div class="card">
+    <div class="card-label lbl-teal">Pertanyaan (Leaf Level)</div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="left">
+          <button class="back-btn"><span class="material-symbols-outlined">arrow_back</span>Kembali</button>
+          <h2>Pertanyaan</h2>
+        </div>
+        <button class="btn">+ Tambah</button>
+      </div>
+      <div class="breadcrumb">
+        <a href="#">Kebijakan 2024</a><span class="sep">›</span>
+        <a href="#">Kebijakan Struktural</a><span class="sep">›</span>
+        <a href="#">Kerangka Organisasi</a><span class="sep">›</span>
+        <a href="#">Keberadaan Organisasi</a><span class="sep">›</span>
+        <span class="current">Pertanyaan</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th style="width:24px">#</th><th>Pertanyaan</th><th>Status</th><th>Bobot</th><th style="text-align:center">Aksi</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#6c7a71;font-weight:600">1</td>
+            <td><div class="row-name">Apakah sekolah memiliki unit/organisasi khusus yang menangani program lingkungan?</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:100%"></div></div><span class="val">1.0</span></div></td>
+            <td style="text-align:center"><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+          <tr>
+            <td style="color:#6c7a71;font-weight:600">2</td>
+            <td><div class="row-name">Seberapa aktif organisasi tersebut dalam menjalankan program lingkungan?</div></td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:100%"></div></div><span class="val">1.0</span></div></td>
+            <td style="text-align:center"><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+          <tr class="inactive">
+            <td style="color:#6c7a71;font-weight:600">3</td>
+            <td><div class="row-name">Apakah anggota organisasi mendapat pelatihan terkait pengelolaan lingkungan?</div></td>
+            <td><span class="status-badge status-inactive">Inactive</span></td>
+            <td><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:80%"></div></div><span class="val">0.8</span></div></td>
+            <td style="text-align:center"><div class="more-wrapper"><button class="more-btn">⋮</button><div class="more-dropdown"><div class="more-dropdown-item"><span class="material-symbols-outlined">visibility</span>View Detail</div><div class="more-dropdown-item"><span class="material-symbols-outlined">edit</span>Edit</div><div class="more-dropdown-item"><span class="material-symbols-outlined">toggle_on</span>Toggle Status</div><div class="more-dropdown-divider"></div><div class="more-dropdown-item danger"><span class="material-symbols-outlined">delete</span>Hapus</div></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="panel-footer">
+        <span>Menampilkan 3 dari 3 pertanyaan</span>
+        <span style="color:#006c49;font-weight:600">Skor Likert 1-7</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: MORE MENU ===== -->
+<div class="section-title">④ More Menu (⋮) — Aksi per Tabel</div>
+<div class="row">
+  <div class="card">
+    <div class="card-label lbl-green">More Menu Options</div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.05);width:280px;">
+      <div style="font-size:12px;font-weight:600;color:#161d19;margin-bottom:12px;">Aksi tersedia di setiap tabel:</div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:4px;background:#f9fdf9;">
+        <span class="material-symbols-outlined" style="font-size:18px;color:#006c49;">visibility</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#161d19;">View Detail</div>
+          <div style="font-size:10px;color:#6c7a71;">Lihat data lengkap</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:4px;">
+        <span class="material-symbols-outlined" style="font-size:18px;color:#6c7a71;">edit</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#161d19;">Edit</div>
+          <div style="font-size:10px;color:#6c7a71;">Ubah data</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:4px;">
+        <span class="material-symbols-outlined" style="font-size:18px;color:#6c7a71;">toggle_on</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#161d19;">Toggle Status</div>
+          <div style="font-size:10px;color:#6c7a71;">Active / Inactive</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:#fef2f2;">
+        <span class="material-symbols-outlined" style="font-size:18px;color:#ba1a1a;">delete</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#ba1a1a;">Hapus (Soft Delete)</div>
+          <div style="font-size:10px;color:#6c7a71;">Data tidak hilang permanen</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e5e7eb;">
+        <div style="font-size:10px;color:#6c7a71;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Link Drill-Down (terpisah dari more menu)</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;background:#eef6ee;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:#006c49;">subdirectory_arrow_right</span>
+          <div style="font-size:11px;font-weight:600;color:#006c49;">Lihat Sub Component / Indikator / Pertanyaan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

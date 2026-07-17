@@ -698,4 +698,38 @@ All Eloquent models updated to use explicit foreign keys (camelCase) matching mi
 
 ---
 
+### v1.14.0 - Sidebar Navigation & Hierarchy Flow (17 Juli 2026)
+
+**Keputusan:** [ADR-003-Sidebar-Navigation-Hierarchy-Flow](../ADR/ADR-003-Sidebar-Navigation-Hierarchy-Flow.md)
+
+**Perubahan Sidebar:**
+- Component, Sub Component, Indicator, Pertanyaan **dihapus dari sidebar**
+- Sidebar hanya menampilkan: Period, Instrument Penelitian, Responden, Monitoring, Reports, Settings
+- Component s.d. Pertanyaan diakses melalui **drill-down table** dari halaman Instrument Penelitian
+
+**Navigasi:**
+- Breadcrumbs klikable di setiap level drill-down, berfungsi sebagai navigasi utama antar instrument
+- Tombol "← Kembali" di header setiap halaman drill-down
+- Info bar di halaman Component menampilkan instrument yang sedang dilihat
+- More menu (⋮) dengan hover dropdown untuk akses cepat ke View, Edit, Toggle Status, Hapus
+
+**Aturan Status:**
+| Level | Status |
+|-------|--------|
+| Instrument Penelitian | Draft / Published / Closed |
+| Component s.d. Pertanyaan | Active / Inactive |
+
+**Constraints:**
+- Published & Closed = terkunci total (tidak bisa edit/tambah/hapus)
+- Inactive tidak cascade ke child
+- Soft delete untuk semua operasi hapus
+
+**File Terkait:**
+- `doc/ADR/ADR-003-Sidebar-Navigation-Hierarchy-Flow.md`
+- `doc/sidebar-flow-concept.html`
+- `doc/BUSINESS-PROCESS.md` (updated)
+- `doc/SYSTEM_ARCHITECTURE.md` (updated)
+
+---
+
 **Catatan:** Dokumentasi ini akan diperbarui seiring progress development. Update dilakukan setelah setiap phase selesai.

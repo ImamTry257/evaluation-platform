@@ -31,6 +31,8 @@ Evaluation Engine adalah core module yang menangani:
 | POST | `/evaluations/{sessionId}/submit` | Submit evaluasi | Respondent |
 | GET | `/evaluations/{sessionId}/results` | Get hasil | Respondent |
 
+> **Note:** Endpoint `start` dan `show` mengembalikan `scoringLevels` (data master level skor 1-7) yang digunakan frontend untuk menampilkan opsi jawaban dengan label yang benar.
+
 ---
 
 ## 3. Evaluation Flow

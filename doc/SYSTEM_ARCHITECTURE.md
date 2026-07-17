@@ -75,20 +75,21 @@ Administrator bertanggung jawab terhadap pengelolaan seluruh data sistem.
 
 ### Hak Akses
 
-- Login (Email + Password)
+- Login (Username + Password)
 - Dashboard
-- Master Periode
-- Master Kuesioner
-- Master Komponen
-- Master Sub Komponen
-- Master Indikator
-- Master Pertanyaan
+- Master Period
+- Master Instrument Penelitian
+- Master Component (drill-down dari Instrument Penelitian)
+  - Sub Component (drill-down dari Component)
+  - Indikator (drill-down dari Sub Component)
+  - Pertanyaan (drill-down dari Indikator)
 - Master Responden
-- Master Rekomendasi
 - Monitoring Hasil
 - Export Excel
 - Export PDF
 - Pengaturan Sistem
+
+**Catatan:** Component, Sub Component, Indikator, dan Pertanyaan tidak memiliki menu sidebar terpisah. Diakses melalui drill-down table dari halaman Instrument Penelitian.
 
 ---
 
@@ -335,17 +336,18 @@ MySQL
 ## Admin
 
 - Dashboard
-- Master Periode
-- Master Kuesioner
-- Master Komponen
-- Master Sub Komponen
-- Master Indikator
-- Master Pertanyaan
+- Master Period
+- Master Instrument Penelitian
+- Master Component (drill-down dari Instrument)
+  - Sub Component (drill-down dari Component)
+  - Indikator (drill-down dari Sub Component)
+  - Pertanyaan (drill-down dari Indikator)
 - Master Responden
-- Master Rekomendasi
 - Monitoring
 - Laporan
 - Setting
+
+**Catatan:** Component s.d. Pertanyaan diakses melalui drill-down table, bukan menu sidebar terpisah.
 
 ---
 
@@ -420,31 +422,31 @@ Dashboard
 
 ↓
 
-Buat Periode
+Buat Period
 
 ↓
 
-Buat Kuesioner
+Buat Instrument Penelitian (status: Draft)
 
 ↓
 
-Tambah Komponen
+Tambah Component (drill-down dari tabel Instrument)
 
 ↓
 
-Tambah Sub Komponen
+Tambah Sub Component (drill-down dari tabel Component)
 
 ↓
 
-Tambah Indikator
+Tambah Indikator (drill-down dari tabel Sub Component)
 
 ↓
 
-Tambah Pertanyaan
+Tambah Pertanyaan (drill-down dari tabel Indikator)
 
 ↓
 
-Publish
+Publish Instrument (status: Published, semua data terkunci)
 
 ↓
 
@@ -458,6 +460,14 @@ Melihat Hasil
 
 Export Excel / PDF
 ```
+
+**Catatan Navigasi:**
+- Sidebar hanya menampilkan: Period, Instrument Penelitian, Responden, Monitoring, Reports, Settings
+- Component s.d. Pertanyaan diakses melalui **drill-down table**
+- Setiap halaman drill-down memiliki tombol "← Kembali" dan breadcrumbs klikable
+- Breadcrumbs berfungsi sebagai navigasi utama antar instrument (klik "Instrument Penelitian" untuk ganti instrument)
+- Info bar di halaman Component menampilkan instrument yang sedang dilihat
+- More menu (⋮) dengan hover dropdown untuk akses cepat ke View, Edit, Toggle Status, Hapus
 
 ---
 

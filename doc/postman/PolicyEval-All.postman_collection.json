@@ -604,6 +604,47 @@
               "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire deleted successfully\",\n  \"data\": null\n}"
             }
           ]
+        },
+        {
+          "name": "Publish Questionnaire",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/questionnaires/2/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "questionnaires", "2", "publish"]
+            }
+          },
+          "response": [
+            {
+              "name": "Publish Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Questionnaire published successfully\",\n  \"data\": {\n    \"id\": 2,\n    \"evaluationPeriodId\": 2,\n    \"title\": \"Draft Kuesioner\",\n    \"description\": null,\n    \"durationMinutes\": 60,\n    \"status\": \"published\",\n    \"created_at\": \"2026-07-15T17:47:28.000000Z\",\n    \"updated_at\": \"2026-07-17T09:22:46.000000Z\",\n    \"evaluation_period\": {\n      \"id\": 2,\n      \"name\": \"Periode 2026 Ganjil\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Publish Already Published",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Questionnaire is already published\",\n  \"errors\": []\n}"
+            },
+            {
+              "name": "Publish No Questions",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Cannot publish questionnaire without questions\",\n  \"errors\": {\n    \"message\": \"Questionnaire must have at least one component with questions\"\n  }\n}"
+            },
+            {
+              "name": "Publish Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Questionnaire not found\",\n  \"errors\": []\n}"
+            }
+          ]
         }
       ]
     },
@@ -1554,13 +1595,13 @@
               "name": "Start Success",
               "code": 201,
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"status\": true,\n  \"message\": \"Evaluation started successfully\",\n  \"data\": {\n    \"session\": {\n      \"id\": 5,\n      \"userId\": 7,\n      \"questionnaireId\": 5,\n      \"status\": \"inProgress\",\n      \"startedAt\": \"2026-07-16T00:00:00.000000Z\",\n      \"remainingSeconds\": 1800,\n      \"answers\": []\n    },\n    \"questionnaire\": {\n      \"id\": 5,\n      \"title\": \"Angket Evaluasi Lingkungan\",\n      \"durationMinutes\": 30,\n      \"components\": [...]\n    },\n    \"isResumed\": false\n  }\n}"
+              "body": "{\n  \"status\": true,\n  \"message\": \"Evaluation started successfully\",\n  \"data\": {\n    \"session\": {\n      \"id\": 5,\n      \"userId\": 7,\n      \"questionnaireId\": 5,\n      \"status\": \"inProgress\",\n      \"startedAt\": \"2026-07-16T00:00:00.000000Z\",\n      \"remainingSeconds\": 1800,\n      \"answers\": []\n    },\n    \"questionnaire\": {\n      \"id\": 5,\n      \"title\": \"Angket Evaluasi Lingkungan\",\n      \"durationMinutes\": 30,\n      \"components\": [...]\n    },\n    \"scoringLevels\": [\n      {\"id\": 1, \"title\": \"Sangat Tidak Sesuai\", \"value\": \"1\", \"is_active\": 1, \"description\": \"Sangat Tidak Sesuai\"},\n      {\"id\": 2, \"title\": \"Tidak Sesuai\", \"value\": \"2\", \"is_active\": 1, \"description\": \"Tidak Sesuai\"},\n      {\"id\": 3, \"title\": \"Kurang Sesuai\", \"value\": \"3\", \"is_active\": 1, \"description\": \"Kurang Sesuai\"},\n      {\"id\": 4, \"title\": \"Netral\", \"value\": \"4\", \"is_active\": 1, \"description\": \"Netral\"},\n      {\"id\": 5, \"title\": \"Cukup Sesuai\", \"value\": \"5\", \"is_active\": 1, \"description\": \"Cukup Sesuai\"},\n      {\"id\": 6, \"title\": \"Sesuai\", \"value\": \"6\", \"is_active\": 1, \"description\": \"Sesuai\"},\n      {\"id\": 7, \"title\": \"Sangat Sesuai\", \"value\": \"7\", \"is_active\": 1, \"description\": \"Sangat Sesuai\"}\n    ],\n    \"isResumed\": false\n  }\n}"
             },
             {
               "name": "Resume Success",
               "code": 200,
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"status\": true,\n  \"message\": \"Session resumed successfully\",\n  \"data\": {\n    \"session\": { ... },\n    \"questionnaire\": { ... },\n    \"isResumed\": true\n  }\n}"
+              "body": "{\n  \"status\": true,\n  \"message\": \"Session resumed successfully\",\n  \"data\": {\n    \"session\": { ... },\n    \"questionnaire\": { ... },\n    \"scoringLevels\": [\n      {\"id\": 1, \"title\": \"Sangat Tidak Sesuai\", \"value\": \"1\", \"is_active\": 1},\n      {\"id\": 2, \"title\": \"Tidak Sesuai\", \"value\": \"2\", \"is_active\": 1},\n      {\"id\": 3, \"title\": \"Kurang Sesuai\", \"value\": \"3\", \"is_active\": 1},\n      {\"id\": 4, \"title\": \"Netral\", \"value\": \"4\", \"is_active\": 1},\n      {\"id\": 5, \"title\": \"Cukup Sesuai\", \"value\": \"5\", \"is_active\": 1},\n      {\"id\": 6, \"title\": \"Sesuai\", \"value\": \"6\", \"is_active\": 1},\n      {\"id\": 7, \"title\": \"Sangat Sesuai\", \"value\": \"7\", \"is_active\": 1}\n    ],\n    \"isResumed\": true\n  }\n}"
             }
           ]
         },
@@ -1583,7 +1624,7 @@
               "name": "Get Success",
               "code": 200,
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"status\": true,\n  \"message\": \"Session retrieved successfully\",\n  \"data\": { \"session\": { ... } }\n}"
+              "body": "{\n  \"status\": true,\n  \"message\": \"Session retrieved successfully\",\n  \"data\": {\n    \"session\": { ... },\n    \"scoringLevels\": [\n      {\"id\": 1, \"title\": \"Sangat Tidak Sesuai\", \"value\": \"1\", \"is_active\": 1},\n      {\"id\": 2, \"title\": \"Tidak Sesuai\", \"value\": \"2\", \"is_active\": 1},\n      {\"id\": 3, \"title\": \"Kurang Sesuai\", \"value\": \"3\", \"is_active\": 1},\n      {\"id\": 4, \"title\": \"Netral\", \"value\": \"4\", \"is_active\": 1},\n      {\"id\": 5, \"title\": \"Cukup Sesuai\", \"value\": \"5\", \"is_active\": 1},\n      {\"id\": 6, \"title\": \"Sesuai\", \"value\": \"6\", \"is_active\": 1},\n      {\"id\": 7, \"title\": \"Sangat Sesuai\", \"value\": \"7\", \"is_active\": 1}\n    ]\n  }\n}"
             }
           ]
         },
@@ -1711,6 +1752,407 @@
               "code": 200,
               "_postman_previewlanguage": "json",
               "body": "{\n  \"status\": true,\n  \"message\": \"Results retrieved successfully\",\n  \"data\": {\n    \"result\": {\n      \"id\": 1,\n      \"overallScore\": \"5.00\",\n      \"overallPercentage\": \"71.43\",\n      \"overallCategory\": \"C\",\n      \"details\": [...]\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Scoring Level",
+      "description": "CRUD endpoints untuk Level Skor (Admin only). 7 level dari Sangat Tidak Sesuai (1) sampai Sangat Sesuai (7).",
+      "item": [
+        {
+          "name": "List Scoring Levels",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/scoring-levels?page=1&limit=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "scoring-levels"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "15" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "is_active", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Scoring levels retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"title\": \"Sangat Tidak Sesuai\",\n        \"value\": \"1\",\n        \"is_active\": 1,\n        \"description\": \"Sangat Tidak Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 2,\n        \"title\": \"Tidak Sesuai\",\n        \"value\": \"2\",\n        \"is_active\": 1,\n        \"description\": \"Tidak Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 3,\n        \"title\": \"Kurang Sesuai\",\n        \"value\": \"3\",\n        \"is_active\": 1,\n        \"description\": \"Kurang Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 4,\n        \"title\": \"Netral\",\n        \"value\": \"4\",\n        \"is_active\": 1,\n        \"description\": \"Netral\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 5,\n        \"title\": \"Cukup Sesuai\",\n        \"value\": \"5\",\n        \"is_active\": 1,\n        \"description\": \"Cukup Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 6,\n        \"title\": \"Sesuai\",\n        \"value\": \"6\",\n        \"is_active\": 1,\n        \"description\": \"Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 7,\n        \"title\": \"Sangat Sesuai\",\n        \"value\": \"7\",\n        \"is_active\": 1,\n        \"description\": \"Sangat Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 15,\n      \"total\": 7\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Scoring Level",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sangat Baik\",\n  \"value\": 8,\n  \"is_active\": true,\n  \"description\": \"Sangat Baik\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/scoring-levels",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "scoring-levels"]
+            }
+          },
+          "response": [
+            {
+              "name": "Create Success",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level created successfully\",\n  \"data\": {\n    \"id\": 8,\n    \"title\": \"Sangat Baik\",\n    \"value\": 8,\n    \"is_active\": 1,\n    \"description\": \"Sangat Baik\",\n    \"created_at\": \"2026-07-17T07:00:00.000000Z\",\n    \"updated_at\": \"2026-07-17T07:00:00.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error - Duplicate Value",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"value\": [\"The value has already been taken.\"]\n  }\n}"
+            },
+            {
+              "name": "Create Validation Error - Max Value",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"value\": [\"The value field must not be greater than 7.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Scoring Level",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/scoring-levels/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "scoring-levels", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Sangat Tidak Sesuai\",\n    \"value\": \"1\",\n    \"is_active\": 1,\n    \"description\": \"Sangat Tidak Sesuai\",\n    \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n    \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Scoring level not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Scoring Level",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sangat Tidak Sesuai (Updated)\",\n  \"value\": 1,\n  \"is_active\": true,\n  \"description\": \"Sangat Tidak Sesuai - Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/scoring-levels/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "scoring-levels", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Sangat Tidak Sesuai (Updated)\",\n    \"value\": 1,\n    \"is_active\": 1,\n    \"description\": \"Sangat Tidak Sesuai - Updated\",\n    \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n    \"updated_at\": \"2026-07-17T07:00:00.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "Update Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Scoring level not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Scoring Level",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/scoring-levels/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "scoring-levels", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Delete Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Scoring level not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Settings",
+      "description": "Settings endpoints untuk konfigurasi platform (Admin only)",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "settings"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Settings Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Settings retrieved successfully\",\n  \"data\": {\n    \"activePeriodId\": null,\n    \"evaluationDuration\": 60,\n    \"autoSaveInterval\": 30,\n    \"allowResume\": true,\n    \"timeoutMinutes\": 5\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activePeriodId\": null,\n  \"evaluationDuration\": 60,\n  \"autoSaveInterval\": 30,\n  \"allowResume\": true,\n  \"timeoutMinutes\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "settings"]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Settings Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Settings retrieved successfully\",\n  \"data\": {\n    \"activePeriodId\": null,\n    \"evaluationDuration\": 60,\n    \"autoSaveInterval\": 30,\n    \"allowResume\": true,\n    \"timeoutMinutes\": 5\n  }\n}"
+            },
+            {
+              "name": "Update Settings Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"evaluationDuration\": [\"The evaluation duration field is required.\"],\n    \"autoSaveInterval\": [\"The auto save interval field is required.\"],\n    \"allowResume\": [\"The allow resume field is required.\"],\n    \"timeoutMinutes\": [\"The timeout minutes field is required.\"]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Monitoring",
+      "description": "Monitoring endpoints untuk melacak sesi evaluasi responden (Admin only)",
+      "item": [
+        {
+          "name": "List Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sessions?page=1&limit=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sessions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "15" },
+                { "key": "questionnaireId", "value": "", "disabled": true },
+                { "key": "status", "value": "", "disabled": true },
+                { "key": "search", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Sessions retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 7,\n        \"user\": {\n          \"id\": 7,\n          \"name\": \"Budi Santoso\",\n          \"email\": \"budi@sekolah.id\"\n        },\n        \"questionnaire\": {\n          \"id\": 5,\n          \"title\": \"Angket Evaluasi Lingkungan\"\n        },\n        \"status\": \"submitted\",\n        \"startedAt\": \"2026-07-17T01:59:55.000000Z\",\n        \"submittedAt\": \"2026-07-17T01:59:55.000000Z\",\n        \"remainingSeconds\": 1800,\n        \"answeredCount\": 3,\n        \"totalQuestions\": 3,\n        \"progress\": 100,\n        \"result\": {\n          \"overallScore\": \"5.00\",\n          \"overallPercentage\": \"71.43\",\n          \"overallCategory\": \"C\"\n        },\n        \"createdAt\": \"2026-07-17T01:59:55.000000Z\"\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 15,\n      \"total\": 1\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Session Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sessions/7",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "sessions", "7"]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Session retrieved successfully\",\n  \"data\": {\n    \"session\": {\n      \"id\": 7,\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"Budi Santoso\",\n        \"email\": \"budi@sekolah.id\"\n      },\n      \"questionnaire\": { ... },\n      \"status\": \"submitted\",\n      \"startedAt\": \"2026-07-17T01:59:55.000000Z\",\n      \"submittedAt\": \"2026-07-17T01:59:55.000000Z\",\n      \"remainingSeconds\": 1800,\n      \"answeredCount\": 3,\n      \"totalQuestions\": 3,\n      \"progress\": 100,\n      \"answers\": [...],\n      \"result\": {\n        \"id\": 4,\n        \"overallScore\": \"5.00\",\n        \"overallPercentage\": \"71.43\",\n        \"overallCategory\": \"C\",\n        \"conclusion\": \"Sedang - Kebijakan lingkungan sekolah masih perlu perbaikan\",\n        \"details\": [...]\n      }\n    }\n  }\n}"
+            },
+            {
+              "name": "Get Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Session not found\",\n  \"errors\": []\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - Reports",
+      "description": "Reports endpoints untuk export laporan evaluasi (Admin only)",
+      "item": [
+        {
+          "name": "Get Report Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "reports"],
+              "query": [
+                { "key": "questionnaireId", "value": "", "disabled": true },
+                { "key": "periodId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Report Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Report retrieved successfully\",\n  \"data\": {\n    \"summary\": {\n      \"totalSessions\": 1,\n      \"totalRespondents\": 1,\n      \"averageScore\": 5,\n      \"averagePercentage\": 71.43\n    },\n    \"categoryDistribution\": {\n      \"A\": {\"label\": \"Sangat Tinggi (86-100%)\", \"count\": 0, \"percentage\": 0},\n      \"B\": {\"label\": \"Tinggi (71-85%)\", \"count\": 0, \"percentage\": 0},\n      \"C\": {\"label\": \"Sedang (56-70%)\", \"count\": 1, \"percentage\": 100},\n      \"D\": {\"label\": \"Rendah (41-55%)\", \"count\": 0, \"percentage\": 0},\n      \"E\": {\"label\": \"Sangat Rendah (0-40%)\", \"count\": 0, \"percentage\": 0}\n    },\n    \"recentSubmissions\": [\n      {\n        \"id\": 7,\n        \"respondent\": \"Budi Santoso\",\n        \"questionnaire\": \"Angket Evaluasi Lingkungan\",\n        \"score\": \"5.00\",\n        \"percentage\": \"71.43\",\n        \"category\": \"C\",\n        \"submittedAt\": \"2026-07-17T01:59:55.000000Z\"\n      }\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Export Excel",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports/export-excel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "reports", "export-excel"],
+              "query": [
+                { "key": "questionnaireId", "value": "", "disabled": true },
+                { "key": "periodId", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Export Success (CSV)",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "body": "No,\"Nama Responden\",Email,Kuesioner,Skor,Persentase,Kategori,Kesimpulan,\"Tanggal Submit\"\n1,\"Budi Santoso\",budi@sekolah.id,\"Angket Evaluasi Lingkungan\",5.00,71.43%,C,\"Sedang - Kebijakan lingkungan sekolah masih perlu perbaikan\",\"17/07/2026 01:59\""
+            },
+            {
+              "name": "Export No Data",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"No data to export\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Export PDF",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": 7\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reports/export-pdf",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "reports", "export-pdf"]
+            }
+          },
+          "response": [
+            {
+              "name": "Export PDF Success (HTML)",
+              "code": 200,
+              "_postman_previewlanguage": "html",
+              "body": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Laporan Evaluasi - Budi Santoso</title>\n    ...\n</head>\n<body>\n    <div class=\"header\">\n        <h1>Laporan Evaluasi Kebijakan Lingkungan Sekolah</h1>\n    </div>\n    ...\n</body>\n</html>"
+            },
+            {
+              "name": "Export PDF Validation Error",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"sessionId\": [\"The session id field is required.\"]\n  }\n}"
+            },
+            {
+              "name": "Export PDF Not Found",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"sessionId\": [\"The selected session id is invalid.\"]\n  }\n}"
             }
           ]
         }
