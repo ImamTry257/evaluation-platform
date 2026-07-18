@@ -599,7 +599,7 @@ Periode Evaluasi
 - Link drill-down terpisah dari more menu
 - Component tidak dapat di-set Inactive ketika Instrument Penelitian status Published
 - Item inactive tetap muncul di tabel dengan grey-out dan badge "Inactive"
-- Semua operasi hapus menggunakan soft delete (deleted_at timestamp)
+- Semua operasi hapus menggunakan soft delete (deleted_at timestamp). Record tidak benar-benar dihapus dari database.
 
 ### 5.5 Aturan Periode
 1. Hanya satu periode yang aktif pada satu waktu

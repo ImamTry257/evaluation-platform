@@ -62,6 +62,7 @@ erDiagram
         enum status "draft, published, closed"
         timestamp createdAt
         timestamp updatedAt
+        timestamp deletedAt
     }
 
     COMPONENTS {

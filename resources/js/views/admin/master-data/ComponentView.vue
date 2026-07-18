@@ -1,9 +1,26 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import { useComponent } from '@/hooks/useComponent'
 
-// State
-const searchQuery = ref('')
+const route = useRoute()
+const questionnaireId = Number(route.params.questionnaireId)
+
+const {
+  components,
+  loading,
+  error,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  searchQuery,
+  fetchComponents,
+  createComponent,
+  updateComponent,
+  deleteComponent,
+  onSearch,
+} = useComponent(questionnaireId)
 
 // Modal state
 const showFormModal = ref(false)
@@ -18,70 +35,10 @@ const form = ref({
   description: '',
 })
 
-// Mock data - Components (context: Instrument 2024)
-const components = ref([
-  {
-    id: 1,
-    name: 'Kebijakan Struktural',
-    description: 'Aspek kebijakan organisasi',
-    status: 'active',
-    totalSubComponents: 3,
-    totalIndicators: 9,
-    totalQuestions: 27,
-  },
-  {
-    id: 2,
-    name: 'Program Utama',
-    description: 'Program lingkungan sekolah',
-    status: 'active',
-    totalSubComponents: 2,
-    totalIndicators: 6,
-    totalQuestions: 18,
-  },
-  {
-    id: 3,
-    name: 'Operasional',
-    description: 'Pelaksanaan harian',
-    status: 'active',
-    totalSubComponents: 2,
-    totalIndicators: 5,
-    totalQuestions: 15,
-  },
-  {
-    id: 4,
-    name: 'Edukasi',
-    description: 'Pendidikan lingkungan',
-    status: 'inactive',
-    totalSubComponents: 2,
-    totalIndicators: 4,
-    totalQuestions: 12,
-  },
-  {
-    id: 5,
-    name: 'Evaluasi & Inovasi',
-    description: 'Monitoring dan peningkatan',
-    status: 'active',
-    totalSubComponents: 2,
-    totalIndicators: 5,
-    totalQuestions: 15,
-  },
-])
-
-// Computed
-const filteredComponents = computed(() => {
-  return components.value.filter((c) =>
-    c.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
+// Load data on mount
+onMounted(() => {
+  fetchComponents()
 })
-
-// Methods
-function getStatusBadge(status: string) {
-  return status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
-}
-
-function getStatusLabel(status: string) {
-  return status === 'active' ? 'Active' : 'Inactive'
-}
 
 // Form handlers
 function openAddModal() {
@@ -94,33 +51,29 @@ function openAddModal() {
 function openEditModal(c: any) {
   formMode.value = 'edit'
   editingId.value = c.id
-  form.value = { name: c.name, description: c.description }
+  form.value = { name: c.name, description: c.description || '' }
   showFormModal.value = true
 }
 
-function handleFormSubmit() {
-  if (formMode.value === 'add') {
-    const newId = Math.max(...components.value.map((c) => c.id)) + 1
-    components.value.unshift({
-      id: newId,
-      name: form.value.name,
-      description: form.value.description,
-      status: 'active',
-      totalSubComponents: 0,
-      totalIndicators: 0,
-      totalQuestions: 0,
-    })
-  } else {
-    const idx = components.value.findIndex((c) => c.id === editingId.value)
-    if (idx !== -1) {
-      components.value[idx] = {
-        ...components.value[idx],
+async function handleFormSubmit() {
+  try {
+    if (formMode.value === 'add') {
+      await createComponent({
+        questionnaireId,
         name: form.value.name,
         description: form.value.description,
-      }
+      })
+    } else if (editingId.value) {
+      await updateComponent(editingId.value, {
+        questionnaireId,
+        name: form.value.name,
+        description: form.value.description,
+      })
     }
+    showFormModal.value = false
+  } catch (err) {
+    // Error handled by hook
   }
-  showFormModal.value = false
 }
 
 // Delete handlers
@@ -129,10 +82,12 @@ function openDeleteModal(c: any) {
   showDeleteModal.value = true
 }
 
-function confirmDelete() {
-  components.value = components.value.filter((c) => c.id !== deletingComponent.value.id)
-  showDeleteModal.value = false
-  deletingComponent.value = null
+async function confirmDelete() {
+  if (deletingComponent.value) {
+    await deleteComponent(deletingComponent.value.id)
+    showDeleteModal.value = false
+    deletingComponent.value = null
+  }
 }
 
 // More menu actions
@@ -144,13 +99,6 @@ function handleEdit(item: any) {
   openEditModal(item)
 }
 
-function handleToggleStatus(item: any) {
-  const idx = components.value.findIndex((c) => c.id === item.id)
-  if (idx !== -1) {
-    components.value[idx].status = item.status === 'active' ? 'inactive' : 'active'
-  }
-}
-
 function handleDelete(item: any) {
   openDeleteModal(item)
 }
@@ -160,20 +108,16 @@ function handleDelete(item: any) {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <a href="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</a>
-      <span class="text-outline">›</span>
-      <a href="/admin/instrument/1" class="text-primary font-medium hover:underline cursor-pointer">Kuesioner Kebijakan Lingkungan</a>
+      <RouterLink to="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Components</span>
     </nav>
 
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
-      <div class="flex items-center gap-4">
-        <a href="/admin/instrument" class="back-btn flex items-center gap-1 text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
-          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-          Kembali ke Instrument
-        </a>
+      <div>
+        <!-- <h1 class="font-title-lg text-title-lg text-on-surface">Master Components</h1>
+        <p class="text-body-sm text-on-surface-variant mt-1">Kelola komponen untuk kuesioner ini</p> -->
       </div>
       <button
         @click="openAddModal"
@@ -184,6 +128,11 @@ function handleDelete(item: any) {
       </button>
     </div>
 
+    <!-- Error Alert -->
+    <div v-if="error" class="mb-4 p-4 bg-error/10 border border-error/20 rounded-xl text-error text-body-sm">
+      {{ error }}
+    </div>
+
     <!-- Action Bar & Content Card -->
     <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay">
       <!-- Action Bar -->
@@ -191,7 +140,8 @@ function handleDelete(item: any) {
         <div class="relative">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
           <input
-            v-model="searchQuery"
+            :value="searchQuery"
+            @input="onSearch(($event.target as HTMLInputElement).value)"
             class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama komponen..."
             type="text"
@@ -199,84 +149,86 @@ function handleDelete(item: any) {
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="p-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
+        <p class="text-body-sm text-on-surface-variant mt-3">Memuat data...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="components.length === 0" class="p-12 text-center">
+        <span class="material-symbols-outlined text-4xl text-outline">folder_open</span>
+        <p class="text-body-base text-on-surface-variant mt-3">Belum ada komponen</p>
+        <button @click="openAddModal" class="mt-4 text-primary text-body-sm font-semibold hover:underline">
+          + Tambah Komponen Pertama
+        </button>
+      </div>
+
       <!-- Data Table -->
-      <div class="overflow-x-auto data-table-scroll">
+      <div v-else class="overflow-x-auto data-table-scroll">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-surface-container-low/50">
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">No</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Nama Komponen</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Sub Comp</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Indikator</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Pertanyaan</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Deskripsi</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Urutan</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-outline-variant/10">
             <tr
-              v-for="c in filteredComponents"
+              v-for="(c, index) in components"
               :key="c.id"
               class="table-row hover:bg-surface-container-low/30 transition-colors"
-              :class="{ 'opacity-50': c.status === 'inactive' }"
             >
+              <td class="px-6 py-5 text-body-sm text-on-surface-variant">
+                {{ (currentPage - 1) * perPage + index + 1 }}
+              </td>
               <td class="px-6 py-5">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                     <span class="material-symbols-outlined text-[20px]">widgets</span>
                   </div>
-                  <div>
-                    <span class="font-body-base font-semibold text-on-surface">{{ c.name }}</span>
-                    <p class="text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">{{ c.description }}</p>
-                  </div>
+                  <span class="font-body-base font-semibold text-on-surface">{{ c.name }}</span>
                 </div>
               </td>
               <td class="px-6 py-5">
-                <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(c.status)">
-                  {{ getStatusLabel(c.status) }}
-                </span>
+                <span class="text-body-sm text-on-surface-variant">{{ c.description || '-' }}</span>
               </td>
               <td class="px-6 py-5">
-                <span class="count-badge">{{ c.totalSubComponents }}</span>
+                <span class="count-badge">{{ c.orderNumber }}</span>
               </td>
               <td class="px-6 py-5">
-                <span class="count-badge">{{ c.totalIndicators }}</span>
-              </td>
-              <td class="px-6 py-5">
-                <span class="count-badge">{{ c.totalQuestions }}</span>
-              </td>
-              <td class="px-6 py-5">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex items-center justify-center gap-1">
                   <RouterLink
                     :to="`/admin/component/${c.id}/sub-component`"
-                    class="action-link text-xs font-semibold text-primary cursor-pointer hover:bg-primary/10 px-2 py-1 rounded-lg"
+                    class="action-btn"
+                    title="Lihat Sub-Komponen"
                   >
-                    <span class="material-symbols-outlined text-[14px]">subdirectory_arrow_right</span>
-                    Lihat Sub
+                    <span class="material-symbols-outlined text-[18px]">subdirectory_arrow_right</span>
                   </RouterLink>
-                  <div class="relative more-wrapper">
-                    <button class="more-btn w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                      <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                    </button>
-                    <div class="more-dropdown">
-                      <div class="more-dropdown-item" @click="handleView(c)">
-                        <span class="material-symbols-outlined">visibility</span>
-                        View Detail
-                      </div>
-                      <div class="more-dropdown-item" @click="handleEdit(c)">
-                        <span class="material-symbols-outlined">edit</span>
-                        Edit
-                      </div>
-                      <div class="more-dropdown-item" @click="handleToggleStatus(c)">
-                        <span class="material-symbols-outlined">toggle_on</span>
-                        {{ c.status === 'active' ? 'Set Inactive' : 'Set Active' }}
-                      </div>
-                      <div class="more-dropdown-divider"></div>
-                      <div class="more-dropdown-item danger" @click="handleDelete(c)">
-                        <span class="material-symbols-outlined">delete</span>
-                        Hapus
-                      </div>
-                    </div>
-                  </div>
+                  <button
+                    @click="handleView(c)"
+                    class="action-btn"
+                    title="Detail"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
+                  <button
+                    @click="handleEdit(c)"
+                    class="action-btn"
+                    title="Edit"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button
+                    @click="handleDelete(c)"
+                    class="action-btn danger"
+                    title="Hapus"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -285,10 +237,28 @@ function handleDelete(item: any) {
       </div>
 
       <!-- Footer -->
-      <div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10">
+      <div v-if="!loading && components.length > 0" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-between">
         <p class="text-body-sm font-body-sm text-on-surface-variant">
-          Menampilkan <span class="font-semibold text-on-surface">{{ filteredComponents.length }}</span> dari <span class="font-semibold text-on-surface">{{ components.length }}</span> komponen
+          Menampilkan <span class="font-semibold text-on-surface">{{ components.length }}</span> dari <span class="font-semibold text-on-surface">{{ totalItems }}</span> komponen
         </p>
+        <!-- Pagination -->
+        <div v-if="totalPages > 1" class="flex items-center gap-2">
+          <button
+            @click="fetchComponents(currentPage - 1)"
+            :disabled="currentPage <= 1"
+            class="px-3 py-1 rounded-lg border border-outline-variant/50 text-body-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-container-low"
+          >
+            Sebelumnya
+          </button>
+          <span class="text-body-sm text-on-surface-variant">Hal {{ currentPage }} / {{ totalPages }}</span>
+          <button
+            @click="fetchComponents(currentPage + 1)"
+            :disabled="currentPage >= totalPages"
+            class="px-3 py-1 rounded-lg border border-outline-variant/50 text-body-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-container-low"
+          >
+            Selanjutnya
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -356,10 +326,10 @@ function handleDelete(item: any) {
             </button>
             <button
               @click="handleFormSubmit"
-              :disabled="!form.name || !form.description"
+              :disabled="!form.name || loading"
               class="px-8 py-2 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ formMode === 'add' ? 'Simpan' : 'Ubah' }}
+              {{ loading ? 'Menyimpan...' : (formMode === 'add' ? 'Simpan' : 'Ubah') }}
             </button>
           </div>
         </div>
@@ -405,13 +375,13 @@ function handleDelete(item: any) {
                 </div>
                 <div>
                   <p class="font-body-base font-semibold text-on-surface">{{ deletingComponent.name }}</p>
-                  <p class="text-body-sm text-on-surface-variant">{{ deletingComponent.totalSubComponents }} sub-komponen, {{ deletingComponent.totalIndicators }} indikator</p>
+                  <p class="text-body-sm text-on-surface-variant">{{ deletingComponent.description || 'Tanpa deskripsi' }}</p>
                 </div>
               </div>
             </div>
             <p class="text-body-sm text-error mt-3 flex items-center gap-1.5">
               <span class="material-symbols-outlined text-[16px]">warning</span>
-              Semua sub-komponen di dalamnya akan ikut terhapus. Tindakan ini tidak dapat dibatalkan.
+              Komponen akan di-soft delete dan tidak tampil di daftar. Data tetap tersimpan di database.
             </p>
           </div>
 
@@ -425,9 +395,10 @@ function handleDelete(item: any) {
             </button>
             <button
               @click="confirmDelete"
-              class="px-5 py-2.5 rounded-xl bg-error text-on-error font-body-base font-semibold shadow-sm transition-all hover:bg-error/90 active:scale-95"
+              :disabled="loading"
+              class="px-5 py-2.5 rounded-xl bg-error text-on-error font-body-base font-semibold shadow-sm transition-all hover:bg-error/90 active:scale-95 disabled:opacity-50"
             >
-              Ya, Hapus
+              {{ loading ? 'Menghapus...' : 'Ya, Hapus' }}
             </button>
           </div>
         </div>
@@ -447,16 +418,6 @@ function handleDelete(item: any) {
   border-color: #10b981;
 }
 
-/* ===== BACK BUTTON ===== */
-.back-btn {
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
-.back-btn:hover {
-  background-color: rgba(16, 185, 129, 0.1);
-  text-decoration: none;
-}
-
 /* ===== TABLE ===== */
 .table-row {
   transition: all 0.3s ease;
@@ -470,65 +431,27 @@ function handleDelete(item: any) {
   color: #161d19;
 }
 
-/* ===== ACTION LINK ===== */
-.action-link {
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.action-link:hover {
-  background-color: #eef6ee;
-}
-
-/* ===== MORE MENU ===== */
-.more-wrapper {
-  position: relative;
-  display: inline-block;
-}
-.more-dropdown {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  margin-top: 4px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  z-index: 50;
-  min-width: 160px;
-  overflow: hidden;
-}
-.more-wrapper:hover .more-dropdown {
-  display: block;
-}
-.more-dropdown-item {
+/* ===== ACTION BUTTON ===== */
+.action-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  font-size: 12px;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   color: #3c4a42;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.2s ease;
 }
-.more-dropdown-item:hover {
-  background: #f9fdf9;
+.action-btn:hover {
+  background-color: #eef6ee;
+  color: #006c49;
 }
-.more-dropdown-item .material-symbols-outlined {
-  font-size: 16px;
-}
-.more-dropdown-item.danger {
+.action-btn.danger {
   color: #ba1a1a;
 }
-.more-dropdown-item.danger:hover {
-  background: #fef2f2;
-}
-.more-dropdown-divider {
-  height: 1px;
-  background: #e5e7eb;
-  margin: 2px 0;
+.action-btn.danger:hover {
+  background-color: #fef2f2;
 }
 
 /* ===== COUNT BADGE ===== */
@@ -539,14 +462,6 @@ function handleDelete(item: any) {
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 8px;
-}
-
-/* ===== STATUS BADGE ===== */
-.status-badge {
-  transition: all 0.3s ease;
-}
-.status-badge:hover {
-  transform: scale(1.05);
 }
 
 /* ===== DATA TABLE SCROLL ===== */

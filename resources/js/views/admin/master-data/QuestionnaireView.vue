@@ -1,106 +1,67 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useQuestionnaire } from '@/hooks/useQuestionnaire'
 
-// State
-const searchQuery = ref('')
-const periodFilter = ref('')
-const statusFilter = ref('')
-const currentPage = ref(1)
-const perPage = 10
+const {
+  questionnaires,
+  loading,
+  error,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  searchQuery,
+  statusFilter,
+  periodFilter,
+  fetchQuestionnaires,
+  createQuestionnaire,
+  updateQuestionnaire,
+  deleteQuestionnaire,
+  publishQuestionnaire,
+  onSearch,
+  onStatusFilter,
+  onPeriodFilter,
+} = useQuestionnaire()
 
+// Modal state
 // Modal state
 const showFormModal = ref(false)
 const showDeleteModal = ref(false)
+const showViewModal = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
 const editingId = ref<number | null>(null)
 const deletingInstrument = ref<any>(null)
+const viewingInstrument = ref<any>(null)
+const formLoading = ref(false)
 
 // Form
 const form = ref({
-  name: '',
+  title: '',
   description: '',
-  period: '',
+  evaluationPeriodId: '',
   status: 'draft',
-  duration: 30,
+  durationMinutes: 30,
 })
 
-// Mock data - Instruments
-const instruments = ref([
-  {
-    id: 1,
-    name: 'Kuesioner Kebijakan Lingkungan',
-    description: 'Evaluasi kebijakan hijau sekolah',
-    period: '2024',
-    status: 'published',
-    duration: 45,
-    components: 5,
-    subComponents: 12,
-    indicators: 32,
-    questions: 96,
-  },
-  {
-    id: 2,
-    name: 'Evaluasi Pengelolaan Sampah',
-    description: 'Instrument tahun sebelumnya',
-    period: '2022',
-    status: 'published',
-    duration: 40,
-    components: 4,
-    subComponents: 10,
-    indicators: 28,
-    questions: 84,
-  },
-  {
-    id: 3,
-    name: 'Instrumen Adiwiyata Mandiri',
-    description: 'Draft instrument baru',
-    period: '2025',
-    status: 'draft',
-    duration: 60,
-    components: 3,
-    subComponents: 8,
-    indicators: 20,
-    questions: 60,
-  },
-  {
-    id: 4,
-    name: 'Audit Emisi Karbon Sekolah',
-    description: 'Kalkulasi jejak karbon dari aktivitas transportasi dan energi sekolah',
-    period: '2023',
-    status: 'closed',
-    duration: 35,
-    components: 6,
-    subComponents: 14,
-    indicators: 36,
-    questions: 108,
-  },
-])
-
-// Mock data - Period options
-const periodOptions = ['2022', '2023', '2024', '2025']
+// Period options (will be fetched later)
+const periodOptions = ref<any[]>([])
 
 // Computed
-const filteredInstruments = computed(() => {
-  return instruments.value.filter((i) => {
-    const matchSearch = i.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchPeriod = !periodFilter.value || i.period === periodFilter.value
-    const matchStatus = !statusFilter.value || i.status === statusFilter.value
-    return matchSearch && matchPeriod && matchStatus
-  })
-})
-
-const totalPages = computed(() => Math.ceil(filteredInstruments.value.length / perPage))
-
-const paginatedInstruments = computed(() => {
-  const start = (currentPage.value - 1) * perPage
-  return filteredInstruments.value.slice(start, start + perPage)
-})
-
 const showingFrom = computed(() => (currentPage.value - 1) * perPage + 1)
-const showingTo = computed(() => Math.min(currentPage.value * perPage, filteredInstruments.value.length))
+const showingTo = computed(() => Math.min(currentPage.value * perPage, totalItems.value))
 
 // Methods
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
 function getStatusBadge(status: string) {
   switch (status) {
     case 'draft':
@@ -132,11 +93,11 @@ function openAddModal() {
   formMode.value = 'add'
   editingId.value = null
   form.value = {
-    name: '',
+    title: '',
     description: '',
-    period: '',
+    evaluationPeriodId: '',
     status: 'draft',
-    duration: 30,
+    durationMinutes: 30,
   }
   showFormModal.value = true
 }
@@ -145,44 +106,34 @@ function openEditModal(item: any) {
   formMode.value = 'edit'
   editingId.value = item.id
   form.value = {
-    name: item.name,
-    description: item.description,
-    period: item.period,
+    title: item.title,
+    description: item.description || '',
+    evaluationPeriodId: item.evaluationPeriodId,
     status: item.status,
-    duration: item.duration,
+    durationMinutes: item.durationMinutes,
   }
   showFormModal.value = true
 }
 
-function handleFormSubmit() {
-  if (formMode.value === 'add') {
-    const newId = Math.max(...instruments.value.map((i) => i.id)) + 1
-    instruments.value.unshift({
-      id: newId,
-      name: form.value.name,
-      description: form.value.description,
-      period: form.value.period,
-      status: form.value.status,
-      duration: form.value.duration,
-      components: 0,
-      subComponents: 0,
-      indicators: 0,
-      questions: 0,
-    })
-  } else {
-    const idx = instruments.value.findIndex((i) => i.id === editingId.value)
-    if (idx !== -1) {
-      instruments.value[idx] = {
-        ...instruments.value[idx],
-        name: form.value.name,
-        description: form.value.description,
-        period: form.value.period,
-        status: form.value.status,
-        duration: form.value.duration,
-      }
+function openViewModal(item: any) {
+  viewingInstrument.value = item
+  showViewModal.value = true
+}
+
+async function handleFormSubmit() {
+  formLoading.value = true
+  try {
+    if (formMode.value === 'add') {
+      await createQuestionnaire(form.value)
+    } else {
+      await updateQuestionnaire(editingId.value!, form.value)
     }
+    showFormModal.value = false
+  } catch (err) {
+    console.error('Form submit error:', err)
+  } finally {
+    formLoading.value = false
   }
-  showFormModal.value = false
 }
 
 // Delete handlers
@@ -191,37 +142,43 @@ function openDeleteModal(item: any) {
   showDeleteModal.value = true
 }
 
-function confirmDelete() {
-  instruments.value = instruments.value.filter((i) => i.id !== deletingInstrument.value.id)
-  showDeleteModal.value = false
-  deletingInstrument.value = null
+async function confirmDelete() {
+  try {
+    await deleteQuestionnaire(deletingInstrument.value.id)
+    showDeleteModal.value = false
+    deletingInstrument.value = null
+  } catch (err) {
+    console.error('Delete error:', err)
+  }
 }
 
 // More menu actions
-function handleView(item: any) {
-  console.log('View:', item)
-}
-
 function handleEdit(item: any) {
   openEditModal(item)
 }
 
-function handleToggleStatus(item: any) {
-  const idx = instruments.value.findIndex((i) => i.id === item.id)
-  if (idx !== -1) {
-    if (item.status === 'draft') {
-      instruments.value[idx].status = 'published'
-    } else if (item.status === 'published') {
-      instruments.value[idx].status = 'closed'
-    } else {
-      instruments.value[idx].status = 'draft'
-    }
+async function handleToggleStatus(item: any) {
+  try {
+    await publishQuestionnaire(item.id)
+  } catch (err) {
+    console.error('Toggle status error:', err)
   }
 }
 
 function handleDelete(item: any) {
   openDeleteModal(item)
 }
+
+// Pagination
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return
+  fetchQuestionnaires(page)
+}
+
+// Init
+onMounted(() => {
+  fetchQuestionnaires()
+})
 </script>
 
 <template>
@@ -252,7 +209,8 @@ function handleDelete(item: any) {
         <div class="relative flex-1">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
           <input
-            v-model="searchQuery"
+            :value="searchQuery"
+            @input="onSearch(($event.target as HTMLInputElement).value)"
             class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama instrument..."
             type="text"
@@ -299,7 +257,7 @@ function handleDelete(item: any) {
           </thead>
           <tbody class="divide-y divide-outline-variant/10">
             <tr
-              v-for="item in paginatedInstruments"
+              v-for="item in questionnaires"
               :key="item.id"
               class="table-row hover:bg-surface-container-low/30 transition-colors"
             >
@@ -309,13 +267,13 @@ function handleDelete(item: any) {
                     <span class="material-symbols-outlined text-[20px]">assignment</span>
                   </div>
                   <div>
-                    <span class="font-body-base font-semibold text-on-surface">{{ item.name }}</span>
+                    <span class="font-body-base font-semibold text-on-surface">{{ item.title }}</span>
                     <p class="text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">{{ item.description }}</p>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-5">
-                <span class="instrument-tag text-xs font-semibold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg">{{ item.period }}</span>
+                <span class="instrument-tag text-xs font-semibold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg">{{ item.evaluationPeriod?.name || '-' }}</span>
               </td>
               <td class="px-6 py-5">
                 <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(item.status)">
@@ -323,43 +281,29 @@ function handleDelete(item: any) {
                 </span>
               </td>
               <td class="px-6 py-5">
-                <span class="count-badge">{{ item.components }}</span>
+                <span class="count-badge items-center">{{ item.components || '-' }}</span>
               </td>
               <td class="px-6 py-5">
-                <span class="count-badge">{{ item.questions }}</span>
+                <span class="count-badge items-center">{{ item.questions || '-' }}</span>
               </td>
               <td class="px-6 py-5">
-                <div class="flex items-center justify-center gap-2">
-                  <span class="action-link text-xs font-semibold text-primary cursor-pointer hover:bg-primary/10 px-2 py-1 rounded-lg">
-                    <RouterLink to="/admin/component">
-                      <span class="material-symbols-outlined text-[14px]">subdirectory_arrow_right</span>
-                    Lihat Component
-                    </RouterLink>
-                  </span>
-                  <div class="relative more-wrapper">
-                    <button class="more-btn w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                      <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                    </button>
-                    <div class="more-dropdown">
-                      <div class="more-dropdown-item" @click="handleView(item)">
-                        <span class="material-symbols-outlined">visibility</span>
-                        View Detail
-                      </div>
-                      <div class="more-dropdown-item" @click="handleEdit(item)">
-                        <span class="material-symbols-outlined">edit</span>
-                        Edit
-                      </div>
-                      <div class="more-dropdown-item" @click="handleToggleStatus(item)">
-                        <span class="material-symbols-outlined">toggle_on</span>
-                        Toggle Status
-                      </div>
-                      <div class="more-dropdown-divider"></div>
-                      <div class="more-dropdown-item danger" @click="handleDelete(item)">
-                        <span class="material-symbols-outlined">delete</span>
-                        Hapus
-                      </div>
-                    </div>
-                  </div>
+                <div class="flex items-center justify-center gap-1">
+                  <RouterLink
+                    :to="`/admin/instrument/${item.id}/component`"
+                    class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    title="Lihat Component"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">subdirectory_arrow_right</span>
+                  </RouterLink>
+                  <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
+                  <button @click="handleEdit(item)" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button @click="handleDelete(item)" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Hapus">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -368,15 +312,16 @@ function handleDelete(item: any) {
       </div>
 
       <!-- Pagination Footer -->
-      <div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <!-- Pagination Footer -->
+      <div v-if="questionnaires.length > 0" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-body-sm font-body-sm text-on-surface-variant">
-          Menampilkan <span class="font-semibold text-on-surface">{{ showingFrom }}-{{ showingTo }}</span> dari <span class="font-semibold text-on-surface">{{ filteredInstruments.length }}</span> instrument
+          Menampilkan <span class="font-semibold text-on-surface">{{ showingFrom }}-{{ showingTo }}</span> dari <span class="font-semibold text-on-surface">{{ totalItems }}</span> instrument
         </p>
         <div class="flex items-center gap-2">
           <button
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50"
-            :disabled="currentPage === 1"
-            @click="currentPage--"
+            :disabled="currentPage <= 1"
+            @click="goToPage(currentPage - 1)"
           >
             <span class="material-symbols-outlined text-[20px]">chevron_left</span>
           </button>
@@ -385,14 +330,14 @@ function handleDelete(item: any) {
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
             :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
-            @click="currentPage = page"
+            @click="goToPage(page)"
           >
             {{ page }}
           </button>
           <button
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50"
-            :disabled="currentPage === totalPages || totalPages === 0"
-            @click="currentPage++"
+            :disabled="currentPage >= totalPages"
+            @click="goToPage(currentPage + 1)"
           >
             <span class="material-symbols-outlined text-[20px]">chevron_right</span>
           </button>
@@ -436,7 +381,7 @@ function handleDelete(item: any) {
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Nama Instrument</label>
               <input
-                v-model="form.name"
+                v-model="form.title"
                 type="text"
                 placeholder="Contoh: Kuesioner Kebijakan Lingkungan 2024"
                 class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
@@ -454,17 +399,17 @@ function handleDelete(item: any) {
               ></textarea>
             </div>
 
-            <!-- Tahun & Status -->
+            <!-- Periode & Status -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Tahun</label>
+                <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Periode</label>
                 <div class="relative">
                   <select
-                    v-model="form.period"
+                    v-model="form.evaluationPeriodId"
                     class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface appearance-none focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
                   >
-                    <option value="">Pilih Tahun</option>
-                    <option v-for="year in periodOptions" :key="year" :value="year">{{ year }}</option>
+                    <option value="">Pilih Periode</option>
+                    <option v-for="period in periodOptions" :key="period.id" :value="period.id">{{ period.name }}</option>
                   </select>
                   <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[20px]">expand_more</span>
                 </div>
@@ -489,7 +434,7 @@ function handleDelete(item: any) {
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Durasi (Menit)</label>
               <input
-                v-model.number="form.duration"
+                v-model.number="form.durationMinutes"
                 type="number"
                 min="1"
                 placeholder="30"
@@ -580,6 +525,120 @@ function handleDelete(item: any) {
               class="px-5 py-2.5 rounded-xl bg-error text-on-error font-body-base font-semibold shadow-sm transition-all hover:bg-error/90 active:scale-95"
             >
               Ya, Hapus
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
+  <!-- ==================== VIEW MODAL ==================== -->
+  <Teleport to="body">
+    <Transition name="modal">
+      <div
+        v-if="showViewModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        @click.self="showViewModal = false"
+      >
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="showViewModal = false"></div>
+        <div class="relative bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg z-10 modal-content">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">visibility</span>
+              </div>
+              <div>
+                <h3 class="font-title-md text-title-md text-on-surface">Detail Instrument</h3>
+                <p class="text-body-sm text-on-surface-variant">Informasi lengkap instrument</p>
+              </div>
+            </div>
+            <button
+              @click="showViewModal = false"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors"
+            >
+              <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-6 space-y-5" v-if="viewingInstrument">
+            <!-- Nama Instrument -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Nama Instrument</label>
+              <input
+                :value="viewingInstrument.title"
+                type="text"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+              />
+            </div>
+
+            <!-- Deskripsi -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Deskripsi</label>
+              <textarea
+                :value="viewingInstrument.description || ''"
+                rows="2"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Periode & Status -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Periode</label>
+                <input
+                  :value="viewingInstrument.evaluationPeriod?.name || '-'"
+                  type="text"
+                  disabled
+                  class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                <input
+                  :value="getStatusLabel(viewingInstrument.status)"
+                  type="text"
+                  disabled
+                  class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+                />
+              </div>
+            </div>
+
+            <!-- Durasi -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Durasi (Menit)</label>
+              <input
+                :value="viewingInstrument.durationMinutes"
+                type="number"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+              />
+            </div>
+
+            <!-- Info Tambahan -->
+            <div class="pt-4 border-t border-outline-variant/20">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-secondary">Dibuat:</span>
+                  <p class="font-medium text-on-surface">{{ formatDate(viewingInstrument.createdAt) }}</p>
+                </div>
+                <div>
+                  <span class="text-secondary">Diupdate:</span>
+                  <p class="font-medium text-on-surface">{{ formatDate(viewingInstrument.updatedAt) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
+            <button
+              @click="showViewModal = false"
+              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+            >
+              Tutup
             </button>
           </div>
         </div>

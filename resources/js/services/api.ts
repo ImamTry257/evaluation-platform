@@ -1,5 +1,6 @@
 import axios from 'axios'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
@@ -11,7 +12,13 @@ const api = axios.create({
 
 // Request interceptor - attach token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const authStore = useAuthStore()
+
+  let token = localStorage.getItem('tokenAdmin')
+  if ( authStore.user?.role != "ADMIN" ) {
+    token = localStorage.getItem("token")
+  }
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }

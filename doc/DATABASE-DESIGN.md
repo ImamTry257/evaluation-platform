@@ -144,6 +144,7 @@ Master Kuesioner.
 | status | enum(draft,published,closed) |
 | createdAt | timestamp |
 | updatedAt | timestamp |
+| deletedAt | timestamp (nullable) |
 
 ---
 

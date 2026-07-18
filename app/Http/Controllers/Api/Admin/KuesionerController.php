@@ -119,7 +119,7 @@ class KuesionerController extends Controller
 
     /**
      * DELETE /api/v1/admin/questionnaires/{id}
-     * Delete a questionnaire.
+     * Soft delete a questionnaire.
      */
     public function destroy($id)
     {
@@ -129,7 +129,7 @@ class KuesionerController extends Controller
             return $this->errorResponse('Questionnaire not found', 404);
         }
 
-        $questionnaire->delete();
+        $questionnaire->delete(); // Soft delete
 
         return $this->successResponse(null, 'Questionnaire deleted successfully');
     }

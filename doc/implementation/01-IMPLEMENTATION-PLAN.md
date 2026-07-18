@@ -732,4 +732,29 @@ All Eloquent models updated to use explicit foreign keys (camelCase) matching mi
 
 ---
 
+### v1.15.0 - Soft Delete Implementation (18 Juli 2026)
+
+**Database:**
+- Migration: `2026_07_18_090000_add_deleted_at_to_questionnaires_table.php`
+- Menambahkan `deleted_at` column ke table `questionnaires`
+
+**Model:**
+- `Questionnaire.php` — Tambah `use SoftDeletes`
+
+**Controller:**
+- `KuesionerController.php` — `destroy()` menggunakan soft delete (Laravel otomatis handle)
+
+**Behavior:**
+- `DELETE /admin/questionnaires/{id}` — set `deleted_at` ke timestamp sekarang
+- `GET /admin/questionnaires` — hanya return data WHERE `deleted_at IS NULL`
+- Record tidak benar-benar dihapus dari database
+
+**Dokumentasi yang diupdate:**
+- `doc/ERD.md` — tambah `deletedAt` field
+- `doc/DATABASE-DESIGN.md` — tambah `deletedAt` field
+- `doc/API-SPECIFICATION.md` — tambah delete endpoint documentation
+- `doc/BUSINESS-PROCESS.md` — update soft delete rules
+
+---
+
 **Catatan:** Dokumentasi ini akan diperbarui seiring progress development. Update dilakukan setelah setiap phase selesai.
