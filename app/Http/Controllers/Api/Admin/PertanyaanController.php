@@ -31,7 +31,6 @@ class PertanyaanController extends Controller
         }
 
         $limit = min($request->get('limit', 10), 100);
-
         $questions = $query->orderBy('orderNumber', 'asc')
             ->paginate($limit);
 
@@ -48,14 +47,23 @@ class PertanyaanController extends Controller
             'indicatorId' => 'required|exists:indicators,id',
             'questionText' => 'required|string',
             'weight' => 'required|numeric|min:0',
-            'orderNumber' => 'required|integer|min:0',
+            'orderNumber' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $question = Question::create($validator->validated());
+        $data = $validator->validated();
+
+        // Auto-generate orderNumber if not provided
+        if (!isset($data['orderNumber'])) {
+            $maxOrder = Question::where('indicatorId', $data['indicatorId'])
+                ->max('orderNumber');
+            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+        }
+
+        $question = Question::create($data);
 
         return $this->successResponse(
             $question->load('indicator'),
@@ -95,14 +103,24 @@ class PertanyaanController extends Controller
             'indicatorId' => 'required|exists:indicators,id',
             'questionText' => 'required|string',
             'weight' => 'required|numeric|min:0',
-            'orderNumber' => 'required|integer|min:0',
+            'orderNumber' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $question->update($validator->validated());
+        $data = $validator->validated();
+
+        // Auto-generate orderNumber if not provided
+        if (!isset($data['orderNumber'])) {
+            $maxOrder = Question::where('indicatorId', $data['indicatorId'])
+                ->where('id', '!=', $id)
+                ->max('orderNumber');
+            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+        }
+
+        $question->update($data);
 
         return $this->successResponse(
             $question->load('indicator'),

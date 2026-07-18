@@ -31,7 +31,6 @@ class SubKomponenController extends Controller
         }
 
         $limit = min($request->get('limit', 10), 100);
-
         $subComponents = $query->orderBy('orderNumber', 'asc')
             ->paginate($limit);
 
@@ -48,14 +47,23 @@ class SubKomponenController extends Controller
             'componentId' => 'required|exists:components,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'orderNumber' => 'required|integer|min:0',
+            'orderNumber' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $subComponent = SubComponent::create($validator->validated());
+        $data = $validator->validated();
+
+        // Auto-generate orderNumber if not provided
+        if (!isset($data['orderNumber'])) {
+            $maxOrder = SubComponent::where('componentId', $data['componentId'])
+                ->max('orderNumber');
+            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+        }
+
+        $subComponent = SubComponent::create($data);
 
         return $this->successResponse(
             $subComponent->load('component'),
@@ -95,14 +103,24 @@ class SubKomponenController extends Controller
             'componentId' => 'required|exists:components,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'orderNumber' => 'required|integer|min:0',
+            'orderNumber' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $subComponent->update($validator->validated());
+        $data = $validator->validated();
+
+        // Auto-generate orderNumber if not provided
+        if (!isset($data['orderNumber'])) {
+            $maxOrder = SubComponent::where('componentId', $data['componentId'])
+                ->where('id', '!=', $id)
+                ->max('orderNumber');
+            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+        }
+
+        $subComponent->update($data);
 
         return $this->successResponse(
             $subComponent->load('component'),
