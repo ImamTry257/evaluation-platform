@@ -207,33 +207,42 @@ Get current user profile.
 
 ## 3.1 Evaluation Periods
 
+> **Note:** Evaluation Periods menggunakan soft delete. Record yang dihapus akan memiliki `deleted_at` timestamp dan tidak akan muncul di list/get biasa.
+
 ### List Periods
 **Endpoint:** `GET /periods`
 
+Hanya mengembalikan periode yang belum di-soft delete (`deleted_at IS NULL`).
+
 **Query Parameters:**
 - `page` (optional) - default: 1
-- `perPage` (optional) - default: 15
+- `limit` (optional) - default: 10
+- `search` (optional) - search by name
+- `isActive` (optional) - filter by status
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "name": "Evaluasi 2024",
-      "description": "Periode evaluasi tahun 2024",
-      "startDate": "2024-01-01",
-      "endDate": "2024-12-31",
-      "isActive": true,
-      "createdAt": "2024-01-01T10:00:00Z"
+  "status": true,
+  "message": "Periods retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "name": "Evaluasi 2024",
+        "description": "Periode evaluasi tahun 2024",
+        "startDate": "2024-01-01T00:00:00.000000Z",
+        "endDate": "2024-12-31T00:00:00.000000Z",
+        "isActive": true,
+        "created_at": "2024-01-01T10:00:00.000000Z",
+        "updated_at": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 10,
+      "total": 1
     }
-  ],
-  "pagination": {
-    "total": 10,
-    "perPage": 15,
-    "currentPage": 1,
-    "lastPage": 1
   }
 }
 ```
@@ -257,15 +266,17 @@ Get current user profile.
 **Response (201 Created):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Period created successfully",
   "data": {
     "id": 1,
     "name": "Evaluasi 2024",
     "description": "Periode evaluasi tahun 2024",
-    "startDate": "2024-01-01",
-    "endDate": "2024-12-31",
+    "startDate": "2024-01-01T00:00:00.000000Z",
+    "endDate": "2024-12-31T00:00:00.000000Z",
     "isActive": true,
-    "createdAt": "2024-01-01T10:00:00Z"
+    "created_at": "2024-01-01T10:00:00.000000Z",
+    "updated_at": "2024-01-01T10:00:00.000000Z"
   }
 }
 ```
@@ -278,16 +289,17 @@ Get current user profile.
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Period retrieved successfully",
   "data": {
     "id": 1,
     "name": "Evaluasi 2024",
     "description": "Periode evaluasi tahun 2024",
-    "startDate": "2024-01-01",
-    "endDate": "2024-12-31",
+    "startDate": "2024-01-01T00:00:00.000000Z",
+    "endDate": "2024-12-31T00:00:00.000000Z",
     "isActive": true,
-    "createdAt": "2024-01-01T10:00:00Z",
-    "updatedAt": "2024-01-01T10:00:00Z"
+    "created_at": "2024-01-01T10:00:00.000000Z",
+    "updated_at": "2024-01-01T10:00:00.000000Z"
   }
 }
 ```
@@ -309,16 +321,24 @@ Get current user profile.
 
 ---
 
-### Delete Period
+### Delete Period (Soft Delete)
 **Endpoint:** `DELETE /periods/{id}`
+
+Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak benar-benar dihapus dari database.
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "message": "Periode berhasil dihapus"
+  "status": true,
+  "message": "Period deleted successfully",
+  "data": null
 }
 ```
+
+**Behavior:**
+- `deleted_at` diatur ke timestamp sekarang
+- Record tidak muncul di `GET /periods` atau `GET /periods/{id}`
+- Data tetap tersimpan di database untuk audit trail
 
 ---
 

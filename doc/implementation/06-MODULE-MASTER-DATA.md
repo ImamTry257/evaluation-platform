@@ -19,6 +19,35 @@ Module ini menangani CRUD operations untuk semua master data:
 7. Respondent (Responden)
 8. Recommendation (Rekomendasi)
 
+> **Note:** Evaluation Periods menggunakan soft delete. Lihat section 1.1 untuk detail.
+
+---
+
+## 1.1 Soft Delete Implementation
+
+**Evaluation Periods** menggunakan soft delete:
+- Tambah field `deleted_at` via migration
+- Model gunakan `SoftDeletes` trait
+- `DELETE /periods/{id}` mengatur `deleted_at = now()` (bukan hard delete)
+- `GET /periods` dan `GET /periods/{id}` hanya return record yang `deleted_at IS NULL`
+
+```php
+// Model
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class EvaluationPeriod extends Model
+{
+    use SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+}
+
+// Controller - tidak perlu ubah, Laravel handle otomatis
+$period->delete(); // Set deleted_at = now()
+EvaluationPeriod::find($id); // Exclude soft-deleted
+EvaluationPeriod::withTrashed()->find($id); // Include soft-deleted
+```
+
 ---
 
 ## 2. Architecture Pattern
