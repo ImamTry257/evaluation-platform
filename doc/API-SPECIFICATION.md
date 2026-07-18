@@ -80,6 +80,78 @@ Authenticate user dan mendapatkan Bearer token.
 
 ---
 
+## Login Admin
+Authenticate admin/superadmin dan mendapatkan Bearer token. Khusus untuk role admin dan superadmin.
+
+**Endpoint:** `POST /auth/login-admin`
+
+**Request:**
+```json
+{
+  "email": "admin@cbt.com",
+  "password": "password123"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Login successful",
+  "data": {
+    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
+    "user": {
+      "id": 1,
+      "name": "Administrator",
+      "username": "admin",
+      "email": "admin@cbt.com",
+      "role": "ADMIN"
+    }
+  }
+}
+```
+
+**Error Response (401 Unauthorized):**
+```json
+{
+  "status": false,
+  "message": "Email atau password salah",
+  "errors": []
+}
+```
+
+**Error Response (403 Forbidden) - Non-Admin Role:**
+```json
+{
+  "status": false,
+  "message": "Akun ini tidak memiliki akses admin",
+  "errors": []
+}
+```
+
+**Error Response (403 Forbidden) - Inactive Account:**
+```json
+{
+  "status": false,
+  "message": "Akun tidak aktif",
+  "errors": []
+}
+```
+
+**Error Response (422 Validation Error):**
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "email": ["The email field is required."],
+    "password": ["The password field is required."]
+  }
+}
+```
+
+---
+
 ## Register
 Register new respondent account.
 
@@ -425,6 +497,27 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
   }
 }
 ```
+
+---
+
+### Delete Questionnaire (Soft Delete)
+**Endpoint:** `DELETE /questionnaires/{id}`
+
+Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak benar-benar dihapus dari database.
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Questionnaire deleted successfully",
+  "data": null
+}
+```
+
+**Behavior:**
+- `deleted_at` diatur ke timestamp sekarang
+- Record tidak muncul di `GET /questionnaires` atau `GET /questionnaires/{id}`
+- Data tetap tersimpan di database untuk audit trail
 
 ---
 

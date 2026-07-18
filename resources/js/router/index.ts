@@ -29,6 +29,12 @@ const router = createRouter({
       meta: { guest: true },
     },
     {
+      path: '/login/admin',
+      name: 'login-admin',
+      component: () => import('@/views/auth/LoginAdminView.vue'),
+      meta: { guest: true },
+    },
+    {
       path: '/register',
       name: 'register',
       component: () => import('@/views/auth/RegisterView.vue'),
@@ -38,7 +44,7 @@ const router = createRouter({
     {
       path: '/admin',
       component: () => import('@/views/admin/layout/AdminLayout.vue'),
-      meta: { requiresAuth: true, role: 'ADMIN' },
+      meta: { requiresAuth: true, roles: ['ADMIN', 'SUPERADMIN'] },
       children: [
         {
           path: '',
@@ -56,7 +62,7 @@ const router = createRouter({
           component: () => import('@/views/admin/master-data/QuestionnaireView.vue'),
         },
         {
-          path: 'component',
+          path: 'instrument/:instrumentId/component',
           name: 'admin-component',
           component: () => import('@/views/admin/master-data/ComponentView.vue'),
         },
@@ -131,11 +137,25 @@ const router = createRouter({
 // Navigation guard
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else if (to.meta.guest && authStore.isAuthenticated) {
-    next(authStore.user?.role === 'ADMIN' ? '/admin' : '/respondent')
+    console.log(authStore.user, to.meta.requiresAuth, authStore.isAuthenticated)
+    const role = authStore.user?.role
+    if (role === 'ADMIN' || role === 'SUPERADMIN') {
+      next('/admin')
+    } else {
+      next('/respondent')
+    }
+  } else if (to.meta.roles && !to.meta.roles.includes(authStore.user?.role)) {
+    console.log(authStore.user, to.meta.requiresAuth, authStore.isAuthenticated)
+    // Unauthorized role - redirect to appropriate dashboard
+    const role = authStore.user?.role
+    if (role === 'ADMIN' || role === 'SUPERADMIN') {
+      next('/admin')
+    } else {
+      next('/respondent')
+    }
   } else {
     next()
   }

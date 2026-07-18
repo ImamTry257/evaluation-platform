@@ -3,16 +3,87 @@ import { ref, computed } from 'vue'
 import api from '@/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref<string | null>(localStorage.getItem('token'))
+  // localStorage keys: tokenRespondent, tokenAdmin, userRespondent, userAdmin
+  const token = ref<string | null>(null)
   const user = ref<any>(null)
 
+  // Initialize from localStorage
+  function initAuth() {
+    // Check admin token first
+    const adminToken = localStorage.getItem('tokenAdmin')
+    const adminUser = localStorage.getItem('userAdmin')
+    if (adminToken && adminUser) {
+      token.value = adminToken
+      user.value = JSON.parse(adminUser)
+      return
+    }
+
+    // Check respondent token
+    const respondentToken = localStorage.getItem('tokenRespondent')
+    const respondentUser = localStorage.getItem('userRespondent')
+    if (respondentToken && respondentUser) {
+      token.value = respondentToken
+      user.value = JSON.parse(respondentUser)
+      return
+    }
+
+    // Legacy fallback: single 'token' key
+    const legacyToken = localStorage.getItem('token')
+    if (legacyToken) {
+      token.value = legacyToken
+    }
+  }
+
+  // Run on store init
+  initAuth()
+
   const isAuthenticated = computed(() => !!token.value)
+  const isAdmin = computed(() => user.value?.role === 'ADMIN')
+  const isSuperAdmin = computed(() => user.value?.role === 'SUPERADMIN')
+  const isRespondent = computed(() => user.value?.role === 'RESPONDENT')
+  const isAdminOrSuperAdmin = computed(() => isAdmin.value || isSuperAdmin.value)
+
+  function saveAuth(tokenVal: string, userVal: any) {
+    token.value = tokenVal
+    user.value = userVal
+
+    const role = userVal?.role
+    if (role === 'ADMIN' || role === 'SUPERADMIN') {
+      localStorage.setItem('tokenAdmin', tokenVal)
+      localStorage.setItem('userAdmin', JSON.stringify(userVal))
+      // Clear respondent token to avoid conflict
+      localStorage.removeItem('tokenRespondent')
+      localStorage.removeItem('userRespondent')
+    } else {
+      localStorage.setItem('tokenRespondent', tokenVal)
+      localStorage.setItem('userRespondent', JSON.stringify(userVal))
+      // Clear admin token to avoid conflict
+      localStorage.removeItem('tokenAdmin')
+      localStorage.removeItem('userAdmin')
+    }
+
+    // Clean legacy key
+    localStorage.removeItem('token')
+  }
+
+  function clearAuth() {
+    token.value = null
+    user.value = null
+    localStorage.removeItem('tokenAdmin')
+    localStorage.removeItem('userAdmin')
+    localStorage.removeItem('tokenRespondent')
+    localStorage.removeItem('userRespondent')
+    localStorage.removeItem('token')
+  }
 
   async function login(username: string, password: string) {
     const response = await api.post('/auth/login', { username, password })
-    token.value = response.data.data.token
-    user.value = response.data.data.user
-    localStorage.setItem('token', token.value!)
+    saveAuth(response.data.data.token, response.data.data.user)
+  }
+
+  async function loginAdmin(email: string, password: string) {
+    const response = await api.post('/auth/login-admin', { email, password })
+    saveAuth(response.data.data.token, response.data.data.user)
   }
 
   async function register(data: { name: string; username: string; email: string; password: string; password_confirmation: string }) {
@@ -25,15 +96,33 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (e) {
       // Ignore error - token will be cleared locally anyway
     }
-    token.value = null
-    user.value = null
-    localStorage.removeItem('token')
+    clearAuth()
   }
 
   async function fetchProfile() {
     const response = await api.get('/auth/profile')
     user.value = response.data.data
+    // Update persisted user data
+    const role = user.value?.role
+    if (role === 'ADMIN' || role === 'SUPERADMIN') {
+      localStorage.setItem('userAdmin', JSON.stringify(user.value))
+    } else {
+      localStorage.setItem('userRespondent', JSON.stringify(user.value))
+    }
   }
 
-  return { token, user, isAuthenticated, login, register, logout, fetchProfile }
+  return {
+    token,
+    user,
+    isAuthenticated,
+    isAdmin,
+    isSuperAdmin,
+    isRespondent,
+    isAdminOrSuperAdmin,
+    login,
+    loginAdmin,
+    register,
+    logout,
+    fetchProfile,
+  }
 })

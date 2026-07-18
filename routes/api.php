@@ -22,6 +22,8 @@ Route::prefix('v1')->group(function () {
         ->middleware('throttle:100,15');
     Route::post('/auth/login', [AuthController::class, 'login'])
         ->middleware('throttle:500,15');
+    Route::post('/auth/login-admin', [AuthController::class, 'loginAdmin'])
+        ->middleware('throttle:100,15');
 
     // Protected routes (Sanctum)
     Route::middleware('auth:sanctum')->group(function () {

@@ -94,6 +94,51 @@ class AuthController extends Controller
     }
 
     /**
+     * POST /api/v1/auth/login-admin
+     * Login khusus admin & superadmin via email.
+     */
+    public function loginAdmin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed', 422, $validator->errors());
+        }
+
+        $email = strtolower($request->email);
+        $user = User::where('email', $email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return $this->errorResponse('Email atau password salah', 401);
+        }
+
+        // Hanya admin & superadmin yang boleh login via ini
+        if (!in_array($user->role, ['admin', 'superadmin'])) {
+            return $this->errorResponse('Akun ini tidak memiliki akses admin', 403);
+        }
+
+        if (!$user->isActive) {
+            return $this->errorResponse('Akun tidak aktif', 403);
+        }
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return $this->successResponse([
+            'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => strtoupper($user->role),
+            ],
+        ], 'Login successful');
+    }
+
+    /**
      * POST /api/v1/auth/logout
      * Revoke current access token.
      */

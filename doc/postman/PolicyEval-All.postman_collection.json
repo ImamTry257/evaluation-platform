@@ -260,6 +260,135 @@
               ]
             },
             {
+              "name": "Login Admin",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@cbt.com\",\n  \"password\": \"password\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login-admin"]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// === LOGIN ADMIN SUCCESS VALIDATION ===",
+                      "pm.test('Status is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response has success status', function () {",
+                      "    var response = pm.response.json();",
+                      "    pm.expect(response.status).to.be.true;",
+                      "});",
+                      "",
+                      "pm.test('Response has token', function () {",
+                      "    var response = pm.response.json();",
+                      "    pm.expect(response.data).to.have.property('token');",
+                      "    pm.expect(response.data.token).to.not.be.empty;",
+                      "});",
+                      "",
+                      "pm.test('Response has user data with admin role', function () {",
+                      "    var response = pm.response.json();",
+                      "    pm.expect(response.data).to.have.property('user');",
+                      "    pm.expect(response.data.user).to.have.property('role');",
+                      "    pm.expect(response.data.user.role).to.be.oneOf(['ADMIN', 'SUPERADMIN']);",
+                      "});"
+                    ]
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// === AUTO-CLEAR TOKEN ON LOGIN ===",
+                      "pm.environment.unset('authToken');",
+                      "pm.collectionVariables.unset('authToken');"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// === SAVE TOKEN FOR PROTECTED ROUTES ===",
+                      "if (pm.response.code === 200) {",
+                      "    var response = pm.response.json();",
+                      "    if (response.status && response.data && response.data.token) {",
+                      "        var token = response.data.token;",
+                      "        ",
+                      "        pm.environment.set('authToken', token);",
+                      "        pm.collectionVariables.set('authToken', token);",
+                      "        ",
+                      "        if (response.data.user) {",
+                      "            pm.environment.set('userId', response.data.user.id);",
+                      "            pm.environment.set('userName', response.data.user.name);",
+                      "            pm.environment.set('userRole', response.data.user.role);",
+                      "            pm.collectionVariables.set('userId', response.data.user.id);",
+                      "            pm.collectionVariables.set('userName', response.data.user.name);",
+                      "            pm.collectionVariables.set('userRole', response.data.user.role);",
+                      "        }",
+                      "        ",
+                      "        console.log('✅ Admin Login successful! Token saved.');",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "response": [
+                {
+                  "name": "Login Admin Success (Admin)",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|abc123def456ghi789jkl012mno345pqr678stu901\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"Administrator\",\n      \"username\": \"admin\",\n      \"email\": \"admin@cbt.com\",\n      \"role\": \"ADMIN\"\n    }\n  }\n}"
+                },
+                {
+                  "name": "Login Admin Success (Superadmin)",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|xyz789abc012def345ghi678jkl901mno234pqr567\",\n    \"user\": {\n      \"id\": 3,\n      \"name\": \"Super Administrator\",\n      \"username\": \"superadmin\",\n      \"email\": \"superadmin@cbt.com\",\n      \"role\": \"SUPERADMIN\"\n    }\n  }\n}"
+                },
+                {
+                  "name": "Login Admin Failed - Wrong Password",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": false,\n  \"message\": \"Email atau password salah\",\n  \"errors\": []\n}"
+                },
+                {
+                  "name": "Login Admin Failed - Non-Admin Role",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": false,\n  \"message\": \"Akun ini tidak memiliki akses admin\",\n  \"errors\": []\n}"
+                },
+                {
+                  "name": "Login Admin Failed - Validation",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"email\": [\"The email field is required.\"],\n    \"password\": [\"The password field is required.\"]\n  }\n}"
+                }
+              ]
+            },
+            {
               "name": "Logout",
               "request": {
                 "method": "POST",

@@ -114,7 +114,7 @@ async function handleLogin() {
                 id="username"
                 v-model="form.username"
                 type="text"
-                placeholder="nama@sekolah.id"
+                placeholder="budi123"
                 @input="clearFieldError('username')"
                 :class="['form-input w-full h-12 pl-12 pr-4 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60', fieldErrors.username ? 'border-error' : 'border-outline-variant']"
               />
@@ -157,11 +157,11 @@ async function handleLogin() {
           </div>
 
           <!-- Remember Me & Forgot Password -->
-          <div class="flex items-center justify-between font-body-sm text-body-sm">
+          <!-- <div class="flex items-center justify-between font-body-sm text-body-sm">
             <label class="flex items-center cursor-pointer group">
             </label>
             <a class="forgot-link text-primary font-semibold" href="#">Lupa Kata Sandi?</a>
-          </div>
+          </div> -->
 
           <!-- Submit Button -->
           <button
@@ -172,7 +172,7 @@ async function handleLogin() {
             <span v-if="isLoading" class="animate-spin material-symbols-outlined text-[20px]">progress_activity</span>
             <span v-if="isLoading" class="ml-2">Memproses...</span>
             <template v-else>
-              Masuk ke Platform
+              Login
               <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
             </template>
           </button>
@@ -180,6 +180,9 @@ async function handleLogin() {
         <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pt-4">
           Belum punya akun?
           <router-link to="/register" class="login-link text-primary font-bold">Register</router-link>
+        </p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+          <router-link to="/login/admin" class="text-primary font-semibold transition-colors hover:text-primary-dark">Masuk sebagai Admin</router-link>
         </p>
         </div>
       </div>

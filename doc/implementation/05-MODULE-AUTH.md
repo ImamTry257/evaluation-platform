@@ -15,16 +15,16 @@ Autentikasi menggunakan Laravel Sanctum dengan **Unified Login** untuk semua tip
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    LOGIN UNIFIED                         │
-│                   (login.html)                           │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │   ┌─────────────┐      ┌─────────────┐                 │
-│   │   Admin     │      │  Respondent │                 │
-│   │ Username +  │      │  Username + │                 │
-│   │  Password   │      │  Password   │                 │
-│   └──────┬──────┘      └──────┬──────┘                 │
-│          │                     │                        │
-│          ▼                     ▼                        │
+│   │ Admin/      │      │  Respondent │                 │
+│   │ SuperAdmin  │      │  Username + │                 │
+│   │ Email +     │      │  Password   │                 │
+│   │ Password    │      └──────┬──────┘                 │
+│   └──────┬──────┘             │                        │
+│          │                    │                        │
+│          ▼                    ▼                        │
 │   ┌─────────────┐      ┌─────────────┐                 │
 │   │   /admin    │      │ /respondent │                 │
 │   │  Dashboard  │      │  Angket     │                 │
@@ -33,12 +33,20 @@ Autentikasi menggunakan Laravel Sanctum dengan **Unified Login** untuk semua tip
 └─────────────────────────────────────────────────────────┘
 ```
 
+**Role Hierarchy:**
+```
+SUPERADMIN > ADMIN > RESPONDENT
+```
+
 **Flow:**
-1. User mengakses `/login`
-2. Memasukkan **Username** dan **Password**
+1. User mengakses `/login` (respondent) atau `/login/admin` (admin/superadmin)
+2. Memasukkan credentials:
+   - Respondent: Username + Password
+   - Admin/Superadmin: Email + Password
 3. Sistem mengidentifikasi role berdasarkan credential
 4. Redirect ke dashboard sesuai role:
    - Admin → `/admin`
+   - Superadmin → `/admin` (dengan module Master Admin)
    - Respondent → `/respondent`
 
 ---
@@ -48,7 +56,8 @@ Autentikasi menggunakan Laravel Sanctum dengan **Unified Login** untuk semua tip
 | Method | Endpoint | Deskripsi | Auth |
 |--------|----------|-----------|------|
 | POST | `/api/v1/auth/register` | Register respondent baru | No |
-| POST | `/api/v1/auth/login` | Login unified (admin/responden) | No |
+| POST | `/api/v1/auth/login` | Login respondent | No |
+| POST | `/api/v1/auth/login-admin` | Login admin/superadmin | No |
 | POST | `/api/v1/auth/logout` | Logout | Yes |
 | GET | `/api/v1/auth/profile` | Get user profile | Yes |
 
@@ -144,6 +153,64 @@ Error:
   "status": false,
   "message": "Akun tidak aktif",
   "errors": []
+}
+```
+
+---
+
+**Login Admin Request:**
+```json
+{
+  "email": "admin@sekolah.id",
+  "password": "password123"
+}
+```
+
+**Login Admin Response (Success):**
+```json
+{
+  "status": true,
+  "message": "Login successful",
+  "data": {
+    "token": "1|abc123...",
+    "user": {
+      "id": 1,
+      "name": "Admin User",
+      "username": "admin",
+      "email": "admin@sekolah.id",
+      "role": "ADMIN"
+    }
+  }
+}
+```
+
+**Login Admin Response (Error - Invalid Credentials):**
+```json
+{
+  "status": false,
+  "message": "Email atau password salah",
+  "errors": []
+}
+```
+
+**Login Admin Response (Error - Non-Admin Role):**
+```json
+{
+  "status": false,
+  "message": "Akun ini tidak memiliki akses admin",
+  "errors": []
+}
+```
+
+**Login Admin Response (Error - Validation):**
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "email": ["The email field is required."],
+    "password": ["The password field is required."]
+  }
 }
 ```
 

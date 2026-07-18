@@ -6,31 +6,50 @@ import { useAuthStore } from '@/stores/auth'
 const route = useRoute()
 const authStore = useAuthStore()
 
+const isSuperAdmin = computed(() => authStore.user?.role === 'SUPERADMIN')
+const userName = computed(() => authStore.user?.name || 'Admin')
+const userRole = computed(() => authStore.user?.role === 'SUPERADMIN' ? 'Super Administrator' : 'Administrator')
+
 const isActive = (path: string) => route.path === path
 
-const navGroups = [
-  {
-    label: 'Master Data',
-    items: [
-      { path: '/admin/period', icon: 'calendar_today', label: 'Period', badge: null },
-      { path: '/admin/instrument', icon: 'assignment', label: 'Instrument Penelitian', badge: null },
-    ],
-  },
-  {
-    label: 'Pelaksanaan',
-    items: [
-      { path: '/admin/respondent', icon: 'groups', label: 'Responden', badge: null },
-      { path: '/admin/monitoring', icon: 'monitoring', label: 'Monitoring', badge: null },
-    ],
-  },
-  {
-    label: 'Lainnya',
-    items: [
-      { path: '/admin/reports', icon: 'assessment', label: 'Reports', badge: null },
-      // { path: '/admin/settings', icon: 'settings', label: 'Settings', badge: null },
-    ],
-  },
-]
+const navGroups = computed(() => {
+  const groups = []
+
+  // Master Admin - only for SUPERADMIN
+  if (isSuperAdmin.value) {
+    groups.push({
+      label: 'Master Admin',
+      items: [
+        { path: '/admin/master/user', icon: 'manage_accounts', label: 'Manajemen User', badge: null },
+      ],
+    })
+  }
+
+  groups.push(
+    {
+      label: 'Master Data',
+      items: [
+        { path: '/admin/period', icon: 'calendar_today', label: 'Period', badge: null },
+        { path: '/admin/instrument', icon: 'assignment', label: 'Instrument Penelitian', badge: null },
+      ],
+    },
+    {
+      label: 'Pelaksanaan',
+      items: [
+        { path: '/admin/respondent', icon: 'groups', label: 'Responden', badge: null },
+        { path: '/admin/monitoring', icon: 'monitoring', label: 'Monitoring', badge: null },
+      ],
+    },
+    {
+      label: 'Lainnya',
+      items: [
+        { path: '/admin/reports', icon: 'assessment', label: 'Reports', badge: null },
+      ],
+    }
+  )
+
+  return groups
+})
 </script>
 
 <template>
@@ -97,8 +116,8 @@ const navGroups = [
             <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">account_circle</span>
           </div>
           <div class="flex-1 overflow-hidden">
-            <p class="font-body-sm text-body-sm font-semibold truncate">Admin Utama</p>
-            <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Administrator</p>
+            <p class="font-body-sm text-body-sm font-semibold truncate">{{ userName }}</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">{{ userRole }}</p>
           </div>
         </div>
       </div>
@@ -115,7 +134,7 @@ const navGroups = [
             <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
             </div>
-            <span class="font-body-sm text-body-sm font-medium hidden sm:block">Budi Santoso</span>
+            <span class="font-body-sm text-body-sm font-medium hidden sm:block">{{ userName }}</span>
           </div>
         </div>
       </header>

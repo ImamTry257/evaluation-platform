@@ -285,6 +285,194 @@
           ]
         },
         {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@cbt.com\",\n  \"password\": \"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login-admin"]
+            },
+            "description": "Login khusus admin dan superadmin menggunakan email.\n\n**Rate Limit:** 100 attempts per 15 minutes per IP\n\n**Flow:**\n1. Kirim email dan password\n2. Backend validasi credentials\n3. Hanya role admin & superadmin yang diizinkan\n4. Jika berhasil, return token dan user data\n5. Frontend redirect ke /admin"
+          },
+          "response": [
+            {
+              "name": "Login Admin Berhasil (Admin)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@cbt.com\",\n  \"password\": \"password\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login-admin"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|abc123def456ghi789jkl012mno345pqr678stu901\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"Administrator\",\n      \"username\": \"admin\",\n      \"email\": \"admin@cbt.com\",\n      \"role\": \"ADMIN\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Login Admin Berhasil (Superadmin)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"superadmin@cbt.com\",\n  \"password\": \"password\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login-admin"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|xyz789abc012def345ghi678jkl901mno234pqr567\",\n    \"user\": {\n      \"id\": 3,\n      \"name\": \"Super Administrator\",\n      \"username\": \"superadmin\",\n      \"email\": \"superadmin@cbt.com\",\n      \"role\": \"SUPERADMIN\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Login Admin Gagal - Wrong Password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@cbt.com\",\n  \"password\": \"wrongpassword\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login-admin"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": false,\n  \"message\": \"Email atau password salah\",\n  \"errors\": []\n}"
+            },
+            {
+              "name": "Login Admin Gagal - Non-Admin Role",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"respondent@sekolah.id\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login-admin"]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": false,\n  \"message\": \"Akun ini tidak memiliki akses admin\",\n  \"errors\": []\n}"
+            },
+            {
+              "name": "Login Admin Gagal - Validation Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login-admin",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login-admin"]
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"email\": [\"The email field is required.\"],\n    \"password\": [\"The password field is required.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
           "name": "Logout",
           "request": {
             "method": "POST",
