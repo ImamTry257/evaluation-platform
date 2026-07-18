@@ -591,6 +591,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 
 ## 3.4 Sub Components
 
+> **Note:** Sub Components menggunakan soft delete. DELETE akan set `deleted_at` = now().
+
 ### List Sub Components
 **Endpoint:** `GET /components/{componentId}/sub-components`
 
@@ -631,6 +633,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 
 ## 3.5 Indicators
 
+> **Note:** Indicators menggunakan soft delete. DELETE akan set `deleted_at` = now().
+
 ### List Indicators
 **Endpoint:** `GET /sub-components/{subComponentId}/indicators`
 
@@ -670,6 +674,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 ---
 
 ## 3.6 Questions
+
+> **Note:** Questions menggunakan soft delete. DELETE akan set `deleted_at` = now().
 
 ### List Questions
 **Endpoint:** `GET /indicators/{indicatorId}/questions`

@@ -19,13 +19,18 @@ Module ini menangani CRUD operations untuk semua master data:
 7. Respondent (Responden)
 8. Recommendation (Rekomendasi)
 
-> **Note:** Evaluation Periods menggunakan soft delete. Lihat section 1.1 untuk detail.
+> **Note:** Evaluation Periods, Components, Sub-Components, Indicators, dan Questions menggunakan soft delete. Lihat section 1.1 untuk detail.
 
 ---
 
 ## 1.1 Soft Delete Implementation
 
-**Evaluation Periods** menggunakan soft delete:
+**Models yang menggunakan soft delete:**
+- EvaluationPeriods
+- Components
+- SubComponents
+- Indicators
+- Questions
 - Tambah field `deleted_at` via migration
 - Model gunakan `SoftDeletes` trait
 - `DELETE /periods/{id}` mengatur `deleted_at = now()` (bukan hard delete)
