@@ -13,33 +13,33 @@ class Questionnaire extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'evaluationPeriodId',
+        'evaluation_period_id',
         'title',
         'description',
-        'durationMinutes',
+        'duration_minutes',
         'status',
     ];
 
     protected function casts(): array
     {
         return [
-            'durationMinutes' => 'integer',
+            'duration_minutes' => 'integer',
         ];
     }
 
     public function evaluationPeriod(): BelongsTo
     {
-        return $this->belongsTo(EvaluationPeriod::class, 'evaluationPeriodId');
+        return $this->belongsTo(EvaluationPeriod::class, 'evaluation_period_id');
     }
 
     public function components(): HasMany
     {
-        return $this->hasMany(Component::class, 'questionnaireId');
+        return $this->hasMany(Component::class, 'questionnaire_id');
     }
 
     public function responseSessions(): HasMany
     {
-        return $this->hasMany(ResponseSession::class, 'questionnaireId');
+        return $this->hasMany(ResponseSession::class, 'questionnaire_id');
     }
 
     public function scopePublished($query)

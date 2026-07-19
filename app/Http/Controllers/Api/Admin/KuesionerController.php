@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\QuestionnaireResource;
 use App\Models\Questionnaire;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class KuesionerController extends Controller
 
         // Filter by evaluation period
         if ($request->has('evaluationPeriodId') && $request->evaluationPeriodId) {
-            $query->where('evaluationPeriodId', $request->evaluationPeriodId);
+            $query->where('evaluation_period_id', $request->evaluationPeriodId);
         }
 
         $limit = min($request->get('limit', 10), 100);
@@ -40,7 +41,18 @@ class KuesionerController extends Controller
         $questionnaires = $query->orderBy('created_at', 'desc')
             ->paginate($limit);
 
-        return $this->listResponse($questionnaires, 'Questionnaires retrieved successfully');
+        return response()->json([
+            'status' => true,
+            'message' => 'Questionnaires retrieved successfully',
+            'data' => [
+                'contents' => QuestionnaireResource::collection($questionnaires),
+                'meta' => [
+                    'page' => $questionnaires->currentPage(),
+                    'limit' => $questionnaires->perPage(),
+                    'total' => $questionnaires->total(),
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -61,10 +73,21 @@ class KuesionerController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $questionnaire = Questionnaire::create($validator->validated());
+        $data = $validator->validated();
+
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'evaluation_period_id' => $data['evaluationPeriodId'],
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'duration_minutes' => $data['durationMinutes'],
+            'status' => $data['status'],
+        ];
+
+        $questionnaire = Questionnaire::create($dbData);
 
         return $this->successResponse(
-            $questionnaire->load('evaluationPeriod'),
+            new QuestionnaireResource($questionnaire->load('evaluationPeriod')),
             'Questionnaire created successfully',
             201
         );
@@ -82,7 +105,10 @@ class KuesionerController extends Controller
             return $this->errorResponse('Questionnaire not found', 404);
         }
 
-        return $this->successResponse($questionnaire, 'Questionnaire retrieved successfully');
+        return $this->successResponse(
+            new QuestionnaireResource($questionnaire),
+            'Questionnaire retrieved successfully'
+        );
     }
 
     /**
@@ -109,10 +135,21 @@ class KuesionerController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $questionnaire->update($validator->validated());
+        $data = $validator->validated();
+
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'evaluation_period_id' => $data['evaluationPeriodId'],
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'duration_minutes' => $data['durationMinutes'],
+            'status' => $data['status'],
+        ];
+
+        $questionnaire->update($dbData);
 
         return $this->successResponse(
-            $questionnaire->load('evaluationPeriod'),
+            new QuestionnaireResource($questionnaire->load('evaluationPeriod')),
             'Questionnaire updated successfully'
         );
     }
@@ -168,7 +205,7 @@ class KuesionerController extends Controller
         $questionnaire->update(['status' => 'published']);
 
         return $this->successResponse(
-            $questionnaire->load('evaluationPeriod'),
+            new QuestionnaireResource($questionnaire->load('evaluationPeriod')),
             'Questionnaire published successfully'
         );
     }

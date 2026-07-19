@@ -35,11 +35,33 @@ class KomponenController extends Controller
         $components = $query->orderBy('order_number', 'asc')
             ->paginate($limit);
 
-        return $this->listResponse(
-            ComponentResource::collection($components),
-            'Components retrieved successfully',
-            $components
-        );
+        // Get breadcrumb data
+        $breadCrumbList = null;
+        if ($components->count() != 0) {
+            $firstComponent = $components->first();
+            $breadCrumbList = [
+                'questionnaire' => $firstComponent->questionnaire ?? null,
+            ];
+        } else {
+            $questionnaire = \App\Models\Questionnaire::find($request->questionnaireId);
+            $breadCrumbList = [
+                'questionnaire' => $questionnaire,
+            ];
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Components retrieved successfully',
+            'data' => [
+                'breadCrumbList' => $breadCrumbList,
+                'contents' => ComponentResource::collection($components),
+                'meta' => [
+                    'page' => $components->currentPage(),
+                    'limit' => $components->perPage(),
+                    'total' => $components->total(),
+                ],
+            ],
+        ]);
     }
 
     /**

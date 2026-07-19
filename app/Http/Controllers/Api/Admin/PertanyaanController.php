@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\QuestionResource;
 use App\Models\Indicator;
 use App\Models\Question;
 use App\Traits\HasApiResponse;
@@ -21,18 +22,18 @@ class PertanyaanController extends Controller
     {
         $query = Question::with('indicator.subComponent.component.questionnaire');
 
-        // Search by questionText
+        // Search by question_text
         if ($request->has('search') && $request->search) {
-            $query->where('questionText', 'like', '%' . $request->search . '%');
+            $query->where('question_text', 'like', '%' . $request->search . '%');
         }
 
         // Filter by indicator
         if ($request->has('indicatorId') && $request->indicatorId) {
-            $query->where('indicatorId', $request->indicatorId);
+            $query->where('indicator_id', $request->indicatorId);
         }
 
         $limit = min($request->get('limit', 10), 100);
-        $questions = $query->orderBy('orderNumber', 'asc')
+        $questions = $query->orderBy('order_number', 'asc')
             ->paginate($limit);
 
         // Get breadcrumb data - always fetch from indicatorId
@@ -62,7 +63,7 @@ class PertanyaanController extends Controller
             'message' => 'Questions retrieved successfully',
             'data' => [
                 'breadCrumbList' => $breadCrumbList,
-                'contents' => $questions->items(),
+                'contents' => QuestionResource::collection($questions),
                 'meta' => [
                     'page' => $questions->currentPage(),
                     'limit' => $questions->perPage(),
@@ -92,22 +93,27 @@ class PertanyaanController extends Controller
 
         $data = $validator->validated();
 
-        // Auto-generate orderNumber if not provided
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'indicator_id' => $data['indicatorId'],
+            'question_text' => $data['questionText'],
+            'weight' => $data['weight'],
+            'is_active' => $data['is_active'] ?? 1,
+        ];
+
+        // Auto-generate order_number if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = Question::where('indicatorId', $data['indicatorId'])
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+            $maxOrder = Question::where('indicator_id', $dbData['indicator_id'])
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
         }
 
-        // Set default is_active if not provided
-        if (!isset($data['is_active'])) {
-            $data['is_active'] = 1;
-        }
-
-        $question = Question::create($data);
+        $question = Question::create($dbData);
 
         return $this->successResponse(
-            $question->load('indicator'),
+            new QuestionResource($question->load('indicator')),
             'Question created successfully',
             201
         );
@@ -125,7 +131,7 @@ class PertanyaanController extends Controller
             return $this->errorResponse('Question not found', 404);
         }
 
-        return $this->successResponse($question, 'Question retrieved successfully');
+        return $this->successResponse(new QuestionResource($question), 'Question retrieved successfully');
     }
 
     /**
@@ -154,18 +160,28 @@ class PertanyaanController extends Controller
 
         $data = $validator->validated();
 
-        // Auto-generate orderNumber if not provided
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'indicator_id' => $data['indicatorId'],
+            'question_text' => $data['questionText'],
+            'weight' => $data['weight'],
+            'is_active' => $data['is_active'] ?? 1,
+        ];
+
+        // Auto-generate order_number if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = Question::where('indicatorId', $data['indicatorId'])
+            $maxOrder = Question::where('indicator_id', $dbData['indicator_id'])
                 ->where('id', '!=', $id)
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
         }
 
-        $question->update($data);
+        $question->update($dbData);
 
         return $this->successResponse(
-            $question->load('indicator'),
+            new QuestionResource($question->load('indicator')),
             'Question updated successfully'
         );
     }

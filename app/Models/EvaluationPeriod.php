@@ -30,7 +30,7 @@ class EvaluationPeriod extends Model
 
     public function questionnaires(): HasMany
     {
-        return $this->hasMany(Questionnaire::class, 'evaluationPeriodId');
+        return $this->hasMany(Questionnaire::class, 'evaluation_period_id');
     }
 
     public function scopeActive($query)

@@ -13,23 +13,23 @@ class Indicator extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'subComponentId',
+        'sub_component_id',
         'name',
         'description',
-        'orderNumber',
+        'order_number',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'orderNumber' => 'integer',
+            'order_number' => 'integer',
         ];
     }
 
     public function subComponent(): BelongsTo
     {
-        return $this->belongsTo(SubComponent::class, 'subComponentId');
+        return $this->belongsTo(SubComponent::class, 'sub_component_id');
     }
 
     public function questions(): HasMany

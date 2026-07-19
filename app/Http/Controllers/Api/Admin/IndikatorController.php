@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\IndicatorResource;
 use App\Models\Indicator;
 use App\Models\SubComponent;
 use App\Traits\HasApiResponse;
@@ -28,11 +29,11 @@ class IndikatorController extends Controller
 
         // Filter by sub-component
         if ($request->has('subComponentId') && $request->subComponentId) {
-            $query->where('subComponentId', $request->subComponentId);
+            $query->where('sub_component_id', $request->subComponentId);
         }
 
         $limit = min($request->get('limit', 10), 100);
-        $indicators = $query->orderBy('orderNumber', 'asc')
+        $indicators = $query->orderBy('order_number', 'asc')
             ->paginate($limit);
 
         // Get breadcrumb data
@@ -44,7 +45,7 @@ class IndikatorController extends Controller
                 'component' => $firstSubComponent->component ?? null,
                 'subComponent' => $firstSubComponent,
             ];
-        }else {
+        } else {
             $subComponent = SubComponent::with('component.questionnaire')->find($request->subComponentId);
             $breadCrumbList = [
                 'questionnaire' => $subComponent->component->questionnaire ?? null,
@@ -58,7 +59,7 @@ class IndikatorController extends Controller
             'message' => 'Indicators retrieved successfully',
             'data' => [
                 'breadCrumbList' => $breadCrumbList,
-                'contents' => $indicators->items(),
+                'contents' => IndicatorResource::collection($indicators),
                 'meta' => [
                     'page' => $indicators->currentPage(),
                     'limit' => $indicators->perPage(),
@@ -79,7 +80,7 @@ class IndikatorController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|integer|in:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -88,22 +89,27 @@ class IndikatorController extends Controller
 
         $data = $validator->validated();
 
-        // Auto-generate orderNumber if not provided
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'sub_component_id' => $data['subComponentId'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'is_active' => $data['isActive'] ?? 1,
+        ];
+
+        // Auto-generate order_number if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = Indicator::where('subComponentId', $data['subComponentId'])
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+            $maxOrder = Indicator::where('sub_component_id', $dbData['sub_component_id'])
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
         }
 
-        // Set default is_active if not provided
-        if (!isset($data['is_active'])) {
-            $data['is_active'] = 1;
-        }
-
-        $indicator = Indicator::create($data);
+        $indicator = Indicator::create($dbData);
 
         return $this->successResponse(
-            $indicator->load('subComponent'),
+            new IndicatorResource($indicator->load('subComponent')),
             'Indicator created successfully',
             201
         );
@@ -121,7 +127,10 @@ class IndikatorController extends Controller
             return $this->errorResponse('Indicator not found', 404);
         }
 
-        return $this->successResponse($indicator, 'Indicator retrieved successfully');
+        return $this->successResponse(
+            new IndicatorResource($indicator),
+            'Indicator retrieved successfully'
+        );
     }
 
     /**
@@ -141,7 +150,7 @@ class IndikatorController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|integer|in:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -150,18 +159,28 @@ class IndikatorController extends Controller
 
         $data = $validator->validated();
 
-        // Auto-generate orderNumber if not provided
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'sub_component_id' => $data['subComponentId'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'is_active' => $data['isActive'] ?? $indicator->is_active,
+        ];
+
+        // Auto-generate order_number if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = Indicator::where('subComponentId', $data['subComponentId'])
+            $maxOrder = Indicator::where('sub_component_id', $dbData['sub_component_id'])
                 ->where('id', '!=', $id)
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
         }
 
-        $indicator->update($data);
+        $indicator->update($dbData);
 
         return $this->successResponse(
-            $indicator->load('subComponent'),
+            new IndicatorResource($indicator->load('subComponent')),
             'Indicator updated successfully'
         );
     }

@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('indicators', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subComponentId')->constrained('sub_components')->cascadeOnDelete();
+            $table->foreignId('sub_component_id')->constrained('sub_components')->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('orderNumber')->default(0);
+            $table->integer('order_number')->default(0);
             $table->timestamps();
         });
     }

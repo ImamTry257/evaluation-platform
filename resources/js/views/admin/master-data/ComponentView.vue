@@ -99,7 +99,6 @@ async function confirmDelete() {
 // More menu actions
 function openViewModal(item: any) {
   viewingComponent.value = item
-  console.log(viewingComponent,'ccc')
   showViewModal.value = true
 }
 

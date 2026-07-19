@@ -13,10 +13,10 @@ class Question extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'indicatorId',
-        'questionText',
+        'indicator_id',
+        'question_text',
         'weight',
-        'orderNumber',
+        'order_number',
         'is_active',
     ];
 
@@ -24,17 +24,18 @@ class Question extends Model
     {
         return [
             'weight' => 'decimal:2',
-            'orderNumber' => 'integer',
+            'order_number' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
 
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(Indicator::class, 'indicatorId');
+        return $this->belongsTo(Indicator::class, 'indicator_id');
     }
 
     public function responseAnswers(): HasMany
     {
-        return $this->hasMany(ResponseAnswer::class, 'questionId');
+        return $this->hasMany(ResponseAnswer::class, 'question_id');
     }
 }
