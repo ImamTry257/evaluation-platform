@@ -279,8 +279,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login-admin",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "login-admin"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login-admin"
+                  ]
                 }
               },
               "event": [
@@ -1090,7 +1097,7 @@
                   "name": "List Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Components retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"questionnaireId\": 4,\n        \"name\": \"Komponen Kebijakan\",\n        \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"questionnaire\": {\n          \"id\": 4,\n          \"evaluationPeriodId\": 4,\n          \"title\": \"Kuesioner Valid\",\n          \"description\": null,\n          \"durationMinutes\": 60,\n          \"status\": \"draft\",\n          \"created_at\": \"2026-07-15T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-15T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Components retrieved successfully\", \"data\": {\"contents\": [{\"id\": 1, \"questionnaireId\": 4, \"name\": \"Komponen Kebijakan\", \"description\": \"Komponen evaluasi kebijakan lingkungan\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"questionnaire\": {\"id\": 4, \"evaluationPeriodId\": 4, \"title\": \"Kuesioner Valid\", \"description\": null, \"durationMinutes\": 60, \"status\": \"draft\", \"created_at\": \"2026-07-15T00:00:00.000000Z\", \"updated_at\": \"2026-07-15T00:00:00.000000Z\"}}], \"meta\": {\"page\": 1, \"limit\": 10, \"total\": 1}}}"
                 }
               ]
             },
@@ -1114,7 +1121,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Kebijakan\",\n  \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n  \"orderNumber\": 1,\n  \"is_active\": 1\n}"
+                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Kebijakan\",\n  \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n  \"orderNumber\": 1,\n  \"isActive\": true\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/components",
@@ -1134,13 +1141,13 @@
                   "name": "Create Success",
                   "code": 201,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Component created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Kebijakan\",\n    \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n    \"orderNumber\": 1,\n    \"is_active\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Component created successfully\", \"data\": {\"id\": 1, \"questionnaireId\": 4, \"name\": \"Komponen Kebijakan\", \"description\": \"Komponen evaluasi kebijakan lingkungan\", \"orderNumber\": 1, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"questionnaire\": {\"id\": 4, \"evaluationPeriodId\": 4, \"title\": \"Kuesioner Valid\"}, \"isActive\": true}}"
                 },
                 {
                   "name": "Create Validation Error",
                   "code": 422,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"questionnaireId\": [\"The questionnaire id field is required.\"],\n    \"name\": [\"The name field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+                  "body": "{\"status\": false, \"message\": \"Validation failed\", \"errors\": {\"questionnaireId\": [\"The questionnaire id field is required.\"], \"name\": [\"The name field is required.\"], \"orderNumber\": [\"The order number field is required.\"], \"isActive\": true}}"
                 }
               ]
             },
@@ -1177,7 +1184,7 @@
                   "name": "Get Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Component retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Kebijakan\",\n    \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Component retrieved successfully\", \"data\": {\"id\": 1, \"questionnaireId\": 4, \"name\": \"Komponen Kebijakan\", \"description\": \"Komponen evaluasi kebijakan lingkungan\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"questionnaire\": {\"id\": 4, \"evaluationPeriodId\": 4, \"title\": \"Kuesioner Valid\"}}}"
                 },
                 {
                   "name": "Get Not Found",
@@ -1207,7 +1214,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2,\n  \"is_active\": 1\n}"
+                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2,\n  \"isActive\": true\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/components/1",
@@ -1228,7 +1235,7 @@
                   "name": "Update Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Component updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Updated\",\n    \"description\": \"Updated\",\n    \"orderNumber\": 2,\n    \"is_active\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Component updated successfully\", \"data\": {\"id\": 1, \"questionnaireId\": 4, \"name\": \"Komponen Updated\", \"description\": \"Updated\", \"orderNumber\": 2, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"questionnaire\": {\"id\": 4, \"evaluationPeriodId\": 4, \"title\": \"Kuesioner Valid\"}, \"isActive\": true}}"
                 }
               ]
             },
@@ -1327,7 +1334,7 @@
                   "name": "List Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Sub-components retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"componentId\": 3,\n        \"name\": \"Sub Komponen 1\",\n        \"description\": \"Deskripsi sub komponen\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"component\": {\n          \"id\": 3,\n          \"questionnaireId\": 4,\n          \"name\": \"Component 1\",\n          \"description\": null,\n          \"orderNumber\": 1,\n          \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Sub-components retrieved successfully\", \"data\": {\"contents\": [{\"id\": 1, \"componentId\": 3, \"name\": \"Sub Komponen 1\", \"description\": \"Deskripsi sub komponen\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"component\": {\"id\": 3, \"questionnaireId\": 4, \"name\": \"Component 1\", \"description\": null, \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\"}}], \"meta\": {\"page\": 1, \"limit\": 10, \"total\": 1}}}"
                 }
               ]
             },
@@ -1351,7 +1358,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"componentId\": 3,\n  \"name\": \"Sub Komponen 1\",\n  \"description\": \"Deskripsi sub komponen\",\n  \"orderNumber\": 1\n}"
+                  "raw": "{\"componentId\": 3, \"name\": \"Sub Komponen 1\", \"description\": \"Deskripsi sub komponen\", \"orderNumber\": 1, \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/sub-components",
@@ -1371,13 +1378,13 @@
                   "name": "Create Success",
                   "code": 201,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"componentId\": 3,\n    \"name\": \"Sub Komponen 1\",\n    \"description\": \"Deskripsi sub komponen\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"component\": {\n      \"id\": 3,\n      \"questionnaireId\": 4,\n      \"name\": \"Component 1\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Sub-component created successfully\", \"data\": {\"id\": 1, \"componentId\": 3, \"name\": \"Sub Komponen 1\", \"description\": \"Deskripsi sub komponen\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"component\": {\"id\": 3, \"questionnaireId\": 4, \"name\": \"Component 1\"}}}"
                 },
                 {
                   "name": "Create Validation Error",
                   "code": 422,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"componentId\": [\"The component id field is required.\"],\n    \"name\": [\"The name field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+                  "body": "{\"status\": false, \"message\": \"Validation failed\", \"errors\": {\"componentId\": [\"The component id field is required.\"], \"name\": [\"The name field is required.\"], \"orderNumber\": [\"The order number field is required.\"], \"isActive\": true}}"
                 }
               ]
             },
@@ -1414,7 +1421,7 @@
                   "name": "Get Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"componentId\": 3,\n    \"name\": \"Sub Komponen 1\",\n    \"description\": \"Deskripsi sub komponen\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"component\": {\n      \"id\": 3,\n      \"questionnaireId\": 4,\n      \"name\": \"Component 1\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Sub-component retrieved successfully\", \"data\": {\"id\": 1, \"componentId\": 3, \"name\": \"Sub Komponen 1\", \"description\": \"Deskripsi sub komponen\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"component\": {\"id\": 3, \"questionnaireId\": 4, \"name\": \"Component 1\"}}}"
                 },
                 {
                   "name": "Get Not Found",
@@ -1444,7 +1451,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"componentId\": 3,\n  \"name\": \"Sub Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2\n}"
+                  "raw": "{\"componentId\": 3, \"name\": \"Sub Komponen Updated\", \"description\": \"Updated\", \"orderNumber\": 2, \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/sub-components/1",
@@ -1465,7 +1472,7 @@
                   "name": "Update Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Sub-component updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"componentId\": 3,\n    \"name\": \"Sub Komponen Updated\",\n    \"description\": \"Updated\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"component\": {\n      \"id\": 3,\n      \"questionnaireId\": 4,\n      \"name\": \"Component 1\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Sub-component updated successfully\", \"data\": {\"id\": 1, \"componentId\": 3, \"name\": \"Sub Komponen Updated\", \"description\": \"Updated\", \"orderNumber\": 2, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"component\": {\"id\": 3, \"questionnaireId\": 4, \"name\": \"Component 1\"}}}"
                 }
               ]
             },
@@ -1564,7 +1571,7 @@
                   "name": "List Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Indicators retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"subComponentId\": 2,\n        \"name\": \"Indikator Kualitas Udara\",\n        \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"sub_component\": {\n          \"id\": 2,\n          \"componentId\": 3,\n          \"name\": \"Sub Komponen 1\",\n          \"description\": null,\n          \"orderNumber\": 1,\n          \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n          \"updated_at\": \"2026-07-16T00:00:00.000000Z\"\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Indicators retrieved successfully\", \"data\": {\"contents\": [{\"id\": 1, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\", \"description\": \"Mengukur kualitas udara di lingkungan sekolah\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"sub_component\": {\"id\": 2, \"componentId\": 3, \"name\": \"Sub Komponen 1\", \"description\": null, \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\"}}], \"meta\": {\"page\": 1, \"limit\": 10, \"total\": 1}}}"
                 }
               ]
             },
@@ -1588,7 +1595,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"subComponentId\": 2,\n  \"name\": \"Indikator Kualitas Udara\",\n  \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n  \"orderNumber\": 1\n}"
+                  "raw": "{\"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\", \"description\": \"Mengukur kualitas udara di lingkungan sekolah\", \"orderNumber\": 1, \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/indicators",
@@ -1608,13 +1615,13 @@
                   "name": "Create Success",
                   "code": 201,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Indicator created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"subComponentId\": 2,\n    \"name\": \"Indikator Kualitas Udara\",\n    \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"sub_component\": {\n      \"id\": 2,\n      \"componentId\": 3,\n      \"name\": \"Sub Komponen 1\",\n      \"description\": null,\n      \"orderNumber\": 1\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Indicator created successfully\", \"data\": {\"id\": 1, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\", \"description\": \"Mengukur kualitas udara di lingkungan sekolah\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"sub_component\": {\"id\": 2, \"componentId\": 3, \"name\": \"Sub Komponen 1\", \"description\": null, \"orderNumber\": 1, \"isActive\": true}}}"
                 },
                 {
                   "name": "Create Validation Error",
                   "code": 422,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"subComponentId\": [\"The sub component id field is required.\"],\n    \"name\": [\"The name field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+                  "body": "{\"status\": false, \"message\": \"Validation failed\", \"errors\": {\"subComponentId\": [\"The sub component id field is required.\"], \"name\": [\"The name field is required.\"], \"orderNumber\": [\"The order number field is required.\"], \"isActive\": true}}"
                 }
               ]
             },
@@ -1651,7 +1658,7 @@
                   "name": "Get Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Indicator retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"subComponentId\": 2,\n    \"name\": \"Indikator Kualitas Udara\",\n    \"description\": \"Mengukur kualitas udara di lingkungan sekolah\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"sub_component\": {\n      \"id\": 2,\n      \"componentId\": 3,\n      \"name\": \"Sub Komponen 1\"\n    },\n    \"questions\": [],\n    \"recommendations\": []\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Indicator retrieved successfully\", \"data\": {\"id\": 1, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\", \"description\": \"Mengukur kualitas udara di lingkungan sekolah\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"sub_component\": {\"id\": 2, \"componentId\": 3, \"name\": \"Sub Komponen 1\"}, \"questions\": [], \"recommendations\": []}}"
                 },
                 {
                   "name": "Get Not Found",
@@ -1681,7 +1688,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"subComponentId\": 2,\n  \"name\": \"Indikator Kualitas Udara Updated\",\n  \"description\": \"Updated description\",\n  \"orderNumber\": 2\n}"
+                  "raw": "{\"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara Updated\", \"description\": \"Updated description\", \"orderNumber\": 2, \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/indicators/1",
@@ -1702,7 +1709,7 @@
                   "name": "Update Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Indicator updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"subComponentId\": 2,\n    \"name\": \"Indikator Kualitas Udara Updated\",\n    \"description\": \"Updated description\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"sub_component\": {\n      \"id\": 2,\n      \"componentId\": 3,\n      \"name\": \"Sub Komponen 1\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Indicator updated successfully\", \"data\": {\"id\": 1, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara Updated\", \"description\": \"Updated description\", \"orderNumber\": 2, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"sub_component\": {\"id\": 2, \"componentId\": 3, \"name\": \"Sub Komponen 1\"}}}"
                 }
               ]
             },
@@ -1801,7 +1808,7 @@
                   "name": "List Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Questions retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"indicatorId\": 4,\n        \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n        \"weight\": \"1.50\",\n        \"orderNumber\": 1,\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"indicator\": {\n          \"id\": 4,\n          \"subComponentId\": 2,\n          \"name\": \"Indikator Kualitas Udara\",\n          \"description\": \"Mengukur kualitas udara\",\n          \"orderNumber\": 1\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Questions retrieved successfully\", \"data\": {\"contents\": [{\"id\": 1, \"indicatorId\": 4, \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\", \"weight\": \"1.50\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"indicator\": {\"id\": 4, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\", \"description\": \"Mengukur kualitas udara\", \"orderNumber\": 1, \"isActive\": true}}], \"meta\": {\"page\": 1, \"limit\": 10, \"total\": 1}}}"
                 }
               ]
             },
@@ -1825,7 +1832,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"indicatorId\": 4,\n  \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n  \"weight\": 1.50,\n  \"orderNumber\": 1\n}"
+                  "raw": "{\"indicatorId\": 4, \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\", \"weight\": 1.5, \"orderNumber\": 1, \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/questions",
@@ -1845,13 +1852,13 @@
                   "name": "Create Success",
                   "code": 201,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Question created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 4,\n    \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n    \"weight\": \"1.50\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 4,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Kualitas Udara\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Question created successfully\", \"data\": {\"id\": 1, \"indicatorId\": 4, \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\", \"weight\": \"1.50\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"indicator\": {\"id\": 4, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\"}}}"
                 },
                 {
                   "name": "Create Validation Error",
                   "code": 422,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"indicatorId\": [\"The indicator id field is required.\"],\n    \"questionText\": [\"The question text field is required.\"],\n    \"weight\": [\"The weight field is required.\"],\n    \"orderNumber\": [\"The order number field is required.\"]\n  }\n}"
+                  "body": "{\"status\": false, \"message\": \"Validation failed\", \"errors\": {\"indicatorId\": [\"The indicator id field is required.\"], \"questionText\": [\"The question text field is required.\"], \"weight\": [\"The weight field is required.\"], \"orderNumber\": [\"The order number field is required.\"], \"isActive\": true}}"
                 }
               ]
             },
@@ -1888,7 +1895,7 @@
                   "name": "Get Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Question retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 4,\n    \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\",\n    \"weight\": \"1.50\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 4,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Kualitas Udara\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Question retrieved successfully\", \"data\": {\"id\": 1, \"indicatorId\": 4, \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah?\", \"weight\": \"1.50\", \"orderNumber\": 1, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"indicator\": {\"id\": 4, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\"}}}"
                 },
                 {
                   "name": "Get Not Found",
@@ -1918,7 +1925,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"indicatorId\": 4,\n  \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah? (Updated)\",\n  \"weight\": 2.00,\n  \"orderNumber\": 2\n}"
+                  "raw": "{\"indicatorId\": 4, \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah? (Updated)\", \"weight\": 2.0, \"orderNumber\": 2, \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/questions/1",
@@ -1939,7 +1946,7 @@
                   "name": "Update Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Question updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"indicatorId\": 4,\n    \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah? (Updated)\",\n    \"weight\": \"2.00\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"indicator\": {\n      \"id\": 4,\n      \"subComponentId\": 2,\n      \"name\": \"Indikator Kualitas Udara\"\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Question updated successfully\", \"data\": {\"id\": 1, \"indicatorId\": 4, \"questionText\": \"Seberapa baik kualitas udara di lingkungan sekolah? (Updated)\", \"weight\": \"2.00\", \"orderNumber\": 2, \"isActive\": true, \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"indicator\": {\"id\": 4, \"subComponentId\": 2, \"name\": \"Indikator Kualitas Udara\"}}}"
                 }
               ]
             },
@@ -2351,7 +2358,7 @@
                   "name": "List Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Recommendations retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"indicatorId\": 5,\n        \"minScore\": \"0.00\",\n        \"maxScore\": \"20.00\",\n        \"category\": \"E\",\n        \"recommendationText\": \"Kualitas udara sangat buruk, perlu perbaikan segera\",\n        \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n        \"indicator\": {\n          \"id\": 5,\n          \"subComponentId\": 2,\n          \"name\": \"Indikator Test\",\n          \"description\": \"Test\",\n          \"orderNumber\": 1\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 1\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Recommendations retrieved successfully\", \"data\": {\"contents\": [{\"id\": 1, \"indicatorId\": 5, \"minScore\": \"0.00\", \"maxScore\": \"20.00\", \"category\": \"E\", \"recommendationText\": \"Kualitas udara sangat buruk, perlu perbaikan segera\", \"created_at\": \"2026-07-16T00:00:00.000000Z\", \"updated_at\": \"2026-07-16T00:00:00.000000Z\", \"indicator\": {\"id\": 5, \"subComponentId\": 2, \"name\": \"Indikator Test\", \"description\": \"Test\", \"orderNumber\": 1, \"isActive\": true}}], \"meta\": {\"page\": 1, \"limit\": 10, \"total\": 1}}}"
                 }
               ]
             },
@@ -2600,7 +2607,7 @@
                   "name": "List Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Scoring levels retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 1,\n        \"title\": \"Sangat Tidak Sesuai\",\n        \"value\": \"1\",\n        \"is_active\": 1,\n        \"description\": \"Sangat Tidak Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 2,\n        \"title\": \"Tidak Sesuai\",\n        \"value\": \"2\",\n        \"is_active\": 1,\n        \"description\": \"Tidak Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 3,\n        \"title\": \"Kurang Sesuai\",\n        \"value\": \"3\",\n        \"is_active\": 1,\n        \"description\": \"Kurang Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 4,\n        \"title\": \"Netral\",\n        \"value\": \"4\",\n        \"is_active\": 1,\n        \"description\": \"Netral\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 5,\n        \"title\": \"Cukup Sesuai\",\n        \"value\": \"5\",\n        \"is_active\": 1,\n        \"description\": \"Cukup Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 6,\n        \"title\": \"Sesuai\",\n        \"value\": \"6\",\n        \"is_active\": 1,\n        \"description\": \"Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      },\n      {\n        \"id\": 7,\n        \"title\": \"Sangat Sesuai\",\n        \"value\": \"7\",\n        \"is_active\": 1,\n        \"description\": \"Sangat Sesuai\",\n        \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n        \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 15,\n      \"total\": 7\n    }\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Scoring levels retrieved successfully\", \"data\": {\"contents\": [{\"id\": 1, \"title\": \"Sangat Tidak Sesuai\", \"value\": \"1\", \"description\": \"Sangat Tidak Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}, {\"id\": 2, \"title\": \"Tidak Sesuai\", \"value\": \"2\", \"description\": \"Tidak Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}, {\"id\": 3, \"title\": \"Kurang Sesuai\", \"value\": \"3\", \"description\": \"Kurang Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}, {\"id\": 4, \"title\": \"Netral\", \"value\": \"4\", \"description\": \"Netral\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}, {\"id\": 5, \"title\": \"Cukup Sesuai\", \"value\": \"5\", \"description\": \"Cukup Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}, {\"id\": 6, \"title\": \"Sesuai\", \"value\": \"6\", \"description\": \"Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}, {\"id\": 7, \"title\": \"Sangat Sesuai\", \"value\": \"7\", \"description\": \"Sangat Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}], \"meta\": {\"page\": 1, \"limit\": 15, \"total\": 7}}}"
                 }
               ]
             },
@@ -2624,7 +2631,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Sangat Baik\",\n  \"value\": 8,\n  \"is_active\": true,\n  \"description\": \"Sangat Baik\"\n}"
+                  "raw": "{\"title\": \"Sangat Baik\", \"value\": 8, \"description\": \"Sangat Baik\", \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/scoring-levels",
@@ -2644,7 +2651,7 @@
                   "name": "Create Success",
                   "code": 201,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level created successfully\",\n  \"data\": {\n    \"id\": 8,\n    \"title\": \"Sangat Baik\",\n    \"value\": 8,\n    \"is_active\": 1,\n    \"description\": \"Sangat Baik\",\n    \"created_at\": \"2026-07-17T07:00:00.000000Z\",\n    \"updated_at\": \"2026-07-17T07:00:00.000000Z\"\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Scoring level created successfully\", \"data\": {\"id\": 8, \"title\": \"Sangat Baik\", \"value\": 8, \"description\": \"Sangat Baik\", \"created_at\": \"2026-07-17T07:00:00.000000Z\", \"updated_at\": \"2026-07-17T07:00:00.000000Z\", \"isActive\": true}}"
                 },
                 {
                   "name": "Create Validation Error - Duplicate Value",
@@ -2693,7 +2700,7 @@
                   "name": "Get Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Sangat Tidak Sesuai\",\n    \"value\": \"1\",\n    \"is_active\": 1,\n    \"description\": \"Sangat Tidak Sesuai\",\n    \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n    \"updated_at\": \"2026-07-17T06:45:14.000000Z\"\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Scoring level retrieved successfully\", \"data\": {\"id\": 1, \"title\": \"Sangat Tidak Sesuai\", \"value\": \"1\", \"description\": \"Sangat Tidak Sesuai\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T06:45:14.000000Z\", \"isActive\": true}}"
                 },
                 {
                   "name": "Get Not Found",
@@ -2723,7 +2730,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Sangat Tidak Sesuai (Updated)\",\n  \"value\": 1,\n  \"is_active\": true,\n  \"description\": \"Sangat Tidak Sesuai - Updated\"\n}"
+                  "raw": "{\"title\": \"Sangat Tidak Sesuai (Updated)\", \"value\": 1, \"description\": \"Sangat Tidak Sesuai - Updated\", \"isActive\": true}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/scoring-levels/1",
@@ -2744,7 +2751,7 @@
                   "name": "Update Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Scoring level updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Sangat Tidak Sesuai (Updated)\",\n    \"value\": 1,\n    \"is_active\": 1,\n    \"description\": \"Sangat Tidak Sesuai - Updated\",\n    \"created_at\": \"2026-07-17T06:45:14.000000Z\",\n    \"updated_at\": \"2026-07-17T07:00:00.000000Z\"\n  }\n}"
+                  "body": "{\"status\": true, \"message\": \"Scoring level updated successfully\", \"data\": {\"id\": 1, \"title\": \"Sangat Tidak Sesuai (Updated)\", \"value\": 1, \"description\": \"Sangat Tidak Sesuai - Updated\", \"created_at\": \"2026-07-17T06:45:14.000000Z\", \"updated_at\": \"2026-07-17T07:00:00.000000Z\", \"isActive\": true}}"
                 },
                 {
                   "name": "Update Not Found",
