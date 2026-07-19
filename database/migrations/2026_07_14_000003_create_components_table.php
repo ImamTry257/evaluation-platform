@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('components', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('questionnaireId')->constrained('questionnaires')->cascadeOnDelete();
+            $table->foreignId('questionnaire_id')->constrained('questionnaires')->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('orderNumber')->default(0);
+            $table->integer('order_number')->default(0);
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

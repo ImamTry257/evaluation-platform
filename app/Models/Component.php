@@ -13,27 +13,28 @@ class Component extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'questionnaireId',
+        'questionnaire_id',
         'name',
         'description',
-        'orderNumber',
+        'order_number',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'orderNumber' => 'integer',
+            'order_number' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
 
     public function questionnaire(): BelongsTo
     {
-        return $this->belongsTo(Questionnaire::class, 'questionnaireId');
+        return $this->belongsTo(Questionnaire::class, 'questionnaire_id');
     }
 
     public function subComponents(): HasMany
     {
-        return $this->hasMany(SubComponent::class, 'componentId');
+        return $this->hasMany(SubComponent::class, 'component_id');
     }
 }

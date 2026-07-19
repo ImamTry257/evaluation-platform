@@ -28,11 +28,11 @@ class SubKomponenController extends Controller
 
         // Filter by component
         if ($request->has('componentId') && $request->componentId) {
-            $query->where('componentId', $request->componentId);
+            $query->where('component_id', $request->componentId);
         }
 
         $limit = min($request->get('limit', 10), 100);
-        $subComponents = $query->orderBy('orderNumber', 'asc')
+        $subComponents = $query->orderBy('order_number', 'asc')
             ->paginate($limit);
 
         // Get breadcrumb data
@@ -88,17 +88,24 @@ class SubKomponenController extends Controller
 
         // Auto-generate orderNumber if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = SubComponent::where('componentId', $data['componentId'])
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+            $maxOrder = SubComponent::where('component_id', $data['componentId'])
+                ->max('order_number');
+            $data['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $data['order_number'] = $data['orderNumber'];
+            unset($data['orderNumber']);
         }
 
-        // Set default is_active if not provided
-        if (!isset($data['is_active'])) {
-            $data['is_active'] = 1;
-        }
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'component_id' => $data['componentId'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'order_number' => $data['order_number'],
+            'is_active' => $data['is_active'] ?? 1,
+        ];
 
-        $subComponent = SubComponent::create($data);
+        $subComponent = SubComponent::create($dbData);
 
         return $this->successResponse(
             $subComponent->load('component'),
@@ -150,13 +157,25 @@ class SubKomponenController extends Controller
 
         // Auto-generate orderNumber if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = SubComponent::where('componentId', $data['componentId'])
+            $maxOrder = SubComponent::where('component_id', $data['componentId'])
                 ->where('id', '!=', $id)
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+                ->max('order_number');
+            $data['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $data['order_number'] = $data['orderNumber'];
+            unset($data['orderNumber']);
         }
 
-        $subComponent->update($data);
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'component_id' => $data['componentId'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'order_number' => $data['order_number'],
+            'is_active' => $data['is_active'] ?? 1,
+        ];
+
+        $subComponent->update($dbData);
 
         return $this->successResponse(
             $subComponent->load('component'),

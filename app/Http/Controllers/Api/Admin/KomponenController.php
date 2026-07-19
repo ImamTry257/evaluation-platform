@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ComponentResource;
 use App\Models\Component;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -27,38 +28,18 @@ class KomponenController extends Controller
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
-            $query->where('questionnaireId', $request->questionnaireId);
+            $query->where('questionnaire_id', $request->questionnaireId);
         }
 
         $limit = min($request->get('limit', 10), 100);
-        $components = $query->orderBy('orderNumber', 'asc')
+        $components = $query->orderBy('order_number', 'asc')
             ->paginate($limit);
 
-        // Get breadcrumb data
-        $breadCrumbList = null;
-        if ($request->has('questionnaireId') && $request->questionnaireId) {
-            $breadCrumbList = [
-                'questionnaire' => \App\Models\Questionnaire::find($request->questionnaireId),
-            ];
-        } elseif ($components->count() > 0) {
-            $breadCrumbList = [
-                'questionnaire' => $components->first()->questionnaire,
-            ];
-        }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Components retrieved successfully',
-            'data' => [
-                'breadCrumbList' => $breadCrumbList,
-                'contents' => $components->items(),
-                'meta' => [
-                    'page' => $components->currentPage(),
-                    'limit' => $components->perPage(),
-                    'total' => $components->total(),
-                ],
-            ],
-        ]);
+        return $this->listResponse(
+            ComponentResource::collection($components),
+            'Components retrieved successfully',
+            $components
+        );
     }
 
     /**
@@ -72,7 +53,7 @@ class KomponenController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -80,23 +61,28 @@ class KomponenController extends Controller
         }
 
         $data = $validator->validated();
-        
+
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'questionnaire_id' => $data['questionnaireId'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'is_active' => $data['isActive'] ?? false,
+        ];
+
         // Auto-generate orderNumber if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = Component::where('questionnaireId', $data['questionnaireId'])
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+            $maxOrder = Component::where('questionnaire_id', $dbData['questionnaire_id'])
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
         }
 
-        // Set default is_active if not provided
-        if (!isset($data['is_active'])) {
-            $data['is_active'] = 1;
-        }
-
-        $component = Component::create($data);
+        $component = Component::create($dbData);
 
         return $this->successResponse(
-            $component->load('questionnaire'),
+            new ComponentResource($component->load('questionnaire')),
             'Component created successfully',
             201
         );
@@ -114,7 +100,10 @@ class KomponenController extends Controller
             return $this->errorResponse('Component not found', 404);
         }
 
-        return $this->successResponse($component, 'Component retrieved successfully');
+        return $this->successResponse(
+            new ComponentResource($component),
+            'Component retrieved successfully'
+        );
     }
 
     /**
@@ -134,7 +123,7 @@ class KomponenController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -142,19 +131,29 @@ class KomponenController extends Controller
         }
 
         $data = $validator->validated();
-        
+
+        // Map camelCase to snake_case for database
+        $dbData = [
+            'questionnaire_id' => $data['questionnaireId'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'is_active' => $data['isActive'] ?? false,
+        ];
+
         // Auto-generate orderNumber if not provided
         if (!isset($data['orderNumber'])) {
-            $maxOrder = Component::where('questionnaireId', $data['questionnaireId'])
+            $maxOrder = Component::where('questionnaire_id', $dbData['questionnaire_id'])
                 ->where('id', '!=', $id)
-                ->max('orderNumber');
-            $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
         }
 
-        $component->update($data);
+        $component->update($dbData);
 
         return $this->successResponse(
-            $component->load('questionnaire'),
+            new ComponentResource($component->load('questionnaire')),
             'Component updated successfully'
         );
     }

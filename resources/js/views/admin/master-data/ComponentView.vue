@@ -59,7 +59,7 @@ function openEditModal(c: any) {
   showFormModal.value = true
 }
 async function handleFormSubmit() {
-  formLoading.value = true
+  loading.value = true
   try {
     if (formMode.value === 'add') {
       await createComponent({
@@ -80,7 +80,7 @@ async function handleFormSubmit() {
   } catch (err) {
     // Error handled by hook
   } finally {
-    formLoading.value = false
+    loading.value = false
   }
 }
 function openDeleteModal(c: any) {
@@ -99,6 +99,7 @@ async function confirmDelete() {
 // More menu actions
 function openViewModal(item: any) {
   viewingComponent.value = item
+  console.log(viewingComponent,'ccc')
   showViewModal.value = true
 }
 

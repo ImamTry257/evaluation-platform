@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useQuestionnaire } from '@/hooks/useQuestionnaire'
+import { usePeriode } from '@/hooks/usePeriode'
 
 const {
   questionnaires,
@@ -24,7 +25,11 @@ const {
   onPeriodFilter,
 } = useQuestionnaire()
 
-// Modal state
+const {
+  periods: periodOptions,
+  fetchPeriods,
+} = usePeriode()
+
 // Modal state
 const showFormModal = ref(false)
 const showDeleteModal = ref(false)
@@ -43,9 +48,6 @@ const form = ref({
   status: 'draft',
   durationMinutes: 30,
 })
-
-// Period options (will be fetched later)
-const periodOptions = ref<any[]>([])
 
 // Computed
 const showingFrom = computed(() => (currentPage.value - 1) * perPage.value + 1)
@@ -178,6 +180,7 @@ function goToPage(page: number) {
 // Init
 onMounted(() => {
   fetchQuestionnaires()
+  fetchPeriods()
 })
 </script>
 
@@ -191,7 +194,7 @@ onMounted(() => {
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div>
-        <h2 class="font-headline-xl text-headline-xl text-on-surface">Instrument Penelitian</h2>
+        <!-- <h2 class="font-headline-xl text-headline-xl text-on-surface">Instrument Penelitian</h2> -->
       </div>
       <button
         @click="openAddModal"
@@ -292,7 +295,7 @@ onMounted(() => {
                 </div>
               </td>
               <td class="px-6 py-5">
-                <span class="instrument-tag text-xs font-semibold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg">{{ item.evaluationPeriod?.name || '-' }}</span>
+                <span class="instrument-tag text-xs font-semibold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg">{{ item.evaluation_period?.name || '-' }}</span>
               </td>
               <td class="px-6 py-5">
                 <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(item.status)">
@@ -330,7 +333,6 @@ onMounted(() => {
         </table>
       </div>
 
-      <!-- Pagination Footer -->
       <!-- Pagination Footer -->
       <div v-if="questionnaires.length > 0" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-body-sm font-body-sm text-on-surface-variant">
@@ -472,7 +474,7 @@ onMounted(() => {
             </button>
             <button
               @click="handleFormSubmit"
-              :disabled="!form.name || !form.description || !form.period"
+              :disabled="!form.title || !form.description || !form.evaluationPeriodId"
               class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ formMode === 'add' ? 'Simpan' : 'Ubah' }}
