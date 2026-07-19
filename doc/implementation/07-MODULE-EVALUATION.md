@@ -171,7 +171,7 @@ class EvaluationService
     {
         // Check for existing active session
         $existingSession = ResponseSession::where('userId', $user->id)
-            ->where('status', 'inProgress')
+            ->where('status', 'in_progress')
             ->first();
 
         if ($existingSession) {
@@ -185,7 +185,7 @@ class EvaluationService
         $session = ResponseSession::create([
             'userId' => $user->id,
             'questionnaireId' => $questionnaire->id,
-            'status' => 'inProgress',
+            'status' => 'in_progress',
             'startedAt' => now(),
             'remainingSeconds' => $questionnaire->durationMinutes * 60,
         ]);
@@ -307,7 +307,7 @@ class EvaluationService
     {
         $session = ResponseSession::where('id', $sessionId)
             ->where('userId', $user->id)
-            ->where('status', 'inProgress')
+            ->where('status', 'in_progress')
             ->firstOrFail();
 
         // Check if session has timed out

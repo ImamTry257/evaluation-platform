@@ -656,7 +656,7 @@ All Eloquent models updated to use explicit foreign keys (camelCase) matching mi
 | GET | `/api/v1/evaluations/{sessionId}/results` | Get results |
 
 **Features:**
-- Start new session or resume existing inProgress session
+- Start new session or resume existing in_progress session
 - Load full questionnaire structure (components → sub-components → indicators → questions)
 - Save answers with upsert (unique constraint: sessionId + questionId)
 - Score validation: Likert scale 1-7

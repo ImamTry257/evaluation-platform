@@ -121,7 +121,7 @@ erDiagram
         datetime startedAt
         datetime submittedAt
         integer remainingSeconds
-        enum status "inProgress, submitted, timeout"
+        enum status "in_progress, submitted, timeout"
         timestamp createdAt
         timestamp updatedAt
     }
@@ -257,7 +257,7 @@ Menggunakan sistem weight untuk pembobotan pertanyaan.
 ## Response Sessions
 Sesi pengisian kuesioner oleh responden.
 
-Menyimpan status pengerjaan (inProgress, submitted, timeout) dan waktu sisa.
+Menyimpan status pengerjaan (in_progress, submitted, timeout) dan waktu sisa.
 
 **Relationships:**
 - N : 1 dengan Users
@@ -379,7 +379,7 @@ Contoh:
 ## Enum Fields
 - `users.role` → ('admin', 'respondent')
 - `questionnaires.status` → ('draft', 'published', 'closed')
-- `response_sessions.status` → ('inProgress', 'submitted', 'timeout')
+- `response_sessions.status` → ('in_progress', 'submitted', 'timeout')
 
 ---
 

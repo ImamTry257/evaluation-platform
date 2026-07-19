@@ -188,7 +188,7 @@ Schema::create('response_sessions', function (Blueprint $table) {
     $table->id();
     $table->foreignId('userId')->constrained('users');
     $table->foreignId('questionnaireId')->constrained('questionnaires');
-    $table->enum('status', ['inProgress', 'submitted', 'timeout'])->default('inProgress');
+    $table->enum('status', ['in_progress', 'submitted', 'timeout'])->default('in_progress');
     $table->dateTime('startedAt');
     $table->dateTime('submittedAt')->nullable();
     $table->integer('remainingSeconds');

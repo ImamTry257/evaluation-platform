@@ -22,6 +22,29 @@ class EvaluasiController extends Controller
     use HasApiResponse;
 
     /**
+     * GET /api/v1/evaluations/active-questionnaire
+     * Get the published questionnaire for respondent to evaluate.
+     */
+    public function activeQuestionnaire(Request $request)
+    {
+        $questionnaire = Questionnaire::with([
+            'evaluationPeriod',
+            'components.subComponents.indicators.questions',
+        ])
+            ->where('status', 'published')
+            ->first();
+
+        if (!$questionnaire) {
+            return $this->errorResponse('Tidak ada kuesioner yang tersedia', 404);
+        }
+
+        return $this->successResponse(
+            new \App\Http\Resources\QuestionnaireResource($questionnaire),
+            'Kuesioner aktif ditemukan'
+        );
+    }
+
+    /**
      * POST /api/v1/evaluations/start
      * Start a new evaluation session or resume existing one.
      */
@@ -43,10 +66,10 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Questionnaire not found or not published', 404);
         }
 
-        // Check for existing inProgress session
+        // Check for existing in_progress session
         $existingSession = ResponseSession::where('userId', $request->user()->id)
             ->where('questionnaireId', $request->questionnaireId)
-            ->where('status', 'inProgress')
+            ->where('status', 'in_progress')
             ->first();
 
         if ($existingSession) {
@@ -63,7 +86,7 @@ class EvaluasiController extends Controller
         $session = ResponseSession::create([
             'userId' => $request->user()->id,
             'questionnaireId' => $request->questionnaireId,
-            'status' => 'inProgress',
+            'status' => 'in_progress',
             'startedAt' => now(),
             'remainingSeconds' => $questionnaire->durationMinutes * 60,
         ]);
@@ -112,7 +135,7 @@ class EvaluasiController extends Controller
         }
 
         $session = ResponseSession::where('userId', $request->user()->id)
-            ->where('status', 'inProgress')
+            ->where('status', 'in_progress')
             ->find($sessionId);
 
         if (!$session) {
@@ -152,7 +175,7 @@ class EvaluasiController extends Controller
     public function submit(Request $request, $sessionId)
     {
         $session = ResponseSession::where('userId', $request->user()->id)
-            ->where('status', 'inProgress')
+            ->where('status', 'in_progress')
             ->find($sessionId);
 
         if (!$session) {
@@ -290,7 +313,7 @@ class EvaluasiController extends Controller
         }
 
         $session = ResponseSession::where('userId', $request->user()->id)
-            ->where('status', 'inProgress')
+            ->where('status', 'in_progress')
             ->find($sessionId);
 
         if (!$session) {

@@ -1,30 +1,52 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useEvaluation } from '@/hooks/respondent/useEvaluation'
 
 const router = useRouter()
+const { loading, error, fetchActiveQuestionnaire, startEvaluation } = useEvaluation()
+
 const isChecked = ref(false)
 const scrolled = ref(false)
+const questionnaire = ref<any>(null)
+const starting = ref(false)
 
-const infoItems = [
-  { icon: 'calendar_today', label: 'Periode', value: 'Ganjil 2023/24' },
-  { icon: 'assignment', label: 'Kuesioner', value: 'Evaluasi Mandiri' },
-  { icon: 'quiz', label: 'Pertanyaan', value: '48 Butir' },
-  { icon: 'timer', label: 'Estimasi', value: '20 Menit' },
-]
+// Dynamic info items from API
+const infoItems = computed(() => {
+  if (!questionnaire.value) {
+    return [
+      { icon: 'calendar_today', label: 'Periode', value: '...' },
+      { icon: 'assignment', label: 'Kuesioner', value: '...' },
+      { icon: 'quiz', label: 'Pertanyaan', value: '...' },
+      { icon: 'timer', label: 'Estimasi', value: '...' },
+    ]
+  }
+  const q = questionnaire.value
+  const totalQuestions = q.components?.reduce((acc: number, c: any) => {
+    return acc + (c.sub_components?.reduce((a2: number, sc: any) => {
+      return a2 + (sc.indicators?.reduce((a3: number, ind: any) => a3 + (ind.questions?.length || 0), 0) || 0)
+    }, 0) || 0)
+  }, 0) || 0
+  return [
+    { icon: 'calendar_today', label: 'Periode', value: q.evaluation_period?.title || '-' },
+    { icon: 'assignment', label: 'Kuesioner', value: q.title || '-' },
+    { icon: 'quiz', label: 'Pertanyaan', value: totalQuestions + ' Butir' },
+    { icon: 'timer', label: 'Estimasi', value: (q.duration_minutes || 20) + ' Menit' },
+  ]
+})
 
 const instructions = [
   {
-    title: 'Baca Pertanyaan dengan Teliti',
-    desc: 'Pastikan Anda memahami konteks setiap butir pernyataan sebelum memilih jawaban.',
+    title: 'Pilih Skala yang Sesuai',
+    desc: 'Klik radio button pada kolom skala yang paling menggambarkan kondisi Anda.',
   },
   {
     title: 'Jawaban Tersimpan Otomatis',
-    desc: 'Jangan khawatir kehilangan data, platform akan menyimpan progres Anda setiap kali bergeser halaman.',
+    desc: 'Setiap kali Anda memilih jawaban, data langsung tersimpan ke server secara real-time.',
   },
   {
-    title: 'Hasil Langsung Tersedia',
-    desc: 'Setelah selesai, sistem akan menampilkan ringkasan skor evaluasi secara real-time.',
+    title: 'Review & Submit',
+    desc: 'Anda dapat mengubah jawaban kapan saja sebelum menekan tombol Kirim Evaluasi.',
   },
 ]
 
@@ -42,13 +64,26 @@ function handleScroll() {
   scrolled.value = window.scrollY > 50
 }
 
-function startEvaluation() {
-  // TODO: navigate to evaluation form
-  console.log('Starting evaluation...')
+async function handleStartEvaluation() {
+  if (!questionnaire.value) return
+  starting.value = true
+  try {
+    const result = await startEvaluation(questionnaire.value.id)
+    router.push(`/respondent/evaluation/${result.session.id}`)
+  } catch (err) {
+    // Error handled by hook
+  } finally {
+    starting.value = false
+  }
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('scroll', handleScroll)
+  try {
+    questionnaire.value = await fetchActiveQuestionnaire()
+  } catch (err) {
+    // Error handled by hook
+  }
 })
 
 onUnmounted(() => {
@@ -142,20 +177,15 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
-
-        <!-- Developer Info -->
-        <div class="pt-4 flex justify-center lg:justify-start">
-          <div class="developer-info flex items-center gap-2 text-outline cursor-default transition-colors duration-300 hover:text-primary">
-            <span class="material-symbols-outlined text-sm">terminal</span>
-            <span class="text-body-sm">Dikembangkan oleh: Tim Riset Universitas Pendidikan • Versi 1.2.0</span>
-          </div>
-        </div>
       </section>
     </main>
 
     <!-- Fixed Bottom Confirmation Bar -->
     <footer class="fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-6 py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
       <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Error -->
+        <div v-if="error" class="text-error text-body-sm">{{ error }}</div>
+
         <label class="checkbox-label flex items-center gap-3 cursor-pointer group transition-colors duration-300 hover:text-primary">
           <div class="relative">
             <input
@@ -170,17 +200,17 @@ onUnmounted(() => {
           <span class="font-body-base text-on-surface group-hover:text-primary transition-colors">Saya telah membaca dan memahami seluruh instruksi</span>
         </label>
         <div class="flex items-center gap-4 w-full md:w-auto">
-          <button class="btn-back flex-1 md:flex-none px-8 h-12 rounded-xl border border-outline text-secondary font-medium">
-            Kembali
-          </button>
           <button
-            :disabled="!isChecked"
+            :disabled="!isChecked || loading || starting"
             class="btn-start flex-1 md:flex-none px-8 h-12 rounded-xl bg-primary-container text-white font-bold flex items-center justify-center gap-2 transition-all duration-300"
-            :class="isChecked ? 'hover:bg-primary shadow-md cursor-pointer' : 'opacity-50 cursor-not-allowed'"
-            @click="startEvaluation"
+            :class="isChecked && !loading && !starting ? 'hover:bg-primary shadow-md cursor-pointer' : 'opacity-50 cursor-not-allowed'"
+            @click="handleStartEvaluation"
           >
-            Mulai Evaluasi
-            <span class="material-symbols-outlined">arrow_forward</span>
+            <span v-if="starting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+            <template v-else>
+              Mulai Evaluasi
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </template>
           </button>
         </div>
       </div>
@@ -189,29 +219,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* ===== GLASS CARD ===== */
-.glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(229, 231, 235, 0.5);
-}
-
-/* ===== HERO ILLUSTRATION ===== */
-.hero-illustration {
-  transition: all 0.4s ease;
-}
-.hero-illustration:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 108, 73, 0.15);
-}
-.hero-illustration:hover .material-symbols-outlined {
-  animation: ecoPulse 0.6s ease;
-}
-@keyframes ecoPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
 /* ===== SCALE SEGMENTS ===== */
 .scale-segment {
   cursor: pointer;
@@ -231,7 +238,7 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 }
 .content-card:hover {
-  box-shadow: 0 8px 30px rgba(0, 108, 73, 0.1);
+  box-shadow: 0 8px 30px rgba(16, 108, 73, 0.1);
   border-color: #10b981;
 }
 
@@ -264,29 +271,7 @@ onUnmounted(() => {
   50% { transform: scale(1.2); }
 }
 
-/* ===== HEADER BUTTONS ===== */
-.header-btn {
-  transition: all 0.3s ease;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-}
-.header-btn:hover {
-  background-color: rgba(16, 185, 129, 0.1);
-  transform: rotate(15deg);
-}
-
 /* ===== FOOTER BUTTONS ===== */
-.btn-back {
-  transition: all 0.4s ease;
-}
-.btn-back:hover {
-  background-color: #dde4dd;
-  transform: translateY(-2px);
-}
-.btn-back:active {
-  transform: scale(0.96);
-}
-
 .btn-start {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -312,12 +297,4 @@ onUnmounted(() => {
 .fade-in-delay-2 { animation: fadeIn 0.6s ease-out 0.3s forwards; opacity: 0; }
 .fade-in-delay-3 { animation: fadeIn 0.6s ease-out 0.45s forwards; opacity: 0; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ===== DEVELOPER INFO ===== */
-.developer-info {
-  transition: all 0.3s ease;
-}
-.developer-info:hover {
-  color: #006c49;
-}
 </style>

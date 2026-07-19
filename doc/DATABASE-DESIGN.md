@@ -248,7 +248,7 @@ Satu sesi pengisian responden.
 | startedAt | datetime |
 | submittedAt | datetime |
 | remainingSeconds | integer |
-| status | enum(inProgress,submitted,timeout) |
+| status | enum(in_progress,submitted,timeout) |
 | createdAt | timestamp |
 | updatedAt | timestamp |
 

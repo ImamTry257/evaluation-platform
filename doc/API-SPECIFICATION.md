@@ -869,7 +869,7 @@ Mulai sesi evaluasi baru.
       "id": 1,
       "userId": 10,
       "questionnaireId": 1,
-      "status": "inProgress",
+      "status": "in_progress",
       "startedAt": "2024-01-01T10:00:00Z",
       "remainingSeconds": 3600
     },
@@ -911,7 +911,7 @@ Resume sesi evaluasi yang belum selesai.
       "id": 1,
       "userId": 10,
       "questionnaireId": 1,
-      "status": "inProgress",
+      "status": "in_progress",
       "startedAt": "2024-01-01T10:00:00Z",
       "remainingSeconds": 2800,
       "answers": [...]
@@ -1080,7 +1080,7 @@ Monitor semua sesi evaluasi.
 
 **Query Parameters:**
 - `questionnaireId` (optional)
-- `status` (optional) - inProgress, submitted, timeout
+- `status` (optional) - in_progress, submitted, timeout
 - `page` (optional)
 - `perPage` (optional)
 

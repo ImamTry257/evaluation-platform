@@ -389,7 +389,7 @@ onMounted(() => fetchSessions())
       </select>
       <select v-model="filters.status" @change="fetchSessions">
         <option :value="null">Semua Status</option>
-        <option value="inProgress">In Progress</option>
+        <option value="in_progress">In Progress</option>
         <option value="submitted">Submitted</option>
         <option value="timeout">Timeout</option>
       </select>

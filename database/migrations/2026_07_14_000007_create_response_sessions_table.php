@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('userId')->constrained('users')->cascadeOnDelete();
             $table->foreignId('questionnaireId')->constrained('questionnaires')->cascadeOnDelete();
-            $table->enum('status', ['inProgress', 'submitted', 'timeout'])->default('inProgress');
+            $table->enum('status', ['in_progress', 'submitted', 'timeout'])->default('in_progress');
             $table->dateTime('startedAt');
             $table->dateTime('submittedAt')->nullable();
             $table->integer('remainingSeconds');

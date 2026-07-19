@@ -50,9 +50,9 @@ class ResponseSession extends Model
         return $this->hasOne(EvaluationResult::class, 'responseSessionId');
     }
 
-    public function scopeInProgress($query)
+    public function scopein_progress($query)
     {
-        return $query->where('status', 'inProgress');
+        return $query->where('status', 'in_progress');
     }
 
     public function scopeSubmitted($query)

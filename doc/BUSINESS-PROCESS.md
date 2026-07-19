@@ -172,7 +172,7 @@ Periode Evaluasi
 1. Akses menu "Monitoring"
 2. Filter berdasarkan:
    - Kuesioner tertentu
-   - Status sesi (inProgress, submitted, timeout)
+   - Status sesi (in_progress, submitted, timeout)
 3. Lihat detail sesi:
    - Informasi responden
    - Waktu mulai dan selesai
@@ -302,7 +302,7 @@ Periode Evaluasi
 {
   "sessionId": 1,
   "questionnaireId": 1,
-  "status": "inProgress",
+  "status": "in_progress",
   "startedAt": "2024-01-01T10:00:00Z",
   "remainingSeconds": 3600,
   "questions": [...]
@@ -347,7 +347,7 @@ Periode Evaluasi
 
 **Aturan Bisnis:**
 - Resume hanya dapat dilakukan jika:
-  - Sesi masih dalam status "inProgress"
+  - Sesi masih dalam status "in_progress"
   - Waktu masih tersisa
   - Pengaturan "Allow Resume" aktif
 
@@ -559,7 +559,7 @@ Periode Evaluasi
 2. Setelah submit, status tidak dapat diubah
 3. Waktu sisa terus berkurang
 4. Auto save dilakukan secara periodik
-5. Resume hanya jika sesi masih "inProgress" dan waktu tersisa
+5. Resume hanya jika sesi masih "in_progress" dan waktu tersisa
 
 ### 5.4 Aturan Kuesioner / Instrument Penelitian
 1. Kuesioner harus dalam status "draft" untuk diedit

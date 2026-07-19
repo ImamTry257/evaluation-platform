@@ -132,7 +132,7 @@ const router = createRouter({
         {
           path: '',
           name: 'respondent-home',
-          component: () => import('@/views/respondent/PlatformExplanationView.vue'),
+          component: () => import('@/views/respondent/InputAngketView.vue'),
         },
         {
           path: 'result/:sessionId',

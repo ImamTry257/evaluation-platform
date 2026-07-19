@@ -77,6 +77,7 @@ Route::prefix('v1')->group(function () {
 
         // Respondent routes
         Route::prefix('evaluations')->group(function () {
+            Route::get('/active-questionnaire', [EvaluasiController::class, 'activeQuestionnaire']);
             Route::post('/start', [EvaluasiController::class, 'start']);
             Route::get('/{sessionId}', [EvaluasiController::class, 'show']);
             Route::post('/{sessionId}/answers', [EvaluasiController::class, 'saveAnswer']);
