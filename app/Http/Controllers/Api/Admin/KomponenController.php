@@ -75,7 +75,7 @@ class KomponenController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'isActive' => 'nullable|boolean',
+            'isActive' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -89,7 +89,7 @@ class KomponenController extends Controller
             'questionnaire_id' => $data['questionnaireId'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'is_active' => $data['isActive'] ?? false,
+            'is_active' => $data['isActive'] ?? 0,
         ];
 
         // Auto-generate orderNumber if not provided
@@ -145,7 +145,7 @@ class KomponenController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'isActive' => 'nullable|boolean',
+            'isActive' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -159,7 +159,7 @@ class KomponenController extends Controller
             'questionnaire_id' => $data['questionnaireId'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'is_active' => $data['isActive'] ?? false,
+            'is_active' => $data['isActive'] ?? 0,
         ];
 
         // Auto-generate orderNumber if not provided

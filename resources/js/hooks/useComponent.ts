@@ -51,7 +51,7 @@ export function useComponent(questionnaireId?: number) {
     name: string
     description?: string
     orderNumber?: number
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null
@@ -73,7 +73,7 @@ export function useComponent(questionnaireId?: number) {
     name: string
     description?: string
     orderNumber?: number
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null

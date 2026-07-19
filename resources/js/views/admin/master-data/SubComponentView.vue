@@ -37,6 +37,7 @@ const formLoading = ref(false)
 const form = ref({
   name: '',
   description: '',
+  isActive: 1,
 })
 
 // Computed
@@ -203,7 +204,7 @@ onMounted(() => {
 
       <!-- Empty State -->
       <div v-else-if="subComponents.length === 0" class="p-12 text-center">
-        <span class="material-symbols-outlined text-[48px] text-outline">subdirectory_arrow_right</span>
+        <span class="material-symbols-outlined text-4xl text-outline">folder_open</span>
         <p class="text-body-base text-on-surface-variant mt-3">Belum ada sub komponen untuk komponen ini.</p>
         <button
           @click="openAddModal"
@@ -220,9 +221,9 @@ onMounted(() => {
           <thead>
             <tr class="bg-surface-container-low/50">
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Nama Sub Komponen</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Deskripsi</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Urutan</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Indikator</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Pertanyaan</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
             </tr>
           </thead>
@@ -245,15 +246,15 @@ onMounted(() => {
                 </div>
               </td>
               <td class="px-6 py-5">
+                <span class="count-badge">{{ sc.description }}</span>
+              </td>
+              <td class="px-6 py-5">
+                <span class="count-badge">{{ sc.orderNumber }}</span>
+              </td>
+              <td class="px-6 py-5">
                 <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(sc.status)">
                   {{ getStatusLabel(sc.status) }}
                 </span>
-              </td>
-              <td class="px-6 py-5">
-                <span class="count-badge">{{ sc.indicators }}</span>
-              </td>
-              <td class="px-6 py-5">
-                <span class="count-badge">{{ sc.questions }}</span>
               </td>
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-1">

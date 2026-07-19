@@ -36,7 +36,7 @@ const viewingComponent = ref<any>(null)
 const form = ref({
   name: '',
   description: '',
-  is_active: 1,
+  isActive: 1,
 })
 
 // Load data on mount
@@ -48,14 +48,14 @@ onMounted(() => {
 function openAddModal() {
   formMode.value = 'add'
   editingId.value = null
-  form.value = { name: '', description: '', is_active: 1 }
+  form.value = { name: '', description: '', isActive: 1 }
   showFormModal.value = true
 }
 
 function openEditModal(c: any) {
   formMode.value = 'edit'
   editingId.value = c.id
-  form.value = { name: c.name, description: c.description || '', is_active: c.is_active }
+  form.value = { name: c.name, description: c.description || '', isActive: c.isActive ? 1 : 0 }
   showFormModal.value = true
 }
 async function handleFormSubmit() {
@@ -66,14 +66,14 @@ async function handleFormSubmit() {
         questionnaireId: questionnaireId,
         name: form.value.name,
         description: form.value.description,
-        is_active: form.value.is_active,
+        isActive: form.value.isActive,
       })
     } else if (editingId.value) {
       await updateComponent(editingId.value, {
         questionnaireId: questionnaireId,
         name: form.value.name,
         description: form.value.description,
-        is_active: form.value.is_active,
+        isActive: form.value.isActive,
       })
     }
     showFormModal.value = false
@@ -113,12 +113,12 @@ function formatDate(dateStr: string): string {
 }
 
 async function toggleStatus(item: any) {
-  const newStatus = item.is_active === 1 ? 0 : 1
+  const newStatus = item.isActive === 1 ? 0 : 1
   await updateComponent(item.id, {
     questionnaireId: questionnaireId,
     name: item.name,
     description: item.description,
-    is_active: newStatus,
+    isActive: newStatus,
   })
   fetchComponents(currentPage.value)
 }
@@ -202,7 +202,6 @@ function handleDelete(item: any) {
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-surface-container-low/50">
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">No</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Nama Komponen</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Deskripsi</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Urutan</th>
@@ -215,34 +214,33 @@ function handleDelete(item: any) {
                 v-for="c in components"
                 :key="c.id"
                 class="table-row hover:bg-surface-container-low/30 transition-colors"
-                :class="{ 'opacity-50': c.is_active === 0 }"
+                :class="{ 'opacity-50': c.isActive === 0 }"
               >
-                <td class="px-6 py-5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <span class="material-symbols-outlined text-primary text-[20px]">folder</span>
-                    </div>
-                    <div>
-                      <span class="font-body-base font-semibold text-on-surface">{{ c.name }}</span>
-                      <p class="text-body-sm text-on-surface-variant">{{ c.questionnaire?.title || '-' }}</p>
-                    </div>
+              <td class="px-6 py-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary text-[20px]">folder</span>
                   </div>
-                </td>
-                <td class="px-6 py-5">
-                  <span
-                    class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                    :class="c.is_active === 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
-                    @click="toggleStatus(c)"
-                    style="cursor: pointer;"
-                  >
-                    {{ c.is_active === 1 ? 'Active' : 'Inactive' }}
-                  </span>
-                </td>
+                  <div>
+                    <span class="font-body-base font-semibold text-on-surface">{{ c.name }}</span>
+                  </div>
+                </div>
+              </td>
               <td class="px-6 py-5">
                 <span class="text-body-sm text-on-surface-variant">{{ c.description || '-' }}</span>
               </td>
               <td class="px-6 py-5">
                 <span class="count-badge">{{ c.orderNumber }}</span>
+              </td>
+              <td class="px-6 py-5">
+                <span
+                  class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                  :class="c.isActive === true ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                  @click="toggleStatus(c)"
+                  style="cursor: pointer;"
+                >
+                  {{ c.isActive == true ? 'Active' : 'Inactive' }}
+                </span>
               </td>
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-1">
@@ -364,7 +362,7 @@ function handleDelete(item: any) {
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
               <select
-                v-model="form.is_active"
+                v-model="form.isActive"
                 class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface focus:ring-2 focus:ring-primary-container outline-none transition-all"
               >
                 <option :value="1">Active</option>

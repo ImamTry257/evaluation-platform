@@ -273,7 +273,7 @@ onMounted(() => {
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tahun</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Component</th>
-              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Pertanyaan</th>
+              <!-- <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Pertanyaan</th> -->
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
             </tr>
           </thead>
@@ -295,7 +295,7 @@ onMounted(() => {
                 </div>
               </td>
               <td class="px-6 py-5">
-                <span class="instrument-tag text-xs font-semibold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg">{{ item.evaluation_period?.name || '-' }}</span>
+                <span class="instrument-tag text-xs font-semibold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-lg">{{ item.evaluationPeriod?.name || '-' }}</span>
               </td>
               <td class="px-6 py-5">
                 <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(item.status)">
@@ -305,9 +305,9 @@ onMounted(() => {
               <td class="px-6 py-5">
                 <span class="count-badge items-center">{{ item.components || '-' }}</span>
               </td>
-              <td class="px-6 py-5">
+              <!-- <td class="px-6 py-5">
                 <span class="count-badge items-center">{{ item.questions || '-' }}</span>
-              </td>
+              </td> -->
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-1">
                   <RouterLink
