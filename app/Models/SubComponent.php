@@ -13,27 +13,28 @@ class SubComponent extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'componentId',
+        'component_id',
         'name',
         'description',
-        'orderNumber',
+        'order_number',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'orderNumber' => 'integer',
+            'order_number' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
 
     public function component(): BelongsTo
     {
-        return $this->belongsTo(Component::class, 'componentId');
+        return $this->belongsTo(Component::class, 'component_id');
     }
 
     public function indicators(): HasMany
     {
-        return $this->hasMany(Indicator::class, 'subComponentId');
+        return $this->hasMany(Indicator::class, 'sub_component_id');
     }
 }

@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('sub_components', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('componentId')->constrained('components')->cascadeOnDelete();
+            $table->foreignId('component_id')->constrained('components')->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('orderNumber')->default(0);
+            $table->integer('order_number')->default(0);
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

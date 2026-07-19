@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SubComponentResource;
 use App\Models\Component;
 use App\Models\SubComponent;
 use App\Traits\HasApiResponse;
@@ -56,7 +57,7 @@ class SubKomponenController extends Controller
             'message' => 'Sub-components retrieved successfully',
             'data' => [
                 'breadCrumbList' => $breadCrumbList,
-                'contents' => $subComponents->items(),
+                'contents' => SubComponentResource::collection($subComponents),
                 'meta' => [
                     'page' => $subComponents->currentPage(),
                     'limit' => $subComponents->perPage(),
@@ -108,7 +109,7 @@ class SubKomponenController extends Controller
         $subComponent = SubComponent::create($dbData);
 
         return $this->successResponse(
-            $subComponent->load('component'),
+            new SubComponentResource($subComponent->load('component')),
             'Sub-component created successfully',
             201
         );
@@ -126,7 +127,7 @@ class SubKomponenController extends Controller
             return $this->errorResponse('Sub-component not found', 404);
         }
 
-        return $this->successResponse($subComponent, 'Sub-component retrieved successfully');
+        return $this->successResponse(new SubComponentResource($subComponent), 'Sub-component retrieved successfully');
     }
 
     /**
@@ -178,7 +179,7 @@ class SubKomponenController extends Controller
         $subComponent->update($dbData);
 
         return $this->successResponse(
-            $subComponent->load('component'),
+            new SubComponentResource($subComponent->load('component')),
             'Sub-component updated successfully'
         );
     }
