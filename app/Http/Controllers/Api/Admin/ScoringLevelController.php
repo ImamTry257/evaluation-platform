@@ -24,12 +24,11 @@ class ScoringLevelController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
+        if ($request->has('isActive')) {
+            $query->where('is_active', $request->boolean('isActive'));
         }
 
         $limit = min($request->get('limit', 15), 100);
-
         $scoringLevels = $query->orderBy('value', 'asc')
             ->paginate($limit);
 
@@ -45,7 +44,7 @@ class ScoringLevelController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:36',
             'value' => 'required|integer|min:1|max:7|unique:scoring_level,value',
-            'is_active' => 'required|boolean',
+            'isActive' => 'required|boolean',
             'description' => 'required|string',
         ]);
 
@@ -54,7 +53,8 @@ class ScoringLevelController extends Controller
         }
 
         $data = $validator->validated();
-        $data['is_active'] = $data['is_active'] ? 1 : 0;
+        $data['is_active'] = $data['isActive'] ? 1 : 0;
+        unset($data['isActive']);
 
         $scoringLevel = ScoringLevel::create($data);
 
@@ -91,7 +91,7 @@ class ScoringLevelController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:36',
             'value' => 'required|integer|min:1|max:7|unique:scoring_level,value,' . $id,
-            'is_active' => 'required|boolean',
+            'isActive' => 'required|boolean',
             'description' => 'required|string',
         ]);
 
@@ -100,7 +100,8 @@ class ScoringLevelController extends Controller
         }
 
         $data = $validator->validated();
-        $data['is_active'] = $data['is_active'] ? 1 : 0;
+        $data['is_active'] = $data['isActive'] ? 1 : 0;
+        unset($data['isActive']);
 
         $scoringLevel->update($data);
 
