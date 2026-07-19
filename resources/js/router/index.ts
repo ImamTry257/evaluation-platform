@@ -79,7 +79,7 @@ const router = createRouter({
         {
           path: 'component/:componentId/sub-component/:subComponentId/indicator/:indicatorId/question',
           name: 'admin-question',
-          component: () => import('@/views/admin/master-data/QuestionView.vue'),
+          component: () => import('@/views/admin/master-data/Question/QuestionView.vue'),
         },
         {
           path: 'sub-component/:subComponentId/indicator',
@@ -89,17 +89,22 @@ const router = createRouter({
         {
           path: 'indicator/:indicatorId/question',
           name: 'admin-indicator-question',
-          component: () => import('@/views/admin/master-data/QuestionView.vue'),
+          component: () => import('@/views/admin/master-data/Question/QuestionView.vue'),
         },
         {
-          path: 'question/add',
+          path: 'indicator/:indicatorId/question/add',
           name: 'admin-question-add',
-          component: () => import('@/views/admin/master-data/QuestionAddView.vue'),
+          component: () => import('@/views/admin/master-data/Question/QuestionAddView.vue'),
         },
         {
-          path: 'question/:id/edit',
+          path: 'indicator/:indicatorId/question/:id',
+          name: 'admin-question-show',
+          component: () => import('@/views/admin/master-data/Question/QuestionShowView.vue'),
+        },
+        {
+          path: 'indicator/:indicatorId/question/:id/edit',
           name: 'admin-question-edit',
-          component: () => import('@/views/admin/master-data/QuestionEditView.vue'),
+          component: () => import('@/views/admin/master-data/Question/QuestionEditView.vue'),
         },
         {
           path: 'respondent',

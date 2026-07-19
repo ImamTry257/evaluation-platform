@@ -49,7 +49,7 @@ export function useSubComponent(componentId?: number) {
     componentId: number
     name: string
     description?: string
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null
@@ -70,7 +70,7 @@ export function useSubComponent(componentId?: number) {
     componentId: number
     name: string
     description?: string
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null

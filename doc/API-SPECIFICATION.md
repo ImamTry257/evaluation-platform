@@ -218,7 +218,7 @@ Revoke user token.
 
 **Endpoint:** `POST /auth/logout`
 
-**Headers:** `Authorization: Bearer ***`
+**Headers:** `Authorization: Bearer ***
 
 **Response (200 OK):**
 ```json
@@ -245,7 +245,7 @@ Get current user profile.
 
 **Endpoint:** `GET /auth/profile`
 
-**Headers:** `Authorization: Bearer ***`
+**Headers:** `Authorization: Bearer ***
 
 **Response (200 OK):**
 ```json
@@ -537,7 +537,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "name": "Kebijakan Struktural",
       "description": "Komponen kebijakan struktural",
       "orderNumber": 1,
-      "is_active": 1,
+      "isActive": true,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -555,7 +555,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
   "name": "Kebijakan Struktural",
   "description": "Komponen kebijakan struktural",
   "orderNumber": 1,
-  "is_active": 1
+  "isActive": true
 }
 ```
 
@@ -571,7 +571,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 {
   "name": "Kebijakan Struktural - Updated",
   "orderNumber": 2,
-  "is_active": 1
+  "isActive": true
 }
 ```
 
@@ -610,7 +610,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "name": "Kerangka Organisasi",
       "description": "Sub komponen kerangka organisasi",
       "orderNumber": 1,
-      "is_active": 1,
+      "isActive": true,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -628,7 +628,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
   "name": "Kerangka Organisasi",
   "description": "Sub komponen kerangka organisasi",
   "orderNumber": 1,
-  "is_active": 1
+  "isActive": true
 }
 ```
 
@@ -654,7 +654,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "name": "Keberadaan organisasi, struktur dan tugas",
       "description": "Indicator keberadaan organisasi",
       "orderNumber": 1,
-      "is_active": 1,
+      "isActive": true,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -672,7 +672,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
   "name": "Keberadaan organisasi, struktur dan tugas",
   "description": "Indicator keberadaan organisasi",
   "orderNumber": 1,
-  "is_active": 1
+  "isActive": true
 }
 ```
 
@@ -695,10 +695,10 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
     {
       "id": 1,
       "indicatorId": 1,
-      "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
+      "questionText": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
       "weight": 1.5,
       "orderNumber": 1,
-      "is_active": 1,
+      "isActive": true,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -713,10 +713,10 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 **Request:**
 ```json
 {
-  "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
+  "questionText": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
   "weight": 1.5,
   "orderNumber": 1,
-  "is_active": 1
+  "isActive": true
 }
 ```
 

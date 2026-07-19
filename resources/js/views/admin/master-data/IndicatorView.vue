@@ -38,6 +38,7 @@ const formLoading = ref(false)
 const form = ref({
   name: '',
   description: '',
+  isActive: 1,
 })
 
 // Computed
@@ -47,27 +48,26 @@ const filteredIndicators = computed(() => {
   )
 })
 
-// Methods
-function getStatusBadge(status: string) {
-  return status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
-}
+const showingFrom = computed(() => (currentPage.value - 1) * perPage.value + 1)
+const showingTo = computed(() => Math.min(currentPage.value * perPage.value, totalItems.value))
 
-function getStatusLabel(status: string) {
-  return status === 'active' ? 'Active' : 'Inactive'
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return
+  fetchIndicators(page)
 }
 
 // Form handlers
 function openAddModal() {
   formMode.value = 'add'
   editingId.value = null
-  form.value = { name: '', description: '' }
+  form.value = { name: '', description: '', isActive: 1 }
   showFormModal.value = true
 }
 
 function openEditModal(ind: any) {
   formMode.value = 'edit'
   editingId.value = ind.id
-  form.value = { name: ind.name, description: ind.description }
+  form.value = { name: ind.name, description: ind.description || '', isActive: ind.isActive ? 1 : 0 }
   showFormModal.value = true
 }
 
@@ -79,12 +79,14 @@ async function handleFormSubmit() {
         subComponentId: subComponentId.value,
         name: form.value.name,
         description: form.value.description,
+        isActive: form.value.isActive,
       })
     } else if (editingId.value) {
       await updateIndicator(editingId.value, {
         subComponentId: subComponentId.value,
         name: form.value.name,
         description: form.value.description,
+        isActive: form.value.isActive,
       })
     }
     showFormModal.value = false
@@ -133,10 +135,15 @@ function handleDelete(item: any) {
   openDeleteModal(item)
 }
 
-// Pagination
-function goToPage(page: number) {
-  if (page < 1 || page > totalPages.value) return
-  fetchIndicators(page)
+async function toggleStatus(item: any) {
+  const newStatus = item.isActive === 1 ? 0 : 1
+  await updateIndicator(item.id, {
+    subComponentId: subComponentId.value,
+    name: item.name,
+    description: item.description,
+    isActive: newStatus,
+  })
+  fetchIndicators(currentPage.value)
 }
 
 // Init
@@ -172,7 +179,7 @@ onMounted(() => {
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 fade-in">
       <div class="flex items-center gap-4">
-        <RouterLink :to="`/admin/component/${componentId}/sub-component`" class="back-btn flex items-center gap-1 text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
+        <RouterLink :to="`/admin/component/${componentId}/sub-component`" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-primary hover:bg-primary/80 hover:text-primary px-3 py-2 rounded-lg transition-colors text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </RouterLink>
@@ -236,7 +243,7 @@ onMounted(() => {
               v-for="ind in filteredIndicators"
               :key="ind.id"
               class="table-row hover:bg-surface-container-low/30 transition-colors"
-              :class="{ 'opacity-50': ind.status === 'inactive' }"
+              :class="{ 'opacity-50': ind.isActive === 0 }"
             >
               <td class="px-6 py-5">
                 <div class="flex items-center gap-3">
@@ -248,9 +255,13 @@ onMounted(() => {
                 </div>
               </td>
               <td class="px-6 py-5">
-                <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(ind.status)">
-                  {{ getStatusLabel(ind.status) }}
-                </span>
+                <button
+                  @click="toggleStatus(ind)"
+                  class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105"
+                  :class="ind.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                >
+                  {{ ind.isActive ? 'Aktif' : 'Tidak Aktif' }}
+                </button>
               </td>
               <td class="px-6 py-5">
                 <span class="count-badge">{{ ind.questionCount ?? 0 }}</span>
@@ -281,10 +292,35 @@ onMounted(() => {
       </div>
 
       <!-- Footer -->
-      <div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10">
+      <div v-if="indicators.length > 0" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-body-sm font-body-sm text-on-surface-variant">
-          Menampilkan <span class="font-semibold text-on-surface">{{ filteredIndicators.length }}</span> dari <span class="font-semibold text-on-surface">{{ indicators.length }}</span> indikator
+          Menampilkan <span class="font-semibold text-on-surface">{{ showingFrom }}-{{ showingTo }}</span> dari <span class="font-semibold text-on-surface">{{ totalItems }}</span> indikator
         </p>
+        <div class="flex items-center gap-2">
+          <button
+            class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50"
+            :disabled="currentPage === 1"
+            @click="goToPage(currentPage - 1)"
+          >
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+          </button>
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
+            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            @click="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+          <button
+            class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            @click="goToPage(currentPage + 1)"
+          >
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -340,6 +376,27 @@ onMounted(() => {
                 placeholder="Deskripsi indikator evaluasi..."
                 class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
               ></textarea>
+            </div>
+
+            <!-- Status Aktif -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+              <div class="flex items-center gap-3">
+                <button
+                  type="button"
+                  @click="form.isActive = form.isActive === 1 ? 0 : 1"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                  :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
+                  />
+                </button>
+                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                  {{ form.isActive ? 'Aktif' : 'Tidak Aktif' }}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -488,6 +545,27 @@ onMounted(() => {
             <div class="pt-4 border-t border-outline-variant/20">
               <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
+                  <span class="text-secondary">Status:</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span
+                      class="relative inline-flex h-5 w-9 items-center rounded-full"
+                      :class="viewingIndicator.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                    >
+                      <span
+                        class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform"
+                        :class="viewingIndicator.isActive ? 'translate-x-4' : 'translate-x-1'"
+                      />
+                    </span>
+                    <span class="text-body-sm font-semibold" :class="viewingIndicator.isActive ? 'text-primary' : 'text-on-surface-variant'">
+                      {{ viewingIndicator.isActive ? 'Aktif' : 'Tidak Aktif' }}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <span class="text-secondary">Urutan:</span>
+                  <p class="font-medium text-on-surface">{{ viewingIndicator.orderNumber }}</p>
+                </div>
+                <div>
                   <span class="text-secondary">Dibuat:</span>
                   <p class="font-medium text-on-surface">{{ formatDate(viewingIndicator.createdAt) }}</p>
                 </div>
@@ -627,6 +705,18 @@ onMounted(() => {
 }
 .status-badge:hover {
   transform: scale(1.05);
+}
+
+/* ===== PAGE BUTTONS ===== */
+.page-btn {
+  transition: all 0.3s ease;
+}
+.page-btn:hover:not(:disabled) {
+  background-color: #e3eae3;
+  transform: translateY(-1px);
+}
+.page-btn:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 /* ===== DATA TABLE SCROLL ===== */

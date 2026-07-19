@@ -44,12 +44,40 @@ export function useQuestion(indicatorId?: number) {
     }
   }
 
+  // Fetch breadCrumbList only (lightweight, for add/edit/view pages)
+  async function fetchBreadCrumbList(targetIndicatorId: number) {
+    try {
+      const { data } = await api.get('/admin/questions', {
+        params: { indicatorId: targetIndicatorId, limit: 1 },
+      })
+      const payload = data.data ?? data
+      breadCrumbList.value = payload.breadCrumbList ?? null
+    } catch (err: any) {
+      console.error('Failed to fetch breadCrumbList:', err)
+    }
+  }
+
+  // Get single question
+  async function getQuestion(id: number) {
+    loading.value = true
+    error.value = null
+    try {
+      const { data } = await api.get(`/admin/questions/${id}`)
+      return data.data ?? data
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Gagal memuat pertanyaan'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   // Create question
   async function createQuestion(payload: {
     indicatorId: number
     questionText: string
     weight: number
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null
@@ -70,7 +98,7 @@ export function useQuestion(indicatorId?: number) {
     indicatorId: number
     questionText: string
     weight: number
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null
@@ -124,6 +152,8 @@ export function useQuestion(indicatorId?: number) {
     searchQuery,
     // Methods
     fetchQuestions,
+    fetchBreadCrumbList,
+    getQuestion,
     createQuestion,
     updateQuestion,
     deleteQuestion,

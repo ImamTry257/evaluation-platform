@@ -34,16 +34,16 @@ class Indicator extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class, 'indicatorId');
+        return $this->hasMany(Question::class, 'indicator_id');
     }
 
     public function recommendations(): HasMany
     {
-        return $this->hasMany(Recommendation::class, 'indicatorId');
+        return $this->hasMany(Recommendation::class, 'indicator_id');
     }
 
     public function evaluationResultDetails(): HasMany
     {
-        return $this->hasMany(EvaluationResultDetail::class, 'indicatorId');
+        return $this->hasMany(EvaluationResultDetail::class, 'indicator_id');
     }
 }

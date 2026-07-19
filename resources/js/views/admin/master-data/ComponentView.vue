@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useComponent } from '@/hooks/useComponent'
 
@@ -43,6 +43,14 @@ const form = ref({
 onMounted(() => {
   fetchComponents()
 })
+
+const showingFrom = computed(() => (currentPage.value - 1) * perPage.value + 1)
+const showingTo = computed(() => Math.min(currentPage.value * perPage.value, totalItems.value))
+
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return
+  fetchComponents(page)
+}
 
 // Form handlers
 function openAddModal() {
@@ -147,7 +155,7 @@ function handleDelete(item: any) {
     </nav>
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div class="flex items-center gap-4">
-        <RouterLink to="/admin/instrument" class="back-btn flex items-center gap-1 text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
+        <RouterLink to="/admin/instrument" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-primary hover:bg-primary/80 hover:text-primary px-3 py-2 rounded-lg transition-colors text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </RouterLink>
@@ -239,7 +247,7 @@ function handleDelete(item: any) {
                   @click="toggleStatus(c)"
                   style="cursor: pointer;"
                 >
-                  {{ c.isActive == true ? 'Active' : 'Inactive' }}
+                  {{ c.isActive == true ? 'Aktif' : 'Tidak Aktif' }}
                 </span>
               </td>
               <td class="px-6 py-5">
@@ -280,26 +288,33 @@ function handleDelete(item: any) {
       </div>
 
       <!-- Footer -->
-      <div v-if="!loading && components.length > 0" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-between">
+      <div v-if="!loading && components.length > 0" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-body-sm font-body-sm text-on-surface-variant">
-          Menampilkan <span class="font-semibold text-on-surface">{{ components.length }}</span> dari <span class="font-semibold text-on-surface">{{ totalItems }}</span> komponen
+          Menampilkan <span class="font-semibold text-on-surface">{{ showingFrom }}-{{ showingTo }}</span> dari <span class="font-semibold text-on-surface">{{ totalItems }}</span> komponen
         </p>
-        <!-- Pagination -->
-        <div v-if="totalPages > 1" class="flex items-center gap-2">
+        <div class="flex items-center gap-2">
           <button
-            @click="fetchComponents(currentPage - 1)"
-            :disabled="currentPage <= 1"
-            class="px-3 py-1 rounded-lg border border-outline-variant/50 text-body-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-container-low"
+            class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50"
+            :disabled="currentPage === 1"
+            @click="goToPage(currentPage - 1)"
           >
-            Sebelumnya
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
           </button>
-          <span class="text-body-sm text-on-surface-variant">Hal {{ currentPage }} / {{ totalPages }}</span>
           <button
-            @click="fetchComponents(currentPage + 1)"
-            :disabled="currentPage >= totalPages"
-            class="px-3 py-1 rounded-lg border border-outline-variant/50 text-body-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-container-low"
+            v-for="page in totalPages"
+            :key="page"
+            class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
+            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            @click="goToPage(page)"
           >
-            Selanjutnya
+            {{ page }}
+          </button>
+          <button
+            class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            @click="goToPage(currentPage + 1)"
+          >
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
           </button>
         </div>
       </div>
@@ -358,16 +373,25 @@ function handleDelete(item: any) {
               ></textarea>
             </div>
 
-            <!-- Status -->
+            <!-- Status Aktif -->
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-              <select
-                v-model="form.isActive"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface focus:ring-2 focus:ring-primary-container outline-none transition-all"
-              >
-                <option :value="1">Active</option>
-                <option :value="0">Inactive</option>
-              </select>
+              <div class="flex items-center gap-3">
+                <button
+                  type="button"
+                  @click="form.isActive = form.isActive === 1 ? 0 : 1"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                  :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
+                  />
+                </button>
+                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                  {{ form.isActive ? 'Aktif' : 'Tidak Aktif' }}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -508,15 +532,23 @@ function handleDelete(item: any) {
               ></textarea>
             </div>
 
-            <!-- Status -->
+            <!-- Status Aktif -->
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-              <input
-                :value="viewingComponent.isActive ? 'Active' : 'Inactive'"
-                type="text"
-                disabled
-                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
-              />
+              <div class="flex items-center gap-3">
+                <span
+                  class="relative inline-flex h-6 w-11 items-center rounded-full"
+                  :class="viewingComponent.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    :class="viewingComponent.isActive ? 'translate-x-6' : 'translate-x-1'"
+                  />
+                </span>
+                <span class="text-body-sm font-body-sm" :class="viewingComponent.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                  {{ viewingComponent.isActive ? 'Aktif' : 'Tidak Aktif' }}
+                </span>
+              </div>
             </div>
 
             <!-- Info Tambahan -->
@@ -658,5 +690,16 @@ function handleDelete(item: any) {
     opacity: 1;
     transform: translateY(0);
   }
+}
+/* ===== PAGE BUTTONS ===== */
+.page-btn {
+  transition: all 0.3s ease;
+}
+.page-btn:hover:not(:disabled) {
+  background-color: #e3eae3;
+  transform: translateY(-1px);
+}
+.page-btn:active:not(:disabled) {
+  transform: scale(0.95);
 }
 </style>

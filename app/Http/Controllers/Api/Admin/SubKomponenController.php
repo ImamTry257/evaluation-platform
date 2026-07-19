@@ -39,13 +39,17 @@ class SubKomponenController extends Controller
         // Get breadcrumb data
         $breadCrumbList = null;
         if ($subComponents->count() != 0) {
-            $firstComponent = $subComponents->first()->component;
+            $firstSubComponent = $subComponents->first();
+            $firstComponent = $firstSubComponent->component;
+            if (!$firstComponent && $firstSubComponent->component_id) {
+                $firstComponent = Component::with('questionnaire')->withTrashed()->find($firstSubComponent->component_id);
+            }
             $breadCrumbList = [
                 'questionnaire' => $firstComponent->questionnaire ?? null,
                 'component' => $firstComponent,
             ];
-        }else {
-            $component = Component::with('questionnaire')->find($request->componentId);
+        } elseif ($request->has('componentId') && $request->componentId) {
+            $component = Component::with('questionnaire')->withTrashed()->find($request->componentId);
             $breadCrumbList = [
                 'questionnaire' => $component->questionnaire ?? null,
                 'component' => $component,
@@ -78,7 +82,7 @@ class SubKomponenController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -87,24 +91,22 @@ class SubKomponenController extends Controller
 
         $data = $validator->validated();
 
-        // Auto-generate orderNumber if not provided
-        if (!isset($data['orderNumber'])) {
-            $maxOrder = SubComponent::where('component_id', $data['componentId'])
-                ->max('order_number');
-            $data['order_number'] = ($maxOrder ?? 0) + 1;
-        } else {
-            $data['order_number'] = $data['orderNumber'];
-            unset($data['orderNumber']);
-        }
-
         // Map camelCase to snake_case for database
         $dbData = [
             'component_id' => $data['componentId'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'order_number' => $data['order_number'],
-            'is_active' => $data['is_active'] ?? 1,
+            'is_active' => $data['isActive'] ?? 1,
         ];
+
+        // Auto-generate order_number if not provided
+        if (!isset($data['orderNumber'])) {
+            $maxOrder = SubComponent::where('component_id', $dbData['component_id'])
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
+        }
 
         $subComponent = SubComponent::create($dbData);
 
@@ -147,7 +149,7 @@ class SubKomponenController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -156,25 +158,23 @@ class SubKomponenController extends Controller
 
         $data = $validator->validated();
 
-        // Auto-generate orderNumber if not provided
-        if (!isset($data['orderNumber'])) {
-            $maxOrder = SubComponent::where('component_id', $data['componentId'])
-                ->where('id', '!=', $id)
-                ->max('order_number');
-            $data['order_number'] = ($maxOrder ?? 0) + 1;
-        } else {
-            $data['order_number'] = $data['orderNumber'];
-            unset($data['orderNumber']);
-        }
-
         // Map camelCase to snake_case for database
         $dbData = [
             'component_id' => $data['componentId'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'order_number' => $data['order_number'],
-            'is_active' => $data['is_active'] ?? 1,
+            'is_active' => $data['isActive'] ?? $subComponent->is_active,
         ];
+
+        // Auto-generate order_number if not provided
+        if (!isset($data['orderNumber'])) {
+            $maxOrder = SubComponent::where('component_id', $dbData['component_id'])
+                ->where('id', '!=', $id)
+                ->max('order_number');
+            $dbData['order_number'] = ($maxOrder ?? 0) + 1;
+        } else {
+            $dbData['order_number'] = $data['orderNumber'];
+        }
 
         $subComponent->update($dbData);
 

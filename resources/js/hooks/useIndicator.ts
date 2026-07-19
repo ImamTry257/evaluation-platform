@@ -49,7 +49,7 @@ export function useIndicator(subComponentId?: number) {
     subComponentId: number
     name: string
     description?: string
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null
@@ -70,7 +70,7 @@ export function useIndicator(subComponentId?: number) {
     subComponentId: number
     name: string
     description?: string
-    is_active?: number
+    isActive?: number
   }) {
     loading.value = true
     error.value = null

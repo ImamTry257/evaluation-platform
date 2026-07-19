@@ -84,7 +84,7 @@ class PertanyaanController extends Controller
             'questionText' => 'required|string',
             'weight' => 'required|numeric|min:0',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -98,7 +98,7 @@ class PertanyaanController extends Controller
             'indicator_id' => $data['indicatorId'],
             'question_text' => $data['questionText'],
             'weight' => $data['weight'],
-            'is_active' => $data['is_active'] ?? 1,
+            'is_active' => $data['isActive'] ?? 1,
         ];
 
         // Auto-generate order_number if not provided
@@ -151,7 +151,7 @@ class PertanyaanController extends Controller
             'questionText' => 'required|string',
             'weight' => 'required|numeric|min:0',
             'orderNumber' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|integer|in:0,1',
+            'isActive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -165,7 +165,7 @@ class PertanyaanController extends Controller
             'indicator_id' => $data['indicatorId'],
             'question_text' => $data['questionText'],
             'weight' => $data['weight'],
-            'is_active' => $data['is_active'] ?? 1,
+            'is_active' => $data['isActive'] ?? $question->is_active,
         ];
 
         // Auto-generate order_number if not provided

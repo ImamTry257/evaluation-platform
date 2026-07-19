@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.3.0
+
+### Changed
+- Standardisasi DB columns ke snake_case: `questionnaire_id`, `order_number`, `is_active`, `indicator_id`, `question_text`, `component_id`, `sub_component_id`
+- Semua API request field `isActive` (camelCase) — sebelumnya ada yang `is_active` (snake_case)
+- Buat API Resource untuk convert snake_case DB → camelCase response: `ComponentResource`, `SubComponentResource`, `IndicatorResource`, `QuestionResource`, `QuestionnaireResource`
+- breadCrumbList tetap ditampilkan di response API (tidak berubah)
+
+### Fixed
+- breadCrumbList NULL saat component soft-deleted — sekarang pakai `withTrashed()`
+- breadCrumbList crash saat `componentId` tidak dikirim — tambah null check
+- Indicator model: relasi `questions()`, `recommendations()`, `evaluationResultDetails()` FK diubah dari `indicatorId` ke `indicator_id`
+- KomponenController: tambah validasi dan save field `isActive`
+
+---
+
 ## v1.2.0
 
 ### Added
