@@ -17,6 +17,7 @@ class Indicator extends Model
         'name',
         'description',
         'orderNumber',
+        'is_active',
     ];
 
     protected function casts(): array

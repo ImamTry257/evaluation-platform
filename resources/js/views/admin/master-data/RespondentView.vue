@@ -1,22 +1,32 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import api from '@/services/api'
+import { useRespondent } from '@/hooks/useRespondent'
 
-// State
-const searchQuery = ref('')
-const respondents = ref<any[]>([])
-const loading = ref(false)
-const currentPage = ref(1)
-const totalPages = ref(1)
-const totalItems = ref(0)
-const perPage = ref(10)
+const {
+  respondents,
+  loading,
+  error,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  searchQuery,
+  stats,
+  fetchRespondents,
+  createRespondent,
+  updateRespondent,
+  deleteRespondent,
+  onSearch,
+} = useRespondent()
 
 // Modal state
 const showFormModal = ref(false)
 const showDeleteModal = ref(false)
+const showViewModal = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
 const editingId = ref<number | null>(null)
 const deletingRespondent = ref<any>(null)
+const viewingRespondent = ref<any>(null)
 const formLoading = ref(false)
 
 // Form
@@ -27,38 +37,6 @@ const form = ref({
   password: '',
   isActive: true,
 })
-
-// Stats
-const stats = ref({
-  total: 0,
-  active: 0,
-  inactive: 0,
-})
-
-// Fetch respondents
-async function fetchRespondents(page = 1) {
-  loading.value = true
-  try {
-    const params: any = {
-      page,
-      limit: perPage.value,
-    }
-    if (searchQuery.value) {
-      params.search = searchQuery.value
-    }
-    const { data } = await api.get('/admin/respondents', { params })
-    const payload = data.data ?? data
-    respondents.value = payload.data ?? payload
-    currentPage.value = payload.current_page ?? 1
-    totalPages.value = payload.last_page ?? 1
-    totalItems.value = payload.total ?? 0
-    updateStats()
-  } catch (err: any) {
-    console.error('Failed to fetch respondents:', err)
-  } finally {
-    loading.value = false
-  }
-}
 
 function updateStats() {
   stats.value.total = totalItems.value
@@ -77,14 +55,29 @@ const filteredRespondents = computed(() => {
       r.email?.toLowerCase().includes(q)
   )
 })
-
 // Search handler (debounced)
 let searchTimeout: ReturnType<typeof setTimeout>
-function onSearch() {
+function onSearchInput(query: string) {
+  searchQuery.value = query
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     fetchRespondents(1)
   }, 400)
+}
+
+function openViewModal(item: any) {
+  viewingRespondent.value = item
+  showViewModal.value = true
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 // Form handlers
@@ -112,16 +105,15 @@ async function handleFormSubmit() {
   formLoading.value = true
   try {
     if (formMode.value === 'add') {
-      await api.post('/admin/respondents', form.value)
-    } else {
+      await createRespondent(form.value)
+    } else if (editingId.value) {
       const payload: any = { ...form.value }
       if (!payload.password) delete payload.password
-      await api.put(`/admin/respondents/${editingId.value}`, payload)
+      await updateRespondent(editingId.value, payload)
     }
     showFormModal.value = false
-    fetchRespondents(currentPage.value)
-  } catch (err: any) {
-    console.error('Form submit error:', err)
+  } catch (err) {
+    // Error handled by hook
   } finally {
     formLoading.value = false
   }
@@ -134,13 +126,10 @@ function openDeleteModal(r: any) {
 }
 
 async function confirmDelete() {
-  try {
-    await api.delete(`/admin/respondents/${deletingRespondent.value.id}`)
+  if (deletingRespondent.value) {
+    await deleteRespondent(deletingRespondent.value.id)
     showDeleteModal.value = false
     deletingRespondent.value = null
-    fetchRespondents(currentPage.value)
-  } catch (err: any) {
-    console.error('Delete error:', err)
   }
 }
 
@@ -173,18 +162,6 @@ function getAvatarColor(id: number) {
   return avatarColors[id % avatarColors.length]
 }
 
-// Date formatter
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
 // Init
 onMounted(() => {
   fetchRespondents()
@@ -196,10 +173,7 @@ onMounted(() => {
     <!-- Header Section -->
     <section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 fade-in">
       <div>
-        <h2 class="font-headline-xl text-headline-xl text-on-surface">Manajemen Responden</h2>
-        <p class="font-body-base text-body-base text-on-surface-variant mt-2 max-w-2xl">
-          Kelola data responden dan pantau status partisipasi evaluasi sekolah secara real-time.
-        </p>
+        <h2 class="font-headline-xl font-bold text-headline-xl text-on-surface">Manajemen Responden</h2>
       </div>
     </section>
 
@@ -315,6 +289,9 @@ onMounted(() => {
               </td>
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-2">
+                  <button @click="openViewModal(r)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
                   <button
                     @click="openEditModal(r)"
                     class="table-btn p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors"
@@ -549,6 +526,98 @@ onMounted(() => {
               class="px-5 py-2.5 rounded-xl bg-error text-on-error font-body-base font-semibold shadow-sm transition-all hover:bg-error/90 active:scale-95"
             >
               Ya, Hapus
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
+  <!-- ==================== VIEW MODAL ==================== -->
+  <Teleport to="body">
+    <Transition name="modal">
+      <div
+        v-if="showViewModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        @click.self="showViewModal = false"
+      >
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="showViewModal = false"></div>
+        <div class="relative bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg z-10 modal-content">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">visibility</span>
+              </div>
+              <div>
+                <h3 class="font-title-md text-title-md text-on-surface">Detail Responden</h3>
+                <p class="text-body-sm text-on-surface-variant">Informasi lengkap responden</p>
+              </div>
+            </div>
+            <button
+              @click="showViewModal = false"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors"
+            >
+              <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-6 space-y-5" v-if="viewingRespondent">
+            <!-- Avatar & Name -->
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg" :class="getAvatarColor(viewingRespondent.id)">
+                {{ getInitials(viewingRespondent.name) }}
+              </div>
+              <div>
+                <h4 class="font-title-md text-title-md text-on-surface">{{ viewingRespondent.name }}</h4>
+                <p class="text-body-sm text-on-surface-variant">{{ viewingRespondent.email }}</p>
+              </div>
+            </div>
+
+            <!-- Username -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Username</label>
+              <input
+                :value="viewingRespondent.username"
+                type="text"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+              />
+            </div>
+
+            <!-- Status -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+              <input
+                :value="viewingRespondent.isActive ? 'Aktif' : 'Inaktif'"
+                type="text"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+              />
+            </div>
+
+            <!-- Info Tambahan -->
+            <div class="pt-4 border-t border-outline-variant/20">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-secondary">Dibuat:</span>
+                  <p class="font-medium text-on-surface">{{ formatDate(viewingRespondent.createdAt) }}</p>
+                </div>
+                <div>
+                  <span class="text-secondary">Diupdate:</span>
+                  <p class="font-medium text-on-surface">{{ formatDate(viewingRespondent.updatedAt) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
+            <button
+              @click="showViewModal = false"
+              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+            >
+              Tutup
             </button>
           </div>
         </div>

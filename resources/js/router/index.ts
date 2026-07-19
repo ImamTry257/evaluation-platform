@@ -111,6 +111,11 @@ const router = createRouter({
           name: 'admin-settings',
           component: () => import('@/views/admin/settings/SettingView.vue'),
         },
+        {
+          path: 'reports',
+          name: 'admin-reports',
+          component: () => import('@/views/admin/master-data/ReportView.vue'),
+        },
       ],
     },
     // Respondent routes

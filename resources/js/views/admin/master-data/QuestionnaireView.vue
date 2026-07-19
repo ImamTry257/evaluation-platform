@@ -48,8 +48,8 @@ const form = ref({
 const periodOptions = ref<any[]>([])
 
 // Computed
-const showingFrom = computed(() => (currentPage.value - 1) * perPage + 1)
-const showingTo = computed(() => Math.min(currentPage.value * perPage, totalItems.value))
+const showingFrom = computed(() => (currentPage.value - 1) * perPage.value + 1)
+const showingTo = computed(() => Math.min(currentPage.value * perPage.value, totalItems.value))
 
 // Methods
 function formatDate(dateStr: string): string {
@@ -242,8 +242,27 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- Loading -->
+      <div v-if="loading" class="p-12 text-center">
+        <span class="material-symbols-outlined text-[32px] text-outline animate-spin">progress_activity</span>
+        <p class="text-body-sm text-on-surface-variant mt-2">Memuat data...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="questionnaires.length === 0" class="p-12 text-center">
+        <span class="material-symbols-outlined text-[48px] text-outline">description</span>
+        <p class="text-body-base text-on-surface-variant mt-3">Belum ada instrument penelitian.</p>
+        <button
+          @click="openAddModal"
+          class="mt-4 bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto"
+        >
+          <span class="material-symbols-outlined">add</span>
+          Tambah Instrument Pertama
+        </button>
+      </div>
+
       <!-- Data Table -->
-      <div class="overflow-x-auto data-table-scroll">
+      <div v-else class="overflow-x-auto data-table-scroll">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-surface-container-low/50">

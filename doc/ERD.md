@@ -71,8 +71,10 @@ erDiagram
         varchar name
         text description
         integer orderNumber
+        integer is_active
         timestamp createdAt
         timestamp updatedAt
+        timestamp deletedAt
     }
 
     SUB_COMPONENTS {
@@ -81,8 +83,10 @@ erDiagram
         varchar name
         text description
         integer orderNumber
+        integer is_active
         timestamp createdAt
         timestamp updatedAt
+        timestamp deletedAt
     }
 
     INDICATORS {
@@ -91,8 +95,10 @@ erDiagram
         varchar name
         text description
         integer orderNumber
+        integer is_active
         timestamp createdAt
         timestamp updatedAt
+        timestamp deletedAt
     }
 
     QUESTIONS {
@@ -101,8 +107,10 @@ erDiagram
         text question
         decimal weight "5,2"
         integer orderNumber
+        integer is_active
         timestamp createdAt
         timestamp updatedAt
+        timestamp deletedAt
     }
 
     RESPONSE_SESSIONS {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Indicator;
+use App\Models\SubComponent;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,14 +19,14 @@ class IndikatorController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Indicator::with('subComponent');
+        $query = Indicator::with('subComponent.component.questionnaire');
 
         // Search by name
         if ($request->has('search') && $request->search) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // Filter by subComponent
+        // Filter by sub-component
         if ($request->has('subComponentId') && $request->subComponentId) {
             $query->where('subComponentId', $request->subComponentId);
         }
@@ -34,7 +35,37 @@ class IndikatorController extends Controller
         $indicators = $query->orderBy('orderNumber', 'asc')
             ->paginate($limit);
 
-        return $this->listResponse($indicators, 'Indicators retrieved successfully');
+        // Get breadcrumb data
+        $breadCrumbList = null;
+        if ($indicators->count() != 0) {
+            $firstSubComponent = $indicators->first()->subComponent;
+            $breadCrumbList = [
+                'questionnaire' => $firstSubComponent->component->questionnaire ?? null,
+                'component' => $firstSubComponent->component ?? null,
+                'subComponent' => $firstSubComponent,
+            ];
+        }else {
+            $subComponent = SubComponent::with('component.questionnaire')->find($request->subComponentId);
+            $breadCrumbList = [
+                'questionnaire' => $subComponent->component->questionnaire ?? null,
+                'component' => $subComponent->component ?? null,
+                'subComponent' => $subComponent,
+            ];
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Indicators retrieved successfully',
+            'data' => [
+                'breadCrumbList' => $breadCrumbList,
+                'contents' => $indicators->items(),
+                'meta' => [
+                    'page' => $indicators->currentPage(),
+                    'limit' => $indicators->perPage(),
+                    'total' => $indicators->total(),
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -48,6 +79,7 @@ class IndikatorController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|integer|in:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -61,6 +93,11 @@ class IndikatorController extends Controller
             $maxOrder = Indicator::where('subComponentId', $data['subComponentId'])
                 ->max('orderNumber');
             $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+        }
+
+        // Set default is_active if not provided
+        if (!isset($data['is_active'])) {
+            $data['is_active'] = 1;
         }
 
         $indicator = Indicator::create($data);
@@ -104,6 +141,7 @@ class IndikatorController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'orderNumber' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|integer|in:0,1',
         ]);
 
         if ($validator->fails()) {

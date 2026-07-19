@@ -17,6 +17,7 @@ class Question extends Model
         'questionText',
         'weight',
         'orderNumber',
+        'is_active',
     ];
 
     protected function casts(): array

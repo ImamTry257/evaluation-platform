@@ -537,6 +537,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "name": "Kebijakan Struktural",
       "description": "Komponen kebijakan struktural",
       "orderNumber": 1,
+      "is_active": 1,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -553,7 +554,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 {
   "name": "Kebijakan Struktural",
   "description": "Komponen kebijakan struktural",
-  "orderNumber": 1
+  "orderNumber": 1,
+  "is_active": 1
 }
 ```
 
@@ -568,7 +570,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 ```json
 {
   "name": "Kebijakan Struktural - Updated",
-  "orderNumber": 2
+  "orderNumber": 2,
+  "is_active": 1
 }
 ```
 
@@ -607,6 +610,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "name": "Kerangka Organisasi",
       "description": "Sub komponen kerangka organisasi",
       "orderNumber": 1,
+      "is_active": 1,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -623,7 +627,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 {
   "name": "Kerangka Organisasi",
   "description": "Sub komponen kerangka organisasi",
-  "orderNumber": 1
+  "orderNumber": 1,
+  "is_active": 1
 }
 ```
 
@@ -649,6 +654,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "name": "Keberadaan organisasi, struktur dan tugas",
       "description": "Indicator keberadaan organisasi",
       "orderNumber": 1,
+      "is_active": 1,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -665,7 +671,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 {
   "name": "Keberadaan organisasi, struktur dan tugas",
   "description": "Indicator keberadaan organisasi",
-  "orderNumber": 1
+  "orderNumber": 1,
+  "is_active": 1
 }
 ```
 
@@ -691,6 +698,7 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
       "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
       "weight": 1.5,
       "orderNumber": 1,
+      "is_active": 1,
       "createdAt": "2024-01-01T10:00:00Z"
     }
   ]
@@ -707,7 +715,8 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 {
   "question": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
   "weight": 1.5,
-  "orderNumber": 1
+  "orderNumber": 1,
+  "is_active": 1
 }
 ```
 

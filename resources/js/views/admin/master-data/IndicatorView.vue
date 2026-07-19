@@ -1,51 +1,44 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import { useIndicator } from '@/hooks/useIndicator'
 
 const route = useRoute()
-const componentId = computed(() => route.params.componentId as string)
-const subComponentId = computed(() => route.params.subComponentId as string)
+const componentId = computed(() => Number(route.params.componentId))
+const subComponentId = computed(() => Number(route.params.subComponentId))
 
-// State
-const searchQuery = ref('')
+const {
+  indicators,
+  breadCrumbList,
+  loading,
+  error,
+  currentPage,
+  perPage,
+  totalItems,
+  totalPages,
+  searchQuery,
+  fetchIndicators,
+  createIndicator,
+  updateIndicator,
+  deleteIndicator,
+  onSearch,
+} = useIndicator(subComponentId.value)
 
 // Modal state
 const showFormModal = ref(false)
 const showDeleteModal = ref(false)
+const showViewModal = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
 const editingId = ref<number | null>(null)
 const deletingIndicator = ref<any>(null)
+const viewingIndicator = ref<any>(null)
+const formLoading = ref(false)
 
 // Form
 const form = ref({
   name: '',
   description: '',
 })
-
-// Mock data - Indicators (context: Sub Component "Kerangka Organisasi")
-const indicators = ref([
-  {
-    id: 1,
-    name: 'Keberadaan Organisasi',
-    description: 'Ada/tidaknya organisasi lingkungan',
-    status: 'active',
-    questions: 3,
-  },
-  {
-    id: 2,
-    name: 'Struktur & Pembagian Tugas',
-    description: 'Pembagian wewenang anggota',
-    status: 'active',
-    questions: 3,
-  },
-  {
-    id: 3,
-    name: 'Mekanisme Koordinasi',
-    description: 'Alur komunikasi antar anggota',
-    status: 'active',
-    questions: 3,
-  },
-])
 
 // Computed
 const filteredIndicators = computed(() => {
@@ -78,27 +71,28 @@ function openEditModal(ind: any) {
   showFormModal.value = true
 }
 
-function handleFormSubmit() {
-  if (formMode.value === 'add') {
-    const newId = Math.max(...indicators.value.map((i) => i.id)) + 1
-    indicators.value.unshift({
-      id: newId,
-      name: form.value.name,
-      description: form.value.description,
-      status: 'active',
-      questions: 0,
-    })
-  } else {
-    const idx = indicators.value.findIndex((i) => i.id === editingId.value)
-    if (idx !== -1) {
-      indicators.value[idx] = {
-        ...indicators.value[idx],
+async function handleFormSubmit() {
+  formLoading.value = true
+  try {
+    if (formMode.value === 'add') {
+      await createIndicator({
+        subComponentId: subComponentId.value,
         name: form.value.name,
         description: form.value.description,
-      }
+      })
+    } else if (editingId.value) {
+      await updateIndicator(editingId.value, {
+        subComponentId: subComponentId.value,
+        name: form.value.name,
+        description: form.value.description,
+      })
     }
+    showFormModal.value = false
+  } catch (err) {
+    // Error handled by hook
+  } finally {
+    formLoading.value = false
   }
-  showFormModal.value = false
 }
 
 // Delete handlers
@@ -107,31 +101,48 @@ function openDeleteModal(ind: any) {
   showDeleteModal.value = true
 }
 
-function confirmDelete() {
-  indicators.value = indicators.value.filter((i) => i.id !== deletingIndicator.value.id)
-  showDeleteModal.value = false
-  deletingIndicator.value = null
+async function confirmDelete() {
+  if (deletingIndicator.value) {
+    await deleteIndicator(deletingIndicator.value.id)
+    showDeleteModal.value = false
+    deletingIndicator.value = null
+  }
 }
 
 // More menu actions
-function handleView(item: any) {
-  console.log('View:', item)
+function openViewModal(item: any) {
+  viewingIndicator.value = item
+  showViewModal.value = true
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 function handleEdit(item: any) {
   openEditModal(item)
 }
 
-function handleToggleStatus(item: any) {
-  const idx = indicators.value.findIndex((i) => i.id === item.id)
-  if (idx !== -1) {
-    indicators.value[idx].status = item.status === 'active' ? 'inactive' : 'active'
-  }
-}
-
 function handleDelete(item: any) {
   openDeleteModal(item)
 }
+
+// Pagination
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return
+  fetchIndicators(page)
+}
+
+// Init
+onMounted(() => {
+  fetchIndicators()
+})
 </script>
 
 <template>
@@ -140,11 +151,20 @@ function handleDelete(item: any) {
     <nav class="mb-6 flex items-center gap-2 text-sm">
       <RouterLink to="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
       <span class="text-outline">›</span>
-      <RouterLink to="/admin/instrument/1" class="text-primary font-medium hover:underline cursor-pointer">Kuesioner Kebijakan Lingkungan</RouterLink>
+      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}`" class="text-primary font-medium hover:underline cursor-pointer">
+        {{ breadCrumbList.questionnaire.title }}
+      </RouterLink>
+      <span v-else class="text-primary font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink :to="`/admin/component/${componentId}`" class="text-primary font-medium hover:underline cursor-pointer">Kebijakan Struktural</RouterLink>
+      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component`" class="text-primary font-medium hover:underline cursor-pointer">
+        {{ breadCrumbList.component.name }}
+      </RouterLink>
+      <span v-else class="text-primary font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink :to="`/admin/component/${componentId}/sub-component`" class="text-primary font-medium hover:underline cursor-pointer">Kerangka Organisasi</RouterLink>
+      <RouterLink v-if="breadCrumbList?.subComponent" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component`" class="text-primary font-medium hover:underline cursor-pointer">
+        {{ breadCrumbList.subComponent.name }}
+      </RouterLink>
+      <span v-else class="text-primary font-medium">-</span>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Indikator</span>
     </nav>
@@ -181,8 +201,27 @@ function handleDelete(item: any) {
         </div>
       </div>
 
+      <!-- Loading -->
+      <div v-if="loading" class="p-12 text-center">
+        <span class="material-symbols-outlined text-[32px] text-outline animate-spin">progress_activity</span>
+        <p class="text-body-sm text-on-surface-variant mt-2">Memuat data...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="indicators.length === 0" class="p-12 text-center">
+        <span class="material-symbols-outlined text-[48px] text-outline">analytics</span>
+        <p class="text-body-base text-on-surface-variant mt-3">Belum ada indikator untuk sub komponen ini.</p>
+        <button
+          @click="openAddModal"
+          class="mt-4 bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto"
+        >
+          <span class="material-symbols-outlined">add</span>
+          Tambah Indikator Pertama
+        </button>
+      </div>
+
       <!-- Data Table -->
-      <div class="overflow-x-auto data-table-scroll">
+      <div v-else class="overflow-x-auto data-table-scroll">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-surface-container-low/50">
@@ -201,9 +240,7 @@ function handleDelete(item: any) {
             >
               <td class="px-6 py-5">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                    <span class="material-symbols-outlined text-[20px]">analytics</span>
-                  </div>
+                  <span class="material-symbols-outlined text-[14px] text-outline">subdirectory_arrow_right</span>
                   <div>
                     <span class="font-body-base font-semibold text-on-surface">{{ ind.name }}</span>
                     <p class="text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">{{ ind.description }}</p>
@@ -216,41 +253,26 @@ function handleDelete(item: any) {
                 </span>
               </td>
               <td class="px-6 py-5">
-                <span class="count-badge">{{ ind.questions }}</span>
+                <span class="count-badge">{{ ind.questionCount ?? 0 }}</span>
               </td>
               <td class="px-6 py-5">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex items-center justify-center gap-1">
                   <RouterLink
-                    :to="`/admin/indicator/${ind.id}/question`"
-                    class="action-link text-xs font-semibold text-primary cursor-pointer hover:bg-primary/10 px-2 py-1 rounded-lg"
+                    :to="`/admin/component/${componentId}/sub-component/${subComponentId}/indicator/${ind.id}/question`"
+                    class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    title="Lihat Pertanyaan"
                   >
-                    <span class="material-symbols-outlined text-[14px]">subdirectory_arrow_right</span>
-                    Lihat Pertanyaan
+                    <span class="material-symbols-outlined text-[18px]">subdirectory_arrow_right</span>
                   </RouterLink>
-                  <div class="relative more-wrapper">
-                    <button class="more-btn w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                      <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                    </button>
-                    <div class="more-dropdown">
-                      <div class="more-dropdown-item" @click="handleView(ind)">
-                        <span class="material-symbols-outlined">visibility</span>
-                        View Detail
-                      </div>
-                      <div class="more-dropdown-item" @click="handleEdit(ind)">
-                        <span class="material-symbols-outlined">edit</span>
-                        Edit
-                      </div>
-                      <div class="more-dropdown-item" @click="handleToggleStatus(ind)">
-                        <span class="material-symbols-outlined">toggle_on</span>
-                        {{ ind.status === 'active' ? 'Set Inactive' : 'Set Active' }}
-                      </div>
-                      <div class="more-dropdown-divider"></div>
-                      <div class="more-dropdown-item danger" @click="handleDelete(ind)">
-                        <span class="material-symbols-outlined">delete</span>
-                        Hapus
-                      </div>
-                    </div>
-                  </div>
+                  <button @click="openViewModal(ind)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
+                  <button @click="handleEdit(ind)" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button @click="handleDelete(ind)" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Hapus">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -403,6 +425,87 @@ function handleDelete(item: any) {
               class="px-5 py-2.5 rounded-xl bg-error text-on-error font-body-base font-semibold shadow-sm transition-all hover:bg-error/90 active:scale-95"
             >
               Ya, Hapus
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
+  <!-- ==================== VIEW MODAL ==================== -->
+  <Teleport to="body">
+    <Transition name="modal">
+      <div
+        v-if="showViewModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        @click.self="showViewModal = false"
+      >
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="showViewModal = false"></div>
+        <div class="relative bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg z-10 modal-content">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">visibility</span>
+              </div>
+              <div>
+                <h3 class="font-title-md text-title-md text-on-surface">Detail Indikator</h3>
+                <p class="text-body-sm text-on-surface-variant">Informasi lengkap indikator</p>
+              </div>
+            </div>
+            <button
+              @click="showViewModal = false"
+              class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors"
+            >
+              <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-6 space-y-5" v-if="viewingIndicator">
+            <!-- Nama Indikator -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Nama Indikator</label>
+              <input
+                :value="viewingIndicator.name"
+                type="text"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
+              />
+            </div>
+
+            <!-- Deskripsi -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Deskripsi</label>
+              <textarea
+                :value="viewingIndicator.description || ''"
+                rows="2"
+                disabled
+                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Info Tambahan -->
+            <div class="pt-4 border-t border-outline-variant/20">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-secondary">Dibuat:</span>
+                  <p class="font-medium text-on-surface">{{ formatDate(viewingIndicator.createdAt) }}</p>
+                </div>
+                <div>
+                  <span class="text-secondary">Diupdate:</span>
+                  <p class="font-medium text-on-surface">{{ formatDate(viewingIndicator.updatedAt) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
+            <button
+              @click="showViewModal = false"
+              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+            >
+              Tutup
             </button>
           </div>
         </div>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 36)->nullable(false);
             $table->string('value', 4)->nullable(false);
-            $table->integer('is_active');
+                
             $table->text('description');
             $table->timestamps();
         });

@@ -1,10 +1,9 @@
 import { ref, computed } from 'vue'
 import api from '@/services/api'
-import { useRoute } from 'vue-router'
 
-export function useComponent(questionnaireId?: number) {
+export function useSubComponent(componentId?: number) {
   // State
-  const components = ref<any[]>([])
+  const subComponents = ref<any[]>([])
   const breadCrumbList = ref<any>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -16,8 +15,8 @@ export function useComponent(questionnaireId?: number) {
   // Computed
   const totalPages = computed(() => Math.ceil(totalItems.value / perPage.value))
 
-  // Fetch components
-  async function fetchComponents(page = 1) {
+  // Fetch sub-components
+  async function fetchSubComponents(page = 1) {
     loading.value = true
     error.value = null
     try {
@@ -25,79 +24,77 @@ export function useComponent(questionnaireId?: number) {
         page,
         limit: perPage.value,
       }
-      if (questionnaireId) {
-        params.questionnaireId = questionnaireId
+      if (componentId) {
+        params.componentId = componentId
       }
       if (searchQuery.value) {
         params.search = searchQuery.value
       }
-      const { data } = await api.get('/admin/components', { params })
+      const { data } = await api.get('/admin/sub-components', { params })
       const payload = data.data ?? data
-      components.value = payload.contents ?? payload.data ?? payload
+      subComponents.value = payload.contents ?? payload.data ?? payload
       breadCrumbList.value = payload.breadCrumbList ?? null
       currentPage.value = payload.meta?.page ?? payload.current_page ?? 1
       totalItems.value = payload.meta?.total ?? payload.total ?? 0
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Gagal memuat data komponen'
-      console.error('Failed to fetch components:', err)
+      error.value = err.response?.data?.message || 'Gagal memuat data sub komponen'
+      console.error('Failed to fetch sub-components:', err)
     } finally {
       loading.value = false
     }
   }
 
-  // Create component
-  async function createComponent(payload: {
-    questionnaireId: number
+  // Create sub-component
+  async function createSubComponent(payload: {
+    componentId: number
     name: string
     description?: string
-    orderNumber?: number
     is_active?: number
   }) {
     loading.value = true
     error.value = null
     try {
-      const { data } = await api.post('/admin/components', payload)
-      await fetchComponents(currentPage.value)
+      const { data } = await api.post('/admin/sub-components', payload)
+      await fetchSubComponents(currentPage.value)
       return data.data
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Gagal membuat komponen'
+      error.value = err.response?.data?.message || 'Gagal membuat sub komponen'
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  // Update component
-  async function updateComponent(id: number, payload: {
-    questionnaireId: number
+  // Update sub-component
+  async function updateSubComponent(id: number, payload: {
+    componentId: number
     name: string
     description?: string
-    orderNumber?: number
     is_active?: number
   }) {
     loading.value = true
     error.value = null
     try {
-      const { data } = await api.put(`/admin/components/${id}`, payload)
-      await fetchComponents(currentPage.value)
+      const { data } = await api.put(`/admin/sub-components/${id}`, payload)
+      await fetchSubComponents(currentPage.value)
       return data.data
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Gagal mengupdate komponen'
+      error.value = err.response?.data?.message || 'Gagal mengupdate sub komponen'
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  // Delete component (soft delete)
-  async function deleteComponent(id: number) {
+  // Delete sub-component
+  async function deleteSubComponent(id: number) {
     loading.value = true
     error.value = null
     try {
-      await api.delete(`/admin/components/${id}`)
-      await fetchComponents(currentPage.value)
+      await api.delete(`/admin/sub-components/${id}`)
+      await fetchSubComponents(currentPage.value)
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Gagal menghapus komponen'
+      error.value = err.response?.data?.message || 'Gagal menghapus sub komponen'
       throw err
     } finally {
       loading.value = false
@@ -110,13 +107,13 @@ export function useComponent(questionnaireId?: number) {
     searchQuery.value = query
     clearTimeout(searchTimeout)
     searchTimeout = setTimeout(() => {
-      fetchComponents(1)
+      fetchSubComponents(1)
     }, 400)
   }
 
   return {
     // State
-    components,
+    subComponents,
     breadCrumbList,
     loading,
     error,
@@ -126,10 +123,10 @@ export function useComponent(questionnaireId?: number) {
     totalPages,
     searchQuery,
     // Methods
-    fetchComponents,
-    createComponent,
-    updateComponent,
-    deleteComponent,
+    fetchSubComponents,
+    createSubComponent,
+    updateSubComponent,
+    deleteSubComponent,
     onSearch,
   }
 }

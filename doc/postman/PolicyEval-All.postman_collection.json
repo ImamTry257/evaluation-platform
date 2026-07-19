@@ -1114,7 +1114,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Kebijakan\",\n  \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n  \"orderNumber\": 1\n}"
+                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Kebijakan\",\n  \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n  \"orderNumber\": 1,\n  \"is_active\": 1\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/components",
@@ -1134,7 +1134,7 @@
                   "name": "Create Success",
                   "code": 201,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Component created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Kebijakan\",\n    \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n    \"orderNumber\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Component created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Kebijakan\",\n    \"description\": \"Komponen evaluasi kebijakan lingkungan\",\n    \"orderNumber\": 1,\n    \"is_active\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
                 },
                 {
                   "name": "Create Validation Error",
@@ -1207,7 +1207,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2\n}"
+                  "raw": "{\n  \"questionnaireId\": 4,\n  \"name\": \"Komponen Updated\",\n  \"description\": \"Updated\",\n  \"orderNumber\": 2,\n  \"is_active\": 1\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/components/1",
@@ -1228,7 +1228,7 @@
                   "name": "Update Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Component updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Updated\",\n    \"description\": \"Updated\",\n    \"orderNumber\": 2,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Component updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionnaireId\": 4,\n    \"name\": \"Komponen Updated\",\n    \"description\": \"Updated\",\n    \"orderNumber\": 2,\n    \"is_active\": 1,\n    \"created_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"updated_at\": \"2026-07-16T00:00:00.000000Z\",\n    \"questionnaire\": {\n      \"id\": 4,\n      \"evaluationPeriodId\": 4,\n      \"title\": \"Kuesioner Valid\"\n    }\n  }\n}"
                 }
               ]
             },

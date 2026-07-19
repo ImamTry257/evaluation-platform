@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Indicator;
 use App\Models\Question;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class PertanyaanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Question::with('indicator');
+        $query = Question::with('indicator.subComponent.component.questionnaire');
 
         // Search by questionText
         if ($request->has('search') && $request->search) {
@@ -34,7 +35,41 @@ class PertanyaanController extends Controller
         $questions = $query->orderBy('orderNumber', 'asc')
             ->paginate($limit);
 
-        return $this->listResponse($questions, 'Questions retrieved successfully');
+        // Get breadcrumb data - always fetch from indicatorId
+        $breadCrumbList = null;
+        if ($request->has('indicatorId') && $request->indicatorId) {
+            $indicator = Indicator::with('subComponent.component.questionnaire')->find($request->indicatorId);
+            if ($indicator) {
+                $breadCrumbList = [
+                    'questionnaire' => $indicator->subComponent->component->questionnaire ?? null,
+                    'component' => $indicator->subComponent->component ?? null,
+                    'subComponent' => $indicator->subComponent ?? null,
+                    'indicator' => $indicator,
+                ];
+            }
+        } elseif ($questions->count() > 0) {
+            $firstIndicator = $questions->first()->indicator;
+            $breadCrumbList = [
+                'questionnaire' => $firstIndicator->subComponent->component->questionnaire ?? null,
+                'component' => $firstIndicator->subComponent->component ?? null,
+                'subComponent' => $firstIndicator->subComponent ?? null,
+                'indicator' => $firstIndicator,
+            ];
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Questions retrieved successfully',
+            'data' => [
+                'breadCrumbList' => $breadCrumbList,
+                'contents' => $questions->items(),
+                'meta' => [
+                    'page' => $questions->currentPage(),
+                    'limit' => $questions->perPage(),
+                    'total' => $questions->total(),
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -48,6 +83,7 @@ class PertanyaanController extends Controller
             'questionText' => 'required|string',
             'weight' => 'required|numeric|min:0',
             'orderNumber' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|integer|in:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -61,6 +97,11 @@ class PertanyaanController extends Controller
             $maxOrder = Question::where('indicatorId', $data['indicatorId'])
                 ->max('orderNumber');
             $data['orderNumber'] = ($maxOrder ?? 0) + 1;
+        }
+
+        // Set default is_active if not provided
+        if (!isset($data['is_active'])) {
+            $data['is_active'] = 1;
         }
 
         $question = Question::create($data);
@@ -104,6 +145,7 @@ class PertanyaanController extends Controller
             'questionText' => 'required|string',
             'weight' => 'required|numeric|min:0',
             'orderNumber' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|integer|in:0,1',
         ]);
 
         if ($validator->fails()) {

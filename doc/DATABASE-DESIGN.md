@@ -165,8 +165,10 @@ Contoh:
 | name | varchar |
 | description | text |
 | orderNumber | integer |
+| is_active | integer |
 | createdAt | timestamp |
 | updatedAt | timestamp |
+| deletedAt | timestamp |
 
 ---
 
@@ -186,8 +188,10 @@ Contoh:
 | name | varchar |
 | description | text |
 | orderNumber | integer |
+| is_active | integer |
 | createdAt | timestamp |
 | updatedAt | timestamp |
+| deletedAt | timestamp |
 
 ---
 
@@ -206,8 +210,10 @@ Contoh:
 | name | varchar |
 | description | text |
 | orderNumber | integer |
+| is_active | integer |
 | createdAt | timestamp |
 | updatedAt | timestamp |
+| deletedAt | timestamp |
 
 ---
 
@@ -222,8 +228,10 @@ Master Pertanyaan.
 | question | text |
 | weight | decimal(5,2) |
 | orderNumber | integer |
+| is_active | integer |
 | createdAt | timestamp |
 | updatedAt | timestamp |
+| deletedAt | timestamp |
 
 ---
 
