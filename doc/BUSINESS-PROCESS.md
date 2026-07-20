@@ -288,25 +288,46 @@ Periode Evaluasi
 **Tujuan:** Memulai sesi evaluasi baru
 
 **Langkah-langkah:**
-1. Setelah login, responden melihat dashboard
-2. Lihat penjelasan platform
-3. Pilih evaluasi aktif yang tersedia
-4. Klik "Mulai Evaluasi"
-5. Sistem akan:
-   - Membuat sesi baru (Response Session)
-   - Menampilkan daftar pertanyaan
+1. Setelah login, responden diarahkan ke `/respondent`
+2. Sistem mengambil kuesioner aktif (published) via `GET /evaluations/active-questionnaire`
+3. Halaman penjelasan menampilkan:
+   - Informasi periode, nama kuesioner, estimasi waktu
+   - Instruksi pengisian
+   - Skala penilaian Likert 1-7
+4. Responden checklist "Saya telah membaca dan memahami seluruh instruksi"
+5. Klik "Mulai Evaluasi" → `POST /evaluations/start`
+6. Sistem akan:
+   - Membuat sesi baru (Response Session) atau resume sesi existing
+   - Redirect ke `/respondent/evaluation/:sessionId/component/1`
+   - Menampilkan pertanyaan dalam format tabel per komponen
    - Menghitung waktu mulai dan sisa waktu
 
 **Data yang Dibuat:**
 ```json
 {
-  "sessionId": 1,
-  "questionnaireId": 1,
-  "status": "in_progress",
-  "startedAt": "2024-01-01T10:00:00Z",
-  "remainingSeconds": 3600,
-  "questions": [...]
+  "session": {
+    "id": 1,
+    "userId": 10,
+    "questionnaireId": 1,
+    "status": "in_progress",
+    "startedAt": "2024-01-01T10:00:00Z",
+    "remainingSeconds": 1200
+  },
+  "questionnaire": { "..." },
+  "scoringLevels": ["..."],
+  "isResumed": false
 }
+```
+
+**Route Flow:**
+```
+/respondent                                          → Halaman Penjelasan (Step 1)
+    ↓ Klik "Mulai Evaluasi"
+/respondent/evaluation/:sessionId/component/1        → Input Angket Komponen 1 (Step 2)
+/respondent/evaluation/:sessionId/component/2        → Input Angket Komponen 2
+/respondent/evaluation/:sessionId/component/3        → Input Angket Komponen 3
+    ↓ Klik "Kirim Evaluasi" + Konfirmasi
+/respondent/result/:sessionId                        → Hasil Evaluasi (Step 3)
 ```
 
 ---
@@ -315,22 +336,25 @@ Periode Evaluasi
 **Tujuan:** Menjawab pertanyaan evaluasi
 
 **Langkah-langkah:**
-1. Lihat daftar pertanyaan
-2. Jawab pertanyaan dengan skor 1-7 (Likert scale)
-3. Sistem akan:
-   - Auto save jawaban secara periodik
-   - Menyimpan progress pengisian
-   - Menampilkan sisa waktu
+1. Pertanyaan ditampilkan dalam format tabel per komponen
+2. Setiap baris = 1 pertanyaan, kolom = skor Likert 1-7 (radio button)
+3. Klik radio button → jawaban langsung tersimpan via `POST /evaluations/{sessionId}/answers`
+4. Navigasi antar komponen menggunakan tombol "Selanjutnya"/"Sebelumnya" atau klik dot pagination
+5. URL berubah sesuai komponen: `/respondent/evaluation/:sessionId/component/:n`
+6. Progress bar menampilkan jumlah pertanyaan yang sudah dijawab
+7. Timer countdown berjalan di header
 
 **Mekanisme Auto Save:**
-- Sistem akan otomatis menyimpan jawaban setiap interval tertentu
-- Responden dapat melanjutkan pengisian kapan saja
-- Jawaban tersimpan di database meskipun sesi terputus
+- Setiap radio button yang diklik langsung di-save ke server (real-time)
+- Toast notification "Jawaban tersimpan" muncul setelah save
+- Jawaban tersimpan di database secara real-time
 
 **Aturan Bisnis:**
 - Skor jawaban harus antara 1-7
-- Semua pertanyaan harus dijawab
+- Semua pertanyaan harus dijawab sebelum submit
 - Sisa waktu terus berkurang selama sesi aktif
+- Responden dapat mengubah jawaban kapan saja sebelum submit
+- Jika waktu habis, sesi otomatis timeout
 
 ---
 
@@ -498,6 +522,37 @@ Periode Evaluasi
 │    ├── Jika Email Sudah Ada                             │
 │    │   └── Langsung Login                               │
 │    │                                                    │
+│    ↓                                                    │
+│  /respondent (Step 1: Penjelasan)                       │
+│    │  GET /evaluations/active-questionnaire              │
+│    │  - Tampilkan info kuesioner                        │
+│    │  - Tampilkan instruksi + skala Likert              │
+│    │  - Checklist "Saya paham"                          │
+│    │                                                    │
+│    ↓ Klik "Mulai Evaluasi"                              │
+│  POST /evaluations/start                                │
+│    │                                                    │
+│    ↓                                                    │
+│  /respondent/evaluation/:id/component/1 (Step 2)        │
+│    │  - Tabel pertanyaan per komponen                   │
+│    │  - Klik radio → POST /answers (auto-save)          │
+│    │  - Navigasi komponen via ?comp=N                   │
+│    │  - Timer countdown                                 │
+│    │                                                    │
+│    ↓ Klik "Kirim Evaluasi"                              │
+│  Modal Konfirmasi → POST /submit                        │
+│    │                                                    │
+│    ↓                                                    │
+│  /respondent/result/:id (Step 3: Hasil)                 │
+│    │  GET /evaluations/:id/results                      │
+│    │  - Skor keseluruhan + kategori                     │
+│    │  - Detail per komponen/indikator                   │
+│    │  - Kesimpulan + rekomendasi                        │
+│    │                                                    │
+│    └── Selesai                                          │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
 │    └── Jika Email Belum Ada                             │
 │        └── Auto-Register                                │
 │                                                         │

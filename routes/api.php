@@ -79,7 +79,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('evaluations')->group(function () {
             Route::get('/active-questionnaire', [EvaluasiController::class, 'activeQuestionnaire']);
             Route::post('/start', [EvaluasiController::class, 'start']);
-            Route::get('/{sessionId}', [EvaluasiController::class, 'show']);
+            Route::get('/{sessionId}/component/{questionnaireId}', [EvaluasiController::class, 'show']);
             Route::post('/{sessionId}/answers', [EvaluasiController::class, 'saveAnswer']);
             Route::post('/{sessionId}/autosave', [EvaluasiController::class, 'autoSave']);
             Route::post('/{sessionId}/submit', [EvaluasiController::class, 'submit']);

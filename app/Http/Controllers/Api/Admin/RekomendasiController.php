@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RecommendationResource;
 use App\Models\Recommendation;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -20,14 +21,14 @@ class RekomendasiController extends Controller
     {
         $query = Recommendation::with('indicator');
 
-        // Search by recommendationText
+        // Search by recommendation_text
         if ($request->has('search') && $request->search) {
-            $query->where('recommendationText', 'like', '%' . $request->search . '%');
+            $query->where('recommendation_text', 'like', '%' . $request->search . '%');
         }
 
-        // Filter by indicator
+        // Filter by indicator (request key camelCase, DB column snake_case)
         if ($request->has('indicatorId') && $request->indicatorId) {
-            $query->where('indicatorId', $request->indicatorId);
+            $query->where('indicator_id', $request->indicatorId);
         }
 
         // Filter by category
@@ -37,10 +38,13 @@ class RekomendasiController extends Controller
 
         $limit = min($request->get('limit', 10), 100);
 
-        $recommendations = $query->orderBy('minScore', 'asc')
+        $recommendations = $query->orderBy('min_score', 'asc')
             ->paginate($limit);
 
-        return $this->listResponse($recommendations, 'Recommendations retrieved successfully');
+        return $this->listResponse(
+            RecommendationResource::collection($recommendations),
+            'Recommendations retrieved successfully'
+        );
     }
 
     /**
@@ -61,10 +65,19 @@ class RekomendasiController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $recommendation = Recommendation::create($validator->validated());
+        $data = $validator->validated();
+
+        // Map camelCase request keys to snake_case DB columns
+        $recommendation = Recommendation::create([
+            'indicator_id' => $data['indicatorId'],
+            'min_score' => $data['minScore'],
+            'max_score' => $data['maxScore'],
+            'category' => $data['category'],
+            'recommendation_text' => $data['recommendationText'],
+        ]);
 
         return $this->successResponse(
-            $recommendation->load('indicator'),
+            new RecommendationResource($recommendation->load('indicator')),
             'Recommendation created successfully',
             201
         );
@@ -82,7 +95,10 @@ class RekomendasiController extends Controller
             return $this->errorResponse('Recommendation not found', 404);
         }
 
-        return $this->successResponse($recommendation, 'Recommendation retrieved successfully');
+        return $this->successResponse(
+            new RecommendationResource($recommendation),
+            'Recommendation retrieved successfully'
+        );
     }
 
     /**
@@ -109,10 +125,19 @@ class RekomendasiController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $recommendation->update($validator->validated());
+        $data = $validator->validated();
+
+        // Map camelCase request keys to snake_case DB columns
+        $recommendation->update([
+            'indicator_id' => $data['indicatorId'],
+            'min_score' => $data['minScore'],
+            'max_score' => $data['maxScore'],
+            'category' => $data['category'],
+            'recommendation_text' => $data['recommendationText'],
+        ]);
 
         return $this->successResponse(
-            $recommendation->load('indicator'),
+            new RecommendationResource($recommendation->load('indicator')),
             'Recommendation updated successfully'
         );
     }

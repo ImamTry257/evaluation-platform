@@ -14,17 +14,17 @@ class EvaluationPeriod extends Model
     protected $fillable = [
         'name',
         'description',
-        'startDate',
-        'endDate',
-        'isActive',
+        'start_date',
+        'end_date',
+        'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'startDate' => 'datetime',
-            'endDate' => 'datetime',
-            'isActive' => 'boolean',
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -35,6 +35,6 @@ class EvaluationPeriod extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('isActive', true);
+        return $query->where('is_active', true);
     }
 }

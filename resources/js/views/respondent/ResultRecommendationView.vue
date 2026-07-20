@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useEvaluation } from '@/hooks/respondent/useEvaluation'
 
 const route = useRoute()
@@ -72,7 +72,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-8 max-w-[1024px] w-full mx-auto">
+  <div class="min-h-screen bg-background">
+    <!-- Step Header -->
+    <div class="fixed top-0 left-0 right-0 z-[200] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+      <div class="max-w-5xl mx-auto px-6 py-2.5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-2xl">eco</span>
+          <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>
+        </div>
+        <div class="flex items-center gap-0">
+          <RouterLink to="/respondent"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container cursor-pointer transition-all">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">1</span>
+            <span class="hidden md:inline">Penjelasan</span>
+          </RouterLink>
+          <div class="w-6 h-px mx-1 bg-outline-variant"></div>
+          <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">2</span>
+            <span class="hidden md:inline">Input Angket</span>
+          </span>
+          <div class="w-6 h-px mx-1 bg-primary"></div>
+          <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-white text-primary border-white">3</span>
+            <span class="hidden md:inline">Hasil</span>
+          </span>
+        </div>
+        <div class="w-24"></div>
+      </div>
+    </div>
+
+    <div class="pt-16 p-8 max-w-[1024px] w-full mx-auto">
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-20">
       <span class="material-symbols-outlined text-[48px] text-outline animate-spin">progress_activity</span>
@@ -185,6 +214,7 @@ onMounted(() => {
         </button>
       </footer>
     </template>
+    </div>
   </div>
 </template>
 

@@ -11,23 +11,23 @@ class Recommendation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'indicatorId',
-        'minScore',
-        'maxScore',
+        'indicator_id',
+        'min_score',
+        'max_score',
         'category',
-        'recommendationText',
+        'recommendation_text',
     ];
 
     protected function casts(): array
     {
         return [
-            'minScore' => 'decimal:2',
-            'maxScore' => 'decimal:2',
+            'min_score' => 'decimal:2',
+            'max_score' => 'decimal:2',
         ];
     }
 
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(Indicator::class, 'indicatorId');
+        return $this->belongsTo(Indicator::class, 'indicator_id');
     }
 }

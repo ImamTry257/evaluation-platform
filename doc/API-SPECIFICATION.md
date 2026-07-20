@@ -847,6 +847,77 @@ Responden 2,responden2@example.com,password123
 
 # 4. Evaluation - Respondent
 
+## Get Active Questionnaire
+Ambil kuesioner yang sedang aktif (published) untuk responden.
+
+**Endpoint:** `GET /evaluations/active-questionnaire`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+Accept: application/json
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Kuesioner aktif ditemukan",
+  "data": {
+    "id": 1,
+    "evaluationPeriodId": 1,
+    "title": "Kuesioner Evaluasi Kebijakan Lingkungan 2026",
+    "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
+    "durationMinutes": 20,
+    "status": "published",
+    "evaluationPeriod": {
+      "id": 1,
+      "title": "Ganjil 2024/25",
+      "description": "Periode evaluasi ganjil tahun ajaran 2024/25"
+    },
+    "components": [
+      {
+        "id": 1,
+        "name": "Kebijakan Struktural",
+        "orderNumber": 1,
+        "sub_components": [
+          {
+            "id": 1,
+            "name": "Kebijakan Struktural",
+            "indicators": [
+              {
+                "id": 1,
+                "name": "Kebijakan Struktural",
+                "questions": [
+                  {
+                    "id": 1,
+                    "text": "Sekolah memiliki dokumen resmi kebijakan lingkungan",
+                    "weight": 1,
+                    "orderNumber": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "status": false,
+  "message": "Tidak ada kuesioner yang tersedia",
+  "errors": []
+}
+```
+
+---
+
 ## Start Evaluation
 Mulai sesi evaluasi baru.
 

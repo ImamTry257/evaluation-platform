@@ -132,6 +132,11 @@ const router = createRouter({
         {
           path: '',
           name: 'respondent-home',
+          component: () => import('@/views/respondent/ExplanationView.vue'),
+        },
+        {
+          path: 'evaluation/:sessionId/component/:compIndex',
+          name: 'respondent-evaluation',
           component: () => import('@/views/respondent/InputAngketView.vue'),
         },
         {

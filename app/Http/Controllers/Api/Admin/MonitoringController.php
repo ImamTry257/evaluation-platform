@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ResponseAnswerResource;
+use App\Http\Resources\ResponseSessionResource;
+use App\Http\Resources\EvaluationResultResource;
 use App\Models\ResponseSession;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -21,7 +24,7 @@ class MonitoringController extends Controller
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
-            $query->where('questionnaireId', $request->questionnaireId);
+            $query->where('questionnaire_id', $request->questionnaireId);
         }
 
         // Filter by status
@@ -69,16 +72,16 @@ class MonitoringController extends Controller
                     'title' => $session->questionnaire->title,
                 ],
                 'status' => $session->status,
-                'startedAt' => $session->startedAt,
-                'submittedAt' => $session->submittedAt,
-                'remainingSeconds' => $session->remainingSeconds,
+                'startedAt' => $session->started_at,
+                'submittedAt' => $session->submitted_at,
+                'remainingSeconds' => $session->remaining_seconds,
                 'answeredCount' => $answeredCount,
                 'totalQuestions' => $totalQuestions,
                 'progress' => $progress,
                 'result' => $session->result ? [
-                    'overallScore' => $session->result->overallScore,
-                    'overallPercentage' => $session->result->overallPercentage,
-                    'overallCategory' => $session->result->overallCategory,
+                    'overallScore' => $session->result->overall_score,
+                    'overallPercentage' => $session->result->overall_percentage,
+                    'overallCategory' => $session->result->overall_category,
                 ] : null,
                 'createdAt' => $session->created_at,
             ];
@@ -126,14 +129,14 @@ class MonitoringController extends Controller
                 ],
                 'questionnaire' => $session->questionnaire,
                 'status' => $session->status,
-                'startedAt' => $session->startedAt,
-                'submittedAt' => $session->submittedAt,
-                'remainingSeconds' => $session->remainingSeconds,
+                'startedAt' => $session->started_at,
+                'submittedAt' => $session->submitted_at,
+                'remainingSeconds' => $session->remaining_seconds,
                 'answeredCount' => $answeredCount,
                 'totalQuestions' => $totalQuestions,
                 'progress' => $progress,
-                'answers' => $session->answers,
-                'result' => $session->result,
+                'answers' => ResponseAnswerResource::collection($session->answers),
+                'result' => new EvaluationResultResource($session->result),
             ],
         ], 'Session retrieved successfully');
     }

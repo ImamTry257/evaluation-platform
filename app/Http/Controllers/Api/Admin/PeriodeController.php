@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EvaluationPeriodResource;
 use App\Models\EvaluationPeriod;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -25,17 +26,20 @@ class PeriodeController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // Filter by status
+        // Filter by status (request key camelCase, DB column snake_case)
         if ($request->has('isActive')) {
-            $query->where('isActive', $request->boolean('isActive'));
+            $query->where('is_active', $request->boolean('isActive'));
         }
 
-        $limit = min($request->get('limit', 10), 100); // Max 100 items per page
+        $limit = min($request->get('limit', 10), 100);
 
         $periods = $query->orderBy('created_at', 'desc')
             ->paginate($limit);
 
-        return $this->listResponse($periods, 'Periods retrieved successfully');
+        return $this->listResponse(
+            EvaluationPeriodResource::collection($periods),
+            'Periods retrieved successfully'
+        );
     }
 
     /**
@@ -56,9 +60,22 @@ class PeriodeController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $period = EvaluationPeriod::create($validator->validated());
+        $data = $validator->validated();
 
-        return $this->successResponse($period, 'Period created successfully', 201);
+        // Map camelCase request keys to snake_case DB columns
+        $period = EvaluationPeriod::create([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'start_date' => $data['startDate'],
+            'end_date' => $data['endDate'],
+            'is_active' => $data['isActive'] ?? true,
+        ]);
+
+        return $this->successResponse(
+            new EvaluationPeriodResource($period),
+            'Period created successfully',
+            201
+        );
     }
 
     /**
@@ -73,7 +90,10 @@ class PeriodeController extends Controller
             return $this->errorResponse('Period not found', 404);
         }
 
-        return $this->successResponse($period, 'Period retrieved successfully');
+        return $this->successResponse(
+            new EvaluationPeriodResource($period),
+            'Period retrieved successfully'
+        );
     }
 
     /**
@@ -100,9 +120,21 @@ class PeriodeController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $period->update($validator->validated());
+        $data = $validator->validated();
 
-        return $this->successResponse($period, 'Period updated successfully');
+        // Map camelCase request keys to snake_case DB columns
+        $period->update([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'start_date' => $data['startDate'],
+            'end_date' => $data['endDate'],
+            'is_active' => $data['isActive'] ?? true,
+        ]);
+
+        return $this->successResponse(
+            new EvaluationPeriodResource($period),
+            'Period updated successfully'
+        );
     }
 
     /**

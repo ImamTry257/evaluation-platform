@@ -83,7 +83,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('✅ Registration successful! Token saved.');",
+                      "        console.log('\u2705 Registration successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -219,14 +219,14 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('✅ Token saved successfully!');",
+                      "        console.log('\u2705 Token saved successfully!');",
                       "        console.log('Token: ' + token.substring(0, 20) + '...');",
                       "        console.log('User: ' + response.data.user.name + ' (' + response.data.user.role + ')');",
                       "    } else {",
-                      "        console.log('⚠️ Login response missing token');",
+                      "        console.log('\u26a0\ufe0f Login response missing token');",
                       "    }",
                       "} else {",
-                      "    console.log('❌ Login failed with status: ' + pm.response.code);",
+                      "    console.log('\u274c Login failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -355,7 +355,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('✅ Admin Login successful! Token saved.');",
+                      "        console.log('\u2705 Admin Login successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -442,12 +442,12 @@
                       "        pm.collectionVariables.unset('userName');",
                       "        pm.collectionVariables.unset('userRole');",
                       "        ",
-                      "        console.log('✅ Logged out successfully. Token cleared.');",
+                      "        console.log('\u2705 Logged out successfully. Token cleared.');",
                       "    } else {",
-                      "        console.log('⚠️ Logout response unexpected');",
+                      "        console.log('\u26a0\ufe0f Logout response unexpected');",
                       "    }",
                       "} else {",
-                      "    console.log('❌ Logout failed with status: ' + pm.response.code);",
+                      "    console.log('\u274c Logout failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -3184,6 +3184,41 @@
           "name": "Evaluasi",
           "description": "Evaluation engine endpoints for respondents. Start, answer, submit, and view results.",
           "item": [
+            {
+              "name": "Get Active Questionnaire",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/evaluations/active-questionnaire",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "evaluations",
+                    "active-questionnaire"
+                  ]
+                }
+              }
+            },
             {
               "name": "Start Evaluation",
               "request": {

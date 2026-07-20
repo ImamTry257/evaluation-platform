@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -32,18 +33,20 @@ class RespondenController extends Controller
             });
         }
 
-        // Filter by isActive
+        // Filter by isActive (request key camelCase, DB column snake_case)
         if ($request->has('isActive') && $request->isActive !== '') {
-            $query->where('isActive', filter_var($request->isActive, FILTER_VALIDATE_BOOLEAN));
+            $query->where('is_active', filter_var($request->isActive, FILTER_VALIDATE_BOOLEAN));
         }
 
         $limit = min($request->get('limit', 10), 100);
 
-        $respondents = $query->select('id', 'name', 'username', 'email', 'isActive', 'created_at', 'updated_at')
-            ->orderBy('created_at', 'desc')
+        $respondents = $query->orderBy('created_at', 'desc')
             ->paginate($limit);
 
-        return $this->listResponse($respondents, 'Respondents retrieved successfully');
+        return $this->listResponse(
+            UserResource::collection($respondents),
+            'Respondents retrieved successfully'
+        );
     }
 
     /**
@@ -70,11 +73,11 @@ class RespondenController extends Controller
             'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
             'role' => 'respondent',
-            'isActive' => $request->boolean('isActive', true),
+            'is_active' => $request->boolean('isActive', true),
         ]);
 
         return $this->successResponse(
-            $respondent->only('id', 'name', 'username', 'email', 'isActive', 'created_at', 'updated_at'),
+            new UserResource($respondent),
             'Respondent created successfully',
             201
         );
@@ -93,7 +96,7 @@ class RespondenController extends Controller
         }
 
         return $this->successResponse(
-            $respondent->only('id', 'name', 'username', 'email', 'isActive', 'created_at', 'updated_at'),
+            new UserResource($respondent),
             'Respondent retrieved successfully'
         );
     }
@@ -126,7 +129,7 @@ class RespondenController extends Controller
             'name' => $request->name,
             'username' => strtolower($request->username),
             'email' => strtolower($request->email),
-            'isActive' => $request->boolean('isActive', true),
+            'is_active' => $request->boolean('isActive', true),
         ];
 
         // Only update password if provided
@@ -137,7 +140,7 @@ class RespondenController extends Controller
         $respondent->update($data);
 
         return $this->successResponse(
-            $respondent->only('id', 'name', 'username', 'email', 'isActive', 'created_at', 'updated_at'),
+            new UserResource($respondent),
             'Respondent updated successfully'
         );
     }
@@ -267,7 +270,7 @@ class RespondenController extends Controller
                     'email' => strtolower($email),
                     'password' => Hash::make($password),
                     'role' => 'respondent',
-                    'isActive' => true,
+                    'is_active' => true,
                 ]);
 
                 $imported++;

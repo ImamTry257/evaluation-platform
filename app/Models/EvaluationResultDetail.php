@@ -11,8 +11,8 @@ class EvaluationResultDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-        'evaluationResultId',
-        'indicatorId',
+        'evaluation_result_id',
+        'indicator_id',
         'score',
         'percentage',
         'category',
@@ -29,11 +29,11 @@ class EvaluationResultDetail extends Model
 
     public function evaluationResult(): BelongsTo
     {
-        return $this->belongsTo(EvaluationResult::class, 'evaluationResultId');
+        return $this->belongsTo(EvaluationResult::class, 'evaluation_result_id');
     }
 
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(Indicator::class, 'indicatorId');
+        return $this->belongsTo(Indicator::class, 'indicator_id');
     }
 }

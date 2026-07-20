@@ -11,8 +11,8 @@ class ResponseAnswer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'responseSessionId',
-        'questionId',
+        'response_session_id',
+        'question_id',
         'score',
     ];
 
@@ -25,11 +25,11 @@ class ResponseAnswer extends Model
 
     public function responseSession(): BelongsTo
     {
-        return $this->belongsTo(ResponseSession::class, 'responseSessionId');
+        return $this->belongsTo(ResponseSession::class, 'response_session_id');
     }
 
     public function question(): BelongsTo
     {
-        return $this->belongsTo(Question::class, 'questionId');
+        return $this->belongsTo(Question::class, 'question_id');
     }
 }

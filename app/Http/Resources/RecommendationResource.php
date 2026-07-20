@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class QuestionnaireResource extends JsonResource
+class RecommendationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,14 +18,14 @@ class QuestionnaireResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'evaluationPeriodId' => $this->evaluation_period_id,
-            'title' => $this->title,
-            'description' => $this->description,
-            'durationMinutes' => $this->duration_minutes,
-            'status' => $this->status,
+            'indicatorId' => $this->indicator_id,
+            'minScore' => $this->min_score,
+            'maxScore' => $this->max_score,
+            'category' => $this->category,
+            'recommendationText' => $this->recommendation_text,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'evaluationPeriod' => new EvaluationPeriodResource($this->whenLoaded('evaluationPeriod')),
+            'indicator' => new IndicatorResource($this->whenLoaded('indicator')),
         ];
     }
 }

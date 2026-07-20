@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Respondent;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ResponseAnswerResource;
+use App\Http\Resources\ResponseSessionResource;
 use App\Models\Indicator;
 use App\Models\Question;
 use App\Models\Questionnaire;
@@ -38,6 +40,35 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Tidak ada kuesioner yang tersedia', 404);
         }
 
+        $getIndicatorList = [];
+        $numbering = 1;
+        $count = 1;
+        $indicatorLength = 0;
+        foreach($questionnaire->components as $component) {
+            foreach($component->subComponents as $subComponent){
+                foreach($subComponent->indicators as $indicator){
+                    if ( $numbering == 1 ) {
+                        $getIndicatorList = [
+                            'page'      => $numbering,
+                            'indicator' => $indicator->name,
+                            'statementList' => $indicator->questions
+                        ];
+                    }
+                    $count += count($indicator->questions);
+                    $indicatorLength += count($subComponent->indicators);
+                    $numbering++;
+                }
+            }
+        }
+
+        $getIndicatorList['count'] = $count;
+        $getIndicatorList['indicatorLength'] = $indicatorLength;
+
+        $questionnaire['session'] = [
+            'evaluation' => null,
+            'statements' => $getIndicatorList, 
+        ];
+
         return $this->successResponse(
             new \App\Http\Resources\QuestionnaireResource($questionnaire),
             'Kuesioner aktif ditemukan'
@@ -66,16 +97,43 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Questionnaire not found or not published', 404);
         }
 
+        $getIndicatorList = [];
+        $numbering = 1;
+        $count = 1;
+        $indicatorLength = 0;
+        foreach($questionnaire->components as $component) {
+            foreach($component->subComponents as $subComponent){
+                foreach($subComponent->indicators as $indicator){
+                    if ( $numbering == 1 ) {
+                        $getIndicatorList = [
+                            'page'      => $numbering,
+                            'indicator' => $indicator->name,
+                            'statementList' => $indicator->questions
+                        ];
+                    }
+                    $count += count($indicator->questions);
+                    $indicatorLength += count($subComponent->indicators);
+                    $numbering++;
+                }
+            }
+        }
+
+        $getIndicatorList['count'] = $count;
+        $getIndicatorList['indicatorLength'] = $indicatorLength;
+
         // Check for existing in_progress session
-        $existingSession = ResponseSession::where('userId', $request->user()->id)
-            ->where('questionnaireId', $request->questionnaireId)
+        $existingSession = ResponseSession::where('user_id', $request->user()->id)
+            ->where('questionnaire_id', $request->questionnaireId)
             ->where('status', 'in_progress')
             ->first();
 
         if ($existingSession) {
             // Resume existing session
             return $this->successResponse([
-                'session' => $existingSession->load(['answers.question.indicator']),
+                'session' => [
+                    'evaluation' => new ResponseSessionResource($existingSession->load(['answers.question.indicator'])),
+                    'statements' => $getIndicatorList, 
+                ],
                 'questionnaire' => $questionnaire,
                 'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
                 'isResumed' => true,
@@ -84,15 +142,18 @@ class EvaluasiController extends Controller
 
         // Create new session
         $session = ResponseSession::create([
-            'userId' => $request->user()->id,
-            'questionnaireId' => $request->questionnaireId,
+            'user_id' => $request->user()->id,
+            'questionnaire_id' => $request->questionnaireId,
             'status' => 'in_progress',
-            'startedAt' => now(),
-            'remainingSeconds' => $questionnaire->durationMinutes * 60,
+            'started_at' => now(),
+            'remaining_seconds' => $questionnaire->duration_minutes * 60,
         ]);
 
         return $this->successResponse([
-            'session' => $session->load(['answers.question.indicator']),
+            'session' => [
+                'evaluation' => new ResponseSessionResource($session->load(['answers.question.indicator'])),
+                'statements' => $getIndicatorList, 
+            ],
             'questionnaire' => $questionnaire,
             'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
             'isResumed' => false,
@@ -103,18 +164,45 @@ class EvaluasiController extends Controller
      * GET /api/v1/evaluations/{sessionId}
      * Get evaluation session details (for resume).
      */
-    public function show(Request $request, $sessionId)
+    public function show(Request $request, $sessionId, $pageId)
     {
-        $session = ResponseSession::where('userId', $request->user()->id)
+        $session = ResponseSession::where('user_id', $request->user()->id)
             ->with(['answers.question.indicator', 'questionnaire.components.subComponents.indicators.questions'])
             ->find($sessionId);
+
+        $getIndicatorList = [];
+        $numbering = 1;
+        $count = 1;
+        $indicatorLength = 0;
+        foreach($session->questionnaire->components as $component) {
+            foreach($component->subComponents as $subComponent){
+                foreach($subComponent->indicators as $indicator){
+                    if ( $numbering == $pageId ) {
+                        $getIndicatorList = [
+                            'page'      => $numbering,
+                            'indicator' => $indicator->name,
+                            'statementList' => $indicator->questions
+                        ];
+                    }
+                    $count += count($indicator->questions);
+                    $indicatorLength += count($subComponent->indicators);
+                    $numbering++;
+                }
+            }
+        }
+
+        $getIndicatorList['count'] = $count;
+        $getIndicatorList['indicatorLength'] = $indicatorLength;
 
         if (!$session) {
             return $this->errorResponse('Session not found', 404);
         }
 
         return $this->successResponse([
-            'session' => $session,
+            'session' => [
+                'evaluation' => new ResponseSessionResource($session),
+                'statements' => $getIndicatorList, 
+            ],
             'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
         ], 'Session retrieved successfully');
     }
@@ -134,7 +222,7 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $session = ResponseSession::where('userId', $request->user()->id)
+        $session = ResponseSession::where('user_id', $request->user()->id)
             ->where('status', 'in_progress')
             ->find($sessionId);
 
@@ -144,18 +232,18 @@ class EvaluasiController extends Controller
 
         // Verify question belongs to this questionnaire
         $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-            $q->where('questionnaireId', $session->questionnaireId);
+            $q->where('questionnaire_id', $session->questionnaire_id);
         })->find($request->questionId);
 
         if (!$question) {
             return $this->errorResponse('Question does not belong to this questionnaire', 422);
         }
 
-        // Upsert answer (unique constraint on responseSessionId + questionId)
+        // Upsert answer (unique constraint on response_session_id + question_id)
         $answer = ResponseAnswer::updateOrCreate(
             [
-                'responseSessionId' => $session->id,
-                'questionId' => $request->questionId,
+                'response_session_id' => $session->id,
+                'question_id' => $request->questionId,
             ],
             [
                 'score' => $request->score,
@@ -163,7 +251,7 @@ class EvaluasiController extends Controller
         );
 
         return $this->successResponse(
-            $answer->load('question'),
+            new ResponseAnswerResource($answer->load('question')),
             'Answer saved successfully'
         );
     }
@@ -174,7 +262,7 @@ class EvaluasiController extends Controller
      */
     public function submit(Request $request, $sessionId)
     {
-        $session = ResponseSession::where('userId', $request->user()->id)
+        $session = ResponseSession::where('user_id', $request->user()->id)
             ->where('status', 'in_progress')
             ->find($sessionId);
 
@@ -184,7 +272,7 @@ class EvaluasiController extends Controller
 
         // Check if all questions are answered
         $totalQuestions = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-            $q->where('questionnaireId', $session->questionnaireId);
+            $q->where('questionnaire_id', $session->questionnaire_id);
         })->count();
 
         $answeredQuestions = $session->answers()->count();
@@ -203,7 +291,7 @@ class EvaluasiController extends Controller
             // Update session status
             $session->update([
                 'status' => 'submitted',
-                'submittedAt' => now(),
+                'submitted_at' => now(),
             ]);
 
             // Calculate indicator scores
@@ -225,10 +313,10 @@ class EvaluasiController extends Controller
 
             // Create evaluation result
             $result = EvaluationResult::create([
-                'responseSessionId' => $session->id,
-                'overallScore' => round($weightedAverage, 2),
-                'overallPercentage' => round($overallPercentage, 2),
-                'overallCategory' => $overallCategory,
+                'response_session_id' => $session->id,
+                'overall_score' => round($weightedAverage, 2),
+                'overall_percentage' => round($overallPercentage, 2),
+                'overall_category' => $overallCategory,
                 'conclusion' => $this->getConclusion($overallCategory),
             ]);
 
@@ -238,18 +326,18 @@ class EvaluasiController extends Controller
                 $category = $this->getCategory($percentage);
 
                 // Find recommendation for this indicator and score range
-                $recommendation = Recommendation::where('indicatorId', $indicatorId)
-                    ->where('minScore', '<=', $data['score'])
-                    ->where('maxScore', '>=', $data['score'])
+                $recommendation = Recommendation::where('indicator_id', $indicatorId)
+                    ->where('min_score', '<=', $data['score'])
+                    ->where('max_score', '>=', $data['score'])
                     ->first();
 
                 EvaluationResultDetail::create([
-                    'evaluationResultId' => $result->id,
-                    'indicatorId' => $indicatorId,
+                    'evaluation_result_id' => $result->id,
+                    'indicator_id' => $indicatorId,
                     'score' => round($data['score'], 2),
                     'percentage' => round($percentage, 2),
                     'category' => $category,
-                    'recommendation' => $recommendation?->recommendationText,
+                    'recommendation' => $recommendation?->recommendation_text,
                 ]);
             }
 
@@ -259,7 +347,7 @@ class EvaluasiController extends Controller
             $result->load('details.indicator');
 
             return $this->successResponse([
-                'result' => $result,
+                'result' => new \App\Http\Resources\EvaluationResultResource($result),
             ], 'Evaluation submitted successfully');
 
         } catch (\Exception $e) {
@@ -274,7 +362,7 @@ class EvaluasiController extends Controller
      */
     public function results(Request $request, $sessionId)
     {
-        $session = ResponseSession::where('userId', $request->user()->id)
+        $session = ResponseSession::where('user_id', $request->user()->id)
             ->with(['result.details.indicator', 'questionnaire'])
             ->find($sessionId);
 
@@ -291,7 +379,7 @@ class EvaluasiController extends Controller
         }
 
         return $this->successResponse([
-            'result' => $session->result,
+            'result' => new \App\Http\Resources\EvaluationResultResource($session->result),
         ], 'Results retrieved successfully');
     }
 
@@ -312,7 +400,7 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $session = ResponseSession::where('userId', $request->user()->id)
+        $session = ResponseSession::where('user_id', $request->user()->id)
             ->where('status', 'in_progress')
             ->find($sessionId);
 
@@ -322,7 +410,7 @@ class EvaluasiController extends Controller
 
         // Update remaining time
         $session->update([
-            'remainingSeconds' => $request->remainingSeconds,
+            'remaining_seconds' => $request->remainingSeconds,
         ]);
 
         // Auto-save answers if provided
@@ -333,14 +421,14 @@ class EvaluasiController extends Controller
             foreach ($request->answers as $answerData) {
                 // Verify question belongs to this questionnaire
                 $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-                    $q->where('questionnaireId', $session->questionnaireId);
+                    $q->where('questionnaire_id', $session->questionnaire_id);
                 })->find($answerData['questionId']);
 
                 if ($question) {
                     ResponseAnswer::updateOrCreate(
                         [
-                            'responseSessionId' => $session->id,
-                            'questionId' => $answerData['questionId'],
+                            'response_session_id' => $session->id,
+                            'question_id' => $answerData['questionId'],
                         ],
                         [
                             'score' => $answerData['score'],
@@ -354,7 +442,7 @@ class EvaluasiController extends Controller
         }
 
         $response = [
-            'remainingSeconds' => $session->remainingSeconds,
+            'remainingSeconds' => $session->remaining_seconds,
             'savedAt' => now()->toIso8601String(),
         ];
 

@@ -22,13 +22,13 @@ class ReportController extends Controller
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
-            $query->where('questionnaireId', $request->questionnaireId);
+            $query->where('questionnaire_id', $request->questionnaireId);
         }
 
         // Filter by period (via questionnaire)
         if ($request->has('periodId') && $request->periodId) {
             $query->whereHas('questionnaire', function ($q) use ($request) {
-                $q->where('evaluationPeriodId', $request->periodId);
+                $q->where('evaluation_period_id', $request->periodId);
             });
         }
 
@@ -36,12 +36,12 @@ class ReportController extends Controller
 
         // Calculate statistics
         $totalSessions = $sessions->count();
-        $totalRespondents = $sessions->pluck('userId')->unique()->count();
-        $averageScore = $sessions->avg('result.overallPercentage');
-        $averageScoreRaw = $sessions->avg('result.overallScore');
+        $totalRespondents = $sessions->pluck('user_id')->unique()->count();
+        $averageScore = $sessions->avg('result.overall_percentage');
+        $averageScoreRaw = $sessions->avg('result.overall_score');
 
         // Category distribution
-        $categoryDistribution = $sessions->pluck('result.overallCategory')
+        $categoryDistribution = $sessions->pluck('result.overall_category')
             ->filter()
             ->countBy()
             ->toArray();
@@ -65,15 +65,15 @@ class ReportController extends Controller
         }
 
         // Recent submissions
-        $recentSubmissions = $sessions->sortByDesc('submittedAt')->take(5)->map(function ($session) {
+        $recentSubmissions = $sessions->sortByDesc('submitted_at')->take(5)->map(function ($session) {
             return [
                 'id' => $session->id,
                 'respondent' => $session->user->name,
                 'questionnaire' => $session->questionnaire->title,
-                'score' => $session->result?->overallScore,
-                'percentage' => $session->result?->overallPercentage,
-                'category' => $session->result?->overallCategory,
-                'submittedAt' => $session->submittedAt,
+                'score' => $session->result?->overall_score,
+                'percentage' => $session->result?->overall_percentage,
+                'category' => $session->result?->overall_category,
+                'submittedAt' => $session->submitted_at,
             ];
         })->values();
 
@@ -100,17 +100,17 @@ class ReportController extends Controller
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
-            $query->where('questionnaireId', $request->questionnaireId);
+            $query->where('questionnaire_id', $request->questionnaireId);
         }
 
         // Filter by period
         if ($request->has('periodId') && $request->periodId) {
             $query->whereHas('questionnaire', function ($q) use ($request) {
-                $q->where('evaluationPeriodId', $request->periodId);
+                $q->where('evaluation_period_id', $request->periodId);
             });
         }
 
-        $sessions = $query->orderBy('submittedAt', 'desc')->get();
+        $sessions = $query->orderBy('submitted_at', 'desc')->get();
 
         if ($sessions->isEmpty()) {
             return $this->errorResponse('No data to export', 404);
@@ -147,11 +147,11 @@ class ReportController extends Controller
                     $session->user->name,
                     $session->user->email,
                     $session->questionnaire->title,
-                    $session->result?->overallScore ?? '-',
-                    ($session->result?->overallPercentage ?? '-') . '%',
-                    $session->result?->overallCategory ?? '-',
+                    $session->result?->overall_score ?? '-',
+                    ($session->result?->overall_percentage ?? '-') . '%',
+                    $session->result?->overall_category ?? '-',
                     $session->result?->conclusion ?? '-',
-                    $session->submittedAt->format('d/m/Y H:i'),
+                    $session->submitted_at->format('d/m/Y H:i'),
                 ]);
             }
 
@@ -247,17 +247,17 @@ class ReportController extends Controller
             <div class="info-item"><strong>Nama:</strong> ' . $user->name . '</div>
             <div class="info-item"><strong>Email:</strong> ' . $user->email . '</div>
             <div class="info-item"><strong>Kuesioner:</strong> ' . $questionnaire->title . '</div>
-            <div class="info-item"><strong>Tanggal Submit:</strong> ' . $session->submittedAt->format('d/m/Y H:i') . '</div>
+            <div class="info-item"><strong>Tanggal Submit:</strong> ' . $session->submitted_at->format('d/m/Y H:i') . '</div>
         </div>
     </div>
 
     <div class="section">
         <h3>Hasil Evaluasi</h3>
         <div class="score-box">
-            <div class="score">' . $result->overallPercentage . '%</div>
-            <div class="category">Kategori: ' . $result->overallCategory . '</div>
+            <div class="score">' . $result->overall_percentage . '%</div>
+            <div class="category">Kategori: ' . $result->overall_category . '</div>
         </div>
-        <p><strong>Skor:</strong> ' . $result->overallScore . ' / 7.00</p>
+        <p><strong>Skor:</strong> ' . $result->overall_score . ' / 7.00</p>
         <p><strong>Kesimpulan:</strong> ' . $result->conclusion . '</p>
     </div>
 

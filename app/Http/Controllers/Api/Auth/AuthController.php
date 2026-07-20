@@ -36,7 +36,7 @@ class AuthController extends Controller
             'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
             'role' => 'respondent',
-            'isActive' => true,
+            'is_active' => true,
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
@@ -75,7 +75,7 @@ class AuthController extends Controller
             return $this->errorResponse('Username atau password salah', 401);
         }
 
-        if (!$user->isActive) {
+        if (!$user->is_active) {
             return $this->errorResponse('Akun tidak aktif', 403);
         }
 
@@ -120,7 +120,7 @@ class AuthController extends Controller
             return $this->errorResponse('Akun ini tidak memiliki akses admin', 403);
         }
 
-        if (!$user->isActive) {
+        if (!$user->is_active) {
             return $this->errorResponse('Akun tidak aktif', 403);
         }
 

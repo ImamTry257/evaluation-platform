@@ -4,6 +4,7 @@ import api from '@/services/api'
 export function useEvaluation() {
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const questionnaire = ref<any[]>([])
 
   // Fetch active (published) questionnaire for respondent
   async function fetchActiveQuestionnaire() {

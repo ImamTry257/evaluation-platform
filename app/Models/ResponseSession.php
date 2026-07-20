@@ -13,44 +13,44 @@ class ResponseSession extends Model
     use HasFactory;
 
     protected $fillable = [
-        'userId',
-        'questionnaireId',
+        'user_id',
+        'questionnaire_id',
         'status',
-        'startedAt',
-        'submittedAt',
-        'remainingSeconds',
+        'started_at',
+        'submitted_at',
+        'remaining_seconds',
     ];
 
     protected function casts(): array
     {
         return [
-            'startedAt' => 'datetime',
-            'submittedAt' => 'datetime',
-            'remainingSeconds' => 'integer',
+            'started_at' => 'datetime',
+            'submitted_at' => 'datetime',
+            'remaining_seconds' => 'integer',
         ];
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'userId');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function questionnaire(): BelongsTo
     {
-        return $this->belongsTo(Questionnaire::class, 'questionnaireId');
+        return $this->belongsTo(Questionnaire::class, 'questionnaire_id');
     }
 
     public function answers(): HasMany
     {
-        return $this->hasMany(ResponseAnswer::class, 'responseSessionId');
+        return $this->hasMany(ResponseAnswer::class, 'response_session_id');
     }
 
     public function result(): HasOne
     {
-        return $this->hasOne(EvaluationResult::class, 'responseSessionId');
+        return $this->hasOne(EvaluationResult::class, 'response_session_id');
     }
 
-    public function scopein_progress($query)
+    public function scopeInProgress($query)
     {
         return $query->where('status', 'in_progress');
     }
