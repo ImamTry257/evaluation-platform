@@ -181,9 +181,6 @@ async function handleLogin() {
           Belum punya akun?
           <router-link to="/register" class="login-link text-primary font-bold">Register</router-link>
         </p>
-        <p class="font-body-sm text-body-sm text-on-surface-variant">
-          <router-link to="/login/admin" class="text-primary font-semibold transition-colors hover:text-primary-dark">Masuk sebagai Admin</router-link>
-        </p>
         </div>
       </div>
 

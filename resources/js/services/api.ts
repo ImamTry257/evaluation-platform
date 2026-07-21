@@ -35,8 +35,19 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      router.push('/login')
+      const authStore = useAuthStore()
+
+      // Determine login path BEFORE clearing auth state
+      const role = authStore.user?.role
+      const loginPath = (role === 'ADMIN' || role === 'SUPERADMIN')
+        ? '/login/admin'
+        : '/login'
+
+      // Clear both localStorage AND Pinia store state
+      authStore.clearAuth()
+
+      // Redirect to correct login page
+      router.push(loginPath)
     }
     return Promise.reject(error)
   }

@@ -83,6 +83,9 @@ class AuthController extends Controller
             $expiredTokenAt,
         )->plainTextToken;
 
+        // update last login at
+        $user->update(['last_login_at' => now()]);
+
         return $this->successResponse([
             'token' => $token,
             'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
@@ -133,6 +136,9 @@ class AuthController extends Controller
             ['*'],
             $expiredTokenAt,
         )->plainTextToken;
+
+        // update last login at
+        $user->update(['last_login_at' => now()]);
 
         return $this->successResponse([
             'token' => $token,

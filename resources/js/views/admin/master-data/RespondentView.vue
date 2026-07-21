@@ -77,6 +77,9 @@ function formatDate(dateStr: string): string {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
   })
 }
 
@@ -285,7 +288,7 @@ onMounted(() => {
                 </span>
               </td>
               <td class="px-6 py-5 text-sm text-secondary">
-                {{ r.updated_at ? formatDate(r.updated_at) : '-' }}
+                {{ r.lastLoginAt ? formatDate(r.lastLoginAt) : '-' }}
               </td>
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-2">

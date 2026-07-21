@@ -71,8 +71,12 @@ async function handleExportExcel() {
   await exportExcel()
 }
 
-async function handleExportPdf() {
-  await exportPdf()
+async function handleExportPdf(sessionId: number) {
+  await exportPdf(sessionId)
+}
+
+async function handleExportExcelSession(sessionId: number) {
+  await exportExcel({ sessionId })
 }
 
 // Init
@@ -91,7 +95,7 @@ onMounted(() => {
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 fade-in">
       <div>
-        <h2 class="font-headline-xl text-headline-xl text-on-surface">Laporan Evaluasi</h2>
+        <h2 class="font-headline-xl text-headline-xl text-on-surface">Laporan Pengisian Angket</h2>
         <p class="font-body-base text-body-base text-on-surface-variant mt-2">
           Lihat dan export laporan hasil evaluasi kebijakan lingkungan sekolah.
         </p>
@@ -103,13 +107,6 @@ onMounted(() => {
         >
           <span class="material-symbols-outlined text-[18px]">download</span>
           Export Excel
-        </button>
-        <button
-          @click="handleExportPdf"
-          class="bg-white border border-outline-variant text-on-surface px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-surface-container transition-colors"
-        >
-          <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-          Export PDF
         </button>
       </div>
     </div>
@@ -140,7 +137,7 @@ onMounted(() => {
         </div>
         <div>
           <p class="text-xs font-bold text-secondary uppercase tracking-wider">Rata-rata Skor</p>
-          <p class="text-2xl font-bold text-on-surface">{{ stats.averageScore?.toFixed(1) || 0 }}%</p>
+          <p class="text-2xl font-bold text-on-surface">{{ stats.averagePercentage?.toFixed(1) || '0' }}%</p>
         </div>
       </div>
     </div>
@@ -151,9 +148,9 @@ onMounted(() => {
       <span>{{ error }}</span>
     </div>
 
-    <!-- Action Bar & Content Card -->
+    <!-- Content Card -->
     <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay-2">
-      <!-- Action Bar -->
+      <!-- Search Bar -->
       <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30">
         <div class="relative">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
@@ -161,7 +158,7 @@ onMounted(() => {
             :value="searchQuery"
             @input="onSearch(($event.target as HTMLInputElement).value)"
             class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
-            placeholder="Cari laporan..."
+            placeholder="Cari berdasarkan nama responden..."
             type="text"
           />
         </div>
@@ -185,9 +182,9 @@ onMounted(() => {
           <tr class="bg-surface-container-low/50">
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Responden</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Instrument</th>
-            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Skor</th>
-            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Kategori</th>
-            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal</th>
+            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Presentase</th>
+            <!-- <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Kategori</th> -->
+            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Isi Angket</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
           </tr>
         </thead>
@@ -200,28 +197,33 @@ onMounted(() => {
             <td class="px-6 py-5">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                  {{ item.user?.name?.charAt(0) || 'U' }}
+                  {{ item.respondent?.charAt(0) || 'U' }}
                 </div>
                 <div>
-                  <span class="font-body-base font-semibold text-on-surface">{{ item.user?.name || '-' }}</span>
-                  <p class="text-body-sm text-on-surface-variant">{{ item.user?.email || '-' }}</p>
+                  <span class="font-body-base font-semibold text-on-surface">{{ item.respondent || '-' }}</span>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.questionnaire?.title || '-' }}</td>
+            <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.questionnaire || '-' }}</td>
             <td class="px-6 py-5">
-              <span class="font-title-md font-semibold text-primary">{{ item.result?.overallPercentage?.toFixed(1) || '-' }}%</span>
+              <span class="font-title-md font-semibold text-primary">{{ item.percentage || '-' }}%</span>
             </td>
-            <td class="px-6 py-5">
-              <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getCategoryBadge(item.result?.category)">
-                {{ item.result?.category || '-' }}
+            <!-- <td class="px-6 py-5">
+              <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getCategoryBadge(item.category)">
+                {{ item.category || '-' }}
               </span>
-            </td>
+            </td> -->
             <td class="px-6 py-5 text-body-sm text-on-surface">{{ formatDate(item.submittedAt) }}</td>
             <td class="px-6 py-5">
               <div class="flex items-center justify-center gap-1">
                 <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button @click="handleExportPdf(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export PDF">
+                  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                </button>
+                <button @click="handleExportExcelSession(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export Excel">
+                  <span class="material-symbols-outlined text-[18px]">table_chart</span>
                 </button>
               </div>
             </td>
@@ -297,56 +299,28 @@ onMounted(() => {
             <!-- Responden Info -->
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                {{ viewingReport.user?.name?.charAt(0) || 'U' }}
+                {{ viewingReport.respondent?.charAt(0) || 'U' }}
               </div>
               <div>
-                <h4 class="font-title-md text-title-md text-on-surface">{{ viewingReport.user?.name || '-' }}</h4>
-                <p class="text-body-sm text-on-surface-variant">{{ viewingReport.user?.email || '-' }}</p>
+                <h4 class="font-title-md text-title-md text-on-surface">{{ viewingReport.respondent || '-' }}</h4>
+                <p class="text-body-sm text-on-surface-variant">{{ viewingReport.questionnaire || '-' }}</p>
               </div>
             </div>
 
-            <!-- Skor & Kategori -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Skor</label>
-                <input
-                  :value="viewingReport.result?.overallPercentage?.toFixed(1) + '%'"
-                  type="text"
-                  disabled
-                  class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
-                />
-              </div>
-              <div>
-                <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
-                <input
-                  :value="viewingReport.result?.category || '-'"
-                  type="text"
-                  disabled
-                  class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
-                />
-              </div>
+            <!-- Persentase -->
+            <div>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Persentase</label>
+              <span class="block bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface">
+                {{ viewingReport.percentage || '-' }}%
+              </span>
             </div>
 
             <!-- Tanggal -->
             <div>
-              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Tanggal Submit</label>
-              <input
-                :value="formatDate(viewingReport.submittedAt)"
-                type="text"
-                disabled
-                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
-              />
-            </div>
-
-            <!-- Kesimpulan -->
-            <div v-if="viewingReport.result?.conclusion">
-              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Kesimpulan</label>
-              <textarea
-                :value="viewingReport.result.conclusion"
-                rows="3"
-                disabled
-                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed resize-none"
-              ></textarea>
+              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Tanggal Isi Angket</label>
+              <span class="block bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">
+                {{ formatDate(viewingReport.submittedAt) }}
+              </span>
             </div>
           </div>
 
@@ -407,15 +381,6 @@ onMounted(() => {
 }
 .page-btn:active:not(:disabled) {
   transform: scale(0.95);
-}
-
-/* ===== MODAL STYLING ===== */
-.modal-input {
-  transition: all 0.3s ease;
-}
-.modal-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-  transform: translateY(-1px);
 }
 
 /* Modal Transition */

@@ -14,11 +14,14 @@ class ReportController extends Controller
 
     /**
      * GET /api/v1/admin/reports
-     * Get report summary with statistics.
+     * Get report summary with paginated submissions.
+     *
+     * Query params: search, page, limit, questionnaireId, periodId
      */
     public function index(Request $request)
     {
-        $query = ResponseSession::where('status', 'submitted')->with('result');
+        $query = ResponseSession::where('status', 'submitted')
+            ->with(['user', 'questionnaire', 'result']);
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
@@ -32,21 +35,36 @@ class ReportController extends Controller
             });
         }
 
-        $sessions = $query->get();
+        // Search by respondent name
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
 
-        // Calculate statistics
-        $totalSessions = $sessions->count();
-        $totalRespondents = $sessions->pluck('user_id')->unique()->count();
-        $averageScore = $sessions->avg('result.overall_percentage');
-        $averageScoreRaw = $sessions->avg('result.overall_score');
+        // Stats (computed from ALL matching records, not paginated)
+        // Must eager-load result to access relationship data in PHP
+        $allSessions = (clone $query)->with('result')->get();
+        $totalSessions = $allSessions->count();
+        $totalRespondents = $allSessions->pluck('user_id')->unique()->count();
 
-        // Category distribution
-        $categoryDistribution = $sessions->pluck('result.overall_category')
+        // Compute averages from loaded collection (can't use SQL avg on relationship columns)
+        $resultsWithScore = $allSessions->filter->result;
+        $averageScore = $resultsWithScore->count() > 0
+            ? round($resultsWithScore->avg('result.overall_percentage'), 2)
+            : 0;
+        $averageScoreRaw = $resultsWithScore->count() > 0
+            ? round($resultsWithScore->avg('result.overall_score'), 2)
+            : 0;
+
+        // Category distribution (from loaded collection)
+        $categoryDistribution = $allSessions
+            ->map(fn($s) => $s->result?->overall_category)
             ->filter()
             ->countBy()
             ->toArray();
 
-        // Score ranges
         $scoreRanges = [
             'A' => ['label' => 'Sangat Tinggi (86-100%)', 'count' => 0, 'percentage' => 0],
             'B' => ['label' => 'Tinggi (71-85%)', 'count' => 0, 'percentage' => 0],
@@ -64,8 +82,12 @@ class ReportController extends Controller
             }
         }
 
-        // Recent submissions
-        $recentSubmissions = $sessions->sortByDesc('submitted_at')->take(5)->map(function ($session) {
+        // Paginated submissions
+        $limit = min($request->get('limit', 10), 100);
+        $submissions = $query->orderBy('submitted_at', 'desc')
+            ->paginate($limit);
+
+        $contents = $submissions->getCollection()->map(function ($session) {
             return [
                 'id' => $session->id,
                 'respondent' => $session->user->name,
@@ -75,38 +97,111 @@ class ReportController extends Controller
                 'category' => $session->result?->overall_category,
                 'submittedAt' => $session->submitted_at,
             ];
-        })->values();
+        });
 
-        return $this->successResponse([
-            'summary' => [
-                'totalSessions' => $totalSessions,
-                'totalRespondents' => $totalRespondents,
-                'averageScore' => round($averageScoreRaw ?? 0, 2),
-                'averagePercentage' => round($averageScore ?? 0, 2),
+        return response()->json([
+            'status' => true,
+            'message' => 'Report retrieved successfully',
+            'data' => [
+                'summary' => [
+                    'totalSessions' => $totalSessions,
+                    'totalRespondents' => $totalRespondents,
+                    'averageScore' => round($averageScoreRaw ?? 0, 2),
+                    'averagePercentage' => round($averageScore ?? 0, 2),
+                ],
+                'categoryDistribution' => $scoreRanges,
+                'contents' => $contents,
+                'meta' => [
+                    'page' => $submissions->currentPage(),
+                    'limit' => $submissions->perPage(),
+                    'total' => $submissions->total(),
+                ],
             ],
-            'categoryDistribution' => $scoreRanges,
-            'recentSubmissions' => $recentSubmissions,
-        ], 'Report retrieved successfully');
+        ]);
     }
 
     /**
      * POST /api/v1/admin/reports/export-excel
-     * Export evaluation results to Excel.
+     * Export evaluation results to Excel (CSV).
+     * - Without sessionId: bulk summary list
+     * - With sessionId: detail per indikator for that session
      */
     public function exportExcel(Request $request)
     {
+        // Per-session detail export
+        if ($request->has('sessionId') && $request->sessionId) {
+            $session = ResponseSession::with([
+                'user', 'questionnaire', 'result.details.indicator',
+            ])->find($request->sessionId);
+
+            if (!$session || $session->status !== 'submitted') {
+                return $this->errorResponse('Session not found or not submitted', 404);
+            }
+
+            if (!$session->result) {
+                return $this->errorResponse('Results not available', 404);
+            }
+
+            $result = $session->result;
+            $details = $result->details;
+
+            $filename = 'laporan-evaluasi-' . $session->id . '-' . now()->format('Y-m-d') . '.csv';
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ];
+
+            $callback = function () use ($session, $result, $details) {
+                $file = fopen('php://output', 'w');
+
+                // Info responden
+                fputcsv($file, ['Nama', $session->user->name]);
+                fputcsv($file, ['Email', $session->user->email]);
+                fputcsv($file, ['Kuesioner', $session->questionnaire->title]);
+                fputcsv($file, ['Tanggal Isi Angket', $session->submitted_at->format('d/m/Y H:i')]);
+                fputcsv($file, ['Persentase', $result->overall_percentage . '%']);
+                fputcsv($file, []); // blank row
+
+                // Header detail
+                fputcsv($file, [
+                    'No',
+                    'Indikator',
+                    'Persentase',
+                ]);
+
+                $no = 1;
+                foreach ($details as $detail) {
+                    fputcsv($file, [
+                        $no++,
+                        $detail->indicator->name ?? '-',
+                        $detail->percentage . '%',
+                    ]);
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        }
+
+        // Bulk summary export
         $query = ResponseSession::with(['user', 'questionnaire', 'result'])
             ->where('status', 'submitted');
 
-        // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
             $query->where('questionnaire_id', $request->questionnaireId);
         }
 
-        // Filter by period
         if ($request->has('periodId') && $request->periodId) {
             $query->whereHas('questionnaire', function ($q) use ($request) {
                 $q->where('evaluation_period_id', $request->periodId);
+            });
+        }
+
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
             });
         }
 
@@ -116,7 +211,6 @@ class ReportController extends Controller
             return $this->errorResponse('No data to export', 404);
         }
 
-        // Generate CSV content (compatible with Excel)
         $filename = 'laporan-evaluasi-' . now()->format('Y-m-d-His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
@@ -126,20 +220,15 @@ class ReportController extends Controller
         $callback = function () use ($sessions) {
             $file = fopen('php://output', 'w');
 
-            // Header
             fputcsv($file, [
                 'No',
                 'Nama Responden',
                 'Email',
                 'Kuesioner',
-                'Skor',
                 'Persentase',
-                'Kategori',
-                'Kesimpulan',
-                'Tanggal Submit',
+                'Tanggal Isi Angket',
             ]);
 
-            // Data
             $no = 1;
             foreach ($sessions as $session) {
                 fputcsv($file, [
@@ -147,10 +236,7 @@ class ReportController extends Controller
                     $session->user->name,
                     $session->user->email,
                     $session->questionnaire->title,
-                    $session->result?->overall_score ?? '-',
                     ($session->result?->overall_percentage ?? '-') . '%',
-                    $session->result?->overall_category ?? '-',
-                    $session->result?->conclusion ?? '-',
                     $session->submitted_at->format('d/m/Y H:i'),
                 ]);
             }
@@ -163,7 +249,7 @@ class ReportController extends Controller
 
     /**
      * POST /api/v1/admin/reports/export-pdf
-     * Export single session report to PDF.
+     * Export single session report to PDF (HTML).
      */
     public function exportPdf(Request $request)
     {
@@ -176,8 +262,7 @@ class ReportController extends Controller
         }
 
         $session = ResponseSession::with([
-            'user',
-            'questionnaire',
+            'user', 'questionnaire',
             'result.details.indicator',
         ])->find($request->sessionId);
 
@@ -227,7 +312,6 @@ class ReportController extends Controller
         .info-item strong { color: #006c49; }
         .score-box { text-align: center; padding: 20px; background: #f0f9f4; border-radius: 8px; margin: 15px 0; }
         .score-box .score { font-size: 36px; font-weight: bold; color: #006c49; }
-        .score-box .category { font-size: 24px; color: #666; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #006c49; color: white; }
@@ -247,7 +331,7 @@ class ReportController extends Controller
             <div class="info-item"><strong>Nama:</strong> ' . $user->name . '</div>
             <div class="info-item"><strong>Email:</strong> ' . $user->email . '</div>
             <div class="info-item"><strong>Kuesioner:</strong> ' . $questionnaire->title . '</div>
-            <div class="info-item"><strong>Tanggal Submit:</strong> ' . $session->submitted_at->format('d/m/Y H:i') . '</div>
+            <div class="info-item"><strong>Tanggal Isi Angket:</strong> ' . $session->submitted_at->format('d/m/Y H:i') . '</div>
         </div>
     </div>
 
@@ -255,10 +339,7 @@ class ReportController extends Controller
         <h3>Hasil Evaluasi</h3>
         <div class="score-box">
             <div class="score">' . $result->overall_percentage . '%</div>
-            <div class="category">Kategori: ' . $result->overall_category . '</div>
         </div>
-        <p><strong>Skor:</strong> ' . $result->overall_score . ' / 7.00</p>
-        <p><strong>Kesimpulan:</strong> ' . $result->conclusion . '</p>
     </div>
 
     <div class="section">
@@ -268,10 +349,7 @@ class ReportController extends Controller
                 <tr>
                     <th>No</th>
                     <th>Indikator</th>
-                    <th>Skor</th>
                     <th>Persentase</th>
-                    <th>Kategori</th>
-                    <th>Rekomendasi</th>
                 </tr>
             </thead>
             <tbody>';
@@ -282,10 +360,7 @@ class ReportController extends Controller
                 <tr>
                     <td>' . $no++ . '</td>
                     <td>' . ($detail->indicator->name ?? '-') . '</td>
-                    <td>' . $detail->score . '</td>
                     <td>' . $detail->percentage . '%</td>
-                    <td>' . $detail->category . '</td>
-                    <td>' . ($detail->recommendation ?? '-') . '</td>
                 </tr>';
         }
 

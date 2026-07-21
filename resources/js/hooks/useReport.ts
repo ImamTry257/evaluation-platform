@@ -11,16 +11,18 @@ export function useReport() {
   const totalItems = ref(0)
   const searchQuery = ref('')
 
-  // Stats
+  const totalPages = computed(() => Math.ceil(totalItems.value / perPage.value))
+
+  // Stats from API summary
   const stats = ref({
     totalSessions: 0,
     totalRespondents: 0,
     averageScore: 0,
-    categoryDistribution: {} as Record<string, number>,
+    averagePercentage: 0,
   })
 
-  // Computed
-  const totalPages = computed(() => Math.ceil(totalItems.value / perPage.value))
+  // Category distribution from API
+  const categoryDistribution = ref<Record<string, { label: string; count: number; percentage: number }>>({})
 
   // Fetch reports
   async function fetchReports(page = 1) {
@@ -36,14 +38,26 @@ export function useReport() {
       }
       const { data } = await api.get('/admin/reports', { params })
       const payload = data.data ?? data
-      reports.value = payload.contents ?? payload.data ?? payload.sessions ?? payload
-      currentPage.value = payload.meta?.page ?? payload.current_page ?? 1
-      totalItems.value = payload.meta?.total ?? payload.total ?? 0
-      
-      // Update stats if available
-      if (payload.stats) {
-        stats.value = payload.stats
+
+      // Map summary
+      if (payload.summary) {
+        stats.value = {
+          totalSessions: payload.summary.totalSessions ?? 0,
+          totalRespondents: payload.summary.totalRespondents ?? 0,
+          averageScore: payload.summary.averageScore ?? 0,
+          averagePercentage: payload.summary.averagePercentage ?? 0,
+        }
       }
+
+      // Category distribution
+      if (payload.categoryDistribution) {
+        categoryDistribution.value = payload.categoryDistribution
+      }
+
+      // Paginated submissions
+      reports.value = payload.contents ?? []
+      currentPage.value = payload.meta?.page ?? 1
+      totalItems.value = payload.meta?.total ?? 0
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Gagal memuat data laporan'
       console.error('Failed to fetch reports:', err)
@@ -60,11 +74,10 @@ export function useReport() {
       const { data } = await api.post('/admin/reports/export-excel', filters, {
         responseType: 'blob',
       })
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', 'report.xlsx')
+      link.setAttribute('download', 'laporan-evaluasi.csv')
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -77,19 +90,18 @@ export function useReport() {
     }
   }
 
-  // Export PDF
-  async function exportPdf(filters: any = {}) {
+  // Export PDF (per session)
+  async function exportPdf(sessionId: number) {
     loading.value = true
     error.value = null
     try {
-      const { data } = await api.post('/admin/reports/export-pdf', filters, {
+      const { data } = await api.post('/admin/reports/export-pdf', { sessionId }, {
         responseType: 'blob',
       })
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', 'report.pdf')
+      link.setAttribute('download', `laporan-evaluasi-${sessionId}.html`)
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -123,6 +135,7 @@ export function useReport() {
     totalPages,
     searchQuery,
     stats,
+    categoryDistribution,
     // Methods
     fetchReports,
     exportExcel,

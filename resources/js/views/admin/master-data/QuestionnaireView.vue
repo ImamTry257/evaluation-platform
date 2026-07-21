@@ -40,6 +40,10 @@ const deletingInstrument = ref<any>(null)
 const viewingInstrument = ref<any>(null)
 const formLoading = ref(false)
 
+// Filter button state
+const hasPendingFilter = ref(false)
+const showActiveFilters = ref(false)
+
 // Form
 const form = ref({
   title: '',
@@ -171,6 +175,38 @@ function handleDelete(item: any) {
   openDeleteModal(item)
 }
 
+// Filter button handlers
+function onFilterChange() {
+  hasPendingFilter.value = true
+}
+
+function applyFilter() {
+  hasPendingFilter.value = false
+  showActiveFilters.value = !!(periodFilter.value || statusFilter.value)
+  fetchQuestionnaires(1)
+}
+
+function clearFilterByType(type: 'period' | 'status') {
+  if (type === 'period') periodFilter.value = ''
+  else statusFilter.value = ''
+  applyFilter()
+}
+
+function resetFilter() {
+  periodFilter.value = ''
+  statusFilter.value = ''
+  hasPendingFilter.value = false
+  showActiveFilters.value = false
+  fetchQuestionnaires(1)
+}
+
+function getPeriodLabel(value: any): string {
+  if (!value) return ''
+  if (typeof value === 'object') return value.name || ''
+  const found = periodOptions.value.find((p: any) => p.id === value || p === value)
+  return found ? (found.name || String(found)) : String(value)
+}
+
 // Pagination
 function goToPage(page: number) {
   if (page < 1 || page > totalPages.value) return
@@ -223,17 +259,21 @@ onMounted(() => {
           <div class="relative min-w-[140px]">
             <select
               v-model="periodFilter"
+              @change="onFilterChange"
               class="custom-select w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-primary-container outline-none text-body-sm font-body-sm cursor-pointer"
+              :class="{ 'border-amber-400 ring-2 ring-amber-100': hasPendingFilter && periodFilter }"
             >
               <option value="">Semua Tahun</option>
-              <option v-for="year in periodOptions" :key="year" :value="year">{{ year }}</option>
+              <option v-for="year in periodOptions" :key="year" :value="year">{{ year.name }}</option>
             </select>
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
           </div>
           <div class="relative min-w-[140px]">
             <select
               v-model="statusFilter"
+              @change="onFilterChange"
               class="custom-select w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-primary-container outline-none text-body-sm font-body-sm cursor-pointer"
+              :class="{ 'border-amber-400 ring-2 ring-amber-100': hasPendingFilter && statusFilter }"
             >
               <option value="">Semua Status</option>
               <option value="draft">Draft</option>
@@ -242,7 +282,41 @@ onMounted(() => {
             </select>
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
           </div>
+          <button
+            @click="applyFilter"
+            class="h-[42px] px-5 bg-primary hover:bg-primary/90 text-on-primary font-body-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 whitespace-nowrap"
+            :class="{ 'ring-2 ring-amber-400/50': hasPendingFilter }"
+          >
+            <span class="material-symbols-outlined text-[18px]">filter_list</span>
+            Filter
+          </button>
         </div>
+      </div>
+
+      <!-- Active Filter Chips -->
+      <div v-if="showActiveFilters" class="px-6 pt-3 pb-0 flex items-center gap-2 flex-wrap">
+        <span class="text-body-sm text-on-surface-variant">Filter aktif:</span>
+        <span v-if="periodFilter" class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] font-semibold px-2.5 py-1 rounded-full">
+          <span class="material-symbols-outlined text-[12px]">calendar_today</span>
+          {{ getPeriodLabel(periodFilter) }}
+          <button @click="clearFilterByType('period')" class="ml-0.5 hover:text-error transition-colors">
+            <span class="material-symbols-outlined text-[12px]">close</span>
+          </button>
+        </span>
+        <span v-if="statusFilter" class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] font-semibold px-2.5 py-1 rounded-full">
+          <span class="material-symbols-outlined text-[12px]">label</span>
+          {{ statusFilter === 'draft' ? 'Draft' : statusFilter === 'published' ? 'Published' : 'Closed' }}
+          <button @click="clearFilterByType('status')" class="ml-0.5 hover:text-error transition-colors">
+            <span class="material-symbols-outlined text-[12px]">close</span>
+          </button>
+        </span>
+        <button
+          @click="resetFilter"
+          class="text-body-sm text-error hover:text-error/80 font-medium ml-1 flex items-center gap-1 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[14px]">close</span>
+          Reset
+        </button>
       </div>
 
       <!-- Loading -->

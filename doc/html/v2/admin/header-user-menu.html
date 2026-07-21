@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PolicyEval - Admin Header dengan User Menu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+"tertiary-fixed":"#ffdad7","primary":"#006c49","secondary-fixed":"#e2e2e2",
+"on-secondary-fixed-variant":"#454747","on-primary-fixed-variant":"#005236",
+"surface-dim":"#d4dcd5","error-container":"#ffdad6","on-tertiary":"#ffffff",
+"surface-container-highest":"#dde4dd","on-surface":"#161d19",
+"on-tertiary-fixed-variant":"#842225","on-primary-fixed":"#002113",
+"on-secondary-fixed":"#1a1c1c","inverse-on-surface":"#ebf3eb",
+"on-surface-variant":"#3c4a42","outline-variant":"#bbcabf","error":"#ba1a1a",
+"tertiary-fixed-dim":"#ffb3af","secondary-fixed-dim":"#c6c6c7",
+"on-error":"#ffffff","on-tertiary-fixed":"#410005","tertiary":"#a43a3a",
+"surface-bright":"#f4fbf4","on-secondary":"#ffffff",
+"primary-container":"#10b981","primary-fixed-dim":"#4edea3",
+"on-error-container":"#93000a","on-secondary-container":"#616363",
+"surface-container":"#e8f0e9","tertiary-container":"#fc7c78",
+"secondary":"#5d5f5f","inverse-primary":"#4edea3",
+"surface-tint":"#006c49","primary-fixed":"#6ffbbe",
+"inverse-surface":"#2b322d","surface-container-lowest":"#ffffff",
+"on-primary":"#ffffff","surface":"#f4fbf4",
+"on-background":"#161d19","on-tertiary-container":"#711419",
+"outline":"#6c7a71","background":"#f4fbf4",
+"secondary-container":"#dfe0e0","surface-variant":"#dde4dd",
+"surface-container-low":"#eef6ee","surface-container-high":"#e3eae3",
+"on-primary-container":"#00422b"
+},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},
+spacing:{base:"4px",sm:"0.5rem",gutter:"1.5rem","2xl":"3rem",xl:"2rem",lg:"1.5rem",xs:"0.25rem",md:"1rem",margin:"2rem"},
+fontFamily:{"body-sm":["Poppins"],"title-md":["Poppins"],"headline-lg":["Poppins"],"label-caps":["Poppins"],"display-lg":["Poppins"],"headline-xl":["Poppins"],"body-base":["Poppins"]},
+fontSize:{"title-md":["20px",{lineHeight:"1.5",fontWeight:"500"}],"body-base":["16px",{lineHeight:"1.6",fontWeight:"400"}],"label-caps":["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],"headline-lg":["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-xl":["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],"body-sm":["14px",{lineHeight:"1.5",fontWeight:"400"}]}}}}</script>
+<style>
+body{font-family:'Poppins',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+
+/* ===== SIDEBAR NAV (matching AdminLayout.vue) ===== */
+.sidebar-nav{transition:all .3s ease;border-left:4px solid transparent;}
+.sidebar-nav:hover{background-color:#e3eae3;border-left-color:#10b981;transform:translateX(4px);}
+.sidebar-nav:hover .material-symbols-outlined{animation:navIconPop .3s ease;}
+@keyframes navIconPop{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+.sidebar-nav.active{background-color:rgba(16,185,129,.1);border-left-color:#006c49;}
+.sidebar-logo{transition:all .3s ease;}
+.sidebar-logo:hover{transform:scale(1.02);}
+.sidebar-logo:hover .logo-icon{animation:logoSpin .5s ease;}
+@keyframes logoSpin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
+/* ===== HEADER BUTTONS ===== */
+.header-btn{transition:all .3s ease;border-radius:50%;}
+.header-btn:hover{background-color:#e3eae3;transform:scale(1.1);}
+.header-btn:active{transform:scale(.95);}
+
+/* ===== SEARCH ===== */
+.search-input{transition:all .3s ease;}
+.search-input:focus{box-shadow:0 0 0 3px rgba(16,185,129,.15);transform:translateY(-1px);}
+
+/* ===== USER DROPDOWN (NEW) ===== */
+.user-menu-wrapper{position:relative;}
+.user-menu-trigger{cursor:pointer;transition:all .2s ease;border-radius:0.5rem;padding:0.25rem 0.5rem;margin:-0.25rem;}
+.user-menu-trigger:hover{background-color:#e8f0e9;}
+.user-menu-trigger.active{background-color:#e8f0e9;}
+.user-menu-trigger.active .user-avatar-icon{box-shadow:0 0 0 3px rgba(16,185,129,.3);}
+
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:200px;background:white;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.12);border:1px solid #e5e7eb;opacity:0;visibility:hidden;transform:translateY(-8px) scale(.95);transition:all .25s cubic-bezier(0.175,0.885,0.32,1.275);z-index:300;}
+.dropdown-menu.show{opacity:1;visibility:visible;transform:translateY(0) scale(1);}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:14px;color:#3c4a42;cursor:pointer;transition:all .15s ease;border-radius:0;}
+.dropdown-item:last-child{border-radius:0 0 12px 12px;}
+.dropdown-item:hover{background:#f0fdf4;color:#006c49;}
+.dropdown-item.danger{color:#ba1a1a;}
+.dropdown-item.danger:hover{background:#fef2f2;}
+.dropdown-divider{height:1px;background:#e5e7eb;margin:4px 0;}
+.dropdown-overlay{position:fixed;inset:0;z-index:250;}
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+
+<div class="min-h-screen bg-background text-on-surface">
+
+<!-- ===== SIDEBAR (matching AdminLayout.vue exactly) ===== -->
+<aside class="fixed left-0 top-0 h-full w-[280px] z-50 py-6 bg-surface-container-low border-r border-outline-variant/30 hidden md:flex flex-col">
+  <!-- Logo -->
+  <div class="px-6 mb-8">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1;">eco</span>
+      </div>
+      <div>
+        <h1 class="font-headline-lg text-headline-lg font-bold text-primary leading-none">PolicyEval</h1>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Environmental Policy</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 space-y-1 px-4">
+    <!-- Dashboard -->
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all bg-primary-container/10 text-primary font-semibold border-l-4 border-primary">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="font-body-base text-body-base">Dashboard</span>
+    </a>
+
+    <!-- Master Admin (SUPERADMIN only) -->
+    <div class="pt-4 pb-1 px-2">
+      <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Master Admin</p>
+    </div>
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all text-on-surface-variant hover:bg-surface-container">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <span class="font-body-base text-body-base">Manajemen User</span>
+    </a>
+
+    <!-- Master Data -->
+    <div class="pt-4 pb-1 px-2">
+      <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Master Data</p>
+    </div>
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all text-on-surface-variant hover:bg-surface-container">
+      <span class="material-symbols-outlined">calendar_today</span>
+      <span class="font-body-base text-body-base">Period</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all text-on-surface-variant hover:bg-surface-container">
+      <span class="material-symbols-outlined">assignment</span>
+      <span class="font-body-base text-body-base">Instrument Penelitian</span>
+    </a>
+
+    <!-- Pelaksanaan -->
+    <div class="pt-4 pb-1 px-2">
+      <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Pelaksanaan</p>
+    </div>
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all text-on-surface-variant hover:bg-surface-container">
+      <span class="material-symbols-outlined">groups</span>
+      <span class="font-body-base text-body-base">Responden</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all text-on-surface-variant hover:bg-surface-container">
+      <span class="material-symbols-outlined">monitoring</span>
+      <span class="font-body-base text-body-base">Monitoring</span>
+    </a>
+
+    <!-- Lainnya -->
+    <div class="pt-4 pb-1 px-2">
+      <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Lainnya</p>
+    </div>
+    <a href="#" class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all text-on-surface-variant hover:bg-surface-container">
+      <span class="material-symbols-outlined">assessment</span>
+      <span class="font-body-base text-body-base">Reports</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- ===== MAIN CONTENT AREA (matching AdminLayout.vue) ===== -->
+<main class="md:ml-[280px] min-h-screen flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 w-full h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-lg z-40">
+    <div class="flex items-center gap-4 flex-1">
+    </div>
+    <div class="flex items-center gap-4">
+      <!-- User Menu Dropdown (NEW — replaces static avatar) -->
+      <div class="user-menu-wrapper" id="userMenuWrapper">
+        <button onclick="toggleDropdown()" id="userMenuBtn" class="user-menu-trigger flex items-center gap-3 px-8">
+          <div class="user-avatar-icon w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined" style="font-size:20px;">account_circle</span>
+          </div>
+          <span class="font-body-sm text-body-sm font-medium hidden sm:block">Admin Utama</span>
+        </button>
+
+        <!-- Dropdown -->
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="px-4 py-3 border-b border-outline-variant/30">
+            <p class="font-body-sm font-semibold text-on-surface text-sm">Admin Utama</p>
+            <p class="text-[12px] text-on-surface-variant">Super Administrator</p>
+          </div>
+          <div class="py-1">
+            <div class="dropdown-item danger" onclick="closeDropdown()">
+              <span class="material-symbols-outlined text-[18px]">logout</span>
+              <span class="font-medium">Keluar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="flex-1">
+    <div class="p-8">
+      <div class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/20 text-center">
+        <p class="text-on-surface-variant font-body-base">Header admin dengan user menu — klik avatar nama di pojok kanan atas untuk melihat dropdown Keluar</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-8 px-8 border-t border-outline-variant/10 text-center">
+    <p class="text-label-caps text-label-caps text-outline uppercase tracking-widest">
+      PolicyEval © 2024 • Administrator Platform • v2.4.0
+    </p>
+  </footer>
+
+</main>
+
+</div>
+
+<!-- Overlay to close dropdown on outside click -->
+<div class="dropdown-overlay" id="overlay" style="display:none;" onclick="closeDropdown()"></div>
+
+<script>
+function toggleDropdown() {
+  const menu = document.getElementById('dropdownMenu');
+  const overlay = document.getElementById('overlay');
+  const btn = document.getElementById('userMenuBtn');
+  const isOpen = menu.classList.contains('show');
+  if (isOpen) {
+    closeDropdown();
+  } else {
+    menu.classList.add('show');
+    overlay.style.display = 'block';
+    btn.classList.add('active');
+  }
+}
+function closeDropdown() {
+  document.getElementById('dropdownMenu').classList.remove('show');
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('userMenuBtn').classList.remove('active');
+}
+</script>
+
+</body>
+</html>
