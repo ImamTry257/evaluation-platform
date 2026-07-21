@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPolicy - Flow Evaluasi Lengkap</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "surface-dim":"#d4dcd5","on-background":"#161d19","on-secondary-fixed":"#1a1c1c",
+        "surface-variant":"#dde4dd","surface-container":"#e8f0e9","tertiary":"#a43a3a",
+        "on-surface-variant":"#3c4a42","on-primary-fixed-variant":"#005236",
+        "primary-fixed":"#6ffbbe","inverse-surface":"#2b322d","error":"#ba1a1a",
+        "primary-container":"#10b981","on-tertiary":"#ffffff","inverse-on-surface":"#ebf3eb",
+        "background":"#f4fbf4","tertiary-container":"#fc7c78","on-surface":"#161d19",
+        "surface-tint":"#006c49","secondary":"#5d5f5f","on-primary-container":"#00422b",
+        "primary-fixed-dim":"#4edea3","on-error-container":"#93000a",
+        "surface-container-low":"#eef6ee","surface-container-lowest":"#ffffff",
+        "surface-bright":"#f4fbf4","on-primary":"#ffffff","primary":"#006c49",
+        "on-secondary-container":"#616363","surface-container-highest":"#dde4dd",
+        "on-primary-fixed":"#002113","tertiary-fixed":"#ffdad7","outline-variant":"#bbcabf",
+        "surface-container-high":"#e3eae3","on-error":"#ffffff","outline":"#6c7a71",
+        "secondary-container":"#dfe0e0","surface":"#f4fbf4"
+      },
+      "borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+      "spacing":{"sm":"0.5rem","md":"1rem","lg":"1.5rem","gutter":"1.5rem","base":"4px",
+        "margin":"2rem","2xl":"3rem","xl":"2rem","xs":"0.25rem"},
+      "fontFamily":{
+        "body-sm":["Poppins"],"headline-xl":["Poppins"],"label-caps":["Poppins"],
+        "headline-lg":["Poppins"],"title-md":["Poppins"],"display-lg":["Poppins"],"body-base":["Poppins"]
+      },
+      "fontSize":{
+        "body-sm":["14px",{lineHeight:"1.5",fontWeight:"400"}],
+        "headline-xl":["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+        "label-caps":["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],
+        "headline-lg":["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+        "title-md":["20px",{lineHeight:"1.5",fontWeight:"500"}],
+        "display-lg":["48px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+        "body-base":["16px",{lineHeight:"1.6",fontWeight:"400"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+body{font-family:'Poppins',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+
+/* Flow nav */
+.flow-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(244,251,244,0.95);
+  backdrop-filter:blur(12px);border-bottom:1px solid #bbcabf;padding:12px 24px;}
+.flow-nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.flow-step{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 16px;border-radius:12px;
+  transition:all 0.3s ease;font-size:14px;font-weight:500;color:#5d5f5f;}
+.flow-step:hover{background:rgba(16,185,129,0.08);}
+.flow-step.active{background:#10b981;color:white;font-weight:600;}
+.flow-step .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:700;border:2px solid #bbcabf;transition:all 0.3s;}
+.flow-step.active .step-num{background:white;color:#006c49;border-color:white;}
+.flow-step.done .step-num{background:#006c49;color:white;border-color:#006c49;}
+.flow-step.done{color:#006c49;}
+.flow-connector{width:40px;height:2px;background:#bbcabf;transition:background 0.3s;}
+.flow-connector.done{background:#006c49;}
+
+/* Page visibility */
+.flow-page{display:none;}
+.flow-page.active{display:block;}
+
+/* Animations */
+.fade-in{animation:fadeIn 0.5s ease-out forwards;}
+.fade-in-delay{animation:fadeIn 0.5s ease-out 0.15s forwards;opacity:0;}
+.fade-in-delay-2{animation:fadeIn 0.5s ease-out 0.3s forwards;opacity:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* Likert */
+.likert-button{cursor:pointer;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
+.likert-button:hover:not(.active){background:#f0fdf4;border-color:#10b981;transform:translateY(-4px) scale(1.08);
+  box-shadow:0 4px 15px rgba(16,185,129,0.3);}
+.likert-button.active{background:#006c49;color:white;border-color:#006c49;transform:scale(1.15);
+  box-shadow:0 6px 20px rgba(0,108,73,0.4);}
+.likert-button:active:not(.active){transform:scale(0.95);}
+
+/* Scale segments */
+.scale-segment{cursor:pointer;transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);}
+.scale-segment:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 10px 25px -5px rgba(0,0,0,0.15);}
+
+/* Content cards */
+.content-card{transition:all 0.3s ease;}
+.content-card:hover{box-shadow:0 8px 30px rgba(16,185,130,0.1);border-color:#10b981;}
+.info-grid-item{transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);cursor:pointer;}
+.info-grid-item:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(16,185,129,0.2);}
+.instruction-item{transition:all 0.3s ease;padding:0.75rem;border-radius:0.5rem;margin:0 -0.75rem;}
+.instruction-item:hover{background:rgba(16,185,129,0.05);transform:translateX(4px);}
+
+/* Question card */
+.question-card{transition:all 0.4s ease;}
+.question-card:hover{box-shadow:0 10px 40px rgba(0,108,73,0.08);border-color:#10b981;}
+
+/* Progress */
+.progress-pulse{animation:pulse-green 2s infinite;}
+@keyframes pulse-green{0%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);}70%{box-shadow:0 0 0 10px rgba(16,185,129,0);}100%{box-shadow:0 0 0 0 rgba(16,185,129,0);}}
+
+/* Buttons */
+.btn-start{transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
+.btn-start:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(16,185,129,0.4);}
+.btn-next{transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
+.btn-next:hover{box-shadow:0 8px 25px rgba(16,108,73,0.35);transform:translateY(-2px);}
+.btn-submit{transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
+.btn-submit:hover{box-shadow:0 8px 25px rgba(164,58,58,0.35);transform:translateY(-2px);}
+.btn-download{transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
+.btn-download:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,108,73,0.3);}
+
+/* Result */
+.progress-ring-circle{transition:stroke-dashoffset 1s ease-in-out;transform:rotate(-90deg);transform-origin:50% 50%;}
+.float-animation{animation:float 4s ease-in-out infinite;}
+@keyframes float{0%{transform:translateY(0px);}50%{transform:translateY(-10px);}100%{transform:translateY(0px);}}
+.progress-fill{transition:all 0.4s ease;}
+.aspect-item{transition:all 0.3s ease;padding:1rem;border-radius:0.5rem;margin:0 -1rem;}
+.aspect-item:hover{background:rgba(16,185,129,0.05);}
+
+/* Checkbox */
+.checkbox-label{transition:all 0.3s ease;}
+.checkbox-label:hover{color:#006c49;}
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+
+<!-- ========== FLOW NAVIGATION ========== -->
+<div class="flow-nav" id="flowNav">
+  <div class="flow-nav-inner">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-2xl">eco</span>
+      <span class="font-title-md text-title-md font-bold text-primary">EcoPolicy</span>
+    </div>
+    <div class="flex items-center gap-0">
+      <div class="flow-step active" onclick="goToStep(1)" id="navStep1">
+        <span class="step-num">1</span>
+        <span class="hidden md:inline">Penjelasan</span>
+      </div>
+      <div class="flow-connector" id="conn1"></div>
+      <div class="flow-step" onclick="goToStep(2)" id="navStep2">
+        <span class="step-num">2</span>
+        <span class="hidden md:inline">Input Angket</span>
+      </div>
+      <div class="flow-connector" id="conn2"></div>
+      <div class="flow-step" onclick="goToStep(3)" id="navStep3">
+        <span class="step-num">3</span>
+        <span class="hidden md:inline">Hasil</span>
+      </div>
+    </div>
+    <div class="text-body-sm text-on-surface-variant font-medium" id="flowLabel">Step 1 dari 3</div>
+  </div>
+</div>
+
+<!-- ========== STEP 1: PLATFORM EXPLANATION ========== -->
+<div class="flow-page active" id="page1">
+  <div class="pt-24 pb-32 max-w-[1440px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <section class="lg:col-span-12 space-y-8">
+      <!-- Tentang Platform -->
+      <div class="content-card bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20 fade-in">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="material-symbols-outlined text-primary">info</span>
+          <h3 class="font-title-md text-title-md text-on-surface">Tentang Platform</h3>
+        </div>
+        <p class="font-body-base text-body-base text-secondary leading-relaxed">
+          Evaluasi ini merupakan langkah strategis untuk mengukur efektivitas kebijakan lingkungan yang telah diterapkan. Kami menjamin <strong>kerahasiaan data</strong> Anda sepenuhnya; hasil evaluasi akan dianonimkan dan digunakan murni untuk kepentingan riset pengembangan sekolah hijau.
+        </p>
+      </div>
+
+      <!-- Info Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 fade-in-delay">
+        <div class="info-grid-item bg-surface-container-low p-4 rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">calendar_today</span>
+          <span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Periode</span>
+          <span class="font-body-base font-bold text-on-surface group-hover:text-white">Ganjil 2024/25</span>
+        </div>
+        <div class="info-grid-item bg-surface-container-low p-4 rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">assignment</span>
+          <span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Kuesioner</span>
+          <span class="font-body-base font-bold text-on-surface group-hover:text-white">Evaluasi Mandiri</span>
+        </div>
+        <div class="info-grid-item bg-surface-container-low p-4 rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">quiz</span>
+          <span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Pertanyaan</span>
+          <span class="font-body-base font-bold text-on-surface group-hover:text-white">20 Butir</span>
+        </div>
+        <div class="info-grid-item bg-surface-container-low p-4 rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">timer</span>
+          <span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">Estimasi</span>
+          <span class="font-body-base font-bold text-on-surface group-hover:text-white">20 Menit</span>
+        </div>
+      </div>
+
+      <!-- Instruksi -->
+      <div class="content-card bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20 fade-in-delay-2">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary">rule</span>
+          <h3 class="font-title-md text-title-md text-on-surface">Instruksi Pengisian</h3>
+        </div>
+        <ul class="space-y-4">
+          <li class="instruction-item flex gap-4 items-start">
+            <span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings:'FILL' 1;">check_circle</span>
+            <div>
+              <span class="font-body-base font-medium text-on-surface">Baca Pertanyaan dengan Teliti</span>
+              <p class="text-body-sm text-secondary">Pastikan Anda memahami konteks setiap butir pernyataan sebelum memilih jawaban.</p>
+            </div>
+          </li>
+          <li class="instruction-item flex gap-4 items-start">
+            <span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings:'FILL' 1;">check_circle</span>
+            <div>
+              <span class="font-body-base font-medium text-on-surface">Jawaban Tersimpan Otomatis</span>
+              <p class="text-body-sm text-secondary">Platform akan menyimpan progres Anda setiap kali bergeser halaman.</p>
+            </div>
+          </li>
+          <li class="instruction-item flex gap-4 items-start">
+            <span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings:'FILL' 1;">check_circle</span>
+            <div>
+              <span class="font-body-base font-medium text-on-surface">Hasil Langsung Tersedia</span>
+              <p class="text-body-sm text-secondary">Setelah selesai, sistem akan menampilkan ringkasan skor evaluasi secara real-time.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Skala Penilaian -->
+      <div class="content-card bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20 fade-in-delay-2">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary">straighten</span>
+          <h3 class="font-title-md text-title-md text-on-surface">Skala Penilaian (Likert 1-7)</h3>
+        </div>
+        <div class="flex flex-wrap md:flex-nowrap gap-2 w-full">
+          <div class="flex-1 min-w-[80px] scale-segment bg-red-50 p-3 rounded-lg border border-red-100 text-center">
+            <span class="block text-2xl font-bold text-red-600">1</span>
+            <span class="text-[10px] font-bold text-red-800 uppercase leading-tight">Sangat Tidak Sesuai</span>
+          </div>
+          <div class="flex-1 min-w-[80px] scale-segment bg-orange-50 p-3 rounded-lg border border-orange-100 text-center">
+            <span class="block text-2xl font-bold text-orange-600">2</span>
+          </div>
+          <div class="flex-1 min-w-[80px] scale-segment bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-center">
+            <span class="block text-2xl font-bold text-yellow-600">3</span>
+          </div>
+          <div class="flex-1 min-w-[80px] scale-segment bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
+            <span class="block text-2xl font-bold text-gray-500">4</span>
+            <span class="text-[10px] font-bold text-gray-600 uppercase leading-tight">Netral</span>
+          </div>
+          <div class="flex-1 min-w-[80px] scale-segment bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-center">
+            <span class="block text-2xl font-bold text-emerald-600">5</span>
+          </div>
+          <div class="flex-1 min-w-[80px] scale-segment bg-primary/10 p-3 rounded-lg border border-primary/30 text-center">
+            <span class="block text-2xl font-bold text-primary">6</span>
+          </div>
+          <div class="flex-1 min-w-[80px] scale-segment bg-primary p-3 rounded-lg border border-primary/20 text-center">
+            <span class="block text-2xl font-bold text-white">7</span>
+            <span class="text-[10px] font-bold text-white uppercase leading-tight">Sangat Sesuai</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <div class="fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-6 py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+    <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <label class="checkbox-label flex items-center gap-3 cursor-pointer group">
+        <div class="relative">
+          <input class="peer hidden" type="checkbox" id="confirmCheck"/>
+          <div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+            <span class="material-symbols-outlined text-white text-lg scale-0 transition-transform peer-checked:scale-100">check</span>
+          </div>
+        </div>
+        <span class="font-body-base text-on-surface group-hover:text-primary transition-colors">Saya telah membaca dan memahami seluruh instruksi</span>
+      </label>
+      <button onclick="goToStep(2)" id="btnMulai" disabled
+        class="btn-start px-8 h-12 rounded-xl bg-primary-container text-white font-bold flex items-center justify-center gap-2 opacity-50 cursor-not-allowed transition-all">
+        Mulai Evaluasi
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== STEP 2: INPUT ANGKET ========== -->
+<div class="flow-page" id="page2">
+  <!-- Header with progress -->
+  <div class="fixed top-0 left-0 right-0 z-[150] bg-surface/80 backdrop-blur-md border-b border-outline-variant h-20 px-6 flex flex-col justify-center">
+    <div class="max-w-4xl w-full mx-auto flex items-center justify-between gap-6">
+      <div class="flex-1 flex flex-col gap-1.5">
+        <div class="flex justify-between items-center">
+          <span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Progress Evaluasi</span>
+          <span class="font-label-caps text-label-caps text-primary font-bold" id="progressText">1 dari 20</span>
+        </div>
+        <div class="w-full bg-secondary-container h-2 rounded-full overflow-hidden">
+          <div class="bg-primary h-full transition-all duration-700 ease-out" id="progressBar" style="width:5%"></div>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 pl-6 border-l border-outline-variant">
+        <div class="flex flex-col items-end">
+          <div class="flex items-center gap-1.5 text-tertiary">
+            <span class="material-symbols-outlined text-base">timer</span>
+            <span class="font-title-md text-title-md font-bold tabular-nums" id="countdown">20:00</span>
+          </div>
+          <div class="flex items-center gap-1 text-primary">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+            <span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question Area -->
+  <main class="flex-1 w-full max-w-3xl mt-28 px-6 pb-32 mx-auto flex flex-col items-center">
+    <!-- Component badge -->
+    <div class="w-full mb-4 fade-in">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+        <span class="material-symbols-outlined text-[14px]">folder</span>
+        <span id="compName">Kebijakan Struktural</span>
+      </span>
+    </div>
+
+    <!-- Question Card -->
+    <div class="question-card w-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-8 md:p-12 fade-in">
+      <div class="flex flex-col gap-2 mb-8 text-center md:text-left">
+        <p class="font-label-caps text-label-caps text-primary tracking-[0.1em] uppercase">
+          Pertanyaan <span id="qCurrent">1</span> dari <span id="qTotal">20</span>
+          &bull; <span class="font-bold" id="subCompName">Kebijakan Struktural</span>
+        </p>
+        <h1 class="font-headline-lg text-headline-lg text-on-surface leading-tight" id="questionText">
+          Sejauh mana sekolah memiliki dokumen resmi kebijakan lingkungan?
+        </h1>
+      </div>
+
+      <!-- Likert Scale -->
+      <div class="mt-10 flex flex-col gap-8">
+        <div class="flex justify-between items-center w-full px-2">
+          <span class="font-body-sm text-body-sm text-secondary max-w-[100px] text-center leading-tight">Sangat Tidak Setuju</span>
+          <span class="font-body-sm text-body-sm text-secondary max-w-[100px] text-center leading-tight">Sangat Setuju</span>
+        </div>
+        <div class="relative flex justify-between items-center w-full">
+          <div class="absolute top-1/2 left-0 right-0 h-px bg-outline-variant -translate-y-1/2 z-0"></div>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(1)">1</button>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(2)">2</button>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(3)">3</button>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(4)">4</button>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(5)">5</button>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(6)">6</button>
+          <button class="likert-button relative z-10 w-12 h-12 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center font-title-md text-title-md" onclick="selectScore(7)">7</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Navigation -->
+  <div class="fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant h-20 flex items-center z-[150]">
+    <div class="max-w-4xl w-full mx-auto px-6 flex items-center justify-between">
+      <button onclick="prevQuestion()" id="prevBtn"
+        class="flex items-center gap-2 px-6 py-3 rounded-xl font-title-md text-title-md text-secondary border border-outline-variant hover:bg-surface-container transition-all">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Sebelumnya
+      </button>
+      <div class="flex items-center gap-4">
+        <button onclick="submitEvaluation()" id="submitBtn"
+          class="hidden items-center gap-2 px-8 py-3 rounded-xl font-title-md text-title-md bg-tertiary text-on-tertiary shadow-lg shadow-tertiary/20 transition-all">
+          Kirim Evaluasi
+          <span class="material-symbols-outlined">send</span>
+        </button>
+        <button onclick="nextQuestion()" id="nextBtn"
+          class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary text-on-primary shadow-lg shadow-primary/20 transition-all">
+          Selanjutnya
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== STEP 3: HASIL EVALUASI ========== -->
+<div class="flow-page" id="page3">
+  <main class="max-w-[1024px] mx-auto px-6 py-8 pt-24">
+    <!-- Success Header -->
+    <section class="flex flex-col items-center text-center mb-12 fade-in">
+      <div class="w-48 h-48 mb-6 float-animation relative">
+        <div class="w-full h-full bg-gradient-to-br from-primary/10 to-primary-container/20 rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary" style="font-size:80px;">eco</span>
+        </div>
+        <div class="absolute -bottom-2 -right-2 bg-primary text-on-primary rounded-full p-3 shadow-lg flex items-center justify-center">
+          <span class="material-symbols-outlined text-[32px]" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        </div>
+      </div>
+      <h1 class="font-headline-xl text-headline-xl text-on-surface mb-3 fade-in-delay">Evaluasi Berhasil Diselesaikan</h1>
+      <p class="font-body-base text-body-base text-secondary max-w-lg fade-in-delay">
+        Terima kasih telah mengisi instrumen evaluasi. Data Anda telah berhasil tersimpan dalam sistem.
+      </p>
+    </section>
+
+    <!-- Summary Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+      <!-- Score Card -->
+      <div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col items-center justify-center text-center fade-in-delay-2">
+        <div class="relative flex items-center justify-center mb-6">
+          <svg class="w-44 h-44">
+            <circle class="text-secondary-container" cx="88" cy="88" fill="transparent" r="72" stroke="currentColor" stroke-width="10"></circle>
+            <circle class="text-primary progress-ring-circle" cx="88" cy="88" fill="transparent" r="72"
+              stroke="currentColor" stroke-dasharray="452.39" stroke-dashoffset="72" stroke-linecap="round" stroke-width="10"></circle>
+          </svg>
+          <div class="absolute flex flex-col items-center">
+            <span class="font-display-lg text-display-lg text-primary leading-none">84%</span>
+            <span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Skor</span>
+          </div>
+        </div>
+        <div class="bg-primary/10 text-on-primary-container px-6 py-2 rounded-full font-title-md text-title-md inline-flex items-center gap-2 border border-primary/20">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">stars</span>
+          Sangat Baik
+        </div>
+      </div>
+
+      <!-- Conclusion Card -->
+      <div class="md:col-span-7 bg-surface-container-low p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col justify-center fade-in-delay-2">
+        <h3 class="font-headline-lg text-headline-lg text-on-surface mb-4 flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary">analytics</span>
+          Kesimpulan Evaluasi
+        </h3>
+        <p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+          Secara umum implementasi kebijakan lingkungan di sekolah Anda telah berjalan dengan sangat baik.
+          Fokus utama untuk pengembangan selanjutnya adalah pada aspek <span class="font-bold text-primary">Edukasi</span>
+          dan <span class="font-bold text-primary">Partisipasi Siswa</span> untuk memastikan keberlanjutan program.
+        </p>
+        <div class="mt-6 flex items-center gap-4 p-4 bg-white rounded-lg border border-outline-variant/30">
+          <div class="h-10 w-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary shrink-0">
+            <span class="material-symbols-outlined">lightbulb</span>
+          </div>
+          <div>
+            <p class="text-label-caps font-label-caps text-secondary uppercase">Rekomendasi Utama</p>
+            <p class="text-body-sm font-body-sm text-on-surface">Tingkatkan integrasi kurikulum hijau pada semester depan.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Breakdown -->
+    <section class="mb-12">
+      <h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2 mb-6 fade-in-delay-2">
+        <span class="material-symbols-outlined text-primary">segment</span>
+        Detail Capaian Per Komponen
+      </h2>
+      <div class="space-y-4 fade-in-delay-2">
+        <div class="aspect-item">
+          <div class="flex justify-between items-end mb-2">
+            <span class="font-body-base text-on-surface font-medium">Kebijakan Struktural</span>
+            <span class="font-label-caps text-primary">85%</span>
+          </div>
+          <div class="h-2 w-full bg-secondary-container rounded-full overflow-hidden">
+            <div class="progress-fill h-full bg-primary rounded-full" style="width:85%"></div>
+          </div>
+        </div>
+        <div class="aspect-item">
+          <div class="flex justify-between items-end mb-2">
+            <span class="font-body-base text-on-surface font-medium">Program Utama</span>
+            <span class="font-label-caps text-primary">72%</span>
+          </div>
+          <div class="h-2 w-full bg-secondary-container rounded-full overflow-hidden">
+            <div class="progress-fill h-full bg-primary rounded-full" style="width:72%"></div>
+          </div>
+        </div>
+        <div class="aspect-item">
+          <div class="flex justify-between items-end mb-2">
+            <span class="font-body-base text-on-surface font-medium">Operasional</span>
+            <span class="font-label-caps text-primary">80%</span>
+          </div>
+          <div class="h-2 w-full bg-secondary-container rounded-full overflow-hidden">
+            <div class="progress-fill h-full bg-primary rounded-full" style="width:80%"></div>
+          </div>
+        </div>
+        <div class="aspect-item">
+          <div class="flex justify-between items-end mb-2">
+            <span class="font-body-base text-on-surface font-medium">Edukasi</span>
+            <span class="font-label-caps text-tertiary">68%</span>
+          </div>
+          <div class="h-2 w-full bg-secondary-container rounded-full overflow-hidden">
+            <div class="progress-fill h-full bg-tertiary rounded-full" style="width:68%"></div>
+          </div>
+        </div>
+        <div class="aspect-item">
+          <div class="flex justify-between items-end mb-2">
+            <span class="font-body-base text-on-surface font-medium">Evaluasi &amp; Inovasi</span>
+            <span class="font-label-caps text-primary">88%</span>
+          </div>
+          <div class="h-2 w-full bg-secondary-container rounded-full overflow-hidden">
+            <div class="progress-fill h-full bg-primary rounded-full" style="width:88%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Actions -->
+    <footer class="flex flex-col md:flex-row items-center justify-center gap-4 border-t border-outline-variant pt-8 fade-in-delay-2">
+      <button class="btn-download w-full md:w-auto px-8 py-3 bg-primary text-on-primary font-title-md text-title-md rounded-lg shadow-sm flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">download</span>
+        Unduh PDF
+      </button>
+      <button onclick="goToStep(1)" class="w-full md:w-auto px-8 py-3 text-secondary font-body-base text-body-base flex items-center justify-center gap-2 hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">refresh</span>
+        Ulangi Evaluasi
+      </button>
+    </footer>
+  </main>
+</div>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+// === Mock Data ===
+const questions = [
+  { comp:"Kebijakan Struktural", subComp:"Kebijakan Struktural", text:"Sejauh mana sekolah memiliki dokumen resmi kebijakan lingkungan?" },
+  { comp:"Kebijakan Struktural", subComp:"Kebijakan Struktural", text:"Sejauh mana kebijakan lingkungan terintegrasi dalam visi-misi sekolah?" },
+  { comp:"Kebijakan Struktural", subComp:"Konservasi Energi", text:"Sejauh mana sekolah mengimplementasikan sistem monitoring emisi karbon secara berkala?" },
+  { comp:"Kebijakan Struktural", subComp:"Konservasi Energi", text:"Sejauh mana sekolah memiliki program penghematan energi yang terstruktur?" },
+  { comp:"Program Utama", subComp:"Program Utama", text:"Sejauh mana sekolah menjalankan program daur ulang sampah secara konsisten?" },
+  { comp:"Program Utama", subComp:"Program Utama", text:"Sejauh mana sekolah memiliki program penghijauan dan penanaman pohon?" },
+  { comp:"Operasional", subComp:"Operasional", text:"Sejauh mana sekolah menerapkan pengelolaan limbah B3 yang benar?" },
+  { comp:"Operasional", subComp:"Operasional", text:"Sejauh mana sekolah memiliki sistem pengelolaan air yang efisien?" },
+  { comp:"Edukasi", subComp:"Edukasi", text:"Sejauh mana guru mengintegrasikan isu lingkungan dalam pembelajaran?" },
+  { comp:"Edukasi", subComp:"Edukasi", text:"Sejauh mana sekolah menyelenggarakan pelatihan kesadaran lingkungan?" },
+  { comp:"Evaluasi & Inovasi", subComp:"Evaluasi & Inovasi", text:"Sejauh mana sekolah melakukan evaluasi berkala terhadap program lingkungan?" },
+  { comp:"Evaluasi & Inovasi", subComp:"Evaluasi & Inovasi", text:"Sejauh mana sekolah menggunakan teknologi hijau dalam operasional?" },
+];
+
+let currentQ = 0;
+let answers = {};
+let currentScore = null;
+let timeLeft = 20 * 60;
+
+// === Step Navigation ===
+function goToStep(step) {
+  document.querySelectorAll('.flow-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page' + step).classList.add('active');
+
+  // Update nav
+  for (let i = 1; i <= 3; i++) {
+    const nav = document.getElementById('navStep' + i);
+    nav.classList.remove('active', 'done');
+    if (i < step) nav.classList.add('done');
+    else if (i === step) nav.classList.add('active');
+
+    if (i < 3) {
+      const conn = document.getElementById('conn' + i);
+      conn.classList.toggle('done', i < step);
+    }
+  }
+  document.getElementById('flowLabel').textContent = 'Step ' + step + ' dari 3';
+
+  // Show/hide flow nav on step 3
+  document.getElementById('flowNav').style.display = step === 3 ? 'none' : '';
+
+  // Initialize step 2
+  if (step === 2) renderQuestion();
+
+  // Scroll top
+  window.scrollTo(0, 0);
+}
+
+// === Checkbox enable start button ===
+document.getElementById('confirmCheck').addEventListener('change', function() {
+  const btn = document.getElementById('btnMulai');
+  if (this.checked) {
+    btn.disabled = false;
+    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    btn.classList.add('hover:bg-primary', 'shadow-md');
+  } else {
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    btn.classList.remove('hover:bg-primary', 'shadow-md');
+  }
+});
+
+// === Likert Selection ===
+function selectScore(val) {
+  currentScore = val;
+  document.querySelectorAll('.likert-button').forEach(btn => {
+    btn.classList.remove('active');
+    if (parseInt(btn.textContent) === val) btn.classList.add('active');
+  });
+  // Save answer
+  answers[currentQ] = val;
+}
+
+// === Render Question ===
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('compName').textContent = q.comp;
+  document.getElementById('subCompName').textContent = q.subComp;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('qCurrent').textContent = currentQ + 1;
+  document.getElementById('qTotal').textContent = questions.length;
+
+  // Progress
+  const pct = ((currentQ + 1) / questions.length * 100).toFixed(0);
+  document.getElementById('progressText').textContent = (currentQ + 1) + ' dari ' + questions.length;
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  // Restore answer
+  currentScore = answers[currentQ] || null;
+  document.querySelectorAll('.likert-button').forEach(btn => {
+    btn.classList.remove('active');
+    if (currentScore && parseInt(btn.textContent) === currentScore) btn.classList.add('active');
+  });
+
+  // Prev button visibility
+  document.getElementById('prevBtn').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+
+  // Last question → show submit, hide next
+  const isLast = currentQ === questions.length - 1;
+  document.getElementById('nextBtn').classList.toggle('hidden', isLast);
+  document.getElementById('submitBtn').classList.toggle('hidden', !isLast);
+  document.getElementById('submitBtn').classList.toggle('flex', isLast);
+}
+
+function nextQuestion() {
+  if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+function submitEvaluation() {
+  goToStep(3);
+  // Animate progress ring
+  setTimeout(() => {
+    const circle = document.querySelector('.progress-ring-circle');
+    if (circle) {
+      const r = circle.r.baseVal.value;
+      const c = r * 2 * Math.PI;
+      circle.style.strokeDasharray = c + ' ' + c;
+      circle.style.strokeDashoffset = c - (84 / 100 * c);
+    }
+  }, 300);
+}
+
+// === Timer ===
+setInterval(() => {
+  if (timeLeft <= 0) return;
+  timeLeft--;
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('countdown');
+  if (el) el.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+}, 1000);
+</script>
+</body>
+</html>

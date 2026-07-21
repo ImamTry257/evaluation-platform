@@ -39,10 +39,7 @@ class AuthController extends Controller
             'is_active' => true,
         ]);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
         return $this->successResponse([
-            'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -79,10 +76,16 @@ class AuthController extends Controller
             return $this->errorResponse('Akun tidak aktif', 403);
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $expiredTokenAt = now()->addHours(1);
+        $token = $user->createToken(
+            'auth-token',
+            ['*'],
+            $expiredTokenAt,
+        )->plainTextToken;
 
         return $this->successResponse([
             'token' => $token,
+            'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -124,10 +127,16 @@ class AuthController extends Controller
             return $this->errorResponse('Akun tidak aktif', 403);
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $expiredTokenAt = now()->addHours(1);
+        $token = $user->createToken(
+            'auth-token',
+            ['*'],
+            $expiredTokenAt,
+        )->plainTextToken;
 
         return $this->successResponse([
             'token' => $token,
+            'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,

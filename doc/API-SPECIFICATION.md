@@ -1142,7 +1142,62 @@ Evaluation dihitung per Indicator dengan kategori A-E berdasarkan Standar Baku I
 
 ---
 
-# 6. Admin - Monitoring & Report
+# 6. Admin - Dashboard & Monitoring
+
+## Dashboard Summary
+Get dashboard summary stats, weekly progress, and active sessions.
+
+**Endpoint:** `GET /admin/dashboard`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+Accept: application/json
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Dashboard data retrieved successfully",
+  "data": {
+    "summary": {
+      "totalRespondent": 1284,
+      "submitted": 856,
+      "inProgress": 312,
+      "notStarted": 116,
+      "completionPercent": 67
+    },
+    "weeklyProgress": [
+      { "day": "Sen", "date": "2024-01-01", "value": 45 },
+      { "day": "Sel", "date": "2024-01-02", "value": 60 },
+      { "day": "Rab", "date": "2024-01-03", "value": 75 },
+      { "day": "Kam", "date": "2024-01-04", "value": 55 },
+      { "day": "Jum", "date": "2024-01-05", "value": 90 },
+      { "day": "Sab", "date": "2024-01-06", "value": 30 },
+      { "day": "Min", "date": "2024-01-07", "value": 25 }
+    ],
+    "activeSessions": [
+      {
+        "id": 1,
+        "userName": "Andi Wijaya",
+        "userEmail": "andi@example.com",
+        "questionnaireTitle": "Evaluasi Kebijakan Lingkungan",
+        "answeredCount": 18,
+        "totalQuestions": 20,
+        "progress": 90,
+        "remainingSeconds": 252,
+        "timeRemaining": "04m 12s",
+        "startedAt": "2024-01-01T10:00:00Z",
+        "updatedAt": "2024-01-01T10:25:48Z"
+      }
+    ]
+  }
+}
+```
+
+---
 
 ## List Evaluation Sessions
 Monitor semua sesi evaluasi.

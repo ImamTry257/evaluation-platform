@@ -144,6 +144,11 @@ const router = createRouter({
           name: 'respondent-result',
           component: () => import('@/views/respondent/ResultRecommendationView.vue'),
         },
+        {
+          path: 'profile',
+          name: 'respondent-profile',
+          component: () => import('@/views/respondent/ProfileView.vue'),
+        },
       ],
     },
   ],

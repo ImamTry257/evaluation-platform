@@ -2,7 +2,12 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useEvaluation } from '@/hooks/respondent/useEvaluation'
+import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+
+const authStore = useAuthStore()
+const userName = computed(() => authStore.user?.name || 'Responden')
+const userEmail = computed(() => authStore.user?.email || '')
 
 const route = useRoute()
 const router = useRouter()
@@ -19,7 +24,10 @@ const statements = ref<any>(null)
 const answers = ref<Record<number, number>>({})
 const showSubmitModal = ref(false)
 const showResetModal = ref(false)
+const showTimeoutModal = ref(false)
+const showUserMenu = ref(false)
 const submitting = ref(false)
+const timeoutSubmitting = ref(false)
 const toastMsg = ref('')
 const toastVisible = ref(false)
 const currentPage = ref<any>(pageId.value)
@@ -139,6 +147,33 @@ function confirmReset() {
   router.push('/respondent')
 }
 
+// Logout
+async function handleLogout() {
+  await authStore.logout()
+  router.push('/login')
+}
+
+// Timeout handlers
+async function handleTimeoutSubmit() {
+  timeoutSubmitting.value = true
+  try {
+    await submitEvaluation(sessionId.value)
+    clearTimerLocal()
+    router.push(`/respondent/result/${sessionId.value}`)
+  } catch (err) {
+    // Even if submit fails, redirect to result (backend may have partial data)
+    clearTimerLocal()
+    router.push(`/respondent/result/${sessionId.value}`)
+  } finally {
+    timeoutSubmitting.value = false
+  }
+}
+
+function handleTimeoutGoHome() {
+  clearTimerLocal()
+  router.push('/respondent')
+}
+
 // Timer
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval)
@@ -147,9 +182,11 @@ function startTimer() {
     if (timeLeft.value > 0) {
       timeLeft.value--
     } else {
-      // Timer expired
+      // Timer expired — show timeout modal
       clearTimerLocal()
       if (timerInterval) clearInterval(timerInterval)
+      if (saveInterval) clearInterval(saveInterval)
+      showTimeoutModal.value = true
     }
   }, 1000)
   // Save to localStorage every 5 seconds
@@ -265,6 +302,30 @@ onUnmounted(() => {
               <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
               <span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
             </div>
+            <!-- User Menu -->
+            <div class="relative">
+              <button @click="showUserMenu = !showUserMenu"
+                class="w-9 h-9 rounded-full bg-primary-container/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
+                <span class="material-symbols-outlined text-primary text-[20px]">person</span>
+              </button>
+              <div v-if="showUserMenu"
+                class="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-outline-variant/30 py-1 z-[300]"
+                @click.self="showUserMenu = false">
+                <div class="px-4 py-3 border-b border-outline-variant/30">
+                  <p class="font-body-base font-semibold text-on-surface text-sm">{{ userName }}</p>
+                  <p class="text-xs text-on-surface-variant">{{ userEmail }}</p>
+                </div>
+                <div class="py-1">
+                  <button class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">person</span> Profil Saya
+                  </button>
+                  <div class="my-1 border-t border-outline-variant/30"></div>
+                  <button @click="handleLogout" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-error hover:bg-red-50 transition-colors font-medium">
+                    <span class="material-symbols-outlined text-[18px]">logout</span> Keluar
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -368,17 +429,17 @@ onUnmounted(() => {
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 transition-transform duration-300" :class="showSubmitModal ? 'scale-100' : 'scale-90'">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center"><span class="material-symbols-outlined text-tertiary">send</span></div>
-          <h3 class="font-title-md text-title-md text-on-surface">Kirim Evaluasi?</h3>
+          <h3 class="font-title-md text-title-md text-on-surface">Submit Pengisian Angkat?</h3>
         </div>
-        <p class="text-body-base text-on-surface-variant mb-2">Anda yakin ingin mengirim seluruh jawaban evaluasi?</p>
+        <p class="text-body-base text-on-surface-variant mb-2">Anda yakin ingin submit seluruh jawaban angket?</p>
         <p class="text-body-sm text-on-surface-variant mb-6">{{ answeredCount }} dari {{ statementCount }} pertanyaan sudah dijawab.</p>
         <div class="flex items-center justify-end gap-3">
           <button @click="closeSubmitModal" class="px-5 py-2.5 rounded-xl border border-outline-variant/50 text-on-surface font-body-base font-medium hover:bg-surface-container transition-colors">Batal</button>
           <button @click="confirmSubmit" :disabled="submitting"
-            class="px-8 py-2.5 rounded-xl bg-tertiary text-on-tertiary font-body-base font-semibold shadow-sm transition-all hover:bg-tertiary/90 active:scale-95 disabled:opacity-50 flex items-center gap-2">
+            class="px-8 py-2.5 rounded-xl bg-primary text-white font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 flex items-center gap-2">
             <span v-if="submitting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
             <span v-else class="material-symbols-outlined text-[18px]">check_circle</span>
-            {{ submitting ? 'Mengirim...' : 'Ya, Kirim' }}
+            {{ submitting ? 'Mengirim...' : 'Submit' }}
           </button>
         </div>
       </div>
@@ -404,10 +465,61 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Timeout Modal -->
+    <div v-if="showTimeoutModal" class="fixed inset-0 z-[600] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);animation:fadeIn .4s ease-out;">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10 text-center" style="animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275);">
+        <!-- Icon -->
+        <div class="mx-auto mb-6 w-20 h-20 rounded-full bg-error/10 flex items-center justify-center" style="animation:pulse 2s ease-in-out infinite;">
+          <div class="w-16 h-16 rounded-full bg-error/20 flex items-center justify-center" style="box-shadow:0 0 0 0 rgba(186,26,26,0.3);animation:clockPulse 1.5s ease-in-out infinite;">
+            <span class="material-symbols-outlined text-error" style="font-size:36px;">timer_off</span>
+          </div>
+        </div>
+        <!-- Title -->
+        <h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Waktu Habis!</h2>
+        <p class="font-body-base text-on-surface-variant mb-6 leading-relaxed">
+          Batas waktu evaluasi telah berakhir. Jawaban yang sudah Anda isi telah <strong>tersimpan otomatis</strong> oleh sistem.
+        </p>
+        <!-- Summary -->
+        <div class="bg-surface-container-low rounded-xl p-5 mb-6 text-left">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-body-sm text-on-surface-variant">Pertanyaan terjawab</span>
+            <span class="font-title-md text-title-md font-semibold text-on-surface">{{ answeredCount }} <span class="text-body-sm font-normal text-on-surface-variant">dari {{ statementCount }}</span></span>
+          </div>
+          <div class="w-full h-2 bg-secondary-container rounded-full overflow-hidden mb-3">
+            <div class="bg-tertiary h-full rounded-full transition-all" :style="{ width: progressPct + '%' }"></div>
+          </div>
+          <div class="flex items-center gap-2 text-body-sm">
+            <span class="material-symbols-outlined text-[16px] text-tertiary">info</span>
+            <span class="text-on-surface-variant">Sisa pertanyaan yang belum dijawab tidak akan dihitung dalam perhitungan skor.</span>
+          </div>
+        </div>
+        <!-- Actions -->
+        <div class="flex flex-col gap-3">
+          <button @click="handleTimeoutSubmit" :disabled="timeoutSubmitting"
+            class="w-full px-8 py-3.5 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50">
+            <span v-if="timeoutSubmitting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+            <span v-else class="material-symbols-outlined">analytics</span>
+            {{ timeoutSubmitting ? 'Mengirim...' : 'Lihat Hasil Evaluasi' }}
+          </button>
+          <button @click="handleTimeoutGoHome"
+            class="w-full px-8 py-3 rounded-xl border border-outline-variant text-on-surface-variant font-body-base font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">home</span>
+            Kembali ke Beranda
+          </button>
+        </div>
+        <p class="text-body-sm text-outline mt-6">Evaluasi ini akan otomatis di-submit dengan jawaban yang sudah ada.</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes clockPulse{0%,100%{box-shadow:0 0 0 0 rgba(186,26,26,0.3);}50%{box-shadow:0 0 0 16px rgba(186,26,26,0);}}
+
 .radio-dot {
   width: 22px; height: 22px; border-radius: 50%;
   border: 2px solid #bbcabf;

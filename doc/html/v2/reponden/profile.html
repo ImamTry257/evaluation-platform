@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPolicy - Profil Responden</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+"surface-dim":"#d4dcd5","on-background":"#161d19","surface-variant":"#dde4dd",
+"surface-container":"#e8f0e9","tertiary":"#a43a3a","on-surface-variant":"#3c4a42",
+"primary-fixed":"#6ffbbe","inverse-surface":"#2b322d","error":"#ba1a1a",
+"primary-container":"#10b981","on-tertiary":"#ffffff","background":"#f4fbf4",
+"tertiary-container":"#fc7c78","on-surface":"#161d19","surface-tint":"#006c49",
+"secondary":"#5d5f5f","on-primary-container":"#00422b","surface-container-low":"#eef6ee",
+"surface-container-lowest":"#ffffff","on-primary":"#ffffff","primary":"#006c49",
+"on-secondary-container":"#616363","surface-container-highest":"#dde4dd",
+"outline-variant":"#bbcabf","surface-container-high":"#e3eae3","outline":"#6c7a71",
+"secondary-container":"#dfe0e0","surface":"#f4fbf4","on-error":"#ffffff"
+},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},
+spacing:{sm:"0.5rem",md:"1rem",lg:"1.5rem",gutter:"1.5rem",base:"4px",margin:"2rem","2xl":"3rem",xl:"2rem",xs:"0.25rem"},
+fontFamily:{"body-sm":["Poppins"],"headline-xl":["Poppins"],"label-caps":["Poppins"],"headline-lg":["Poppins"],"title-md":["Poppins"],"display-lg":["Poppins"],"body-base":["Poppins"]},
+fontSize:{"body-sm":["14px",{lineHeight:"1.5",fontWeight:"400"}],"headline-xl":["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+"label-caps":["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],"headline-lg":["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+"title-md":["20px",{lineHeight:"1.5",fontWeight:"500"}],"display-lg":["48px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+"body-base":["16px",{lineHeight:"1.6",fontWeight:"400"}]}}}}</script>
+<style>
+body{font-family:'Poppins',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+.fade-in{animation:fadeIn .5s ease-out forwards;}
+.fade-in-delay{animation:fadeIn .5s ease-out .15s forwards;opacity:0;}
+.fade-in-delay-2{animation:fadeIn .5s ease-out .3s forwards;opacity:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.card{transition:all .3s ease;}
+.card:hover{box-shadow:0 8px 30px rgba(16,185,130,0.08);}
+.btn-primary{transition:all .3s cubic-bezier(0.175,0.885,0.32,1.275);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,108,73,0.35);}
+.btn-outline{transition:all .3s ease;}
+.btn-outline:hover{background:#eef6ee;border-color:#006c49;}
+.profile-avatar{transition:all .3s ease;}
+.profile-avatar:hover{transform:scale(1.05);box-shadow:0 8px 25px rgba(16,185,129,0.2);}
+.stat-card{transition:all .3s cubic-bezier(0.175,0.885,0.32,1.275);}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(16,185,129,0.15);}
+.history-item{transition:all .2s ease;}
+.history-item:hover{background:rgba(16,185,129,0.03);transform:translateX(4px);}
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+
+<!-- Step Header -->
+<div class="fixed top-0 left-0 right-0 z-[200] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+  <div class="max-w-5xl mx-auto px-6 py-2.5 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-2xl">eco</span>
+      <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>
+    </div>
+    <div class="flex items-center gap-0">
+      <a href="#" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-all">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">1</span>
+        <span class="hidden md:inline">Penjelasan</span>
+      </a>
+      <div class="w-6 h-px mx-1 bg-outline-variant"></div>
+      <a href="#" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-all">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">2</span>
+        <span class="hidden md:inline">Input Angket</span>
+      </a>
+      <div class="w-6 h-px mx-1 bg-outline-variant"></div>
+      <a href="#" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-all">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">3</span>
+        <span class="hidden md:inline">Hasil</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="#" class="flex items-center gap-1.5 px-4 py-2 rounded-lg text-primary text-body-sm font-medium hover:bg-primary/10 transition-colors">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali
+      </a>
+      <div class="relative">
+        <button class="w-9 h-9 rounded-full bg-primary text-on-primary border-2 border-primary flex items-center justify-center shadow-md">
+          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">person</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="pt-20 pb-32 max-w-[900px] mx-auto px-6">
+
+  <!-- Back Link -->
+  <div class="mb-6 fade-in">
+    <a href="#" class="inline-flex items-center gap-1.5 text-primary text-body-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Evaluasi
+    </a>
+  </div>
+
+  <!-- Profile Header Card -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden mb-8 fade-in">
+    <!-- Cover -->
+    <div class="h-32 bg-gradient-to-br from-primary/20 via-primary-container/30 to-primary/10 relative">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDZjNDkiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC04VjE4SDJ2MmgzNG0wLThWMTBIMXYyaDM0bTAtOFYySDF2MmgzNCIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
+    </div>
+    <!-- Avatar + Info -->
+    <div class="px-8 pb-8 relative">
+      <div class="profile-avatar -mt-16 w-28 h-28 rounded-2xl bg-primary-container border-4 border-white shadow-lg flex items-center justify-center mb-4 cursor-pointer">
+        <span class="material-symbols-outlined text-primary text-[48px]" style="font-variation-settings:'FILL' 1;">person</span>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Budi Santoso</h1>
+          <p class="text-body-sm text-on-surface-variant mb-2">budi@sekolah.id</p>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+              <span class="material-symbols-outlined text-[14px]">school</span> Responden
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
+            </span>
+          </div>
+        </div>
+        <button class="btn-outline px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface font-body-base font-medium flex items-center gap-2 self-start">
+          <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profil
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 fade-in-delay">
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">assessment</span>
+      <p class="font-title-md text-title-md font-bold text-on-surface">2</p>
+      <p class="text-body-sm text-on-surface-variant">Evaluasi Selesai</p>
+    </div>
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">trending_up</span>
+      <p class="font-title-md text-title-md font-bold text-primary">82%</p>
+      <p class="text-body-sm text-on-surface-variant">Rata-rata Skor</p>
+    </div>
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">stars</span>
+      <p class="font-title-md text-title-md font-bold text-on-surface">B</p>
+      <p class="text-body-sm text-on-surface-variant">Kategori Terakhir</p>
+    </div>
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">calendar_today</span>
+      <p class="font-title-md text-title-md font-bold text-on-surface">19 Jul</p>
+      <p class="text-body-sm text-on-surface-variant">Terakhir Aktif</p>
+    </div>
+  </div>
+
+  <!-- Profile Info Card -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 p-8 mb-8 fade-in-delay">
+    <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2 mb-6">
+      <span class="material-symbols-outlined text-primary">person</span> Informasi Akun
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Nama Lengkap</label>
+        <div class="bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">Budi Santoso</div>
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Email</label>
+        <div class="bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">budi@sekolah.id</div>
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Username</label>
+        <div class="bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">budi_santoso</div>
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Peran</label>
+        <div class="bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">Responden</div>
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Tanggal Bergabung</label>
+        <div class="bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">15 Juli 2026</div>
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Terakhir Login</label>
+        <div class="bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface">19 Juli 2026, 08:32</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Card -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 p-8 mb-8 fade-in-delay-2">
+    <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2 mb-6">
+      <span class="material-symbols-outlined text-primary">lock</span> Ubah Kata Sandi
+    </h3>
+    <div class="space-y-4 max-w-md">
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Kata Sandi Saat Ini</label>
+        <input type="password" placeholder="Masukkan kata sandi saat ini"
+          class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all" />
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Kata Sandi Baru</label>
+        <input type="password" placeholder="Masukkan kata sandi baru"
+          class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all" />
+      </div>
+      <div>
+        <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Konfirmasi Kata Sandi Baru</label>
+        <input type="password" placeholder="Ulangi kata sandi baru"
+          class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all" />
+      </div>
+      <button class="btn-primary px-6 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">save</span> Simpan Perubahan
+      </button>
+    </div>
+  </div>
+
+  <!-- Evaluation History Card -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 p-8 mb-8 fade-in-delay-2">
+    <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2 mb-6">
+      <span class="material-symbols-outlined text-primary">history</span> Riwayat Evaluasi
+    </h3>
+    <div class="space-y-3">
+      <!-- History Item 1 -->
+      <div class="history-item flex items-center gap-4 p-4 rounded-xl border border-outline-variant/20 cursor-pointer">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary">assessment</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-body-base font-medium text-on-surface truncate">Evaluasi Kebijakan Lingkungan 2026</p>
+          <p class="text-body-sm text-on-surface-variant">19 Juli 2026, 08:30 - 08:52</p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="text-right">
+            <p class="font-title-md font-bold text-primary">85%</p>
+            <p class="text-[10px] font-semibold text-emerald-600 uppercase">Kategori B</p>
+          </div>
+          <span class="material-symbols-outlined text-outline text-[20px]">chevron_right</span>
+        </div>
+      </div>
+      <!-- History Item 2 -->
+      <div class="history-item flex items-center gap-4 p-4 rounded-xl border border-outline-variant/20 cursor-pointer">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary">assessment</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-body-base font-medium text-on-surface truncate">Evaluasi Kebijakan Lingkungan 2025</p>
+          <p class="text-body-sm text-on-surface-variant">20 Desember 2025, 09:15 - 09:48</p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="text-right">
+            <p class="font-title-md font-bold text-primary">78%</p>
+            <p class="text-[10px] font-semibold text-emerald-600 uppercase">Kategori B</p>
+          </div>
+          <span class="material-symbols-outlined text-outline text-[20px]">chevron_right</span>
+        </div>
+      </div>
+      <!-- Empty state placeholder (hidden by default) -->
+      <!-- <div class="text-center py-8">
+        <span class="material-symbols-outlined text-[48px] text-outline mb-3">inbox</span>
+        <p class="text-body-sm text-on-surface-variant">Belum ada riwayat evaluasi</p>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-error/20 p-8 fade-in-delay-2">
+    <h3 class="font-title-md text-title-md text-error flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined">warning</span> Zona Berbahaya
+    </h3>
+    <p class="text-body-sm text-on-surface-variant mb-4">Tindakan di bawah ini tidak dapat dibatalkan.</p>
+    <button class="px-6 py-2.5 rounded-xl border border-error/30 text-error font-body-base font-medium hover:bg-error/5 transition-colors flex items-center gap-2">
+      <span class="material-symbols-outlined text-[18px]">delete_forever</span> Hapus Akun
+    </button>
+  </div>
+
+</main>
+
+</body>
+</html>

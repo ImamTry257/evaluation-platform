@@ -2,17 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useEvaluation } from '@/hooks/respondent/useEvaluation'
-import { useAuthStore } from '@/stores/auth'
-
-const authStore = useAuthStore()
-const userName = computed(() => authStore.user?.name || 'Responden')
-const userEmail = computed(() => authStore.user?.email || '')
-const showUserMenu = ref(false)
-
-async function handleLogout() {
-  await authStore.logout()
-  router.push('/login')
-}
 
 const route = useRoute()
 const router = useRouter()
@@ -108,30 +97,7 @@ onMounted(() => {
             <span class="hidden md:inline">Hasil</span>
           </span>
         </div>
-        <!-- User Menu -->
-        <div class="relative">
-          <button @click="showUserMenu = !showUserMenu"
-            class="w-9 h-9 rounded-full bg-primary-container/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
-            <span class="material-symbols-outlined text-primary text-[20px]">person</span>
-          </button>
-          <div v-if="showUserMenu"
-            class="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-outline-variant/30 py-1 z-[300]"
-            @click.self="showUserMenu = false">
-            <div class="px-4 py-3 border-b border-outline-variant/30">
-              <p class="font-body-base font-semibold text-on-surface text-sm">{{ userName }}</p>
-              <p class="text-xs text-on-surface-variant">{{ userEmail }}</p>
-            </div>
-            <div class="py-1">
-              <button @click="router.push('/respondent/profile')" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                <span class="material-symbols-outlined text-[18px]">person</span> Profil Saya
-              </button>
-              <div class="my-1 border-t border-outline-variant/30"></div>
-              <button @click="handleLogout" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-error hover:bg-red-50 transition-colors font-medium">
-                <span class="material-symbols-outlined text-[18px]">logout</span> Keluar
-              </button>
-            </div>
-          </div>
-        </div>
+        <div class="w-24"></div>
       </div>
     </div>
 
@@ -162,14 +128,14 @@ onMounted(() => {
         </div>
         <h1 class="font-headline-xl text-headline-xl text-on-surface mb-2 fade-in-delay">Angket Berhasil Diselesaikan</h1>
         <p class="font-body-base text-body-base text-secondary max-w-lg fade-in-delay">
-          Terima kasih telah mengisi. Data Anda telah berhasil tersimpan dalam sistem.
+          Terima kasih telah mengisi instrumen evaluasi. Data Anda telah berhasil tersimpan dalam sistem.
         </p>
       </section>
 
       <!-- Main Summary Grid -->
-      <div class="flex flex-col items-center gap-6 mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
         <!-- Score Card -->
-        <div class="w-full max-w-sm bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col items-center justify-center text-center fade-in-delay-2">
+        <div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col items-center justify-center text-center fade-in-delay-2">
           <div class="relative flex items-center justify-center mb-6">
             <svg class="w-48 h-48">
               <circle class="text-secondary-container" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
@@ -188,25 +154,25 @@ onMounted(() => {
               <span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Persentase</span>
             </div>
           </div>
-          <!-- <div
+          <div
             class="px-6 py-2 rounded-full font-title-md text-title-md inline-flex items-center gap-2 border cursor-default"
             :class="getCategoryColor(overallCategory)"
           >
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stars</span>
             {{ categoryLabel }}
-          </div> -->
+          </div>
         </div>
 
         <!-- Conclusion Card -->
-        <!-- <div class="md:col-span-7 bg-surface-container-low p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col justify-center fade-in-delay-2">
+        <div class="md:col-span-7 bg-surface-container-low p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col justify-center fade-in-delay-2">
           <h3 class="font-headline-lg text-headline-lg text-on-surface mb-6 flex items-center gap-3">
             <span class="material-symbols-outlined text-primary">analytics</span>
-            Kesimpulan Angket
+            Kesimpulan Evaluasi
           </h3>
           <p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
             {{ conclusion }}
           </p>
-        </div> -->
+        </div>
       </div>
 
       <!-- Detailed Breakdown -->
@@ -234,16 +200,14 @@ onMounted(() => {
       </section>
 
       <!-- Footer Actions -->
-      <footer class="flex justify-center border-t border-outline-variant pt-8 fade-in-delay-2">
-        <!--
+      <footer class="flex flex-col md:flex-row items-center justify-center gap-4 border-t border-outline-variant pt-8 fade-in-delay-2">
         <button class="w-full md:w-auto px-8 py-3 bg-primary text-on-primary font-title-md text-title-md rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:-translate-y-0.5">
           <span class="material-symbols-outlined">download</span>
           Unduh PDF
         </button>
-        -->
         <button
           @click="router.push('/respondent')"
-          class="px-8 py-3 text-secondary font-body-base text-body-base flex items-center justify-center gap-2 hover:text-primary transition-colors"
+          class="w-full md:w-auto px-8 py-3 text-secondary font-body-base text-body-base flex items-center justify-center gap-2 hover:text-primary transition-colors"
         >
           <span class="material-symbols-outlined">refresh</span>
           Kembali ke Beranda

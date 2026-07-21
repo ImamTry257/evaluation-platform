@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import api from '@/services/api'
+
+// Loading state
+const loading = ref(true)
+const error = ref<string | null>(null)
 
 // Summary stats
 const stats = ref({
-  totalResponden: 1284,
-  selesai: 856,
-  berjalan: 312,
-  belumMulai: 116,
+  totalResponden: 0,
+  selesai: 0,
+  berjalan: 0,
+  belumMulai: 0,
 })
 
 // Completion percentage
@@ -16,65 +21,39 @@ const completionPercent = computed(() => {
 })
 
 // Weekly progress data
-const weeklyData = ref([
-  { day: 'Sen', value: 45 },
-  { day: 'Sel', value: 60 },
-  { day: 'Rab', value: 75 },
-  { day: 'Kam', value: 55 },
-  { day: 'Jum', value: 90 },
-  { day: 'Sab', value: 30 },
-  { day: 'Min', value: 25 },
-])
+const weeklyData = ref<{ day: string; date: string; value: number }[]>([])
 
 const maxWeeklyValue = computed(() => Math.max(...weeklyData.value.map((d) => d.value)))
 
 // Monitoring table
-const monitoringData = ref([
-  {
-    id: 1,
-    name: 'Andi Wijaya',
-    role: 'Kepala Kurikulum',
-    school: 'SMAN 1 Jakarta',
-    questionCurrent: 18,
-    questionTotal: 20,
-    timeRemaining: '04m 12s',
-    status: 'Aktif',
-    initials: 'AW',
-  },
-  {
-    id: 2,
-    name: 'Siti Aminah',
-    role: 'Koordinator Adiwiyata',
-    school: 'SMPN 5 Bandung',
-    questionCurrent: 5,
-    questionTotal: 20,
-    timeRemaining: '18m 45s',
-    status: 'Idle',
-    initials: 'SA',
-  },
-  {
-    id: 3,
-    name: 'Rina Maharani',
-    role: 'Staf Tata Usaha',
-    school: 'SDN 02 Surabaya',
-    questionCurrent: 20,
-    questionTotal: 20,
-    timeRemaining: 'Selesai',
-    status: 'Selesai',
-    initials: 'RM',
-  },
-  {
-    id: 4,
-    name: 'Bambang Hartono',
-    role: 'Kepala Sekolah',
-    school: 'SMAS Kencana',
-    questionCurrent: 12,
-    questionTotal: 20,
-    timeRemaining: '08m 55s',
-    status: 'Aktif',
-    initials: 'BH',
-  },
-])
+const monitoringData = ref<any[]>([])
+
+// Fetch dashboard data
+async function fetchDashboard() {
+  loading.value = true
+  error.value = null
+  try {
+    const { data } = await api.get('/admin/dashboard')
+    const payload = data.data
+    stats.value = {
+      totalResponden: payload.summary.totalRespondent,
+      selesai: payload.summary.submitted,
+      berjalan: payload.summary.inProgress,
+      belumMulai: payload.summary.notStarted,
+    }
+    weeklyData.value = payload.weeklyProgress || []
+    monitoringData.value = payload.activeSessions || []
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'Gagal memuat data dashboard'
+    console.error('Dashboard fetch error:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchDashboard()
+})
 
 function getProgressPercent(current: number, total: number) {
   return Math.round((current / total) * 100)
@@ -104,6 +83,20 @@ const chartPeriod = ref('7 Hari Terakhir')
 
 <template>
   <div class="p-12 max-w-[1840px] w-full mx-auto">
+    <!-- Loading -->
+    <div v-if="loading" class="flex flex-col items-center justify-center py-20">
+      <span class="material-symbols-outlined text-[48px] text-outline animate-spin">progress_activity</span>
+      <p class="text-body-base text-on-surface-variant mt-4">Memuat data dashboard...</p>
+    </div>
+
+    <!-- Error -->
+    <div v-else-if="error" class="flex flex-col items-center justify-center py-20">
+      <span class="material-symbols-outlined text-[48px] text-error">error</span>
+      <p class="text-body-base text-error mt-4">{{ error }}</p>
+      <button @click="fetchDashboard" class="mt-4 text-primary text-body-sm font-semibold hover:underline">Coba Lagi</button>
+    </div>
+
+    <template v-else>
     <!-- Header -->
     <div class="mb-8 fade-in">
       <h2 class="header-title font-headline-xl font-bold text-headline-xl text-on-surface cursor-default">Monitoring Evaluasi</h2>
@@ -122,7 +115,7 @@ const chartPeriod = ref('7 Hari Terakhir')
         </div>
         <div class="mt-2">
           <span class="text-headline-xl font-bold">{{ stats.totalResponden.toLocaleString() }}</span>
-          <span class="text-xs text-primary font-medium ml-2">+12% minggu ini</span>
+          <span class="text-xs text-on-surface-variant ml-2">dari total responden</span>
         </div>
       </div>
 
@@ -251,6 +244,11 @@ const chartPeriod = ref('7 Hari Terakhir')
             </tr>
           </thead>
           <tbody class="divide-y divide-outline-variant/30">
+            <tr v-if="monitoringData.length === 0 && !loading">
+              <td colspan="7" class="px-6 py-8 text-center text-on-surface-variant">
+                Tidak ada sesi aktif saat ini
+              </td>
+            </tr>
             <tr
               v-for="row in monitoringData"
               :key="row.id"
@@ -259,34 +257,34 @@ const chartPeriod = ref('7 Hari Terakhir')
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" :class="getAvatarColor(row.id)">
-                    {{ row.initials }}
+                    {{ row.userName?.split(' ').map((w: string) => w[0]).join('').substring(0, 2).toUpperCase() }}
                   </div>
                   <div>
-                    <p class="font-body-sm text-body-sm font-medium">{{ row.name }}</p>
-                    <p class="text-[11px] text-on-surface-variant">{{ row.role }}</p>
+                    <p class="font-body-sm text-body-sm font-medium">{{ row.userName }}</p>
+                    <p class="text-[11px] text-on-surface-variant">{{ row.questionnaireTitle }}</p>
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 font-body-sm text-body-sm">{{ row.school }}</td>
-              <td class="px-6 py-4 font-body-sm text-body-sm">Q{{ String(row.questionCurrent).padStart(2, '0') }} / {{ row.questionTotal }}</td>
+              <td class="px-6 py-4 font-body-sm text-body-sm">{{ row.questionnaireTitle }}</td>
+              <td class="px-6 py-4 font-body-sm text-body-sm">Q{{ String(row.answeredCount).padStart(2, '0') }} / {{ row.totalQuestions }}</td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden min-w-[80px]">
                     <div
                       class="bg-primary h-full transition-all duration-400"
-                      :style="{ width: getProgressPercent(row.questionCurrent, row.questionTotal) + '%' }"
+                      :style="{ width: row.progress + '%' }"
                     ></div>
                   </div>
-                  <span class="text-xs font-semibold">{{ getProgressPercent(row.questionCurrent, row.questionTotal) }}%</span>
+                  <span class="text-xs font-semibold">{{ row.progress }}%</span>
                 </div>
               </td>
               <td class="px-6 py-4 font-body-sm text-body-sm">{{ row.timeRemaining }}</td>
               <td class="px-6 py-4">
                 <span
                   class="px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-tighter"
-                  :class="getStatusClass(row.status)"
+                  :class="'bg-primary/10 text-primary'"
                 >
-                  {{ row.status }}
+                  Aktif
                 </span>
               </td>
               <td class="px-6 py-4 text-right">
@@ -308,6 +306,7 @@ const chartPeriod = ref('7 Hari Terakhir')
         </div>
       </div>
     </div>
+    </template>
   </div>
 </template>
 

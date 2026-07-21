@@ -2,6 +2,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEvaluation } from '@/hooks/respondent/useEvaluation'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const userName = computed(() => authStore.user?.name || 'Responden')
+const userEmail = computed(() => authStore.user?.email || '')
 
 const router = useRouter()
 const { loading, error, fetchActiveQuestionnaire, startEvaluation } = useEvaluation()
@@ -9,6 +14,7 @@ const { loading, error, fetchActiveQuestionnaire, startEvaluation } = useEvaluat
 const questionnaire = ref<any>(null)
 const isChecked = ref(false)
 const starting = ref(false)
+const showUserMenu = ref(false)
 
 const infoItems = computed(() => {
   if (!questionnaire.value) return []
@@ -49,6 +55,11 @@ async function handleStartEvaluation() {
   } finally {
     starting.value = false
   }
+}
+
+async function handleLogout() {
+  await authStore.logout()
+  router.push('/login')
 }
 
 onMounted(async () => {
@@ -96,7 +107,30 @@ onMounted(async () => {
               <span class="hidden md:inline">Hasil</span>
             </span>
           </div>
-          <div class="w-24"></div>
+          <!-- User Menu -->
+          <div class="relative">
+            <button @click="showUserMenu = !showUserMenu"
+              class="w-9 h-9 rounded-full bg-primary-container/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
+              <span class="material-symbols-outlined text-primary text-[20px]">person</span>
+            </button>
+            <div v-if="showUserMenu"
+              class="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-outline-variant/30 py-1 z-[300]"
+              @click.self="showUserMenu = false">
+              <div class="px-4 py-3 border-b border-outline-variant/30">
+                <p class="font-body-base font-semibold text-on-surface text-sm">{{ userName }}</p>
+                <p class="text-xs text-on-surface-variant">{{ userEmail }}</p>
+              </div>
+              <div class="py-1">
+                <button @click="router.push('/respondent/profile')" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">person</span> Profil Saya
+                </button>
+                <div class="my-1 border-t border-outline-variant/30"></div>
+                <button @click="handleLogout" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-error hover:bg-red-50 transition-colors font-medium">
+                  <span class="material-symbols-outlined text-[18px]">logout</span> Keluar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

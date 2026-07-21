@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPolicy - Waktu Habis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+"surface-dim":"#d4dcd5","on-background":"#161d19","surface-variant":"#dde4dd",
+"surface-container":"#e8f0e9","tertiary":"#a43a3a","on-surface-variant":"#3c4a42",
+"primary-fixed":"#6ffbbe","inverse-surface":"#2b322d","error":"#ba1a1a",
+"primary-container":"#10b981","on-tertiary":"#ffffff","background":"#f4fbf4",
+"tertiary-container":"#fc7c78","on-surface":"#161d19","surface-tint":"#006c49",
+"secondary":"#5d5f5f","on-primary-container":"#00422b","surface-container-low":"#eef6ee",
+"surface-container-lowest":"#ffffff","on-primary":"#ffffff","primary":"#006c49",
+"on-secondary-container":"#616363","surface-container-highest":"#dde4dd",
+"outline-variant":"#bbcabf","surface-container-high":"#e3eae3","outline":"#6c7a71",
+"secondary-container":"#dfe0e0","surface":"#f4fbf4","on-error":"#ffffff"
+},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},
+spacing:{sm:"0.5rem",md:"1rem",lg:"1.5rem",gutter:"1.5rem",base:"4px",margin:"2rem","2xl":"3rem",xl:"2rem",xs:"0.25rem"},
+fontFamily:{"body-sm":["Poppins"],"headline-xl":["Poppins"],"label-caps":["Poppins"],"headline-lg":["Poppins"],"title-md":["Poppins"],"display-lg":["Poppins"],"body-base":["Poppins"]},
+fontSize:{"body-sm":["14px",{lineHeight:"1.5",fontWeight:"400"}],"headline-xl":["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+"label-caps":["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],"headline-lg":["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+"title-md":["20px",{lineHeight:"1.5",fontWeight:"500"}],"display-lg":["48px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+"body-base":["16px",{lineHeight:"1.6",fontWeight:"400"}]}}}}</script>
+<style>
+body{font-family:'Poppins',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+.radio-dot{width:22px;height:22px;border-radius:50%;border:2px solid #bbcabf;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.selected-cell .radio-dot{border-color:#006c49;background:#006c49;transform:scale(1.15);}
+.selected-cell .radio-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:white;}
+tr.answered{background:rgba(16,185,129,0.06);}
+/* Timeout overlay */
+.timeout-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:fadeIn .4s ease-out;}
+.timeout-card{background:white;border-radius:24px;padding:48px 40px;max-width:460px;width:90%;text-align:center;box-shadow:0 25px 80px rgba(0,0,0,0.25);animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+.timeout-icon{animation:pulse 2s ease-in-out infinite;}
+.clock-ring{animation:clockPulse 1.5s ease-in-out infinite;}
+@keyframes clockPulse{0%,100%{box-shadow:0 0 0 0 rgba(186,26,26,0.3);}50%{box-shadow:0 0 0 16px rgba(186,26,26,0);}}
+.btn-primary{transition:all .3s cubic-bezier(0.175,0.885,0.32,1.275);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,108,73,0.35);}
+.btn-primary:active{transform:scale(0.97);}
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+
+<!-- Simulated Step Header -->
+<div class="fixed top-0 left-0 right-0 z-[200] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+  <div class="max-w-5xl mx-auto px-6 py-2.5 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-2xl">eco</span>
+      <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>
+    </div>
+    <div class="flex items-center gap-0">
+      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">1</span>
+        <span class="hidden md:inline">Penjelasan</span>
+      </span>
+      <div class="w-6 h-px mx-1 bg-outline-variant"></div>
+      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-white text-primary border-white">2</span>
+        <span class="hidden md:inline">Input Angket</span>
+      </span>
+      <div class="w-6 h-px mx-1 bg-outline-variant"></div>
+      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">3</span>
+        <span class="hidden md:inline">Hasil</span>
+      </span>
+    </div>
+    <!-- Timer showing 00:00 in red -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-1.5 text-error">
+        <span class="material-symbols-outlined text-base">timer</span>
+        <span class="font-title-md text-title-md font-bold tabular-nums">00:00</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-primary">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        <span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Simulated Progress Bar -->
+<div class="fixed top-[42px] left-0 right-0 z-[140] bg-surface border-b border-outline-variant/50">
+  <div class="max-w-5xl w-full mx-auto px-6 py-2 flex items-center justify-between">
+    <span class="font-label-caps text-label-caps text-secondary uppercase">Progress</span>
+    <span class="font-label-caps text-label-caps text-primary font-bold">8 dari 20 dijawab</span>
+  </div>
+  <div class="w-full h-1 bg-secondary-container">
+    <div class="bg-primary h-full" style="width:40%"></div>
+  </div>
+</div>
+
+<!-- Simulated Table (dimmed) -->
+<main class="pt-[98px] pb-40 max-w-5xl mx-auto px-6 opacity-30 pointer-events-none select-none">
+  <div class="flex items-center gap-2 mb-4 mt-4">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+      <span class="material-symbols-outlined text-[14px]">folder</span> Kebijakan Struktural
+    </span>
+    <span class="text-body-sm text-on-surface-variant"> — 4 pernyataan</span>
+  </div>
+  <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+    <table class="w-full text-left" style="border-collapse:separate;border-spacing:0;">
+      <thead>
+        <tr class="bg-surface-container-low/60">
+          <th class="px-4 py-3 w-12 text-center font-label-caps text-label-caps text-outline uppercase text-xs">No</th>
+          <th class="px-4 py-3 font-label-caps text-label-caps text-outline uppercase text-xs">Pernyataan</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">1</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">2</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">3</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">4</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">5</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">6</th>
+          <th class="px-2 py-3 text-center font-label-caps text-label-caps text-outline uppercase text-xs" style="width:56px">7</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant/50">
+        <tr class="answered"><td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">1</td><td class="px-4 py-4 text-body-sm text-on-surface">Sekolah memiliki dokumen resmi kebijakan lingkungan</td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center selected-cell p-2"><div class="radio-dot mx-auto"></div></td></tr>
+        <tr><td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">2</td><td class="px-4 py-4 text-body-sm text-on-surface">Kebijakan lingkungan tercantum dalam visi-misi sekolah</td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center selected-cell p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td></tr>
+        <tr><td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">3</td><td class="px-4 py-4 text-body-sm text-on-surface">Sekolah mengimplementasikan monitoring emisi karbon</td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td></tr>
+        <tr><td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">4</td><td class="px-4 py-4 text-body-sm text-on-surface">Sekolah memiliki program penghematan energi</td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td><td class="text-center p-2"><div class="radio-dot mx-auto"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ===== TIMEOUT OVERLAY ===== -->
+<div class="timeout-overlay">
+  <div class="timeout-card">
+    <!-- Icon -->
+    <div class="timeout-icon mx-auto mb-6 w-20 h-20 rounded-full bg-error/10 flex items-center justify-center">
+      <div class="clock-ring w-16 h-16 rounded-full bg-error/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-error text-[36px]">timer_off</span>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Waktu Habis!</h2>
+    <p class="font-body-base text-on-surface-variant mb-6 leading-relaxed">
+      Batas waktu evaluasi telah berakhir. Jawaban yang sudah Anda isi telah <strong>tersimpan otomatis</strong> oleh sistem.
+    </p>
+
+    <!-- Summary Card -->
+    <div class="bg-surface-container-low rounded-xl p-5 mb-6 text-left">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-body-sm text-on-surface-variant">Pertanyaan terjawab</span>
+        <span class="font-title-md text-title-md font-semibold text-on-surface">8 <span class="text-body-sm font-normal text-on-surface-variant">dari 20</span></span>
+      </div>
+      <div class="w-full h-2 bg-secondary-container rounded-full overflow-hidden mb-3">
+        <div class="bg-tertiary h-full rounded-full" style="width:40%"></div>
+      </div>
+      <div class="flex items-center gap-2 text-body-sm">
+        <span class="material-symbols-outlined text-[16px] text-tertiary">info</span>
+        <span class="text-on-surface-variant">Sisa pertanyaan yang belum dijawab tidak akan dihitung dalam perhitungan skor.</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col gap-3">
+      <button class="btn-primary w-full px-8 py-3.5 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">analytics</span>
+        Lihat Hasil Evaluasi
+      </button>
+      <button class="w-full px-8 py-3 rounded-xl border border-outline-variant text-on-surface-variant font-body-base font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">home</span>
+        Kembali ke Beranda
+      </button>
+    </div>
+
+    <!-- Footer note -->
+    <p class="text-body-sm text-outline mt-6">
+      Evaluasi ini akan otomatis di-submit dengan jawaban yang sudah ada.
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

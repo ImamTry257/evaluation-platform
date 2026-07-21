@@ -14,9 +14,14 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const authStore = useAuthStore()
 
-  let token = localStorage.getItem('tokenAdmin')
-  if ( authStore.user?.role != "ADMIN" ) {
-    token = localStorage.getItem("token")
+  let token = null
+  if (authStore.user?.role === 'ADMIN' || authStore.user?.role === 'SUPERADMIN') {
+    token = localStorage.getItem('tokenAdmin')
+  } else if (authStore.user?.role === 'RESPONDENT') {
+    token = localStorage.getItem('tokenRespondent')
+  } else {
+    // Fallback: try both
+    token = localStorage.getItem('tokenAdmin') || localStorage.getItem('tokenRespondent')
   }
   
   if (token) {

@@ -42,7 +42,7 @@ class EvaluasiController extends Controller
 
         $getIndicatorList = [];
         $numbering = 1;
-        $count = 1;
+        $count = 0;
         $indicatorLength = 0;
         foreach($questionnaire->components as $component) {
             foreach($component->subComponents as $subComponent){
@@ -99,7 +99,7 @@ class EvaluasiController extends Controller
 
         $getIndicatorList = [];
         $numbering = 1;
-        $count = 1;
+        $count = 0;
         $indicatorLength = 0;
         foreach($questionnaire->components as $component) {
             foreach($component->subComponents as $subComponent){
@@ -171,22 +171,48 @@ class EvaluasiController extends Controller
             ->find($sessionId);
 
         $getIndicatorList = [];
-        $numbering = 1;
-        $count = 1;
+        $page = 1;
+        $count = 0;
         $indicatorLength = 0;
+        $numbering = 0;
         foreach($session->questionnaire->components as $component) {
             foreach($component->subComponents as $subComponent){
                 foreach($subComponent->indicators as $indicator){
-                    if ( $numbering == $pageId ) {
-                        $getIndicatorList = [
-                            'page'      => $numbering,
-                            'indicator' => $indicator->name,
-                            'statementList' => $indicator->questions
-                        ];
+
+                    if ( $page > 0 ) {
+                        if ( $page < $pageId ) {
+                            $numbering += count($indicator->questions);
+                        }
+
+                        if ( $pageId == 1 ) {
+                            $numbering = 0;
+                        }
                     }
+
+                    if ( $page == $pageId ) {
+                        $getIndicatorList = [
+                            'page'      => $page,
+                            'indicator' => $indicator->name,
+                        ];
+
+                        foreach($indicator->questions as $question) {
+                            $numbering++;
+
+                            $getIndicatorList['statementList'][] = [
+                                "id" => $question->id,
+                                "indicator_id" => $question->indicator_id,
+                                "question_text" => $question->question_text,
+                                "weight" => $question->weight,
+                                "order_number" => $question->order_number,
+                                "is_active" => $question->is_active,
+                                "number" => $numbering
+                            ];
+                        }
+                    }
+
                     $count += count($indicator->questions);
                     $indicatorLength += count($subComponent->indicators);
-                    $numbering++;
+                    $page++;
                 }
             }
         }

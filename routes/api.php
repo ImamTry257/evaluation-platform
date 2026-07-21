@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Admin\ScoringLevelController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\MonitoringController;
 use App\Http\Controllers\Api\Admin\ReportController;
+use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Respondent\EvaluasiController;
 
 Route::prefix('v1')->group(function () {
@@ -64,6 +65,9 @@ Route::prefix('v1')->group(function () {
             // Settings
             Route::get('/settings', [SettingController::class, 'index']);
             Route::put('/settings', [SettingController::class, 'update']);
+
+            // Dashboard
+            Route::get('/dashboard', [DashboardController::class, 'index']);
 
             // Monitoring
             Route::get('/sessions', [MonitoringController::class, 'index']);
