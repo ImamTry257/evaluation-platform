@@ -257,7 +257,8 @@ Get current user profile.
     "name": "Administrator",
     "username": "admin",
     "email": "admin@cbt.com",
-    "role": "ADMIN"
+    "role": "ADMIN",
+    "createdAt": "2024-01-01T10:00:00Z"
   }
 }
 ```
@@ -1003,13 +1004,14 @@ Resume sesi evaluasi yang belum selesai.
 ---
 
 ## Auto Save Answer
-Simpan jawaban otomatis (periodic save).
+Simpan jawaban otomatis dan update sisa waktu (periodic save).
 
 **Endpoint:** `POST /evaluations/{sessionId}/auto-save`
 
 **Request:**
 ```json
 {
+  "remainingSeconds": 2800,
   "answers": [
     {
       "questionId": 1,
@@ -1026,11 +1028,12 @@ Simpan jawaban otomatis (periodic save).
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "message": "Jawaban tersimpan",
+  "status": true,
+  "message": "Auto-save successful",
   "data": {
+    "remainingSeconds": 2800,
     "savedAt": "2024-01-01T10:05:00Z",
-    "answersSaved": 2
+    "savedAnswers": [1, 2]
   }
 }
 ```
@@ -1078,12 +1081,30 @@ Submit sesi evaluasi (final submission).
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "message": "Evaluasi berhasil disubmit",
+  "status": true,
+  "message": "Evaluation submitted successfully",
   "data": {
-    "sessionId": 1,
-    "status": "submitted",
-    "submittedAt": "2024-01-01T10:30:00Z"
+    "result": {
+      "id": 1,
+      "responseSessionId": 1,
+      "overallScore": 5.25,
+      "overallPercentage": 75.0,
+      "overallCategory": "B",
+      "conclusion": "Implementasi kebijakan lingkungan sudah baik...",
+      "createdAt": "2024-01-01T10:30:00Z",
+      "updatedAt": "2024-01-01T10:30:00Z",
+      "details": [
+        {
+          "id": 1,
+          "evaluationResultId": 1,
+          "indicatorId": 1,
+          "score": 6.5,
+          "percentage": 92.86,
+          "category": "A",
+          "recommendation": "Pertahankan implementasi saat ini..."
+        }
+      ]
+    }
   }
 }
 ```
@@ -1102,33 +1123,31 @@ Evaluation dihitung per Indicator dengan kategori A-E berdasarkan Standar Baku I
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Results retrieved successfully",
   "data": {
-    "evaluationResultId": 1,
-    "sessionId": 1,
-    "overallScore": 312.5,
-    "overallPercentage": 75.5,
-    "overallCategory": "B",
-    "conclusion": "Implementasi kebijakan lingkungan sudah baik...",
-    "submittedAt": "2024-01-01T10:30:00Z",
-    "indicatorResults": [
-      {
-        "indicatorId": 1,
-        "indicatorName": "Keberadaan organisasi, struktur dan tugas",
-        "score": 6.5,
-        "percentage": 92.86,
-        "category": "A",
-        "recommendation": "Pertahankan implementasi saat ini..."
-      },
-      {
-        "indicatorId": 2,
-        "indicatorName": "Peran dan fungsi organisasi",
-        "score": 5.2,
-        "percentage": 74.29,
-        "category": "B",
-        "recommendation": "Tingkatkan keterlibatan organisasi dalam..."
-      }
-    ]
+    "result": {
+      "id": 1,
+      "responseSessionId": 1,
+      "overallScore": 5.25,
+      "overallPercentage": 75.0,
+      "overallCategory": "B",
+      "conclusion": "Implementasi kebijakan lingkungan sudah baik...",
+      "createdAt": "2024-01-01T10:30:00Z",
+      "updatedAt": "2024-01-01T10:30:00Z",
+      "details": [
+        {
+          "id": 1,
+          "evaluationResultId": 1,
+          "indicatorId": 1,
+          "indicatorName": "Keberadaan organisasi, struktur dan tugas",
+          "score": 6.5,
+          "percentage": 92.86,
+          "category": "A",
+          "recommendation": "Pertahankan implementasi saat ini..."
+        }
+      ]
+    }
   }
 }
 ```

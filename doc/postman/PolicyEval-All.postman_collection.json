@@ -83,7 +83,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('\u2705 Registration successful! Token saved.');",
+                      "        console.log('✅ Registration successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -219,14 +219,14 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('\u2705 Token saved successfully!');",
+                      "        console.log('✅ Token saved successfully!');",
                       "        console.log('Token: ' + token.substring(0, 20) + '...');",
                       "        console.log('User: ' + response.data.user.name + ' (' + response.data.user.role + ')');",
                       "    } else {",
-                      "        console.log('\u26a0\ufe0f Login response missing token');",
+                      "        console.log('⚠️ Login response missing token');",
                       "    }",
                       "} else {",
-                      "    console.log('\u274c Login failed with status: ' + pm.response.code);",
+                      "    console.log('❌ Login failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -355,7 +355,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('\u2705 Admin Login successful! Token saved.');",
+                      "        console.log('✅ Admin Login successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -442,12 +442,12 @@
                       "        pm.collectionVariables.unset('userName');",
                       "        pm.collectionVariables.unset('userRole');",
                       "        ",
-                      "        console.log('\u2705 Logged out successfully. Token cleared.');",
+                      "        console.log('✅ Logged out successfully. Token cleared.');",
                       "    } else {",
-                      "        console.log('\u26a0\ufe0f Logout response unexpected');",
+                      "        console.log('⚠️ Logout response unexpected');",
                       "    }",
                       "} else {",
-                      "    console.log('\u274c Logout failed with status: ' + pm.response.code);",
+                      "    console.log('❌ Logout failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -494,7 +494,7 @@
                   "name": "Profile Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"username\": \"admin\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\"\n  }\n}"
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"username\": \"admin\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\",\n    \"createdAt\": \"2024-01-01T10:00:00Z\"\n  }\n}"
                 }
               ]
             }
