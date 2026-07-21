@@ -22,16 +22,44 @@ const showResetModal = ref(false)
 const submitting = ref(false)
 const toastMsg = ref('')
 const toastVisible = ref(false)
+const currentPage = ref<any>(pageId.value)
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 
 // Timer
 const timeLeft = ref(0)
 let timerInterval: ReturnType<typeof setInterval> | null = null
+let saveInterval: ReturnType<typeof setInterval> | null = null
+const localStorageKey = computed(() => `eval_timer_${sessionId.value}`)
+
 const countdown = computed(() => {
   const m = Math.floor(timeLeft.value / 60)
   const s = timeLeft.value % 60
   return `${m}:${s < 10 ? '0' : ''}${s}`
 })
+
+// localStorage helpers
+function saveTimerToLocal() {
+  if (!sessionId.value || timeLeft.value <= 0) return
+  const data = { remainingSeconds: timeLeft.value, savedAt: Date.now() }
+  localStorage.setItem(localStorageKey.value, JSON.stringify(data))
+}
+
+function loadTimerFromLocal(): number | null {
+  try {
+    const raw = localStorage.getItem(localStorageKey.value)
+    if (!raw) return null
+    const data = JSON.parse(raw)
+    const elapsed = Math.floor((Date.now() - data.savedAt) / 1000)
+    const remaining = data.remainingSeconds - elapsed
+    return remaining > 0 ? remaining : 0
+  } catch {
+    return null
+  }
+}
+
+function clearTimerLocal() {
+  localStorage.removeItem(localStorageKey.value)
+}
 
 // Components
 const components = computed(() => questionnaire.value?.components || [])
@@ -52,11 +80,19 @@ function goToComp(i: number) {
     router.push(`/respondent/evaluation/${sessionId.value}/component/${i + 1}`)
   }
 }
-function nextComp() {
-  if (!isLastComp.value) goToComp(compPage.value + 1)
+async function nextComp() {
+  router.push(`/respondent/evaluation/${sessionId.value}/component/${Number(route.params.compIndex) + 1}`)
+
+  currentPage.value = Number(route.params.compIndex) + 1
+
+  await fetchSession()
 }
-function prevComp() {
-  if (compPage.value > 0) goToComp(compPage.value - 1)
+async function prevComp() {
+  if (pageId.value > 0) router.push(`/respondent/evaluation/${sessionId.value}/component/${Number(route.params.compIndex) - 1}`)
+
+  currentPage.value = Number(route.params.compIndex) - 1
+
+  await fetchSession()
 }
 
 // Answer
@@ -84,6 +120,7 @@ async function confirmSubmit() {
   submitting.value = true
   try {
     await submitEvaluation(sessionId.value)
+    clearTimerLocal()
     showSubmitModal.value = false
     router.push(`/respondent/result/${sessionId.value}`)
   } catch (err) { /* Error handled by hook */ } finally {
@@ -97,36 +134,72 @@ function closeResetModal() { showResetModal.value = false }
 function confirmReset() {
   showResetModal.value = false
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
+  if (saveInterval) { clearInterval(saveInterval); saveInterval = null }
+  clearTimerLocal()
   router.push('/respondent')
 }
 
 // Timer
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval)
+  // Tick every second
   timerInterval = setInterval(() => {
-    if (timeLeft.value > 0) timeLeft.value--
+    if (timeLeft.value > 0) {
+      timeLeft.value--
+    } else {
+      // Timer expired
+      clearTimerLocal()
+      if (timerInterval) clearInterval(timerInterval)
+    }
   }, 1000)
+  // Save to localStorage every 5 seconds
+  if (saveInterval) clearInterval(saveInterval)
+  saveInterval = setInterval(() => {
+    saveTimerToLocal()
+  }, 5000)
+  // Auto-save to backend every 30 seconds
+  setInterval(async () => {
+    if (timeLeft.value > 0 && sessionId.value) {
+      try {
+        const { autoSave } = useEvaluation()
+        await autoSave(sessionId.value, timeLeft.value)
+      } catch { /* silently fail */ }
+    }
+  }, 30000)
 }
 
 // Fetch session data
 async function fetchSession() {
   if (!sessionId.value) return
   try {
-    const { data } = await api.get(`/evaluations/${sessionId.value}/component/${pageId.value}`)
+    const { data } = await api.get(`/evaluations/${sessionId.value}/component/${currentPage.value}`)
     const payload = data.data
     session.value = payload.session
     questionnaire.value = payload.session.evaluation
     statements.value = payload.session.statements
 
     // Pre-fill answers
-    console.log(statements.value)
     if (questionnaire.value?.answers) {
       for (const a of questionnaire.value.answers) {
         answers.value[a.questionId] = a.score
       }
     }
 
-    timeLeft.value = session.value?.remainingSeconds || (questionnaire.value?.durationMinutes || 20) * 60
+    // Timer: prioritize localStorage, fallback to API, then duration
+    const backendRemaining = session.value?.remainingSeconds || (questionnaire.value?.questionnaire?.durationMinutes || 20) * 60
+    const localRemaining = loadTimerFromLocal()
+
+    if (localRemaining !== null) {
+      // Use localStorage value (calculated with elapsed time)
+      // But if localStorage value is MORE than backend, someone tampered — use backend
+      timeLeft.value = Math.min(localRemaining, backendRemaining)
+    } else {
+      // First load or localStorage expired — use backend value
+      timeLeft.value = backendRemaining
+    }
+
+    // Save initial state to localStorage
+    saveTimerToLocal()
     startTimer()
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Sesi evaluasi tidak ditemukan atau bukan milik Anda'
@@ -138,7 +211,9 @@ onMounted(() => { fetchSession() })
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
+  if (saveInterval) clearInterval(saveInterval)
   if (toastTimer) clearTimeout(toastTimer)
+  saveTimerToLocal()
 })
 </script>
 
@@ -240,7 +315,7 @@ onUnmounted(() => {
                 <tbody class="divide-y divide-outline-variant/50">
                   <tr v-for="(q, qi) in statements?.statementList" :key="q.id"
                     :class="{ 'answered': answers[q.id] }" class="transition-colors hover:bg-primary/[0.03]">
-                    <td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">{{ qi + 1 }}</td>
+                    <td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">{{ q.number }}</td>
                     <td class="px-4 py-4 text-body-sm text-on-surface leading-relaxed">{{ q.question_text }}</td>
                     <td v-for="s in 7" :key="s"
                       class="text-center cursor-pointer transition-all duration-200 p-2"
@@ -258,16 +333,16 @@ onUnmounted(() => {
         <!-- Prev / Next / Submit -->
         <div class="mt-8 flex items-center justify-between">
           <button v-if="pageId != 1" @click="prevComp"
-            class="flex items-center gap-2 px-6 py-3 rounded-xl font-title-md text-title-md text-secondary border border-outline-variant hover:bg-surface-container transition-all">
+            class="flex items-center gap-2 px-6 py-3 rounded-xl font-title-md text-title-md bg-tertiary/50 text-white border border-outline-variant hover:bg-tertiary transition-all">
             <span class="material-symbols-outlined">arrow_back</span> Sebelumnya
           </button>
           <div v-else></div>
-          <button v-if="!isLastComp" @click="nextComp"
-            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary text-on-primary shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5">
+          <button v-if="statements.indicatorLength != currentPage" @click="nextComp"
+            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary/50 text-on-primary shadow-lg shadow-primary/20 transition-all hover:bg-primary">
             Selanjutnya <span class="material-symbols-outlined">arrow_forward</span>
           </button>
           <button v-else @click="showSubmitModalFn"
-            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-tertiary text-on-tertiary shadow-lg shadow-tertiary/20 transition-all hover:shadow-xl hover:-translate-y-0.5">
+            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary-container text-white shadow-lg shadow-tertiary/20 transition-all hover:shadow-xl">
             Submit <span class="material-symbols-outlined">send</span>
           </button>
         </div>
