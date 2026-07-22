@@ -143,6 +143,14 @@ const navGroups = computed(() => {
       <!-- Top Navigation Bar -->
       <header class="sticky top-0 w-full h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-lg z-40">
         <div class="flex items-center gap-4 flex-1">
+          <RouterLink to="/admin" class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
+              <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1; font-size: 22px;">eco</span>
+            </div>
+            <div class="hidden sm:block">
+              <h1 class="text-lg font-bold text-primary leading-none">PolicyEval</h1>
+            </div>
+          </RouterLink>
         </div>
         <div class="flex items-center gap-4">
           <!-- User Menu Dropdown -->
