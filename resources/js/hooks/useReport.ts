@@ -71,13 +71,21 @@ export function useReport() {
     loading.value = true
     error.value = null
     try {
-      const { data } = await api.post('/admin/reports/export-excel', filters, {
+      const response = await api.post('/admin/reports/export-excel', filters, {
         responseType: 'blob',
       })
+      const { data, headers } = response
       const url = window.URL.createObjectURL(new Blob([data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', 'laporan-evaluasi.csv')
+      // Extract filename from Content-Disposition header, fallback to dynamic name
+      const disposition = headers?.['content-disposition']
+      let filename = 'laporan-evaluasi.csv'
+      if (disposition) {
+        const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?(.+?)["']?(?:;|$)/i)
+        if (match) filename = match[1]
+      }
+      link.setAttribute('download', filename)
       document.body.appendChild(link)
       link.click()
       link.remove()

@@ -232,7 +232,15 @@ class ReportController extends Controller
             return $this->errorResponse('No data to export', 404);
         }
 
-            $filename = 'laporan-evaluasi-' . now()->format('YmdHis') . '.csv';
+        // Build descriptive filename
+        $filename = 'laporan-evaluasi';
+        if ($request->has('questionnaireId') && $request->questionnaireId) {
+            $firstSession = $sessions->first();
+            $questionnaireTitle = $firstSession?->questionnaire?->title ?? '';
+            $safeTitle = preg_replace('/[^a-zA-Z0-9\-\_]/', '_', $questionnaireTitle);
+            $filename .= '-' . $safeTitle;
+        }
+        $filename .= '-' . now()->format('YmdHis') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
