@@ -1,0 +1,84 @@
+services:
+  app:
+    build: .
+    container_name: instruments_evaluation_app
+    ports:
+      - "8831:8989"
+
+    volumes:
+      - ./.env:/app/.env
+      - ./storage/app/public:/app/storage/app/public
+
+    env_file:
+      - .env
+
+    networks:
+      - mysql_default
+
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit((int) (@fsockopen(\"127.0.0.1\", 8989) === false));'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+    command: >
+      sh -c '
+      until php -r "
+        new PDO(
+          \"mysql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}\",
+          \"${DB_USERNAME}\",
+          \"${DB_PASSWORD}\"
+        );
+      " >/dev/null 2>&1; do
+        echo Waiting for MySQL...
+        sleep 2
+      done
+
+      php artisan key:generate --force &&
+      php artisan migrate --force &&
+      php artisan db:seed --force &&
+      php artisan storage:link &&
+      php artisan serve --host=0.0.0.0 --port=8989
+      '
+
+  queue:
+    build: .
+
+    container_name: instruments_evaluation_queue
+
+    volumes:
+      - ./.env:/app/.env
+      - ./storage/app/public:/app/storage/app/public
+
+    env_file:
+      - .env
+
+    networks:
+      - mysql_default
+
+    restart: unless-stopped
+
+    depends_on:
+      app:
+        condition: service_healthy
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Waiting application..."
+
+        until php -r 'exit((int) (@fsockopen("app", 8989) === false));'; do
+          echo "Waiting for app to become reachable..."
+          sleep 2
+        done
+
+        php artisan queue:work \
+          --tries=3 \
+          --timeout=300 \
+          --sleep=3
+
+networks:
+  mysql_default:
+    external: true

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoPolicy – Evaluasi Kebijakan Lingkungan Sekolah</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#106c49;--primary-light:#e8f5ee;--primary-dark:#0a4d33;--accent:#2ecc71;--surface:#ffffff;--surface-variant:#f5f7f5;--on-surface:#1a1c1a;--on-surface-variant:#414941;--outline:#c3c9c3;--error:#ba1a1a;--error-light:#fdecea;--warning:#e8a317;--warning-light:#fff8e1;--success:#106c49;--success-light:#e8f5ee;--radius:12px;--radius-lg:16px;--radius-xl:24px;--shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 2px 8px rgba(0,0,0,.1);--shadow-lg:0 8px 24px rgba(0,0,0,.15);--transition:all .3s cubic-bezier(.4,0,.2,1)}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f0f2f0;color:var(--on-surface);line-height:1.6;min-height:100vh;overflow-x:hidden}
+.screen{display:none;opacity:0;transition:opacity .3s ease;min-height:100vh;position:relative}
+.screen.active{display:flex;flex-direction:column;opacity:1}
+.material-symbols-outlined{font-size:20px;vertical-align:middle}
+/* === TOAST === */
+.toast-container{position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{pointer-events:auto;background:var(--surface);border-radius:var(--radius);padding:12px 20px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;transform:translateX(120%);transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;max-width:360px;border-left:4px solid var(--primary)}
+.toast.show{transform:translateX(0);opacity:1}
+.toast.error{border-left-color:var(--error)}
+.toast.warning{border-left-color:var(--warning)}
+.toast.success{border-left-color:var(--success)}
+.toast .material-symbols-outlined{font-size:20px;flex-shrink:0}
+.toast.success .material-symbols-outlined{color:var(--success)}
+.toast.error .material-symbols-outlined{color:var(--error)}
+.toast.warning .material-symbols-outlined{color:var(--warning)}
+/* === HEADER === */
+.app-header{position:fixed;top:0;left:0;right:0;height:64px;background:var(--primary);display:flex;align-items:center;padding:0 16px;z-index:100;color:#fff;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+.header-logo{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700;letter-spacing:-.3px}
+.header-logo .eco-icon{width:32px;height:32px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:18px;font-weight:800}
+.step-indicator{display:flex;align-items:center;gap:6px;margin-left:auto;margin-right:16px}
+.step{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.5;padding:4px 10px;border-radius:20px;cursor:default;transition:var(--transition);white-space:nowrap}
+.step.active{opacity:1;background:rgba(255,255,255,.2);font-weight:600}
+.step.clickable{cursor:pointer;opacity:.7}
+.step.clickable:hover{opacity:1;background:rgba(255,255,255,.15)}
+.step-num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.step.active .step-num{background:#fff;color:var(--primary)}
+.header-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.header-timer{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.header-timer .material-symbols-outlined{font-size:16px}
+.header-timer.warning{background:rgba(255,165,0,.3);animation:pulse-timer .5s infinite alternate}
+.header-timer.danger{background:rgba(220,50,50,.5);animation:pulse-timer .3s infinite alternate}
+@keyframes pulse-timer{from{opacity:.7}to{opacity:1}}
+.save-badge{background:rgba(255,255,255,.2);padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:4px;opacity:0;transition:opacity .3s}
+.save-badge.show{opacity:1}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:14px;transition:var(--transition);position:relative}
+.user-avatar:hover{background:rgba(255,255,255,.3)}
+.user-menu{position:absolute;top:44px;right:0;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-lg);min-width:180px;overflow:hidden;display:none;z-index:110}
+.user-menu.show{display:block}
+.user-menu-item{padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--on-surface);cursor:pointer;transition:background .2s}
+.user-menu-item:hover{background:var(--surface-variant)}
+.user-menu-item .material-symbols-outlined{color:var(--on-surface-variant);font-size:18px}
+.user-menu-divider{height:1px;background:var(--outline);margin:0 8px}
+/* === LOGIN === */
+.login-screen{background:linear-gradient(135deg,#e8f5ee 0%,#f0f2f0 100%);justify-content:center;align-items:center;padding:20px}
+.login-card{background:var(--surface);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);padding:40px 32px;width:100%;max-width:400px}
+.login-header{text-align:center;margin-bottom:32px}
+.login-logo{width:56px;height:56px;border-radius:16px;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin-bottom:12px}
+.login-title{font-size:22px;font-weight:700;color:var(--on-surface);margin-bottom:4px}
+.login-subtitle{font-size:14px;color:var(--on-surface-variant)}
+.form-group{margin-bottom:20px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--on-surface-variant);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;padding:12px 14px;border:2px solid var(--outline);border-radius:var(--radius);font-size:15px;font-family:inherit;transition:var(--transition);background:var(--surface);color:var(--on-surface);outline:none}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,108,73,.12)}
+.form-input.error{border-color:var(--error)}
+.form-error{font-size:12px;color:var(--error);margin-top:4px;display:none}
+.form-error.show{display:block}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:var(--radius);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:var(--transition);text-decoration:none}
+.btn-primary{background:var(--primary);color:#fff;width:100%;padding:14px 24px;font-size:15px}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:var(--shadow)}
+.btn-primary:disabled{background:var(--outline);color:var(--on-surface-variant);cursor:not-allowed;box-shadow:none}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--primary-light)}
+.btn-text{background:transparent;color:var(--primary);padding:8px 16px}
+.btn-text:hover{background:var(--primary-light)}
+.btn-danger{background:var(--error);color:#fff}
+.btn-danger:hover{background:#9a1515}
+.btn-group{display:flex;gap:12px;margin-top:24px}
+.btn-group .btn{flex:1}
+.login-demo{margin-top:28px;padding-top:24px;border-top:1px solid var(--outline)}
+.login-demo-title{font-size:12px;color:var(--on-surface-variant);text-align:center;margin-bottom:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.login-demo-btn{width:100%;padding:10px 16px;border:2px dashed var(--outline);border-radius:var(--radius);background:var(--surface-variant);font-size:13px;font-weight:500;color:var(--on-surface-variant);cursor:pointer;transition:var(--transition);font-family:inherit;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.login-demo-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.login-demo-btn .material-symbols-outlined{font-size:18px}
+/* === EXPLANATION === */
+.explanation-screen{background:var(--surface-variant);padding-top:64px;padding-bottom:100px}
+.explanation-content{max-width:800px;margin:0 auto;padding:24px 16px}
+.info-card{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;margin-bottom:16px;border:1px solid rgba(0,0,0,.04)}
+.info-card h3{font-size:17px;font-weight:700;color:var(--on-surface);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.info-card h3 .material-symbols-outlined{color:var(--primary);font-size:22px}
+.info-card p{font-size:14px;color:var(--on-surface-variant);line-height:1.7}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
+.info-item{background:var(--primary-light);border-radius:var(--radius);padding:16px;text-align:center}
+.info-item .value{font-size:22px;font-weight:700;color:var(--primary);margin-bottom:2px}
+.info-item .label{font-size:12px;color:var(--on-surface-variant);font-weight:500}
+.likert-scale{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.likert-item{flex:1;min-width:60px;text-align:center;padding:10px 6px;border-radius:var(--radius);background:var(--surface-variant);border:1px solid var(--outline);font-size:13px;transition:var(--transition)}
+.likert-item:hover{border-color:var(--primary);background:var(--primary-light)}
+.likert-item .num{font-size:18px;font-weight:700;color:var(--primary);display:block;margin-bottom:2px}
+.explanation-footer{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--outline);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:16px;z-index:90;box-shadow:0 -2px 8px rgba(0,0,0,.05)}
+.checkbox-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--on-surface-variant)}
+.checkbox-wrap input{width:18px;height:18px;accent-color:var(--primary);cursor:pointer}
+/* === LOADING === */
+.loading-screen{background:var(--surface-variant);justify-content:center;align-items:center;padding-top:64px}
+.loading-content{text-align:center}
+.spinner{width:56px;height:56px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:16px;font-weight:500;color:var(--on-surface-variant);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+/* === INPUT ANGKET === */
+.angket-screen{background:var(--surface-variant);padding-top:64px;padding-bottom:20px}
+.angket-content{max-width:900px;margin:0 auto;padding:16px}
+.progress-section{background:var(--surface);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.progress-text{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:8px;color:var(--on-surface-variant)}
+.progress-text span:last-child{color:var(--primary)}
+.progress-bar-track{height:8px;background:var(--surface-variant);border-radius:4px;overflow:hidden;border:1px solid var(--outline)}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1);min-width:0}
+.component-dots{display:flex;justify-content:center;gap:12px;margin-bottom:16px}
+.dot{width:40px;height:8px;border-radius:4px;background:var(--outline);transition:var(--transition);cursor:pointer}
+.dot.active{background:var(--primary);width:56px}
+.dot.completed{background:var(--accent)}
+.component-header{background:var(--primary);color:#fff;border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:16px 20px;display:flex;align-items:center;gap:12px}
+.component-header .comp-num{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.component-header .comp-info h4{font-size:15px;font-weight:600;margin-bottom:2px}
+.component-header .comp-info span{font-size:12px;opacity:.8}
+.angket-table-wrap{background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);box-shadow:var(--shadow-sm);overflow-x:auto;border:1px solid rgba(0,0,0,.04);border-top:none}
+.angket-table{width:100%;border-collapse:collapse;min-width:600px}
+.angket-table th{background:var(--surface-variant);padding:12px 8px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--on-surface-variant);border-bottom:2px solid var(--outline);white-space:nowrap}
+.angket-table th:first-child{width:40px;text-align:center}
+.angket-table th:nth-child(2){text-align:left;padding-left:16px;min-width:200px}
+.angket-table td{padding:14px 8px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:middle;text-align:center;font-size:14px}
+.angket-table td:first-child{font-weight:600;color:var(--on-surface-variant);width:40px;text-align:center}
+.angket-table td:nth-child(2){text-align:left;padding-left:16px;font-weight:500;color:var(--on-surface)}
+.angket-table tr:last-child td{border-bottom:none}
+.angket-table tr:hover{background:var(--primary-light)}
+.likert-radio{width:22px;height:22px;accent-color:var(--primary);cursor:pointer;border-radius:50%}
+.likert-radio:checked{background-color:var(--primary)}
+.cell-selected{background:var(--primary-light) !important;border-radius:4px}
+.angket-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.nav-info{font-size:13px;color:var(--on-surface-variant)}
+/* === MODALS === */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;justify-content:center;align-items:center;padding:20px;opacity:0;transition:opacity .3s}
+.modal-overlay.show{display:flex;opacity:1}
+.modal{background:var(--surface);border-radius:var(--radius-xl);padding:32px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);transform:scale(.9);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.modal-overlay.show .modal{transform:scale(1)}
+.modal-icon{text-align:center;margin-bottom:16px}
+.modal-icon .material-symbols-outlined{font-size:48px}
+.modal-title{text-align:center;font-size:20px;font-weight:700;margin-bottom:8px}
+.modal-desc{text-align:center;font-size:14px;color:var(--on-surface-variant);margin-bottom:8px;line-height:1.6}
+.modal-stats{text-align:center;padding:16px;background:var(--surface-variant);border-radius:var(--radius);margin:16px 0}
+.modal-stats .stat-num{font-size:28px;font-weight:700;color:var(--primary)}
+.modal-stats .stat-label{font-size:13px;color:var(--on-surface-variant)}
+.modal-actions{display:flex;gap:12px;margin-top:24px}
+.modal-actions .btn{flex:1}
+.timeout-icon .material-symbols-outlined{color:var(--error);font-size:56px;animation:pulse-icon 1s infinite alternate}
+@keyframes pulse-icon{from{transform:scale(1);opacity:.7}to{transform:scale(1.1);opacity:1}}
+/* === RESULT === */
+.result-screen{background:var(--surface-variant);padding-top:64px;padding-bottom:40px}
+.result-content{max-width:700px;margin:0 auto;padding:24px 16px}
+.result-hero{text-align:center;padding:40px 24px;background:linear-gradient(135deg,var(--primary),#2ecc71);border-radius:var(--radius-xl);color:#fff;margin-bottom:24px;box-shadow:0 8px 32px rgba(16,108,73,.3)}
+.result-icon-wrap{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative}
+.result-icon-wrap .material-symbols-outlined{font-size:36px}
+.result-hero h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.result-hero p{font-size:14px;opacity:.85}
+.score-ring{width:140px;height:140px;margin:24px auto 0}
+.score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-ring .bg{fill:none;stroke:rgba(255,255,255,.2);stroke-width:10}
+.score-ring .fg{fill:none;stroke:#fff;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)}
+.score-text{font-size:32px;font-weight:800}
+.score-label{font-size:13px;opacity:.8}
+.component-results{margin-top:24px}
+.result-card{background:var(--surface);border-radius:var(--radius-lg);padding:20px;margin-bottom:12px;box-shadow:var(--shadow-sm);border:1px solid rgba(0,0,0,.04)}
+.result-card h4{font-size:14px;font-weight:600;color:var(--on-surface);margin-bottom:2px}
+.result-card .indicator{font-size:12px;color:var(--on-surface-variant);margin-bottom:12px;display:flex;align-items:center;gap:4px}
+.result-card .indicator .material-symbols-outlined{font-size:14px}
+.result-bar-row{display:flex;align-items:center;gap:12px}
+.result-bar-track{flex:1;height:10px;background:var(--surface-variant);border-radius:5px;overflow:hidden}
+.result-bar-fill{height:100%;border-radius:5px;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+.result-pct{font-size:16px;font-weight:700;min-width:48px;text-align:right}
+.result-footer{text-align:center;margin-top:24px}
+/* === TC PANEL === */
+.tc-panel-toggle{position:fixed;bottom:20px;left:20px;z-index:1000;background:var(--primary);color:#fff;width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;transition:var(--transition);font-size:14px;font-weight:700}
+.tc-panel-toggle:hover{transform:scale(1.1);background:var(--primary-dark)}
+.tc-panel{position:fixed;bottom:76px;left:20px;z-index:1000;background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:320px;max-height:400px;overflow:hidden;display:none;flex-direction:column;border:1px solid var(--outline)}
+.tc-panel.show{display:flex}
+.tc-panel-header{padding:14px 16px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tc-panel-header button{background:none;border:none;color:#fff;cursor:pointer;font-size:18px;padding:2px}
+.tc-panel-body{overflow-y:auto;flex:1;padding:8px 0}
+.tc-item{padding:8px 16px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:default;transition:background .2s;border-left:3px solid transparent}
+.tc-item.active{background:var(--primary-light);border-left-color:var(--primary);font-weight:600}
+.tc-item .tc-id{font-weight:700;color:var(--primary);min-width:42px}
+.tc-item .tc-desc{color:var(--on-surface-variant)}
+.tc-item.active .tc-desc{color:var(--on-surface)}
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .step-indicator{display:none}
+  .header-logo{font-size:15px}
+  .explanation-content,.angket-content,.result-content{padding:16px 12px}
+  .info-grid{grid-template-columns:repeat(2,1fr)}
+  .likert-scale{gap:4px}
+  .likert-item{min-width:42px;padding:8px 4px;font-size:11px}
+  .likert-item .num{font-size:14px}
+  .modal{padding:24px 20px;margin:16px}
+  .tc-panel{width:calc(100vw - 40px);left:20px}
+  .result-hero{padding:28px 16px}
+  .score-ring{width:120px;height:120px}
+}
+</style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ====== SCREEN 1: LOGIN ====== -->
+<div class="screen login-screen active" id="screenLogin">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">EP</div>
+      <div class="login-title">EcoPolicy</div>
+      <div class="login-subtitle">Evaluasi Kebijakan Lingkungan Sekolah</div>
+    </div>
+    <form id="loginForm" onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="loginUsername" type="text" placeholder="Masukkan username" autocomplete="off">
+        <div class="form-error" id="usernameError">Username tidak boleh kosong</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="loginPassword" type="password" placeholder="Masukkan password">
+        <div class="form-error" id="passwordError">Password tidak boleh kosong</div>
+      </div>
+      <div class="form-error" id="loginError" style="text-align:center;margin-bottom:12px">Username atau password salah</div>
+      <button class="btn btn-primary" type="submit" onclick="handleLogin()">Masuk</button>
+    </form>
+    <div class="login-demo">
+      <div class="login-demo-title">Demo Akses</div>
+      <button class="login-demo-btn" onclick="demoRespondentLogin()">
+        <span class="material-symbols-outlined">person</span>
+        Login sebagai Responden
+      </button>
+      <button class="login-demo-btn" onclick="demoAdminLogin()">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+        Login sebagai Admin (Ditolak)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SCREEN 2: EXPLANATION ====== -->
+<div class="screen explanation-screen" id="screenExplanation">
+  <header class="app-header">
+    <div class="header-logo">
+      <div class="eco-icon">EP</div>
+      EcoPolicy
+    </div>
+    <div class="step-indicator" id="stepsExplanation">
+      <div class="step active"><span class="step-num">1</span> Penjelasan</div>
+      <div class="step"><span class="step-num">2</span> Input Angket</div>
+      <div class="step"><span class="step-num">3</span> Hasil</div>
+    </div>
+    <div class="header-right">
+      <div class="user-avatar" id="avatarExplanation" onclick="toggleMenu('menuExplanation')">R</div>
+      <div class="user-menu" id="menuExplanation">
+        <div class="user-menu-item"><span class="material-symbols-outlined">person</span> Responden</div>
+        <div class="user-menu-divider"></div>
+        <div class="user-menu-item" onclick="handleLogout()"><span class="material-symbols-outlined">logout</span> Keluar</div>
+      </div>
+    </div>
+  </header>
+  <div class="explanation-content">
+    <div class="info-card">
+      <h3><span class="material-symbols-outlined">info</span> Tentang Platform</h3>
+      <p>EcoPolicy adalah platform evaluasi kebijakan lingkungan sekolah yang dirancang untuk mengukur tingkat kepedulian dan keberlanjutan program lingkungan di institusi pendidikan. Kuesioner ini membantu mengidentifikasi area yang perlu ditingkatkan dalam pengelolaan lingkungan sekolah.</p>
+    </div>
+    <div class="info-card">
+      <h3><span class="material-symbols-outlined">grid_view</span> Informasi Kuesioner</h3>
+      <div class="info-grid">
+        <div class="info-item"><div class="value">2025</div><div class="label">Periode</div></div>
+        <div class="info-item"><div class="value">3</div><div class="label">Komponen</div></div>
+        <div class="info-item"><div class="value">10</div><div class="label">Pertanyaan</div></div>
+        <div class="info-item"><div class="value">20m</div><div class="label">Estimasi Waktu</div></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3><span class="material-symbols-outlined">menu_book</span> Instruksi Pengisian</h3>
+      <p>1. Bacalah setiap pernyataan dengan cermat sebelum menjawab.<br>
+      2. Pilihlah skala yang paling sesuai dengan kondisi sekolah Anda.<br>
+      3. Pastikan semua pertanyaan telah dijawab sebelum mengirimkan jawaban.<br>
+      4. Jawaban Anda bersifat rahasia dan hanya digunakan untuk keperluan evaluasi.<br>
+      5. Waktu pengerjaan dibatasi selama 20 menit.</p>
+    </div>
+    <div class="info-card">
+      <h3><span class="material-symbols-outlined">format_list_numbered</span> Skala Likert 1 – 7</h3>
+      <p style="margin-bottom:12px">Pilih angka yang paling menggambarkan kondisi di sekolah Anda:</p>
+      <div class="likert-scale">
+        <div class="likert-item"><span class="num">1</span>Sangat Tidak Setuju</div>
+        <div class="likert-item"><span class="num">2</span>Tidak Setuju</div>
+        <div class="likert-item"><span class="num">3</span>Agak Tidak Setuju</div>
+        <div class="likert-item"><span class="num">4</span>Netral</div>
+        <div class="likert-item"><span class="num">5</span>Agak Setuju</div>
+        <div class="likert-item"><span class="num">6</span>Setuju</div>
+        <div class="likert-item"><span class="num">7</span>Sangat Setuju</div>
+      </div>
+    </div>
+  </div>
+  <div class="explanation-footer">
+    <label class="checkbox-wrap">
+      <input type="checkbox" id="instructionCheck" onchange="toggleStartBtn()">
+      Saya telah membaca dan memahami seluruh instruksi
+    </label>
+    <button class="btn btn-primary" id="startBtn" disabled onclick="startEvaluation()" style="width:auto;padding:12px 28px">
+      <span class="material-symbols-outlined">play_arrow</span> Mulai Evaluasi
+    </button>
+  </div>
+</div>
+
+<!-- ====== SCREEN 3: LOADING ====== -->
+<div class="screen loading-screen" id="screenLoading">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <div class="loading-text">Memuat sesi evaluasi...</div>
+  </div>
+</div>
+
+<!-- ====== SCREEN 4: INPUT ANGKET ====== -->
+<div class="screen angket-screen" id="screenAngket">
+  <header class="app-header">
+    <div class="header-logo">
+      <div class="eco-icon">EP</div>
+      EcoPolicy
+    </div>
+    <div class="step-indicator" id="stepsAngket">
+      <div class="step clickable" onclick="showResetModal()"><span class="step-num">1</span> Penjelasan</div>
+      <div class="step active"><span class="step-num">2</span> Input Angket</div>
+      <div class="step"><span class="step-num">3</span> Hasil</div>
+    </div>
+    <div class="header-right">
+      <div class="header-timer" id="timerDisplay">
+        <span class="material-symbols-outlined">timer</span>
+        <span id="timerText">20:00</span>
+      </div>
+      <div class="save-badge" id="saveBadge"><span class="material-symbols-outlined" style="font-size:14px">cloud_done</span> Tersimpan</div>
+      <div class="user-avatar" onclick="toggleMenu('menuAngket')">R</div>
+      <div class="user-menu" id="menuAngket">
+        <div class="user-menu-item"><span class="material-symbols-outlined">person</span> Responden</div>
+        <div class="user-menu-divider"></div>
+        <div class="user-menu-item" onclick="handleLogout()"><span class="material-symbols-outlined">logout</span> Keluar</div>
+      </div>
+    </div>
+  </header>
+  <div class="angket-content">
+    <div class="progress-section">
+      <div class="progress-text">
+        <span id="progressLabel">0 dari 10 dijawab</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="component-dots" id="componentDots"></div>
+    <div id="angketTableArea"></div>
+    <div class="angket-nav">
+      <button class="btn btn-outline" id="prevBtn" onclick="prevComponent()" style="display:none">
+        <span class="material-symbols-outlined">arrow_back</span> Sebelumnya
+      </button>
+      <div class="nav-info" id="navInfo">Komponen 1 dari 3</div>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextComponent()" style="width:auto;padding:12px 24px">
+        Selanjutnya <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SCREEN 8: RESULT ====== -->
+<div class="screen result-screen" id="screenResult">
+  <header class="app-header">
+    <div class="header-logo">
+      <div class="eco-icon">EP</div>
+      EcoPolicy
+    </div>
+    <div class="step-indicator" id="stepsResult">
+      <div class="step"><span class="step-num">1</span> Penjelasan</div>
+      <div class="step"><span class="step-num">2</span> Input Angket</div>
+      <div class="step active"><span class="step-num">3</span> Hasil</div>
+    </div>
+    <div class="header-right">
+      <div class="user-avatar" onclick="toggleMenu('menuResult')">R</div>
+      <div class="user-menu" id="menuResult">
+        <div class="user-menu-item"><span class="material-symbols-outlined">person</span> Responden</div>
+        <div class="user-menu-divider"></div>
+        <div class="user-menu-item" onclick="handleLogout()"><span class="material-symbols-outlined">logout</span> Keluar</div>
+      </div>
+    </div>
+  </header>
+  <div class="result-content">
+    <div class="result-hero" id="resultHero">
+      <div class="result-icon-wrap">
+        <span class="material-symbols-outlined">eco</span>
+      </div>
+      <h2>Angket Berhasil Diselesaikan</h2>
+      <p>Terima kasih telah berpartisipasi dalam evaluasi EcoPolicy</p>
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle class="bg" cx="60" cy="60" r="52"/>
+          <circle class="fg" id="scoreCircle" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+        </svg>
+        <div style="text-align:center;margin-top:-90px;position:relative;z-index:1">
+          <div class="score-text" id="scoreValue">0%</div>
+          <div class="score-label">Skor Rata-rata</div>
+        </div>
+      </div>
+    </div>
+    <div class="component-results" id="componentResults"></div>
+    <div class="result-footer">
+      <button class="btn btn-primary" onclick="handleLogout()" style="width:auto;padding:14px 32px">
+        <span class="material-symbols-outlined">home</span> Kembali ke Beranda
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODALS ====== -->
+<!-- Submit Confirmation -->
+<div class="modal-overlay" id="modalSubmit">
+  <div class="modal">
+    <div class="modal-icon"><span class="material-symbols-outlined" style="color:var(--primary)">send</span></div>
+    <div class="modal-title">Submit Pengisian Angket?</div>
+    <div class="modal-desc">Pastikan semua jawaban sudah benar. Setelah submit, Anda tidak dapat mengubah jawaban.</div>
+    <div class="modal-stats">
+      <div class="stat-num" id="submitAnswered">0 dari 10</div>
+      <div class="stat-label">pertanyaan sudah dijawab</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalSubmit')">Batal</button>
+      <button class="btn btn-primary" onclick="confirmSubmit()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Submit Loading -->
+<div class="modal-overlay" id="modalSubmitLoading">
+  <div class="modal" style="text-align:center">
+    <div class="spinner" style="margin:0 auto 20px"></div>
+    <div class="loading-text">Mengirim jawaban...</div>
+  </div>
+</div>
+
+<!-- Timeout -->
+<div class="modal-overlay" id="modalTimeout">
+  <div class="modal">
+    <div class="modal-icon timeout-icon"><span class="material-symbols-outlined">timer_off</span></div>
+    <div class="modal-title">Waktu Habis!</div>
+    <div class="modal-desc">Waktu pengerjaan angket telah habis. Jawaban yang sudah diisi akan disimpan secara otomatis.</div>
+    <div class="modal-stats">
+      <div class="stat-num" id="timeoutAnswered">0 dari 10</div>
+      <div class="stat-label">pertanyaan sudah dijawab</div>
+      <div style="margin-top:12px">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="timeoutProgress" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="handleTimeoutBack()">
+        <span class="material-symbols-outlined">home</span> Kembali ke Beranda
+      </button>
+      <button class="btn btn-danger" onclick="handleTimeoutSubmit()">
+        <span class="material-symbols-outlined">send</span> Submit Otomatis
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset -->
+<div class="modal-overlay" id="modalReset">
+  <div class="modal">
+    <div class="modal-icon"><span class="material-symbols-outlined" style="color:var(--warning)">warning</span></div>
+    <div class="modal-title">Mulai Ulang?</div>
+    <div class="modal-desc">Semua jawaban yang belum disimpan akan hilang. Apakah Anda yakin ingin memulai ulang evaluasi?</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalReset')">Batal</button>
+      <button class="btn btn-danger" onclick="confirmReset()">
+        <span class="material-symbols-outlined">restart_alt</span> Ya, Mulai Ulang
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TC PANEL ====== -->
+<button class="tc-panel-toggle" id="tcToggle" onclick="toggleTCPanel()">TC</button>
+<div class="tc-panel" id="tcPanel">
+  <div class="tc-panel-header">
+    Test Case Indicator
+    <button onclick="toggleTCPanel()">×</button>
+  </div>
+  <div class="tc-panel-body" id="tcPanelBody"></div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const COMPONENTS = [
+  {
+    name: 'Kebijakan Pengelolaan Limbah',
+    indicator: 'Pengelolaan Sampah',
+    questions: [
+      'Sekolah memiliki kebijakan pemilahan sampah yang jelas',
+      'Tersedia tempat sampah terpisah di setiap area sekolah',
+      'Program daur ulang dilaksanakan secara rutin',
+      'Siswa aktif berpartisipasi dalam pengelolaan limbah'
+    ]
+  },
+  {
+    name: 'Konservasi Energi dan Air',
+    indicator: 'Efisiensi Sumber Daya',
+    questions: [
+      'Sekolah menghemat energi dengan penggunaan lampu LED',
+      'Air di sekolah dikelola untuk mencegah pemborosan',
+      'Jadwal penggunaan listrik diatur secara efisien'
+    ]
+  },
+  {
+    name: 'Penghijauan dan Ekosistem',
+    indicator: 'Ekosistem Sekolah',
+    questions: [
+      'Sekolah memiliki program penghijauan area kampus',
+      'Ekosistem di lingkungan sekolah terjaga dengan baik',
+      'Siswa diberi edukasi tentang pelestarian lingkungan'
+    ]
+  }
+];
+
+const TC_LIST = [
+  { id: 'TC-01', desc: 'Login Berhasil (Responden)', screen: 'login' },
+  { id: 'TC-02', desc: 'Login Salah Password', screen: 'login' },
+  { id: 'TC-03', desc: 'Login Salah Username', screen: 'login' },
+  { id: 'TC-05', desc: 'Login Field Kosong', screen: 'login' },
+  { id: 'TC-06', desc: 'Login Akses Ditolak (Admin)', screen: 'login' },
+  { id: 'TC-07', desc: 'Logout', screen: 'any' },
+  { id: 'TC-08', desc: 'Halaman Penjelasan', screen: 'explanation' },
+  { id: 'TC-10', desc: 'Info Grid', screen: 'explanation' },
+  { id: 'TC-11', desc: 'Toggle Checkbox Aktifkan Tombol', screen: 'explanation' },
+  { id: 'TC-12', desc: 'Mulai Evaluasi', screen: 'explanation' },
+  { id: 'TC-13', desc: 'Loading State', screen: 'loading' },
+  { id: 'TC-19', desc: 'Tampilan Angket', screen: 'angket' },
+  { id: 'TC-20', desc: 'Timer Countdown', screen: 'angket' },
+  { id: 'TC-24', desc: 'Navigasi Komponen', screen: 'angket' },
+  { id: 'TC-30', desc: 'Pilihan Jawaban Likert', screen: 'angket' },
+  { id: 'TC-34', desc: 'Auto-Save Toast', screen: 'angket' },
+  { id: 'TC-35', desc: 'Progress Bar Update', screen: 'angket' },
+  { id: 'TC-45', desc: 'Timeout Modal', screen: 'timeout' },
+  { id: 'TC-48', desc: 'Timer Warna Merah', screen: 'angket' },
+  { id: 'TC-55', desc: 'Submit Konfirmasi', screen: 'submit' },
+  { id: 'TC-68', desc: 'Reset via Step 1', screen: 'angket' },
+  { id: 'TC-69', desc: 'Reset Modal', screen: 'reset' },
+  { id: 'TC-70', desc: 'Reset Konfirmasi', screen: 'reset' },
+  { id: 'TC-76', desc: 'Halaman Hasil', screen: 'result' }
+];
+
+// ==================== STATE ====================
+let currentScreen = 'login';
+let currentComponent = 0;
+let answers = {};
+let timerSeconds = 1200;
+let timerInterval = null;
+let autoSaveInterval = null;
+let tcPanelOpen = false;
+let currentTC = null;
+
+// ==================== TC PANEL ====================
+function toggleTCPanel() {
+  tcPanelOpen = !tcPanelOpen;
+  document.getElementById('tcPanel').classList.toggle('show', tcPanelOpen);
+}
+
+function updateTCPanel(screen) {
+  const body = document.getElementById('tcPanelBody');
+  const matchingTCs = TC_LIST.filter(tc => tc.screen === screen || tc.screen === 'any');
+  body.innerHTML = matchingTCs.map(tc =>
+    `<div class="tc-item${currentTC === tc.id ? ' active' : ''}">
+      <span class="tc-id">${tc.id}</span>
+      <span class="tc-desc">${tc.desc}</span>
+    </div>`
+  ).join('');
+}
+
+function highlightTC(id) {
+  currentTC = id;
+  document.querySelectorAll('.tc-item').forEach(el => {
+    el.classList.toggle('active', el.querySelector('.tc-id')?.textContent === id);
+  });
+  // scroll into view
+  const active = document.querySelector('.tc-item.active');
+  if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ==================== TOAST ====================
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const icons = { success: 'check_circle', error: 'error', warning: 'warning', info: 'info' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="material-symbols-outlined">${icons[type] || 'info'}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+// ==================== SCREEN NAVIGATION ====================
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const map = {
+    login: 'screenLogin',
+    explanation: 'screenExplanation',
+    loading: 'screenLoading',
+    angket: 'screenAngket',
+    result: 'screenResult'
+  };
+  document.getElementById(map[name]).classList.add('active');
+  currentScreen = name;
+  updateTCPanel(name);
+  window.scrollTo(0, 0);
+}
+
+// ==================== MODALS ====================
+function openModal(id) {
+  const m = document.getElementById(id);
+  m.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add('show')));
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  m.classList.remove('show');
+  setTimeout(() => m.style.display = 'none', 300);
+}
+
+// ==================== USER MENU ====================
+function toggleMenu(id) {
+  const menu = document.getElementById(id);
+  const isVisible = menu.classList.contains('show');
+  document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('show'));
+  if (!isVisible) menu.classList.add('show');
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.user-avatar') && !e.target.closest('.user-menu')) {
+    document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('show'));
+  }
+});
+
+// ==================== LOGIN ====================
+function handleLogin() {
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value.trim();
+  // Clear errors
+  document.getElementById('usernameError').classList.remove('show');
+  document.getElementById('passwordError').classList.remove('show');
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('loginUsername').classList.remove('error');
+  document.getElementById('loginPassword').classList.remove('error');
+
+  if (!u && !p) {
+    document.getElementById('usernameError').classList.add('show');
+    document.getElementById('passwordError').classList.add('show');
+    document.getElementById('loginUsername').classList.add('error');
+    document.getElementById('loginPassword').classList.add('error');
+    highlightTC('TC-05');
+    return;
+  }
+  if (!u) {
+    document.getElementById('usernameError').classList.add('show');
+    document.getElementById('loginUsername').classList.add('error');
+    highlightTC('TC-05');
+    return;
+  }
+  if (!p) {
+    document.getElementById('passwordError').classList.add('show');
+    document.getElementById('loginPassword').classList.add('error');
+    highlightTC('TC-05');
+    return;
+  }
+  if (p !== 'responden123') {
+    document.getElementById('loginError').textContent = 'Username atau password salah';
+    document.getElementById('loginError').classList.add('show');
+    highlightTC('TC-02');
+    return;
+  }
+  // Success
+  highlightTC('TC-01');
+  showToast('Login berhasil. Selamat datang!', 'success');
+  setTimeout(() => showScreen('explanation'), 600);
+}
+
+function demoRespondentLogin() {
+  highlightTC('TC-01');
+  document.getElementById('loginUsername').value = 'responden';
+  document.getElementById('loginPassword').value = '••••••••';
+  showToast('Login berhasil. Selamat datang, Responden!', 'success');
+  setTimeout(() => showScreen('explanation'), 600);
+}
+
+function demoAdminLogin() {
+  highlightTC('TC-06');
+  document.getElementById('loginUsername').value = 'admin';
+  document.getElementById('loginPassword').value = '••••••••';
+  showToast('Akun ini tidak memiliki akses admin', 'error');
+}
+
+function handleLogout() {
+  highlightTC('TC-07');
+  stopTimer();
+  clearInterval(autoSaveInterval);
+  document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('show'));
+  showToast('Anda telah keluar dari sistem', 'info');
+  setTimeout(() => {
+    resetState();
+    showScreen('login');
+  }, 400);
+}
+
+function resetState() {
+  currentComponent = 0;
+  answers = {};
+  timerSeconds = 1200;
+  document.getElementById('instructionCheck').checked = false;
+  toggleStartBtn();
+  document.getElementById('loginUsername').value = '';
+  document.getElementById('loginPassword').value = '';
+}
+
+// ==================== EXPLANATION ====================
+function toggleStartBtn() {
+  const checked = document.getElementById('instructionCheck').checked;
+  document.getElementById('startBtn').disabled = !checked;
+}
+
+function startEvaluation() {
+  highlightTC('TC-12');
+  showScreen('loading');
+  setTimeout(() => {
+    initAngket();
+    showScreen('angket');
+    startTimer();
+    highlightTC('TC-19');
+    // Auto-save every 30s
+    autoSaveInterval = setInterval(() => {
+      const answered = Object.keys(answers).length;
+      if (answered > 0) {
+        showToast('Jawaban tersimpan otomatis', 'success');
+        flashSaveBadge();
+      }
+    }, 30000);
+  }, 1500);
+}
+
+// ==================== TIMER ====================
+function startTimer() {
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    if (timerSeconds <= 0) {
+      timerSeconds = 0;
+      stopTimer();
+      updateTimerDisplay();
+      handleTimeout();
+      return;
+    }
+    updateTimerDisplay();
+    // Warning at 60s
+    const timerEl = document.getElementById('timerDisplay');
+    if (timerSeconds <= 60) {
+      timerEl.className = 'header-timer danger';
+      if (timerSeconds === 60) highlightTC('TC-48');
+    } else if (timerSeconds <= 180) {
+      timerEl.className = 'header-timer warning';
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timerText').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function flashSaveBadge() {
+  const badge = document.getElementById('saveBadge');
+  badge.classList.add('show');
+  setTimeout(() => badge.classList.remove('show'), 2000);
+}
+
+// ==================== ANGKET ====================
+function getTotalQuestions() {
+  return COMPONENTS.reduce((sum, c) => sum + c.questions.length, 0);
+}
+
+function getAnsweredCount() {
+  return Object.keys(answers).length;
+}
+
+function initAngket() {
+  currentComponent = 0;
+  answers = {};
+  timerSeconds = 1200;
+  renderDots();
+  renderComponent();
+  updateProgress();
+}
+
+function renderDots() {
+  const dots = document.getElementById('componentDots');
+  dots.innerHTML = COMPONENTS.map((_, i) =>
+    `<div class="dot${i === currentComponent ? ' active' : ''}" onclick="goToComponent(${i})"></div>`
+  ).join('');
+}
+
+function renderComponent() {
+  const comp = COMPONENTS[currentComponent];
+  const compOffset = COMPONENTS.slice(0, currentComponent).reduce((s, c) => s + c.questions.length, 0);
+  const area = document.getElementById('angketTableArea');
+
+  let rows = comp.questions.map((q, qi) => {
+    const qId = `q${compOffset + qi}`;
+    let cells = '';
+    for (let v = 1; v <= 7; v++) {
+      const checked = answers[qId] === v ? 'checked' : '';
+      const selected = answers[qId] === v ? 'cell-selected' : '';
+      cells += `<td class="${selected}">
+        <input type="radio" name="${qId}" value="${v}" class="likert-radio" ${checked}
+          onchange="selectAnswer('${qId}', ${v}, this)">
+      </td>`;
+    }
+    return `<tr>
+      <td>${compOffset + qi + 1}</td>
+      <td>${q}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="component-header">
+      <div class="comp-num">${currentComponent + 1}</div>
+      <div class="comp-info">
+        <h4>Komponen ${currentComponent + 1}: ${comp.name}</h4>
+        <span>Indikator: ${comp.indicator}</span>
+      </div>
+    </div>
+    <div class="angket-table-wrap">
+      <table class="angket-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Pernyataan</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+
+  // Navigation
+  document.getElementById('prevBtn').style.display = currentComponent > 0 ? 'inline-flex' : 'none';
+  const isLast = currentComponent === COMPONENTS.length - 1;
+  const nextBtn = document.getElementById('nextBtn');
+  if (isLast) {
+    nextBtn.innerHTML = '<span class="material-symbols-outlined">send</span> Submit';
+    nextBtn.onclick = showSubmitModal;
+  } else {
+    nextBtn.innerHTML = 'Selanjutnya <span class="material-symbols-outlined">arrow_forward</span>';
+    nextBtn.onclick = nextComponent;
+  }
+  document.getElementById('navInfo').textContent = `Komponen ${currentComponent + 1} dari ${COMPONENTS.length}`;
+  renderDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectAnswer(qId, value, el) {
+  answers[qId] = value;
+  highlightTC('TC-30');
+  // Highlight selected cell
+  const row = el.closest('tr');
+  row.querySelectorAll('td').forEach(td => td.classList.remove('cell-selected'));
+  el.closest('td').classList.add('cell-selected');
+  updateProgress();
+  showToast('Jawaban tersimpan', 'success');
+  flashSaveBadge();
+  highlightTC('TC-34');
+}
+
+function updateProgress() {
+  const total = getTotalQuestions();
+  const answered = getAnsweredCount();
+  const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+  document.getElementById('progressLabel').textContent = `${answered} dari ${total} dijawab`;
+  document.getElementById('progressPct').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = `${pct}%`;
+  highlightTC('TC-35');
+}
+
+function goToComponent(idx) {
+  currentComponent = idx;
+  renderComponent();
+}
+
+function nextComponent() {
+  if (currentComponent < COMPONENTS.length - 1) {
+    currentComponent++;
+    renderComponent();
+    highlightTC('TC-24');
+  }
+}
+
+function prevComponent() {
+  if (currentComponent > 0) {
+    currentComponent--;
+    renderComponent();
+  }
+}
+
+// ==================== SUBMIT ====================
+function showSubmitModal() {
+  highlightTC('TC-55');
+  document.getElementById('submitAnswered').textContent = `${getAnsweredCount()} dari ${getTotalQuestions()}`;
+  openModal('modalSubmit');
+}
+
+function confirmSubmit() {
+  closeModal('modalSubmit');
+  openModal('modalSubmitLoading');
+  setTimeout(() => {
+    closeModal('modalSubmitLoading');
+    stopTimer();
+    clearInterval(autoSaveInterval);
+    showResult();
+    showScreen('result');
+    highlightTC('TC-76');
+  }, 1500);
+}
+
+// ==================== TIMEOUT ====================
+function handleTimeout() {
+  highlightTC('TC-45');
+  document.getElementById('timeoutAnswered').textContent = `${getAnsweredCount()} dari ${getTotalQuestions()}`;
+  const pct = Math.round((getAnsweredCount() / getTotalQuestions()) * 100);
+  document.getElementById('timeoutProgress').style.width = `${pct}%`;
+  openModal('modalTimeout');
+}
+
+function handleTimeoutSubmit() {
+  closeModal('modalTimeout');
+  showResult();
+  showScreen('result');
+  highlightTC('TC-76');
+}
+
+function handleTimeoutBack() {
+  closeModal('modalTimeout');
+  stopTimer();
+  clearInterval(autoSaveInterval);
+  resetState();
+  showScreen('login');
+}
+
+// ==================== RESET ====================
+function showResetModal() {
+  highlightTC('TC-69');
+  openModal('modalReset');
+}
+
+function confirmReset() {
+  highlightTC('TC-70');
+  closeModal('modalReset');
+  stopTimer();
+  clearInterval(autoSaveInterval);
+  resetState();
+  showScreen('login');
+  showToast('Sesi evaluasi diulang', 'warning');
+}
+
+// ==================== RESULT ====================
+function showResult() {
+  // Calculate scores per component
+  const componentScores = COMPONENTS.map((comp, ci) => {
+    const offset = COMPONENTS.slice(0, ci).reduce((s, c) => s + c.questions.length, 0);
+    const total = comp.questions.length;
+    let sum = 0;
+    let answered = 0;
+    for (let qi = 0; qi < total; qi++) {
+      const val = answers[`q${offset + qi}`];
+      if (val) { sum += val; answered++; }
+    }
+    const avg = answered > 0 ? sum / answered : 0;
+    const pct = Math.round((avg / 7) * 100);
+    return { ...comp, avg, pct, answered, total };
+  });
+
+  const overallPct = componentScores.reduce((s, c) => s + c.pct, 0) / componentScores.length;
+  const overallAvg = componentScores.reduce((s, c) => s + c.avg, 0) / componentScores.length;
+
+  // Animate score circle
+  const circumference = 2 * Math.PI * 52; // r=52
+  const offset = circumference - (overallPct / 100) * circumference;
+  setTimeout(() => {
+    document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+    document.getElementById('scoreValue').textContent = `${Math.round(overallAvg * 100 / 7)}%`;
+  }, 100);
+
+  // Render component results
+  const colors = ['#106c49', '#2196F3', '#FF9800'];
+  const barColors = ['#106c49', '#2196F3', '#FF9800'];
+  document.getElementById('componentResults').innerHTML = componentScores.map((c, i) => `
+    <div class="result-card">
+      <h4>Komponen ${i + 1}: ${c.name}</h4>
+      <div class="indicator"><span class="material-symbols-outlined">label</span> ${c.indicator}</div>
+      <div class="result-bar-row">
+        <div class="result-bar-track">
+          <div class="result-bar-fill" style="width:0%;background:${barColors[i]}" id="resultBar${i}"></div>
+        </div>
+        <div class="result-pct" style="color:${barColors[i]}">${c.pct}%</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Animate bars
+  setTimeout(() => {
+    componentScores.forEach((c, i) => {
+      document.getElementById(`resultBar${i}`).style.width = `${c.pct}%`;
+    });
+  }, 300);
+}
+
+// ==================== INIT ====================
+function init() {
+  renderDots();
+  renderComponent();
+  updateProgress();
+  updateTCPanel('login');
+  highlightTC('TC-01');
+}
+init();
+</script>
+</body>
+</html>
