@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPolicy - Profil Terkunci</title>
+<!-- Clean version created alongside original to prevent overwrites -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+"surface-dim":"#d4dcd5","on-background":"#161d19","surface-variant":"#dde4dd",
+"surface-container":"#e8f0e9","tertiary":"#a43a3a","on-surface-variant":"#3c4a42",
+"primary-fixed":"#6ffbbe","inverse-surface":"#2b322d","error":"#ba1a1a",
+"primary-container":"#10b981","on-tertiary":"#ffffff","background":"#f4fbf4",
+"tertiary-container":"#fc7c78","on-surface":"#161d19","surface-tint":"#006c49",
+"secondary":"#5d5f5f","on-primary-container":"#00422b","surface-container-low":"#eef6ee",
+"surface-container-lowest":"#ffffff","on-primary":"#ffffff","primary":"#006c49",
+"on-secondary-container":"#616363","surface-container-highest":"#dde4dd",
+"outline-variant":"#bbcabf","surface-container-high":"#e3eae3","outline":"#6c7a71",
+"secondary-container":"#dfe0e0","surface":"#f4fbf4","on-error":"#ffffff"
+},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},
+spacing:{sm:"0.5rem",md:"1rem",lg:"1.5rem",gutter:"1.5rem",base:"4px",margin:"2rem","2xl":"3rem",xl:"2rem",xs:"0.25rem"},
+fontFamily:{"body-sm":["Poppins"],"headline-xl":["Poppins"],"label-caps":["Poppins"],"headline-lg":["Poppins"],"title-md":["Poppins"],"display-lg":["Poppins"],"body-base":["Poppins"]},
+fontSize:{"body-sm":["14px",{lineHeight:"1.5",fontWeight:"400"}],"headline-xl":["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+"label-caps":["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],"headline-lg":["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+"title-md":["20px",{lineHeight:"1.5",fontWeight:"500"}],"display-lg":["48px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+"body-base":["16px",{lineHeight:"1.6",fontWeight:"400"}]}}}}</script>
+<style>
+body{font-family:'Poppins',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+/* Profile blocking state */
+.profile-locked-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease-out;padding:20px;}
+.profile-modal{background:white;border-radius:24px;padding:40px 32px;max-width:460px;width:90%;text-align:center;box-shadow:0 25px 80px rgba(0,0,0,0.3);animation:slideUp .4s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;overflow:hidden;}
+.profile-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.locked-icon{margin:0 auto 24px; width:72px;height:72px;border-radius:50%;background:#fef2f2;border:2px solid #fee2e2;display:flex;align-items:center;justify-content:center;animation:pulse .8s ease-in-out;}
+.locked-icon svg{width:36px;height:36px;color:#ef4444;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+/* Lock the rest of the UI - content dimmed and disabled */
+body.profile-locked .main-content{opacity:0.3;pointer-events:none;filter:blur(2px);transition:all .3s ease;}
+body.profile-locked .profile-section{cursor:not-allowed;transform:none !important;}
+body.profile-locked .profile-avatar{pointer-events:none;}
+body.profile-locked .card{cursor:not-allowed;transform:none !important;}
+/* Custom lock notice styling */
+.lock-notice{margin-bottom:24px;padding:20px;background:#fef9c3;border:1px solid #fde047;border-radius:12px;display:flex;align-items:flex-start;gap:12px;text-align:left;}
+.lock-notice-icon{width:24px;height:24px;border-radius:50%;background:#fbbf24;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.lock-notice-icon svg{width:14px;height:14px;color:#92400e;}
+/* Buttons */
+.btn-continue{background:#10b981;color:white;font-weight:600;border:none;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 14px rgba(16,185,129,0.3);}
+.btn-continue:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(16,185,129,0.4);}
+.btn-continue:active{transform:scale(0.97);}
+.btn-outline{border:2px solid #d1d5db;color:#6b7280;background:transparent;cursor:pointer;transition:all .3s ease;}
+.btn-outline:hover{background:#f3f4f6;border-color:#9ca3af;}
+/* Overlay text styling */
+.overlay-text{margin-top:16px;font-size:14px;color:#9ca3af;font-weight:500;}
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen profile-locked">
+
+<!-- ===== LOCK OVERLAY ===== -->
+<div class="profile-locked-overlay">
+  <div class="profile-modal">
+    <!-- Lock Icon -->
+    <div class="locked-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <circle cx="12" cy="16" r="1"></circle>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+      </svg>
+    </div>
+    
+    <!-- Title -->
+    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Akses Diblokir</h2>
+    
+    <!-- Warning Notice -->
+    <div class="lock-notice">
+      <div class="lock-notice-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 1 1.71 3h16.94a2 2 0 0 1 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div>
+        <p class="font-body-sm font-semibold text-amber-800 mb-1">Sedang Mengisi Angket</p>
+        <p class="text-body-sm text-amber-700">Anda tidak bisa mengakses profil selama proses pengisian angket. Untuk melindungi integritas data, fitur profil dikunci sementara.</p>
+      </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="flex flex-col gap-3">
+      <button onclick="continueWithAngket()" class="btn-continue px-8 py-3.5 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">edit</span>
+        Lanjutkan Mengisi Angket
+      </button>
+      <button onclick="showProfileLater()" class="btn-outline px-8 py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">schedule</span>
+        Lihat Nanti
+      </button>
+    </div>
+    
+    <!-- Footer note -->
+    <p class="overlay-text">Anda dapat mengakses profil kembali setelah menyelesaikan angket</p>
+  </div>
+</div>
+
+<!-- ===== PROFILE SECTION (LOCKED) ===== -->
+<main class="pt-20 pb-32 max-w-[900px] mx-auto px-6 main-content profile-section">
+
+  <!-- Back Link -->
+  <div class="mb-6 fade-in">
+    <a href="#" class="inline-flex items-center gap-1.5 text-primary text-body-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors cursor-not-allowed">
+      <span class="material-symbols-outlined text-[18px">arrow_back</span> Kembali ke Evaluasi
+    </a>
+  </div>
+
+  <!-- Profile Header Card -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden mb-8 fade-in">
+    <!-- Cover -->
+    <div class="h-32 bg-gradient-to-br from-primary/20 via-primary-container/30 to-primary/10 relative">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDZjNDkiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRmMC04VjE4SDJ2MmgzNG0wLThWMTBIMXYyaDM0bTAtOFYySDF2MmgzNCIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
+    </div>
+    <!-- Avatar + Info -->
+    <div class="px-8 pb-8 relative">
+      <div class="profile-avatar -mt-16 w-28 h-28 rounded-2xl bg-primary-container border-4 border-white shadow-lg flex items-center justify-center mb-4 cursor-not-allowed">
+        <span class="material-symbols-outlined text-primary text-[48px]" style="font-variation-settings:'FILL' 1;">person</span>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Budi Santoso</h1>
+          <p class="text-body-sm text-on-surface-variant mb-2">budi@sekolah.id</p>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+              <span class="material-symbols-outlined text-[14px]">school</span> Responden
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
+            </span>
+          </div>
+        </div>
+        <button class="btn-outline px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface font-body-base font-medium flex items-center gap-2 self-start cursor-not-allowed">
+          <span class="material-symbols-outlined text-[18px">edit</span> Edit Profil
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 fade-in-delay">
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10 cursor-not-allowed">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">assessment</span>
+      <p class="font-title-md text-title-md font-bold text-on-surface">2</p>
+      <p class="text-body-sm text-on-surface-variant">Evaluasi Selesai</p>
+    </div>
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10 cursor-not-allowed">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">trending_up</span>
+      <p class="font-title-md text-title-md font-bold text-primary">82%</p>
+      <p class="text-body-sm text-on-surface-variant">Rata-rata Skor</p>
+    </div>
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10 cursor-not-allowed">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">stars</span>
+      <p class="font-title-md text-title-md font-bold text-on-surface">B</p>
+      <p class="text-body-sm text-on-surface-variant">Kategori Terakhir</p>
+    </div>
+    <div class="stat-card bg-surface-container-low p-5 rounded-xl text-center border border-outline-variant/10 cursor-not-allowed">
+      <span class="material-symbols-outlined text-primary text-[28px] mb-2">calendar_today</span>
+      <p class="font-title-md text-title-md font-bold text-on-surface">19 Jul</p>
+      <p class="text-body-sm text-on-surface-variant">Terakhir Aktif</p>
+    </div>
+  </div>
+
+  <!-- Rest of profile cards would go here but are locked -->
+  <div class="card bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 p-8 mb-8 fade-in-delay-2 cursor-not-allowed">
+    <div class="text-center py-8">
+      <p class="text-body-sm text-on-surface-variant">Klik "Lanjutkan Mengisi Angket" untuk melanjutkan pengisian angket</p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function continueWithAngket() {
+  // Remove the locked state
+  document.body.classList.remove('profile-locked');
+  document.querySelector('.profile-locked-overlay').style.display = 'none';
+  document.querySelector('.profile-modal').style.display = 'none';
+  
+  // Notify parent or navigate to angket
+  const event = new CustomEvent('continueWithAngket');
+  window.dispatchEvent(event);
+}
+
+function showProfileLater() {
+  // Just close the modal, keep UI in locked state for now
+  document.querySelector('.profile-locked-overlay').style.display = 'none';
+  document.querySelector('.profile-modal').style.display = 'none';
+  
+  // Notify
+  const event = new CustomEvent('showProfileLater');
+  window.dispatchEvent(event);
+}
+
+// Auto-hide overlay if page reloads or navigation occurs
+window.addEventListener('beforeunload', function() {
+  // Clear any state
+  localStorage.setItem('profileLocked', 'true');
+});
+
+window.addEventListener('load', function() {
+  if (localStorage.getItem('profileLocked') === 'true') {
+    // Keep locked state after page refresh
+    console.log('Profile remains locked (page refreshed)');
+  }
+});
+</script>
+</body>
+</html>

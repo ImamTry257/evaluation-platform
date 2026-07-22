@@ -121,43 +121,54 @@ class EvaluasiController extends Controller
         $getIndicatorList['count'] = $count;
         $getIndicatorList['indicatorLength'] = $indicatorLength;
 
-        // Check for existing in_progress session
-        $existingSession = ResponseSession::where('user_id', $request->user()->id)
-            ->where('questionnaire_id', $request->questionnaireId)
-            ->where('status', 'in_progress')
-            ->first();
+        DB::beginTransaction();
 
-        if ($existingSession) {
-            // Resume existing session
+        try {
+            // Lock — cegah duplikat session saat klik barengan
+            $existingSession = ResponseSession::lockForUpdate()
+                ->where('user_id', $request->user()->id)
+                ->where('questionnaire_id', $request->questionnaireId)
+                ->where('status', 'in_progress')
+                ->first();
+
+            if ($existingSession) {
+                DB::rollBack();
+                return $this->successResponse([
+                    'session' => [
+                        'evaluation' => new ResponseSessionResource($existingSession->load(['answers.question.indicator'])),
+                        'statements' => $getIndicatorList,
+                    ],
+                    'questionnaire' => $questionnaire,
+                    'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
+                    'isResumed' => true,
+                ], 'Session resumed successfully');
+            }
+
+            // Create new session
+            $session = ResponseSession::create([
+                'user_id' => $request->user()->id,
+                'questionnaire_id' => $request->questionnaireId,
+                'status' => 'in_progress',
+                'started_at' => now(),
+                'remaining_seconds' => $questionnaire->duration_minutes * 60,
+            ]);
+
+            DB::commit();
+
             return $this->successResponse([
                 'session' => [
-                    'evaluation' => new ResponseSessionResource($existingSession->load(['answers.question.indicator'])),
-                    'statements' => $getIndicatorList, 
+                    'evaluation' => new ResponseSessionResource($session->load(['answers.question.indicator'])),
+                    'statements' => $getIndicatorList,
                 ],
                 'questionnaire' => $questionnaire,
                 'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
-                'isResumed' => true,
-            ], 'Session resumed successfully');
+                'isResumed' => false,
+            ], 'Evaluation started successfully', 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse('Failed to start evaluation: ' . $e->getMessage(), 500);
         }
-
-        // Create new session
-        $session = ResponseSession::create([
-            'user_id' => $request->user()->id,
-            'questionnaire_id' => $request->questionnaireId,
-            'status' => 'in_progress',
-            'started_at' => now(),
-            'remaining_seconds' => $questionnaire->duration_minutes * 60,
-        ]);
-
-        return $this->successResponse([
-            'session' => [
-                'evaluation' => new ResponseSessionResource($session->load(['answers.question.indicator'])),
-                'statements' => $getIndicatorList, 
-            ],
-            'questionnaire' => $questionnaire,
-            'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
-            'isResumed' => false,
-        ], 'Evaluation started successfully', 201);
     }
 
     /**
@@ -169,6 +180,16 @@ class EvaluasiController extends Controller
         $session = ResponseSession::where('user_id', $request->user()->id)
             ->with(['answers.question.indicator', 'questionnaire.components.subComponents.indicators.questions'])
             ->find($sessionId);
+
+        // Bug 3 fix: null check SEBELUM akses property
+        if (!$session) {
+            return $this->errorResponse('Session not found', 404);
+        }
+
+        // Bug 5 fix: tolak kalau session sudah submitted
+        if ($session->status === 'submitted') {
+            return $this->errorResponse('Session sudah di-submit. Silakan lihat hasil evaluasi.', 422);
+        }
 
         $getIndicatorList = [];
         $page = 1;
@@ -220,14 +241,10 @@ class EvaluasiController extends Controller
         $getIndicatorList['count'] = $count;
         $getIndicatorList['indicatorLength'] = $indicatorLength;
 
-        if (!$session) {
-            return $this->errorResponse('Session not found', 404);
-        }
-
         return $this->successResponse([
             'session' => [
                 'evaluation' => new ResponseSessionResource($session),
-                'statements' => $getIndicatorList, 
+                'statements' => $getIndicatorList,
             ],
             'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
         ], 'Session retrieved successfully');
@@ -248,38 +265,52 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $session = ResponseSession::where('user_id', $request->user()->id)
-            ->where('status', 'in_progress')
-            ->find($sessionId);
+        DB::beginTransaction();
 
-        if (!$session) {
-            return $this->errorResponse('Session not found or not in progress', 404);
+        try {
+            // Lock session — tolak kalau sudah submitted
+            $session = ResponseSession::lockForUpdate()
+                ->where('user_id', $request->user()->id)
+                ->where('status', 'in_progress')
+                ->find($sessionId);
+
+            if (!$session) {
+                DB::rollBack();
+                return $this->errorResponse('Session not found or not in progress', 404);
+            }
+
+            // Verify question belongs to this questionnaire
+            $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
+                $q->where('questionnaire_id', $session->questionnaire_id);
+            })->find($request->questionId);
+
+            if (!$question) {
+                DB::rollBack();
+                return $this->errorResponse('Question does not belong to this questionnaire', 422);
+            }
+
+            // Upsert answer (unique constraint on response_session_id + question_id)
+            $answer = ResponseAnswer::updateOrCreate(
+                [
+                    'response_session_id' => $session->id,
+                    'question_id' => $request->questionId,
+                ],
+                [
+                    'score' => $request->score,
+                ]
+            );
+
+            DB::commit();
+
+            return $this->successResponse(
+                new ResponseAnswerResource($answer->load('question')),
+                'Answer saved successfully'
+            );
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse('Gagal menyimpan jawaban', 500);
         }
-
-        // Verify question belongs to this questionnaire
-        $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-            $q->where('questionnaire_id', $session->questionnaire_id);
-        })->find($request->questionId);
-
-        if (!$question) {
-            return $this->errorResponse('Question does not belong to this questionnaire', 422);
-        }
-
-        // Upsert answer (unique constraint on response_session_id + question_id)
-        $answer = ResponseAnswer::updateOrCreate(
-            [
-                'response_session_id' => $session->id,
-                'question_id' => $request->questionId,
-            ],
-            [
-                'score' => $request->score,
-            ]
-        );
-
-        return $this->successResponse(
-            new ResponseAnswerResource($answer->load('question')),
-            'Answer saved successfully'
-        );
     }
 
     /**
@@ -288,42 +319,45 @@ class EvaluasiController extends Controller
      */
     public function submit(Request $request, $sessionId)
     {
-        $session = ResponseSession::where('user_id', $request->user()->id)
-            ->where('status', 'in_progress')
-            ->find($sessionId);
-
-        if (!$session) {
-            return $this->errorResponse('Session not found or not in progress', 404);
-        }
-
-        // Check if all questions are answered
-        $totalQuestions = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-            $q->where('questionnaire_id', $session->questionnaire_id);
-        })->count();
-
-        $answeredQuestions = $session->answers()->count();
-
-        if ($answeredQuestions < $totalQuestions) {
-            return $this->errorResponse('Please answer all questions before submitting', 422, [
-                'answered' => $answeredQuestions,
-                'total' => $totalQuestions,
-            ]);
-        }
-
-        // Calculate scores and generate results
         DB::beginTransaction();
 
         try {
-            // Update session status
+            // 1. Lock session row — siapapun edit/autoSave harus tunggu
+            $session = ResponseSession::lockForUpdate()
+                ->where('user_id', $request->user()->id)
+                ->where('status', 'in_progress')
+                ->find($sessionId);
+
+            if (!$session) {
+                DB::rollBack();
+                return $this->errorResponse('Session not found or not in progress', 404);
+            }
+
+            // 2. Validasi jawaban di DALAM transaksi (setelah lock)
+            $totalQuestions = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
+                $q->where('questionnaire_id', $session->questionnaire_id);
+            })->count();
+
+            $answeredQuestions = $session->answers()->count();
+
+            if ($answeredQuestions < $totalQuestions) {
+                DB::rollBack();
+                return $this->errorResponse('Please answer all questions before submitting', 422, [
+                    'answered' => $answeredQuestions,
+                    'total' => $totalQuestions,
+                ]);
+            }
+
+            // 3. Update status → submitted
             $session->update([
                 'status' => 'submitted',
                 'submitted_at' => now(),
             ]);
 
-            // Calculate indicator scores
+            // 4. Calculate indicator scores
             $indicatorScores = $this->calculateIndicatorScores($session);
 
-            // Calculate overall score (weighted average)
+            // 5. Calculate overall score (weighted average)
             $overallScore = 0;
             $totalWeight = 0;
 
@@ -332,12 +366,11 @@ class EvaluasiController extends Controller
                 $totalWeight += $data['totalWeight'];
             }
 
-            // Score is weighted average, percentage is score/maxScore(7) * 100
             $weightedAverage = $totalWeight > 0 ? $overallScore / $totalWeight : 0;
-            $overallPercentage = ($weightedAverage / 7) * 100; // Likert 1-7 scale
+            $overallPercentage = ($weightedAverage / 7) * 100;
             $overallCategory = $this->getCategory($overallPercentage);
 
-            // Create evaluation result
+            // 6. Create evaluation result
             $result = EvaluationResult::create([
                 'response_session_id' => $session->id,
                 'overall_score' => round($weightedAverage, 2),
@@ -346,12 +379,11 @@ class EvaluasiController extends Controller
                 'conclusion' => $this->getConclusion($overallCategory),
             ]);
 
-            // Create result details for each indicator
+            // 7. Create result details for each indicator
             foreach ($indicatorScores as $indicatorId => $data) {
-                $percentage = ($data['score'] / 7) * 100; // Likert 1-7 scale
+                $percentage = ($data['score'] / 7) * 100;
                 $category = $this->getCategory($percentage);
 
-                // Find recommendation for this indicator and score range
                 $recommendation = Recommendation::where('indicator_id', $indicatorId)
                     ->where('min_score', '<=', $data['score'])
                     ->where('max_score', '>=', $data['score'])
@@ -367,18 +399,25 @@ class EvaluasiController extends Controller
                 ]);
             }
 
+            // 8. Semua sukses → commit + lepas lock
             DB::commit();
 
-            // Reload result with relations
             $result->load('details.indicator');
 
             return $this->successResponse([
                 'result' => new \App\Http\Resources\EvaluationResultResource($result),
             ], 'Evaluation submitted successfully');
 
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            // Unique constraint violation — duplikat submit
+            if ($e->errorInfo[1] == 1062) {
+                return $this->errorResponse('Evaluasi sudah pernah di-submit', 409);
+            }
+            return $this->errorResponse('Gagal menyimpan data evaluasi', 500);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to submit evaluation: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Gagal menyimpan data evaluasi', 500);
         }
     }
 
@@ -426,62 +465,75 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors());
         }
 
-        $session = ResponseSession::where('user_id', $request->user()->id)
-            ->where('status', 'in_progress')
-            ->find($sessionId);
+        DB::beginTransaction();
 
-        if (!$session) {
-            return $this->errorResponse('Session not found or not in progress', 404);
-        }
+        try {
+            // Lock session — tunggu kalau submit sedang jalan
+            $session = ResponseSession::lockForUpdate()
+                ->where('user_id', $request->user()->id)
+                ->where('status', 'in_progress')
+                ->find($sessionId);
 
-        // Update remaining time
-        $session->update([
-            'remaining_seconds' => $request->remainingSeconds,
-        ]);
+            if (!$session) {
+                DB::rollBack();
+                return $this->errorResponse('Session not found or not in progress', 404);
+            }
 
-        // Auto-save answers if provided
-        $savedAnswers = [];
-        $skippedAnswers = [];
+            // Update remaining time
+            $session->update([
+                'remaining_seconds' => $request->remainingSeconds,
+            ]);
 
-        if ($request->has('answers') && is_array($request->answers)) {
-            foreach ($request->answers as $answerData) {
-                // Verify question belongs to this questionnaire
-                $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-                    $q->where('questionnaire_id', $session->questionnaire_id);
-                })->find($answerData['questionId']);
+            // Auto-save answers if provided
+            $savedAnswers = [];
+            $skippedAnswers = [];
 
-                if ($question) {
-                    ResponseAnswer::updateOrCreate(
-                        [
-                            'response_session_id' => $session->id,
-                            'question_id' => $answerData['questionId'],
-                        ],
-                        [
-                            'score' => $answerData['score'],
-                        ]
-                    );
-                    $savedAnswers[] = $answerData['questionId'];
-                } else {
-                    $skippedAnswers[] = $answerData['questionId'];
+            if ($request->has('answers') && is_array($request->answers)) {
+                foreach ($request->answers as $answerData) {
+                    $question = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
+                        $q->where('questionnaire_id', $session->questionnaire_id);
+                    })->find($answerData['questionId']);
+
+                    if ($question) {
+                        ResponseAnswer::updateOrCreate(
+                            [
+                                'response_session_id' => $session->id,
+                                'question_id' => $answerData['questionId'],
+                            ],
+                            [
+                                'score' => $answerData['score'],
+                            ]
+                        );
+                        $savedAnswers[] = $answerData['questionId'];
+                    } else {
+                        $skippedAnswers[] = $answerData['questionId'];
+                    }
                 }
             }
+
+            // Semua tersimpan → commit
+            DB::commit();
+
+            $response = [
+                'remainingSeconds' => $session->remaining_seconds,
+                'savedAt' => now()->toIso8601String(),
+            ];
+
+            if (!empty($savedAnswers)) {
+                $response['savedAnswers'] = $savedAnswers;
+            }
+
+            if (!empty($skippedAnswers)) {
+                $response['skippedAnswers'] = $skippedAnswers;
+                $response['skippedReason'] = 'Questions do not belong to this questionnaire';
+            }
+
+            return $this->successResponse($response, 'Auto-save successful');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse('Gagal menyimpan jawaban otomatis', 500);
         }
-
-        $response = [
-            'remainingSeconds' => $session->remaining_seconds,
-            'savedAt' => now()->toIso8601String(),
-        ];
-
-        if (!empty($savedAnswers)) {
-            $response['savedAnswers'] = $savedAnswers;
-        }
-
-        if (!empty($skippedAnswers)) {
-            $response['skippedAnswers'] = $skippedAnswers;
-            $response['skippedReason'] = 'Questions do not belong to this questionnaire';
-        }
-
-        return $this->successResponse($response, 'Auto-save successful');
     }
 
     /**
@@ -509,8 +561,8 @@ class EvaluasiController extends Controller
         }
 
         // Calculate weighted average for each indicator
-        foreach ($indicatorScores as $indicatorId => &$data) {
-            $data['score'] = $data['totalWeight'] > 0
+        foreach ($indicatorScores as $indicatorId => $data) {
+            $indicatorScores[$indicatorId]['score'] = $data['totalWeight'] > 0
                 ? $data['totalScore'] / $data['totalWeight']
                 : 0;
         }

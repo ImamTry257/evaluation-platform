@@ -131,7 +131,9 @@ class ReportController extends Controller
         // Per-session detail export
         if ($request->has('sessionId') && $request->sessionId) {
             $session = ResponseSession::with([
-                'user', 'questionnaire', 'result.details.indicator',
+                'user', 'questionnaire',
+                'result',
+                'answers.question.indicator',
             ])->find($request->sessionId);
 
             if (!$session || $session->status !== 'submitted') {
@@ -143,15 +145,27 @@ class ReportController extends Controller
             }
 
             $result = $session->result;
-            $details = $result->details;
+            $answers = $session->answers;
 
-            $filename = 'laporan-evaluasi-' . $session->id . '-' . now()->format('Y-m-d') . '.csv';
+            // Group answers by indicator
+            $groupedAnswers = $answers->groupBy(function ($answer) {
+                return $answer->question->indicator->id;
+            });
+
+            // Sort by indicator order
+            $groupedAnswers = $groupedAnswers->sortKeysUsing(function ($a, $b) use ($answers) {
+                $indA = $answers->first(fn($ans) => $ans->question->indicator->id === $a)->question->indicator->order_number ?? 999;
+                $indB = $answers->first(fn($ans) => $ans->question->indicator->id === $b)->question->indicator->order_number ?? 999;
+                return $indA <=> $indB;
+            });
+
+            $filename = 'laporan-evaluasi-' . $session->questionnaire->title . '-' . now()->format('YmdHis') . '.csv';
             $headers = [
                 'Content-Type' => 'text/csv',
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"',
             ];
 
-            $callback = function () use ($session, $result, $details) {
+            $callback = function () use ($session, $result, $groupedAnswers) {
                 $file = fopen('php://output', 'w');
 
                 // Info responden
@@ -166,16 +180,23 @@ class ReportController extends Controller
                 fputcsv($file, [
                     'No',
                     'Indikator',
-                    'Persentase',
+                    'Pertanyaan',
+                    'Skor',
                 ]);
 
                 $no = 1;
-                foreach ($details as $detail) {
-                    fputcsv($file, [
-                        $no++,
-                        $detail->indicator->name ?? '-',
-                        $detail->percentage . '%',
-                    ]);
+                foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
+                    $indicator = $indicatorAnswers->first()->question->indicator;
+                    $sortedAnswers = $indicatorAnswers->sortBy('question.order_number');
+
+                    foreach ($sortedAnswers as $answer) {
+                        fputcsv($file, [
+                            $no++,
+                            $indicator->name,
+                            $answer->question->question_text,
+                            $answer->score,
+                        ]);
+                    }
                 }
 
                 fclose($file);
@@ -211,7 +232,7 @@ class ReportController extends Controller
             return $this->errorResponse('No data to export', 404);
         }
 
-        $filename = 'laporan-evaluasi-' . now()->format('Y-m-d-His') . '.csv';
+            $filename = 'laporan-evaluasi-' . now()->format('YmdHis') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -263,7 +284,8 @@ class ReportController extends Controller
 
         $session = ResponseSession::with([
             'user', 'questionnaire',
-            'result.details.indicator',
+            'result',
+            'answers.question.indicator',
         ])->find($request->sessionId);
 
         if ($session->status !== 'submitted') {
@@ -277,7 +299,7 @@ class ReportController extends Controller
         // Generate simple HTML report (can be converted to PDF with DomPDF)
         $html = $this->generatePdfHtml($session);
 
-        $filename = 'laporan-evaluasi-' . $session->id . '-' . now()->format('Y-m-d') . '.html';
+        $filename = 'laporan-evaluasi-' . $session->questionnaire->title . '-' . now()->format('YmdHis') . '.html';
 
         return response($html, 200, [
             'Content-Type' => 'text/html',
@@ -293,7 +315,19 @@ class ReportController extends Controller
         $user = $session->user;
         $questionnaire = $session->questionnaire;
         $result = $session->result;
-        $details = $result->details;
+        $answers = $session->answers;
+
+        // Group answers by indicator
+        $groupedAnswers = $answers->groupBy(function ($answer) {
+            return $answer->question->indicator->id;
+        });
+
+        // Sort by indicator order
+        $groupedAnswers = $groupedAnswers->sortKeysUsing(function ($a, $b) use ($answers) {
+            $indA = $answers->first(fn($a) => $a->question->indicator->id === $a)->question->indicator->order_number ?? 999;
+            $indB = $answers->first(fn($b) => $b->question->indicator->id === $b)->question->indicator->order_number ?? 999;
+            return $indA <=> $indB;
+        });
 
         $html = '<!DOCTYPE html>
 <html>
@@ -316,6 +350,7 @@ class ReportController extends Controller
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #006c49; color: white; }
         tr:nth-child(even) { background-color: #f8f9fa; }
+        td.indicator-name { vertical-align: top; font-weight: bold; background-color: #f0f9f4; }
         .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px; }
     </style>
 </head>
@@ -349,19 +384,35 @@ class ReportController extends Controller
                 <tr>
                     <th>No</th>
                     <th>Indikator</th>
-                    <th>Persentase</th>
+                    <th>Pertanyaan</th>
+                    <th>Skor</th>
                 </tr>
             </thead>
             <tbody>';
 
         $no = 1;
-        foreach ($details as $detail) {
-            $html .= '
-                <tr>
-                    <td>' . $no++ . '</td>
-                    <td>' . ($detail->indicator->name ?? '-') . '</td>
-                    <td>' . $detail->percentage . '%</td>
+        foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
+            $indicator = $indicatorAnswers->first()->question->indicator;
+            $rowspan = $indicatorAnswers->count();
+
+            // Sort questions by order_number
+            $sortedAnswers = $indicatorAnswers->sortBy('question.order_number');
+
+            $first = true;
+            foreach ($sortedAnswers as $answer) {
+                $html .= '
+                <tr>';
+                if ($first) {
+                    $html .= '
+                    <td rowspan="' . $rowspan . '">' . $no++ . '</td>
+                    <td rowspan="' . $rowspan . '" class="indicator-name">' . $indicator->name . '</td>';
+                    $first = false;
+                }
+                $html .= '
+                    <td>' . $answer->question->question_text . '</td>
+                    <td>' . $answer->score . '</td>
                 </tr>';
+            }
         }
 
         $html .= '

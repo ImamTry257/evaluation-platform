@@ -1,5 +1,4 @@
 import axios from 'axios'
-import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 
 const api = axios.create({
@@ -33,7 +32,7 @@ api.interceptors.request.use((config) => {
 // Response interceptor - handle errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
       const authStore = useAuthStore()
 
@@ -45,6 +44,9 @@ api.interceptors.response.use(
 
       // Clear both localStorage AND Pinia store state
       authStore.clearAuth()
+
+      // Dynamic import to avoid circular dependency with router → auth → api
+      const { default: router } = await import('@/router')
 
       // Redirect to correct login page
       router.push(loginPath)

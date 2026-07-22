@@ -66,7 +66,7 @@ onMounted(() => {
     <template v-else-if="profile">
       <!-- Step Header -->
       <div class="fixed top-0 left-0 right-0 z-[200] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
-        <div class="max-w-5xl mx-auto px-6 py-2.5 flex items-center justify-between">
+        <div class="max-w-12xl mx-auto px-6 py-2.5 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-2xl">eco</span>
             <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>

@@ -111,6 +111,27 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function validateToken() {
+    try {
+      const response = await api.get('/auth/validate')
+      // Verify token is still valid and get fresh user data
+      const freshUser = response.data.data
+      user.value = freshUser
+      // Update persisted user data
+      const role = freshUser?.role
+      if (role === 'ADMIN' || role === 'SUPERADMIN') {
+        localStorage.setItem('userAdmin', JSON.stringify(freshUser))
+      } else {
+        localStorage.setItem('userRespondent', JSON.stringify(freshUser))
+      }
+      return true
+    } catch (error) {
+      console.log('Token validation failed:', error)
+      clearAuth()
+      return false
+    }
+  }
+
   return {
     token,
     user,
@@ -124,5 +145,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     fetchProfile,
+    validateToken,
   }
 })

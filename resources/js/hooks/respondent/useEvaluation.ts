@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import api from '@/services/api'
+import { useRouter } from 'vue-router'
 
 export function useEvaluation() {
   const loading = ref(false)
@@ -22,12 +23,22 @@ export function useEvaluation() {
     }
   }
 
+  // Router instance for navigation
+  const router = useRouter()
+
   // Start evaluation session
-  async function startEvaluation(questionnaireId: number) {
+  async function startEvaluation(questionnaireId: number, currentComponent?: number) {
     loading.value = true
     error.value = null
     try {
       const { data } = await api.post('/evaluations/start', { questionnaireId })
+      // Handle both resumed (from localStorage) and new evaluations
+      if (data.data.isResumed && currentComponent) {
+        // Resume from the saved component instead of always going to component 1
+        router.push(`/respondent/evaluation/${data.data.session.evaluation.id}/component/${currentComponent}`)
+      } else {
+        router.push(`/respondent/evaluation/${data.data.session.evaluation.id}/component/1`)
+      }
       return data.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Gagal memulai evaluasi'

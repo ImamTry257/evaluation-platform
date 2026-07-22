@@ -16,6 +16,14 @@ const isChecked = ref(false)
 const starting = ref(false)
 const showUserMenu = ref(false)
 
+// Get the current component from localStorage for resuming
+const getCurrentComponentFromStorage = () => {
+  const saved = localStorage.getItem('savedEvaluationComponent')
+  return saved ? parseInt(saved) : null
+}
+
+const currentComponent = ref(getCurrentComponentFromStorage())
+
 const infoItems = computed(() => {
   if (!questionnaire.value) return []
   const q = questionnaire.value
@@ -47,9 +55,12 @@ async function handleStartEvaluation() {
   starting.value = true
   error.value = null
   try {
-    const result = await startEvaluation(questionnaire.value.id)
+    const result = await startEvaluation(questionnaire.value.id, currentComponent.value)
     const sessionId = result.session?.evaluation?.id || result.session?.id
-    router.push(`/respondent/evaluation/${sessionId}/component/1`)
+    const targetComponent = currentComponent.value || 1
+    router.push(`/respondent/evaluation/${sessionId}/component/${targetComponent}`)
+    // Clear the saved component after successful start
+    localStorage.removeItem('savedEvaluationComponent')
   } catch (err) {
     // Error handled by hook
   } finally {
@@ -64,8 +75,33 @@ async function handleLogout() {
 
 onMounted(async () => {
   try {
+    // Check if user has existing in-progress session
+    const currentComponent = getCurrentComponentFromStorage()
+    let sessionData = null
+    
+    if (currentComponent) {
+      // Try to fetch the session to check if it's still in progress
+      try {
+        // Use the existing evaluation data if available, otherwise fetch
+        if (!sessionData) {
+          sessionData = await startEvaluation(questionnaire.value?.id, currentComponent)
+        }
+        // Successfully restored session, navigate directly
+        const sessionId = sessionData.session?.evaluation?.id || sessionData.session?.id
+        router.push(`/respondent/evaluation/${sessionId}/component/${currentComponent}`)
+        return
+      } catch (resumeError) {
+        // Session may be expired or invalid, continue normally
+        console.log('Session resume failed, continuing normally:', resumeError)
+        localStorage.removeItem('savedEvaluationComponent')
+      }
+    }
+    
+    // No existing session or couldn't resume, fetch active questionnaire
     questionnaire.value = await fetchActiveQuestionnaire()
-  } catch (err) { /* Error handled by hook */ }
+  } catch (err) { 
+    // Error handled by hook
+  }
 })
 </script>
 
@@ -86,7 +122,7 @@ onMounted(async () => {
     <template v-else-if="questionnaire">
       <!-- Step Header -->
       <div class="fixed top-0 left-0 right-0 z-[200] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
-        <div class="max-w-5xl mx-auto px-6 py-2.5 flex items-center justify-between">
+        <div class="max-w-12xl mx-auto px-6 py-2.5 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-2xl">eco</span>
             <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>

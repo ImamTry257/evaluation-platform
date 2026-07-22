@@ -127,7 +127,7 @@ const router = createRouter({
     {
       path: '/respondent',
       component: () => import('@/views/respondent/RespondentLayout.vue'),
-      meta: { requiresAuth: true, role: 'RESPONDENT' },
+      meta: { requiresAuth: true, roles: ['RESPONDENT'] },
       children: [
         {
           path: '',
@@ -155,17 +155,43 @@ const router = createRouter({
 })
 
 // Navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
-  } else if (to.meta.guest && authStore.isAuthenticated) {
-    console.log(authStore.user, to.meta.requiresAuth, authStore.isAuthenticated)
-    const role = authStore.user?.role
-    if (role === 'ADMIN' || role === 'SUPERADMIN') {
-      next('/admin')
+  } else if (to.meta.requiresAuth && authStore.isAuthenticated) {
+    // Only validate token on page reload (from.name is undefined) to avoid
+    // unnecessary API calls on every SPA navigation
+    if (!from.name) {
+      const isTokenValid = await authStore.validateToken()
+      if (!isTokenValid) {
+        next('/login')
+        return
+      }
+    }
+    if (to.meta.roles && !to.meta.roles.includes(authStore.user?.role)) {
+      const role = authStore.user?.role
+      if (role === 'ADMIN' || role === 'SUPERADMIN') {
+        next('/admin')
+      } else {
+        next('/respondent')
+      }
     } else {
-      next('/respondent')
+      next()
+    }
+  } else if (to.meta.guest && authStore.isAuthenticated) {
+    // Validate token before allowing redirect
+    const isTokenValid = await authStore.validateToken()
+    if (!isTokenValid) {
+      next('/login')
+    } else {
+      const role = authStore.user?.role
+      if (role === 'ADMIN' || role === 'SUPERADMIN') {
+        next('/admin')
+      } else {
+        next('/respondent')
+      }
     }
   } else if (to.meta.roles && !to.meta.roles.includes(authStore.user?.role)) {
     console.log(authStore.user, to.meta.requiresAuth, authStore.isAuthenticated)

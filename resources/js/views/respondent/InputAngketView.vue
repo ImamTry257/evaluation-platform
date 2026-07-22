@@ -26,6 +26,7 @@ const showSubmitModal = ref(false)
 const showResetModal = ref(false)
 const showTimeoutModal = ref(false)
 const showUserMenu = ref(false)
+const showProfileBlocked = ref(false)
 const submitting = ref(false)
 const timeoutSubmitting = ref(false)
 const toastMsg = ref('')
@@ -151,6 +152,19 @@ function confirmReset() {
 async function handleLogout() {
   await authStore.logout()
   router.push('/login')
+}
+
+// Profile blocking logic for angket filling mode
+function handleProfileClick() {
+  showProfileBlocked.value = true
+}
+
+function closeProfileBlocked() {
+  showProfileBlocked.value = false
+}
+
+function continueWithAngket() {
+  closeProfileBlocked()
 }
 
 // Timeout handlers
@@ -304,7 +318,7 @@ onUnmounted(() => {
             </div>
             <!-- User Menu -->
             <div class="relative">
-              <button @click="showUserMenu = !showUserMenu"
+              <button @click="handleProfileClick"
                 class="w-9 h-9 rounded-full bg-primary-container/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
                 <span class="material-symbols-outlined text-primary text-[20px]">person</span>
               </button>
@@ -509,6 +523,29 @@ onUnmounted(() => {
           </button>
         </div>
         <p class="text-body-sm text-outline mt-6">Evaluasi ini akan otomatis di-submit dengan jawaban yang sudah ada.</p>
+      </div>
+    </div>
+
+    <!-- Profile Blocked Modal -->
+    <div v-if="showProfileBlocked" class="fixed inset-0 z-[700] flex items-center justify-center p-4"
+      style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);animation:fadeIn .4s ease-out;">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 transition-transform duration-300"
+        style="animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275);">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+            <span class="material-symbols-outlined text-amber-600">warning</span>
+          </div>
+          <h3 class="font-title-md text-title-md text-on-surface">Akses Diblokir</h3>
+        </div>
+        <p class="text-body-base text-on-surface-variant mb-2">Anda sedang mengisi angket. Untuk melindungi integritas data, mengakses profil sementara dikunci.</p>
+        <p class="text-body-sm text-on-surface-variant mb-6">Setelah menyelesaikan evaluasi, Anda dapat mengakses profil kembali.</p>
+        <div class="flex items-center justify-end gap-3">
+          <button @click="closeProfileBlocked" class="px-5 py-2.5 rounded-xl border border-outline-variant/50 text-on-surface font-body-base font-medium hover:bg-surface-container transition-colors">Mengerti</button>
+          <button @click="continueWithAngket"
+            class="px-8 py-2.5 rounded-xl bg-primary text-white font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">edit</span> Lanjutkan Angket
+          </button>
+        </div>
       </div>
     </div>
   </div>

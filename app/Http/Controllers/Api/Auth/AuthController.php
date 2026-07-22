@@ -165,11 +165,13 @@ class AuthController extends Controller
     }
 
     /**
-     * GET /api/v1/auth/profile
-     * Get authenticated user profile.
+     * GET /api/v1/auth/validate
+     * Validate current access token and return user profile.
      */
-    public function profile(Request $request)
+    public function validate(Request $request)
     {
+        // Laravel Sanctum automatically validates the token
+        // Return user data if token is valid
         $user = $request->user();
 
         return $this->successResponse([
