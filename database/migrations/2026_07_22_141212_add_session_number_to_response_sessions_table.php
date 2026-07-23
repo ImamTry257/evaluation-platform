@@ -13,19 +13,21 @@ return new class extends Migration
             $table->unsignedInteger('session_number')->nullable()->after('remaining_seconds');
         });
 
-        // Backfill existing sessions: hitung urutan per user_id berdasarkan started_at
+        // Backfill existing sessions: hitung urutan per user_id (kompatibel MySQL 5.7+ & MariaDB)
         DB::statement('
             UPDATE response_sessions rs
-            JOIN (
-                SELECT
-                    id,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY user_id
-                        ORDER BY started_at ASC, id ASC
-                    ) AS rn
-                FROM response_sessions
+            INNER JOIN (
+                SELECT id,
+                    @rn := CASE
+                        WHEN @prev_user = user_id THEN @rn + 1
+                        ELSE 1
+                    END AS session_number,
+                    @prev_user := user_id
+                FROM response_sessions,
+                    (SELECT @rn := 0, @prev_user := NULL) vars
+                ORDER BY user_id, started_at ASC, id ASC
             ) seq ON rs.id = seq.id
-            SET rs.session_number = seq.rn
+            SET rs.session_number = seq.session_number
         ');
     }
 
