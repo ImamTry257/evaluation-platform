@@ -2,48 +2,23 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useLoginAdmin } from '@/hooks/useLoginAdmin'
 
-const router = useRouter()
-const authStore = useAuthStore()
+const { isLoading, errorMessage, login, fieldErrors, clearFieldError } = useLoginAdmin()
 
 const showPassword = ref(false)
-const isLoading = ref(false)
-const errorMessage = ref('')
-const fieldErrors = reactive<Record<string, string[]>>({})
 
 const form = reactive({
   email: '',
   password: '',
 })
 
-function clearFieldError(field: string) {
-  if (fieldErrors[field]) {
-    delete fieldErrors[field]
-  }
-}
-
 async function handleLogin() {
   isLoading.value = true
   errorMessage.value = ''
   Object.keys(fieldErrors).forEach(k => delete fieldErrors[k])
 
-  try {
-    await authStore.loginAdmin(form.email, form.password)
-
-    if (authStore.user?.role === 'SUPERADMIN' || authStore.user?.role === 'ADMIN') {
-      router.push('/admin')
-    }
-  } catch (error: any) {
-    const data = error?.response?.data
-    const errData = data?.errors
-    if (errData && Object.keys(errData).length) {
-      Object.assign(fieldErrors, data.errors)
-    } else {
-      errorMessage.value = data?.message || 'Terjadi kesalahan. Silakan coba lagi.'
-    }
-  } finally {
-    isLoading.value = false
-  }
+  await login(form.email, form.password)
 }
 </script>
 
