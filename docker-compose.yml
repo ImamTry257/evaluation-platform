@@ -24,6 +24,16 @@ services:
 
     command: >
       sh -c '
+      echo "====================================="
+      echo "CHECK ENV VARIABLES:"
+      echo "DB_CONNECTION=${DB_CONNECTION}"
+      echo "DB_HOST=${DB_HOST}"
+      echo "DB_PORT=${DB_PORT}"
+      echo "DB_DATABASE=${DB_DATABASE}"
+      echo "DB_USERNAME=${DB_USERNAME}"
+      echo "DB_PASSWORD=${DB_PASSWORD}"
+      echo "====================================="
+
       until php -r "
         new PDO(
           \"mysql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}\",
@@ -32,9 +42,7 @@ services:
         );
       " >/dev/null 2>&1; do
         echo Waiting for MySQL...
-        echo "${DB_DATABASE}"
-        echo "${DB_USERNAME}"
-        echo "${DB_PASSWORD}"
+        echo "Trying: host=${DB_HOST} port=${DB_PORT} db=${DB_DATABASE} user=${DB_USERNAME} pass=${DB_PASSWORD}"
         sleep 2
       done
 
