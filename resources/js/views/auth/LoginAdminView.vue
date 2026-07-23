@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import { useLoginAdmin } from '@/hooks/useLoginAdmin'
 
 const { isLoading, errorMessage, login, fieldErrors, clearFieldError } = useLoginAdmin()
@@ -14,10 +12,6 @@ const form = reactive({
 })
 
 async function handleLogin() {
-  isLoading.value = true
-  errorMessage.value = ''
-  Object.keys(fieldErrors).forEach(k => delete fieldErrors[k])
-
   await login(form.email, form.password)
 }
 </script>

@@ -169,10 +169,9 @@ class ReportController extends Controller
             $rows[] = ['Tanggal Isi Angket', $session->submitted_at->format('d/m/Y H:i')];
             $rows[] = ['Persentase', $result->overall_percentage . '%'];
             $rows[] = []; // blank row
-            $rows[] = []; // blank row
 
             // Header row (track its index for bold styling in export class)
-            $headerRowIndex = count($rows); // 1-indexed for Excel
+            $headerRowIndex = count($rows) + 1; // 1-indexed for Excel
             $rows[] = [
                 'No',
                 'Aspek',

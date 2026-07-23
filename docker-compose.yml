@@ -32,6 +32,9 @@ services:
         );
       " >/dev/null 2>&1; do
         echo Waiting for MySQL...
+        echo "${DB_DATABASE}"
+        echo "${DB_USERNAME}"
+        echo "${DB_PASSWORD}"
         sleep 2
       done
 
