@@ -80,7 +80,7 @@ export function useReport() {
       link.href = url
       // Extract filename from Content-Disposition header, fallback to dynamic name
       const disposition = headers?.['content-disposition']
-      let filename = 'laporan-evaluasi.csv'
+      let filename = 'laporan-evaluasi.xlsx'
       if (disposition) {
         const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?(.+?)["']?(?:;|$)/i)
         if (match) filename = match[1]

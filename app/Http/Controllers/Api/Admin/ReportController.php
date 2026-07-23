@@ -122,7 +122,7 @@ class ReportController extends Controller
 
     /**
      * POST /api/v1/admin/reports/export-excel
-     * Export evaluation results to Excel (CSV).
+     * Export evaluation results to Excel (.xlsx).
      * - Without sessionId: bulk summary list
      * - With sessionId: detail per indikator for that session
      */
@@ -159,50 +159,55 @@ class ReportController extends Controller
                 return $indA <=> $indB;
             });
 
-            $filename = 'laporan-evaluasi-' . $session->questionnaire->title . '-' . now()->format('YmdHis') . '.csv';
-            $headers = [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            // Build rows for detail export
+            $rows = [];
+
+            // Metadata section
+            $rows[] = ['Nama', $session->user->name];
+            $rows[] = ['Email', $session->user->email];
+            $rows[] = ['Kuesioner', $session->questionnaire->title];
+            $rows[] = ['Tanggal Isi Angket', $session->submitted_at->format('d/m/Y H:i')];
+            $rows[] = ['Persentase', $result->overall_percentage . '%'];
+            $rows[] = []; // blank row
+            $rows[] = []; // blank row
+
+            // Header row (track its index for bold styling in export class)
+            $headerRowIndex = count($rows); // 1-indexed for Excel
+            $rows[] = [
+                'No',
+                'Aspek',
+                'Pernyataan',
+                'Skor',
             ];
 
-            $callback = function () use ($session, $result, $groupedAnswers) {
-                $file = fopen('php://output', 'w');
+            // Data rows
+            $no = 1;
+            foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
+                $indicator = $indicatorAnswers->first()->question->indicator;
+                $sortedAnswers = $indicatorAnswers->sortBy('question.order_number');
 
-                // Info responden
-                fputcsv($file, ['Nama', $session->user->name]);
-                fputcsv($file, ['Email', $session->user->email]);
-                fputcsv($file, ['Kuesioner', $session->questionnaire->title]);
-                fputcsv($file, ['Tanggal Isi Angket', $session->submitted_at->format('d/m/Y H:i')]);
-                fputcsv($file, ['Persentase', $result->overall_percentage . '%']);
-                fputcsv($file, []); // blank row
-
-                // Header detail
-                fputcsv($file, [
-                    'No',
-                    'Indikator',
-                    'Pertanyaan',
-                    'Skor',
-                ]);
-
-                $no = 1;
-                foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
-                    $indicator = $indicatorAnswers->first()->question->indicator;
-                    $sortedAnswers = $indicatorAnswers->sortBy('question.order_number');
-
-                    foreach ($sortedAnswers as $answer) {
-                        fputcsv($file, [
-                            $no++,
-                            $indicator->name,
-                            $answer->question->question_text,
-                            $answer->score,
-                        ]);
-                    }
+                foreach ($sortedAnswers as $answer) {
+                    $rows[] = [
+                        $no++,
+                        $indicator->name,
+                        $answer->question->question_text,
+                        $answer->score,
+                    ];
                 }
+            }
 
-                fclose($file);
-            };
+            $safeTitle = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $session->questionnaire->title);
+            $filename = 'laporan-evaluasi-' . $safeTitle . '-' . now()->format('YmdHis') . '.xlsx';
 
-            return response()->stream($callback, 200, $headers);
+            return \Maatwebsite\Excel\Facades\Excel::download(
+                new \App\Exports\ReportsExport(
+                    $rows,
+                    $headerRowIndex,
+                    mergeColumn: 'B',
+                    mergeStartRow: $headerRowIndex + 1,
+                ),
+                $filename
+            );
         }
 
         // Bulk summary export
@@ -232,48 +237,43 @@ class ReportController extends Controller
             return $this->errorResponse('No data to export', 404);
         }
 
-        // Build descriptive filename
-        $filename = 'laporan-evaluasi';
-        if ($request->has('questionnaireId') && $request->questionnaireId) {
-            $firstSession = $sessions->first();
-            $questionnaireTitle = $firstSession?->questionnaire?->title ?? '';
-            $safeTitle = preg_replace('/[^a-zA-Z0-9\-\_]/', '_', $questionnaireTitle);
-            $filename .= '-' . $safeTitle;
-        }
-        $filename .= '-' . now()->format('YmdHis') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ];
-
-        $callback = function () use ($sessions) {
-            $file = fopen('php://output', 'w');
-
-            fputcsv($file, [
+        // Build rows for summary export
+        $rows = [
+            [
                 'No',
                 'Nama Responden',
                 'Email',
                 'Kuesioner',
                 'Persentase',
                 'Tanggal Isi Angket',
-            ]);
+            ],
+        ];
 
-            $no = 1;
-            foreach ($sessions as $session) {
-                fputcsv($file, [
-                    $no++,
-                    $session->user->name,
-                    $session->user->email,
-                    $session->questionnaire->title,
-                    ($session->result?->overall_percentage ?? '-') . '%',
-                    $session->submitted_at->format('d/m/Y H:i'),
-                ]);
-            }
+        $no = 1;
+        foreach ($sessions as $session) {
+            $rows[] = [
+                $no++,
+                $session->user->name,
+                $session->user->email,
+                $session->questionnaire->title,
+                ($session->result?->overall_percentage ?? '-') . '%',
+                $session->submitted_at->format('d/m/Y H:i'),
+            ];
+        }
 
-            fclose($file);
-        };
+        // Build descriptive filename
+        $filename = 'laporan-evaluasi';
+        if ($request->has('questionnaireId') && $request->questionnaireId) {
+            $questionnaireTitle = $sessions->first()?->questionnaire?->title ?? '';
+            $safeTitle = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $questionnaireTitle);
+            $filename .= '-' . $safeTitle;
+        }
+        $filename .= '-' . now()->format('YmdHis') . '.xlsx';
 
-        return response()->stream($callback, 200, $headers);
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ReportsExport($rows, 1),
+            $filename
+        );
     }
 
     /**
@@ -375,6 +375,7 @@ class ReportController extends Controller
             <div class="info-item"><strong>Email:</strong> ' . $user->email . '</div>
             <div class="info-item"><strong>Kuesioner:</strong> ' . $questionnaire->title . '</div>
             <div class="info-item"><strong>Tanggal Isi Angket:</strong> ' . $session->submitted_at->format('d/m/Y H:i') . '</div>
+            <div></div>
         </div>
     </div>
 
@@ -392,7 +393,7 @@ class ReportController extends Controller
                 <tr>
                     <th>No</th>
                     <th>Indikator</th>
-                    <th>Pertanyaan</th>
+                    <th>Pernyataan</th>
                     <th>Skor</th>
                 </tr>
             </thead>
