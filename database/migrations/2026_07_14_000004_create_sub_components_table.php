@@ -16,7 +16,6 @@ return new class extends Migration
             $table->integer('order_number')->default(0);
             $table->boolean('is_active')->default(false);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
