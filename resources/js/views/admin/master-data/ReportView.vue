@@ -34,6 +34,9 @@ function formatDate(dateStr: string): string {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
+     hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
   })
 }
 
@@ -96,9 +99,6 @@ onMounted(() => {
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 fade-in">
       <div>
         <h2 class="font-headline-xl text-headline-xl text-on-surface">Laporan Pengisian Angket</h2>
-        <p class="font-body-base text-body-base text-on-surface-variant mt-2">
-          Lihat dan export laporan hasil evaluasi kebijakan lingkungan sekolah.
-        </p>
       </div>
       <div class="flex items-center gap-3">
         <button
@@ -183,8 +183,9 @@ onMounted(() => {
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Responden</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Instrument</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Presentase</th>
-            <!-- <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Kategori</th> -->
-            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Isi Angket</th>
+            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
+            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Mulai isi Angket</th>
+            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Penyelesaian Angket</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
           </tr>
         </thead>
@@ -206,22 +207,24 @@ onMounted(() => {
             </td>
             <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.questionnaire || '-' }}</td>
             <td class="px-6 py-5">
-              <span class="font-title-md font-semibold text-primary">{{ item.percentage || '-' }}%</span>
+              <span class="font-title-md font-semibold text-primary">{{ ( item.percentage != null ? `${item.percentage}%` : '' ) || '' }}</span>
             </td>
+            <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.status || '-' }}</td>
             <!-- <td class="px-6 py-5">
               <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getCategoryBadge(item.category)">
                 {{ item.category || '-' }}
               </span>
             </td> -->
+            <td class="px-6 py-5 text-body-sm text-on-surface">{{ formatDate(item.startedAt) }}</td>
             <td class="px-6 py-5 text-body-sm text-on-surface">{{ formatDate(item.submittedAt) }}</td>
             <td class="px-6 py-5">
               <div class="flex items-center justify-center gap-1">
                 <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
                 </button>
-                <button @click="handleExportPdf(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export PDF">
+                <!-- <button @click="handleExportPdf(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export PDF">
                   <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-                </button>
+                </button> -->
                 <button @click="handleExportExcelSession(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export Excel">
                   <span class="material-symbols-outlined text-[18px]">table_chart</span>
                 </button>

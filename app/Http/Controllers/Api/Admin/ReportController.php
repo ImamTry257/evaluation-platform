@@ -20,8 +20,7 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ResponseSession::where('status', 'submitted')
-            ->with(['user', 'questionnaire', 'result']);
+        $query = ResponseSession::with(['user', 'questionnaire', 'result']);
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
@@ -84,7 +83,7 @@ class ReportController extends Controller
 
         // Paginated submissions
         $limit = min($request->get('limit', 10), 100);
-        $submissions = $query->orderBy('submitted_at', 'desc')
+        $submissions = $query->orderBy('started_at', 'desc')
             ->paginate($limit);
 
         $contents = $submissions->getCollection()->map(function ($session) {
@@ -94,7 +93,9 @@ class ReportController extends Controller
                 'questionnaire' => $session->questionnaire->title,
                 'score' => $session->result?->overall_score,
                 'percentage' => $session->result?->overall_percentage,
+                'status' => ( $session->status == 'in_progress' ) ? 'IN PROGRESS' : strtoupper($session->status),
                 'category' => $session->result?->overall_category,
+                'startedAt' => $session->started_at,
                 'submittedAt' => $session->submitted_at,
             ];
         });
@@ -171,7 +172,7 @@ class ReportController extends Controller
             $rows[] = []; // blank row
 
             // Header row (track its index for bold styling in export class)
-            $headerRowIndex = count($rows) + 1; // 1-indexed for Excel
+            $headerRowIndex = count($rows); // 1-indexed for Excel
             $rows[] = [
                 'No',
                 'Aspek',
