@@ -9,16 +9,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sub_components', function (Blueprint $table) {
-            $table->renameColumn('componentId', 'component_id');
-            $table->renameColumn('orderNumber', 'order_number');
+            if (Schema::hasColumn('sub_components', 'componentId')) {
+                $table->renameColumn('componentId', 'component_id');
+            }
+            if (Schema::hasColumn('sub_components', 'orderNumber')) {
+                $table->renameColumn('orderNumber', 'order_number');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('sub_components', function (Blueprint $table) {
-            $table->renameColumn('component_id', 'componentId');
-            $table->renameColumn('order_number', 'orderNumber');
+            if (Schema::hasColumn('sub_components', 'component_id')) {
+                $table->renameColumn('component_id', 'componentId');
+            }
+            if (Schema::hasColumn('sub_components', 'order_number')) {
+                $table->renameColumn('order_number', 'orderNumber');
+            }
         });
     }
 };

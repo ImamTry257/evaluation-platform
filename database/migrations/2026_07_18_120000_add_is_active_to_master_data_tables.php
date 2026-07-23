@@ -11,21 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('components', function (Blueprint $table) {
-            $table->integer('is_active')->default(1)->after('orderNumber');
-        });
+        if (!Schema::hasColumn('components', 'is_active')) {
+            Schema::table('components', function (Blueprint $table) {
+                $table->integer('is_active')->default(1)->after('order_number');
+            });
+        }
 
-        Schema::table('sub_components', function (Blueprint $table) {
-            $table->integer('is_active')->default(1)->after('orderNumber');
-        });
+        if (!Schema::hasColumn('sub_components', 'is_active')) {
+            Schema::table('sub_components', function (Blueprint $table) {
+                $table->integer('is_active')->default(1)->after('order_number');
+            });
+        }
 
-        Schema::table('indicators', function (Blueprint $table) {
-            $table->integer('is_active')->default(1)->after('orderNumber');
-        });
+        if (!Schema::hasColumn('indicators', 'is_active')) {
+            Schema::table('indicators', function (Blueprint $table) {
+                $table->integer('is_active')->default(1)->after('order_number');
+            });
+        }
 
-        Schema::table('questions', function (Blueprint $table) {
-            $table->integer('is_active')->default(1)->after('orderNumber');
-        });
+        if (!Schema::hasColumn('questions', 'is_active')) {
+            Schema::table('questions', function (Blueprint $table) {
+                $table->integer('is_active')->default(1)->after('order_number');
+            });
+        }
     }
 
     /**
