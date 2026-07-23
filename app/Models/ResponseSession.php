@@ -19,6 +19,7 @@ class ResponseSession extends Model
         'started_at',
         'submitted_at',
         'remaining_seconds',
+        'session_number',
     ];
 
     protected function casts(): array
@@ -27,6 +28,7 @@ class ResponseSession extends Model
             'started_at' => 'datetime',
             'submitted_at' => 'datetime',
             'remaining_seconds' => 'integer',
+            'session_number' => 'integer',
         ];
     }
 

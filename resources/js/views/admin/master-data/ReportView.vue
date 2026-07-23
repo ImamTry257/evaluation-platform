@@ -57,6 +57,17 @@ function getCategoryBadge(category: string) {
   }
 }
 
+function getStatusBadge(status: string) {
+  switch (status) {
+    case 'SUBMITTED':
+      return 'bg-primary/10 text-primary font-semibold'
+    case 'IN PROGRESS':
+      return 'bg-amber-100 text-amber-700 font-semibold'
+    default:
+      return 'bg-gray-100 text-gray-600 font-semibold'
+  }
+}
+
 // View modal
 function openViewModal(item: any) {
   viewingReport.value = item
@@ -182,6 +193,7 @@ onMounted(() => {
           <tr class="bg-surface-container-low/50">
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Responden</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Instrument</th>
+            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Pengisian Ke</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Presentase</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Mulai isi Angket</th>
@@ -197,19 +209,22 @@ onMounted(() => {
           >
             <td class="px-6 py-5">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                  {{ item.respondent?.charAt(0) || 'U' }}
-                </div>
                 <div>
                   <span class="font-body-base font-semibold text-on-surface">{{ item.respondent || '-' }}</span>
                 </div>
               </div>
             </td>
             <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.questionnaire || '-' }}</td>
+            <td class="px-6 py-5 text-body-sm text-on-surface">
+              {{ item.submissionOrder || '-' }}</td>
             <td class="px-6 py-5">
               <span class="font-title-md font-semibold text-primary">{{ ( item.percentage != null ? `${item.percentage}%` : '' ) || '' }}</span>
             </td>
-            <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.status || '-' }}</td>
+            <td class="px-6 py-5 text-body-sm text-on-surface">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(item.status)">
+                {{ item.status || '-' }}
+              </span>
+            </td>
             <!-- <td class="px-6 py-5">
               <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="getCategoryBadge(item.category)">
                 {{ item.category || '-' }}

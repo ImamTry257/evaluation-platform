@@ -24,6 +24,7 @@ class ResponseSessionResource extends JsonResource
             'startedAt' => $this->started_at,
             'submittedAt' => $this->submitted_at,
             'remainingSeconds' => $this->remaining_seconds,
+            'sessionNumber' => $this->session_number,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
             'user' => new UserResource($this->whenLoaded('user')),

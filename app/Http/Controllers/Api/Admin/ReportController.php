@@ -86,7 +86,21 @@ class ReportController extends Controller
         $submissions = $query->orderBy('started_at', 'desc')
             ->paginate($limit);
 
-        $contents = $submissions->getCollection()->map(function ($session) {
+        $contents = $submissions->getCollection();
+
+        // Compute submission order per user (1st, 2nd, 3rd session for each user)
+        $sessionIds = $contents->pluck('id');
+        $submissionOrders = DB::table('response_sessions')
+            ->selectRaw('id, (
+                SELECT COUNT(*) FROM response_sessions rs2
+                WHERE rs2.user_id = response_sessions.user_id
+                AND (rs2.started_at < response_sessions.started_at
+                     OR (rs2.started_at = response_sessions.started_at AND rs2.id <= response_sessions.id))
+            ) as submission_order')
+            ->whereIn('id', $sessionIds)
+            ->pluck('submission_order', 'id');
+
+        $contents = $contents->map(function ($session) use ($submissionOrders) {
             return [
                 'id' => $session->id,
                 'respondent' => $session->user->name,
@@ -95,6 +109,7 @@ class ReportController extends Controller
                 'percentage' => $session->result?->overall_percentage,
                 'status' => ( $session->status == 'in_progress' ) ? 'IN PROGRESS' : strtoupper($session->status),
                 'category' => $session->result?->overall_category,
+                'submissionOrder' => $submissionOrders[$session->id] ?? null,
                 'startedAt' => $session->started_at,
                 'submittedAt' => $session->submitted_at,
             ];

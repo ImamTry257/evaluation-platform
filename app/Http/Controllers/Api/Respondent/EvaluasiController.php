@@ -144,13 +144,15 @@ class EvaluasiController extends Controller
                 ], 'Session resumed successfully');
             }
 
-            // Create new session
+            // Create new session with order number
+            $nextNumber = ResponseSession::where('user_id', $request->user()->id)->max('session_number') ?? 0;
             $session = ResponseSession::create([
                 'user_id' => $request->user()->id,
                 'questionnaire_id' => $request->questionnaireId,
                 'status' => 'in_progress',
                 'started_at' => now(),
                 'remaining_seconds' => $questionnaire->duration_minutes * 60,
+                'session_number' => $nextNumber + 1,
             ]);
 
             DB::commit();
