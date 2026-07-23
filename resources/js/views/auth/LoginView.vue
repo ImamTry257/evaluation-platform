@@ -2,15 +2,13 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { reroute } from 'vue-router/experimental'
+import { useLogin } from '@/hooks/useLogin'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const showPassword = ref(false)
-const isLoading = ref(false)
-const errorMessage = ref('')
-const fieldErrors = reactive<Record<string, string[]>>({})
+const { isLoading, errorMessage, fieldErrors, login, clearFieldError } = useLogin()
 
 const form = reactive({
   username: '',
@@ -18,40 +16,14 @@ const form = reactive({
   rememberMe: false,
 })
 
-function clearFieldError(field: string) {
-  if (fieldErrors[field]) {
-    delete fieldErrors[field]
-  }
-}
-
 async function handleLogin() {
-  isLoading.value = true
-  errorMessage.value = ''
-  Object.keys(fieldErrors).forEach(k => delete fieldErrors[k])
+  const success = await login(form.username, form.password)
+  if (!success) return
 
-  // console.log(form.password, form.username)
-  // return false
-
-  try {
-    await authStore.login(form.username, form.password)
-
-    if (authStore.user?.role === 'ADMIN') {
-      router.push('/admin')
-    } else {
-      router.push({ name: 'respondent-home' })
-    }
-  } catch (error: any) {
-    const data = error?.response?.data
-
-    const errData = data?.errors
-    if (errData && Object.keys(errData).length) {
-      Object.assign(fieldErrors, data.errors)
-    } else {
-      console.log(error)
-      errorMessage.value = data?.message || 'Terjadi kesalahan. Silakan coba lagi.'
-    }
-  } finally {
-    isLoading.value = false
+  if (authStore.user?.role === 'ADMIN') {
+    router.push('/admin')
+  } else {
+    router.push({ name: 'respondent-home' })
   }
 }
 </script>
