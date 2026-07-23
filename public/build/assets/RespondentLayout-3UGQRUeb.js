@@ -1,1 +1,0 @@
-import{H as e,S as t,h as n,m as r,s as i,u as a}from"./runtime-core.esm-bundler-Cz8AFB7c.js";import{a as o}from"./app-11U3TdAx.js";var s={class:`min-h-screen bg-background`},c=n({__name:`RespondentLayout`,setup(n){return(n,c)=>(t(),a(`div`,s,[c[0]||=i(`h1`,null,`Respondent Layout`,-1),r(e(o))]))}});export{c as default};
