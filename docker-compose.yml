@@ -13,7 +13,7 @@ services:
       - .env
 
     networks:
-      - mysql_default
+      - dbnetwork
 
     healthcheck:
       test: ["CMD-SHELL", "php -r 'exit((int) (@fsockopen(\"127.0.0.1\", 8989) === false));'"]
@@ -55,7 +55,7 @@ services:
       - .env
 
     networks:
-      - mysql_default
+      - dbnetwork
 
     restart: unless-stopped
 
@@ -80,5 +80,5 @@ services:
           --sleep=3
 
 networks:
-  mysql_default:
+  dbnetwork:
     external: true
