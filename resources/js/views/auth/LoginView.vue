@@ -44,10 +44,10 @@ async function handleLogin() {
     const data = error?.response?.data
 
     const errData = data?.errors
-    if (errData.length) {
+    if (errData && Object.keys(errData).length) {
       Object.assign(fieldErrors, data.errors)
     } else {
-      console.log('ksesini')
+      console.log(error)
       errorMessage.value = data?.message || 'Terjadi kesalahan. Silakan coba lagi.'
     }
   } finally {

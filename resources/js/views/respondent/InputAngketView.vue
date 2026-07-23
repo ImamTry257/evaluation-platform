@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useEvaluation } from '@/hooks/respondent/useEvaluation'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+import StepHeader from './Component/StepHeader.vue'
 
 const authStore = useAuthStore()
 const userName = computed(() => authStore.user?.name || 'Responden')
@@ -25,7 +26,6 @@ const answers = ref<Record<number, number>>({})
 const showSubmitModal = ref(false)
 const showResetModal = ref(false)
 const showTimeoutModal = ref(false)
-const showUserMenu = ref(false)
 const showProfileBlocked = ref(false)
 const submitting = ref(false)
 const timeoutSubmitting = ref(false)
@@ -284,65 +284,26 @@ onUnmounted(() => {
 
     <template v-else-if="session">
       <!-- Step Header -->
-      <div class="fixed top-0 left-0 right-0 z-[200] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
-        <div class="max-w-5xl mx-auto px-6 py-2.5 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-2xl">eco</span>
-            <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>
+      <StepHeader
+        :current-step="2"
+        :user-name="userName"
+        :user-email="userEmail"
+        :show-steps="true"
+        @logout="handleLogout"
+        @go-profile="handleProfileClick"
+        @navigate-step="step => { if (step === 1) handleBackToExplain() }"
+      >
+        <template #extra>
+          <div class="flex items-center gap-1.5" :class="timeLeft <= 60 ? 'text-error' : 'text-tertiary'">
+            <span class="material-symbols-outlined text-base">timer</span>
+            <span class="font-title-md text-title-md font-bold tabular-nums">{{ countdown }}</span>
           </div>
-          <div class="flex items-center gap-0">
-            <button @click="handleBackToExplain"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container cursor-pointer transition-all">
-              <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">1</span>
-              <span class="hidden md:inline">Penjelasan</span>
-            </button>
-            <div class="w-6 h-px mx-1 bg-primary"></div>
-            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white">
-              <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-white text-primary border-white">2</span>
-              <span class="hidden md:inline">Input Angket</span>
-            </span>
-            <div class="w-6 h-px mx-1 bg-outline-variant"></div>
-            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant">
-              <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-current">3</span>
-              <span class="hidden md:inline">Hasil</span>
-            </span>
+          <div class="flex items-center gap-1.5 text-primary">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
           </div>
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5" :class="timeLeft <= 60 ? 'text-error' : 'text-tertiary'">
-              <span class="material-symbols-outlined text-base">timer</span>
-              <span class="font-title-md text-title-md font-bold tabular-nums">{{ countdown }}</span>
-            </div>
-            <div class="flex items-center gap-1.5 text-primary">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-              <span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
-            </div>
-            <!-- User Menu -->
-            <div class="relative">
-              <button @click="handleProfileClick"
-                class="w-9 h-9 rounded-full bg-primary-container/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
-                <span class="material-symbols-outlined text-primary text-[20px]">person</span>
-              </button>
-              <div v-if="showUserMenu"
-                class="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-outline-variant/30 py-1 z-[300]"
-                @click.self="showUserMenu = false">
-                <div class="px-4 py-3 border-b border-outline-variant/30">
-                  <p class="font-body-base font-semibold text-on-surface text-sm">{{ userName }}</p>
-                  <p class="text-xs text-on-surface-variant">{{ userEmail }}</p>
-                </div>
-                <div class="py-1">
-                  <button class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">person</span> Profil Saya
-                  </button>
-                  <div class="my-1 border-t border-outline-variant/30"></div>
-                  <button @click="handleLogout" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-error hover:bg-red-50 transition-colors font-medium">
-                    <span class="material-symbols-outlined text-[18px]">logout</span> Keluar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </template>
+      </StepHeader>
 
       <!-- Progress Bar -->
       <div class="fixed top-[42px] left-0 right-0 z-[140] bg-surface border-b border-outline-variant/50">

@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
-  function clearAuth() {
+  async function clearAuth() {
     token.value = null
     user.value = null
     localStorage.removeItem('tokenAdmin')
@@ -78,6 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(username: string, password: string) {
     const response = await api.post('/auth/login', { username, password })
+    console.log(response);
     saveAuth(response.data.data.token, response.data.data.user)
   }
 
@@ -146,5 +147,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     fetchProfile,
     validateToken,
+    clearAuth
   }
 })
