@@ -346,23 +346,47 @@ onMounted(() => {
               ></textarea>
             </div>
 
-            <!-- Tanggal Mulai & Selesai -->
+            <!-- Tanggal Mulai & Selesai — v-calendar DatePicker -->
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Tanggal Mulai</label>
-                <input
+                <DatePicker
                   v-model="form.startDate"
-                  type="date"
-                  class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
-                />
+                  mode="date"
+                  :model-config="{ type: 'string', mask: 'YYYY-MM-DD' }"
+                  :popover="{ visibility: 'focus' }"
+                  :is-required="true"
+                >
+                  <template #default="{ inputValue, togglePopover }">
+                    <input
+                      :value="inputValue"
+                      readonly
+                      @click="togglePopover"
+                      placeholder="Pilih tanggal mulai..."
+                      class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
+                    />
+                  </template>
+                </DatePicker>
               </div>
               <div>
                 <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Tanggal Selesai</label>
-                <input
+                <DatePicker
                   v-model="form.endDate"
-                  type="date"
-                  class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
-                />
+                  mode="date"
+                  :model-config="{ type: 'string', mask: 'YYYY-MM-DD' }"
+                  :popover="{ visibility: 'focus' }"
+                  :is-required="true"
+                >
+                  <template #default="{ inputValue, togglePopover }">
+                    <input
+                      :value="inputValue"
+                      readonly
+                      @click="togglePopover"
+                      placeholder="Pilih tanggal selesai..."
+                      class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
+                    />
+                  </template>
+                </DatePicker>
               </div>
             </div>
 
@@ -735,5 +759,32 @@ onMounted(() => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ===== V-CALENDAR THEME OVERRIDES ===== */
+:deep(.vc-popover-content) {
+  --vc-accent-50: #ecfdf5;
+  --vc-accent-100: #d1fae5;
+  --vc-accent-200: #a7f3d0;
+  --vc-accent-300: #6ee7b7;
+  --vc-accent-400: #34d399;
+  --vc-accent-500: #10b981;
+  --vc-accent-600: #059669;
+  --vc-accent-700: #047857;
+}
+:deep(.vc-popover-content) {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(187,202,191,0.5);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+:deep(.vc-day.is-today .vc-day-layer) {
+  color: #10b981;
+}
+:deep(.vc-day.is-active .vc-day-content) {
+  background: #10b981;
+  color: #fff;
+}
+:deep(.vc-day .vc-day-content:hover) {
+  background: #eef6ee;
 }
 </style>
