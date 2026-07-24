@@ -1,8 +1,8 @@
 # API Specification
 ## Platform Evaluasi Kebijakan Lingkungan Sekolah
 
-**Version:** 1.0.0  
-**Base URL:** `/api/v1`  
+**Version:** 1.1.0  
+**Base URL:** `http://localhost:8000/api/v1`  
 **Authentication:** Laravel Sanctum (Bearer Token)
 
 ---
@@ -11,151 +11,61 @@
 
 API mengikuti prinsip RESTful dan JSON sebagai format data.
 
-Semua request dan response menggunakan format JSON dengan status HTTP standard. Parameter menggunakan camelCase format.
+Semua request dan response menggunakan format JSON dengan status HTTP standard. Parameter menggunakan **camelCase** untuk request dan response.
+
+## Standard Response Format
+
+Semua response mengikuti format dari `HasApiResponse` trait:
+
+### Success Response
+```json
+{
+  "status": true,
+  "message": "Success message",
+  "data": { ... }
+}
+```
+
+### Error Response
+```json
+{
+  "status": false,
+  "message": "Error message",
+  "errors": {
+    "fieldName": ["Error detail 1", "Error detail 2"]
+  }
+}
+```
+
+### Paginated List Response
+```json
+{
+  "status": true,
+  "message": "Data retrieved successfully",
+  "data": {
+    "contents": [ ... ],
+    "meta": {
+      "page": 1,
+      "limit": 15,
+      "total": 100
+    }
+  }
+}
+```
 
 ---
 
 # 2. Authentication
 
-## Login
-Authenticate user dan mendapatkan Bearer token.
-
-**Endpoint:** `POST /auth/login`
-
-**Request:**
-```json
-{
-  "username": "admin",
-  "password": "password123"
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "status": true,
-  "message": "Login successful",
-  "data": {
-    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
-    "user": {
-      "id": 1,
-      "name": "Administrator",
-      "username": "admin",
-      "email": "admin@cbt.com",
-      "role": "ADMIN"
-    }
-  }
-}
-```
-
-**Error Response (401 Unauthorized):**
-```json
-{
-  "status": false,
-  "message": "Username atau password salah",
-  "errors": []
-}
-```
-
-**Error Response (403 Forbidden) - Inactive Account:**
-```json
-{
-  "status": false,
-  "message": "Akun tidak aktif",
-  "errors": []
-}
-```
-
-**Error Response (422 Validation Error):**
-```json
-{
-  "status": false,
-  "message": "Validation failed",
-  "errors": {
-    "username": ["The username field is required."],
-    "password": ["The password field is required."]
-  }
-}
-```
-
----
-
-## Login Admin
-Authenticate admin/superadmin dan mendapatkan Bearer token. Khusus untuk role admin dan superadmin.
-
-**Endpoint:** `POST /auth/login-admin`
-
-**Request:**
-```json
-{
-  "email": "admin@cbt.com",
-  "password": "password123"
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "status": true,
-  "message": "Login successful",
-  "data": {
-    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
-    "user": {
-      "id": 1,
-      "name": "Administrator",
-      "username": "admin",
-      "email": "admin@cbt.com",
-      "role": "ADMIN"
-    }
-  }
-}
-```
-
-**Error Response (401 Unauthorized):**
-```json
-{
-  "status": false,
-  "message": "Email atau password salah",
-  "errors": []
-}
-```
-
-**Error Response (403 Forbidden) - Non-Admin Role:**
-```json
-{
-  "status": false,
-  "message": "Akun ini tidak memiliki akses admin",
-  "errors": []
-}
-```
-
-**Error Response (403 Forbidden) - Inactive Account:**
-```json
-{
-  "status": false,
-  "message": "Akun tidak aktif",
-  "errors": []
-}
-```
-
-**Error Response (422 Validation Error):**
-```json
-{
-  "status": false,
-  "message": "Validation failed",
-  "errors": {
-    "email": ["The email field is required."],
-    "password": ["The password field is required."]
-  }
-}
-```
-
----
+Semua endpoint auth bersifat publik (kecuali logout/profile/validate).
 
 ## Register
-Register new respondent account.
+
+Register akun respondent baru.
 
 **Endpoint:** `POST /auth/register`
+
+**Headers:** None (public)
 
 **Request:**
 ```json
@@ -174,7 +84,6 @@ Register new respondent account.
   "status": true,
   "message": "Registration successful",
   "data": {
-    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
     "user": {
       "id": 3,
       "name": "Budi Santoso",
@@ -186,21 +95,7 @@ Register new respondent account.
 }
 ```
 
-**Error Response (422 Validation Error):**
-```json
-{
-  "status": false,
-  "message": "Validation failed",
-  "errors": {
-    "name": ["The name field is required."],
-    "username": ["The username field is required."],
-    "email": ["The email field is required."],
-    "password": ["The password field is required."]
-  }
-}
-```
-
-**Error Response (422 Duplicate):**
+**Error Response (422 Validation):**
 ```json
 {
   "status": false,
@@ -213,12 +108,105 @@ Register new respondent account.
 
 ---
 
+## Login (Unified)
+
+Login untuk semua role (admin, superadmin, respondent) via username + password.
+
+**Endpoint:** `POST /auth/login`
+
+**Headers:** None (public)
+
+**Request:**
+```json
+{
+  "username": "admin",
+  "password": "password123"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Login successful",
+  "data": {
+    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
+    "expiredAt": "2026-07-24 11:00:00",
+    "user": {
+      "id": 1,
+      "name": "Administrator",
+      "username": "admin",
+      "email": "admin@cbt.com",
+      "role": "ADMIN"
+    }
+  }
+}
+```
+
+**Error Response (401):**
+```json
+{
+  "status": false,
+  "message": "Username atau password salah",
+  "errors": []
+}
+```
+
+---
+
+## Login Admin
+
+Login khusus admin/superadmin via email. Menolak respondent.
+
+**Endpoint:** `POST /auth/login-admin`
+
+**Headers:** None (public)
+
+**Request:**
+```json
+{
+  "email": "admin@cbt.com",
+  "password": "password123"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Login successful",
+  "data": {
+    "token": "1|AbCdEfGhIjKlMnOpQrStUvWxYz",
+    "expiredAt": "2026-07-24 11:00:00",
+    "user": {
+      "id": 1,
+      "name": "Administrator",
+      "username": "admin",
+      "email": "admin@cbt.com",
+      "role": "ADMIN"
+    }
+  }
+}
+```
+
+**Error Response (403) — Non-Admin:**
+```json
+{
+  "status": false,
+  "message": "Akun ini tidak memiliki akses admin",
+  "errors": []
+}
+```
+
+---
+
 ## Logout
-Revoke user token.
+
+Revoke token yang sedang aktif.
 
 **Endpoint:** `POST /auth/logout`
 
-**Headers:** `Authorization: Bearer ***
+**Headers:** `Authorization: Bearer ***`
 
 **Response (200 OK):**
 ```json
@@ -229,23 +217,15 @@ Revoke user token.
 }
 ```
 
-**Error Response (401 Unauthorized):**
-```json
-{
-  "status": false,
-  "message": "Unauthenticated.",
-  "errors": []
-}
-```
-
 ---
 
 ## Profile
-Get current user profile.
+
+Mendapatkan data user yang sedang login.
 
 **Endpoint:** `GET /auth/profile`
 
-**Headers:** `Authorization: Bearer ***
+**Headers:** `Authorization: Bearer ***`
 
 **Response (200 OK):**
 ```json
@@ -258,40 +238,62 @@ Get current user profile.
     "username": "admin",
     "email": "admin@cbt.com",
     "role": "ADMIN",
-    "createdAt": "2024-01-01T10:00:00Z"
+    "isActive": true,
+    "createdAt": "2024-01-01T10:00:00.000000Z",
+    "updatedAt": "2024-01-01T10:00:00.000000Z",
+    "lastLoginAt": "2026-07-24T10:30:00.000000Z"
   }
-}
-```
-
-**Error Response (401 Unauthorized):**
-```json
-{
-  "status": false,
-  "message": "Unauthenticated.",
-  "errors": []
 }
 ```
 
 ---
 
-# 3. Master Data - Admin Only
+## Validate Token
+
+Validasi token masih aktif dan return data user.
+
+**Endpoint:** `GET /auth/validate`
+
+**Headers:** `Authorization: Bearer ***`
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "name": "Administrator",
+    "username": "admin",
+    "email": "admin@cbt.com",
+    "role": "ADMIN"
+  }
+}
+```
+
+---
+
+# 3. Admin — Master Data
+
+Semua endpoint di section ini memerlukan:
+- **Headers:** `Authorization: Bearer ***` (role admin/superadmin)
+- **Base path:** `/admin/...`
 
 ---
 
 ## 3.1 Evaluation Periods
 
-> **Note:** Evaluation Periods menggunakan soft delete. Record yang dihapus akan memiliki `deleted_at` timestamp dan tidak akan muncul di list/get biasa.
+> **Note:** Periods menggunakan soft delete.
 
 ### List Periods
-**Endpoint:** `GET /periods`
 
-Hanya mengembalikan periode yang belum di-soft delete (`deleted_at IS NULL`).
+**Endpoint:** `GET /admin/periods`
 
 **Query Parameters:**
-- `page` (optional) - default: 1
-- `limit` (optional) - default: 10
-- `search` (optional) - search by name
-- `isActive` (optional) - filter by status
+- `page` (optional) — default: 1
+- `limit` (optional) — default: 10
+- `search` (optional) — search by name
+- `isActive` (optional) — filter by status (true/false)
 
 **Response (200 OK):**
 ```json
@@ -307,8 +309,8 @@ Hanya mengembalikan periode yang belum di-soft delete (`deleted_at IS NULL`).
         "startDate": "2024-01-01T00:00:00.000000Z",
         "endDate": "2024-12-31T00:00:00.000000Z",
         "isActive": true,
-        "created_at": "2024-01-01T10:00:00.000000Z",
-        "updated_at": "2024-01-01T10:00:00.000000Z"
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
       }
     ],
     "meta": {
@@ -320,10 +322,9 @@ Hanya mengembalikan periode yang belum di-soft delete (`deleted_at IS NULL`).
 }
 ```
 
----
-
 ### Create Period
-**Endpoint:** `POST /periods`
+
+**Endpoint:** `POST /admin/periods`
 
 **Request:**
 ```json
@@ -336,51 +337,24 @@ Hanya mengembalikan periode yang belum di-soft delete (`deleted_at IS NULL`).
 }
 ```
 
-**Response (201 Created):**
-```json
-{
-  "status": true,
-  "message": "Period created successfully",
-  "data": {
-    "id": 1,
-    "name": "Evaluasi 2024",
-    "description": "Periode evaluasi tahun 2024",
-    "startDate": "2024-01-01T00:00:00.000000Z",
-    "endDate": "2024-12-31T00:00:00.000000Z",
-    "isActive": true,
-    "created_at": "2024-01-01T10:00:00.000000Z",
-    "updated_at": "2024-01-01T10:00:00.000000Z"
-  }
-}
-```
-
----
+**Response (201 Created):** Same structure as list item.
 
 ### Get Period Detail
-**Endpoint:** `GET /periods/{id}`
+
+**Endpoint:** `GET /admin/periods/{id}`
 
 **Response (200 OK):**
 ```json
 {
   "status": true,
   "message": "Period retrieved successfully",
-  "data": {
-    "id": 1,
-    "name": "Evaluasi 2024",
-    "description": "Periode evaluasi tahun 2024",
-    "startDate": "2024-01-01T00:00:00.000000Z",
-    "endDate": "2024-12-31T00:00:00.000000Z",
-    "isActive": true,
-    "created_at": "2024-01-01T10:00:00.000000Z",
-    "updated_at": "2024-01-01T10:00:00.000000Z"
-  }
+  "data": { ... }
 }
 ```
 
----
-
 ### Update Period
-**Endpoint:** `PUT /periods/{id}`
+
+**Endpoint:** `PUT /admin/periods/{id}`
 
 **Request:**
 ```json
@@ -390,14 +364,11 @@ Hanya mengembalikan periode yang belum di-soft delete (`deleted_at IS NULL`).
 }
 ```
 
-**Response (200 OK):** Same as Get Period Detail
-
----
+**Response (200 OK):** Updated period data.
 
 ### Delete Period (Soft Delete)
-**Endpoint:** `DELETE /periods/{id}`
 
-Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak benar-benar dihapus dari database.
+**Endpoint:** `DELETE /admin/periods/{id}`
 
 **Response (200 OK):**
 ```json
@@ -408,47 +379,47 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 }
 ```
 
-**Behavior:**
-- `deleted_at` diatur ke timestamp sekarang
-- Record tidak muncul di `GET /periods` atau `GET /periods/{id}`
-- Data tetap tersimpan di database untuk audit trail
-
 ---
 
 ## 3.2 Questionnaires
 
 ### List Questionnaires
-**Endpoint:** `GET /questionnaires`
+
+**Endpoint:** `GET /admin/questionnaires`
 
 **Query Parameters:**
-- `evaluationPeriodId` (optional) - filter by period
-- `status` (optional) - draft, published, closed
+- `evaluationPeriodId` (optional)
+- `status` (optional) — `draft`, `published`, `closed`
 - `page` (optional)
-- `perPage` (optional)
+- `limit` (optional)
+- `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "evaluationPeriodId": 1,
-      "title": "Kuesioner Kebijakan Lingkungan",
-      "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
-      "durationMinutes": 60,
-      "status": "published",
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ],
-  "pagination": {}
+  "status": true,
+  "message": "Questionnaires retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "evaluationPeriodId": 1,
+        "title": "Kuesioner Kebijakan Lingkungan",
+        "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
+        "durationMinutes": 60,
+        "status": "published",
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
 
----
-
 ### Create Questionnaire
-**Endpoint:** `POST /questionnaires`
+
+**Endpoint:** `POST /admin/questionnaires`
 
 **Request:**
 ```json
@@ -461,36 +432,30 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 }
 ```
 
-**Response (201 Created):**
-```json
-{
-  "success": true,
-  "data": {
-    "id": 1,
-    "evaluationPeriodId": 1,
-    "title": "Kuesioner Kebijakan Lingkungan",
-    "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
-    "durationMinutes": 60,
-    "status": "draft",
-    "createdAt": "2024-01-01T10:00:00Z"
-  }
-}
-```
+**Response (201 Created):** Questionnaire data.
 
----
+### Get Questionnaire Detail
+
+**Endpoint:** `GET /admin/questionnaires/{id}`
+
+### Update Questionnaire
+
+**Endpoint:** `PUT /admin/questionnaires/{id}`
+
+### Delete Questionnaire (Soft Delete)
+
+**Endpoint:** `DELETE /admin/questionnaires/{id}`
 
 ### Publish Questionnaire
-**Endpoint:** `POST /questionnaires/{id}/publish`
 
-**Request:**
-```json
-{}
-```
+**Endpoint:** `POST /admin/questionnaires/{id}/publish`
+
+**Request:** `{}` (empty body)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
   "message": "Kuesioner berhasil dipublikasikan",
   "data": {
     "id": 1,
@@ -501,54 +466,42 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 
 ---
 
-### Delete Questionnaire (Soft Delete)
-**Endpoint:** `DELETE /questionnaires/{id}`
+## 3.3 Components
 
-Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak benar-benar dihapus dari database.
+### List Components
+
+**Endpoint:** `GET /admin/components`
+
+**Query Parameters:**
+- `questionnaireId` (optional)
+- `page`, `limit`, `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
   "status": true,
-  "message": "Questionnaire deleted successfully",
-  "data": null
+  "message": "Components retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "questionnaireId": 1,
+        "name": "Kebijakan Struktural",
+        "description": "Komponen kebijakan struktural",
+        "orderNumber": 1,
+        "isActive": true,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
-
-**Behavior:**
-- `deleted_at` diatur ke timestamp sekarang
-- Record tidak muncul di `GET /questionnaires` atau `GET /questionnaires/{id}`
-- Data tetap tersimpan di database untuk audit trail
-
----
-
-## 3.3 Components
-
-### List Components
-**Endpoint:** `GET /questionnaires/{questionnaireId}/components`
-
-**Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "questionnaireId": 1,
-      "name": "Kebijakan Struktural",
-      "description": "Komponen kebijakan struktural",
-      "orderNumber": 1,
-      "isActive": true,
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ]
-}
-```
-
----
 
 ### Create Component
-**Endpoint:** `POST /questionnaires/{questionnaireId}/components`
+
+**Endpoint:** `POST /admin/components`
 
 **Request:**
 ```json
@@ -560,72 +513,59 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 }
 ```
 
-**Response (201 Created):** Same structure as list
-
----
-
 ### Update Component
-**Endpoint:** `PUT /components/{id}`
 
-**Request:**
-```json
-{
-  "name": "Kebijakan Struktural - Updated",
-  "orderNumber": 2,
-  "isActive": true
-}
-```
-
-**Response (200 OK):** Updated component data
-
----
+**Endpoint:** `PUT /admin/components/{id}`
 
 ### Delete Component
-**Endpoint:** `DELETE /components/{id}`
 
-**Response (200 OK):**
-```json
-{
-  "success": true,
-  "message": "Komponen berhasil dihapus"
-}
-```
+**Endpoint:** `DELETE /admin/components/{id}`
 
 ---
 
 ## 3.4 Sub Components
 
-> **Note:** Sub Components menggunakan soft delete. DELETE akan set `deleted_at` = now().
+> **Note:** Menggunakan soft delete.
 
 ### List Sub Components
-**Endpoint:** `GET /components/{componentId}/sub-components`
+
+**Endpoint:** `GET /admin/sub-components`
+
+**Query Parameters:**
+- `componentId` (optional)
+- `page`, `limit`, `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "componentId": 1,
-      "name": "Kerangka Organisasi",
-      "description": "Sub komponen kerangka organisasi",
-      "orderNumber": 1,
-      "isActive": true,
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ]
+  "status": true,
+  "message": "Sub components retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "componentId": 1,
+        "name": "Kerangka Organisasi",
+        "description": "Sub komponen kerangka organisasi",
+        "orderNumber": 1,
+        "isActive": true,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
 
----
-
 ### Create Sub Component
-**Endpoint:** `POST /components/{componentId}/sub-components`
+
+**Endpoint:** `POST /admin/sub-components`
 
 **Request:**
 ```json
 {
+  "componentId": 1,
   "name": "Kerangka Organisasi",
   "description": "Sub komponen kerangka organisasi",
   "orderNumber": 1,
@@ -633,87 +573,96 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 }
 ```
 
-**Response (201 Created):** Same structure as list
+### Update / Delete Sub Component
+
+**Endpoint:** `PUT /admin/sub-components/{id}` | `DELETE /admin/sub-components/{id}`
 
 ---
 
 ## 3.5 Indicators
 
-> **Note:** Indicators menggunakan soft delete. DELETE akan set `deleted_at` = now().
+> **Note:** Menggunakan soft delete.
 
 ### List Indicators
-**Endpoint:** `GET /sub-components/{subComponentId}/indicators`
+
+**Endpoint:** `GET /admin/indicators`
+
+**Query Parameters:**
+- `subComponentId` (optional)
+- `page`, `limit`, `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "subComponentId": 1,
-      "name": "Keberadaan organisasi, struktur dan tugas",
-      "description": "Indicator keberadaan organisasi",
-      "orderNumber": 1,
-      "isActive": true,
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ]
+  "status": true,
+  "message": "Indicators retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "subComponentId": 1,
+        "name": "Keberadaan organisasi, struktur dan tugas",
+        "description": "Indicator keberadaan organisasi",
+        "orderNumber": 1,
+        "isActive": true,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
 
----
+### Create / Update / Delete
 
-### Create Indicator
-**Endpoint:** `POST /sub-components/{subComponentId}/indicators`
-
-**Request:**
-```json
-{
-  "name": "Keberadaan organisasi, struktur dan tugas",
-  "description": "Indicator keberadaan organisasi",
-  "orderNumber": 1,
-  "isActive": true
-}
-```
-
-**Response (201 Created):** Same structure as list
+**Endpoint:** `POST /admin/indicators` | `PUT /admin/indicators/{id}` | `DELETE /admin/indicators/{id}`
 
 ---
 
 ## 3.6 Questions
 
-> **Note:** Questions menggunakan soft delete. DELETE akan set `deleted_at` = now().
+> **Note:** Menggunakan soft delete.
 
 ### List Questions
-**Endpoint:** `GET /indicators/{indicatorId}/questions`
+
+**Endpoint:** `GET /admin/questions`
+
+**Query Parameters:**
+- `indicatorId` (optional)
+- `page`, `limit`, `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "indicatorId": 1,
-      "questionText": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
-      "weight": 1.5,
-      "orderNumber": 1,
-      "isActive": true,
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ]
+  "status": true,
+  "message": "Questions retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "indicatorId": 1,
+        "questionText": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
+        "weight": 1.5,
+        "orderNumber": 1,
+        "isActive": true,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
 
----
-
 ### Create Question
-**Endpoint:** `POST /indicators/{indicatorId}/questions`
+
+**Endpoint:** `POST /admin/questions`
 
 **Request:**
 ```json
 {
+  "indicatorId": 1,
   "questionText": "Apakah ada bukti tertulis tentang keberadaan organisasi?",
   "weight": 1.5,
   "orderNumber": 1,
@@ -721,41 +670,45 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 }
 ```
 
-**Response (201 Created):** Same structure as list
+### Update / Delete
+
+**Endpoint:** `PUT /admin/questions/{id}` | `DELETE /admin/questions/{id}`
 
 ---
 
 ## 3.7 Respondents
 
 ### List Respondents
-**Endpoint:** `GET /respondents`
+
+**Endpoint:** `GET /admin/respondents`
 
 **Query Parameters:**
-- `page` (optional)
-- `perPage` (optional)
-- `search` (optional) - search by name or email
+- `page`, `perPage`, `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "name": "Responden 1",
-      "email": "responden@example.com",
-      "isActive": true,
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ],
-  "pagination": {}
+  "status": true,
+  "message": "Respondents retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "name": "Responden 1",
+        "email": "responden@example.com",
+        "isActive": true,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
 
----
-
 ### Create Respondent
-**Endpoint:** `POST /respondents`
+
+**Endpoint:** `POST /admin/respondents`
 
 **Request:**
 ```json
@@ -767,29 +720,25 @@ Melakukan soft delete - mengatur `deleted_at` ke waktu sekarang. Record tidak be
 }
 ```
 
-**Response (201 Created):** Respondent data
+### Import Respondents (Bulk CSV)
 
----
-
-### Import Respondents (Bulk)
-**Endpoint:** `POST /respondents/import`
+**Endpoint:** `POST /admin/respondents/import`
 
 **Request (multipart/form-data):**
 ```
 file: <CSV file>
 ```
 
-CSV Format:
+**CSV Format:**
 ```
 name,email,password
 Responden 1,responden1@example.com,password123
-Responden 2,responden2@example.com,password123
 ```
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
   "message": "2 responden berhasil diimport",
   "data": {
     "imported": 2,
@@ -798,382 +747,134 @@ Responden 2,responden2@example.com,password123
 }
 ```
 
+### Update / Delete Respondent
+
+**Endpoint:** `PUT /admin/respondents/{id}` | `DELETE /admin/respondents/{id}`
+
 ---
 
 ## 3.8 Recommendations
 
 ### List Recommendations
-**Endpoint:** `GET /recommendations`
+
+**Endpoint:** `GET /admin/recommendations`
 
 **Query Parameters:**
-- `indicatorId` (optional) - filter by indicator
-
-**Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "indicatorId": 1,
-      "minScore": 1.0,
-      "maxScore": 2.33,
-      "category": "Kurang",
-      "recommendation": "Perlu perbaikan dalam implementasi...",
-      "createdAt": "2024-01-01T10:00:00Z"
-    }
-  ]
-}
-```
-
----
-
-### Create Recommendation
-**Endpoint:** `POST /recommendations`
-
-**Request:**
-```json
-{
-  "indicatorId": 1,
-  "minScore": 1.0,
-  "maxScore": 2.33,
-  "category": "Kurang",
-  "recommendation": "Perlu perbaikan dalam implementasi..."
-}
-```
-
-**Response (201 Created):** Recommendation data
-
----
-
-# 4. Evaluation - Respondent
-
-## Get Active Questionnaire
-Ambil kuesioner yang sedang aktif (published) untuk responden.
-
-**Endpoint:** `GET /evaluations/active-questionnaire`
-
-**Headers:**
-```
-Authorization: Bearer <token>
-Content-Type: application/json
-Accept: application/json
-```
+- `indicatorId` (optional)
+- `page`, `limit`, `search` (optional)
 
 **Response (200 OK):**
 ```json
 {
   "status": true,
-  "message": "Kuesioner aktif ditemukan",
+  "message": "Recommendations retrieved successfully",
   "data": {
-    "id": 1,
-    "evaluationPeriodId": 1,
-    "title": "Kuesioner Evaluasi Kebijakan Lingkungan 2026",
-    "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
-    "durationMinutes": 20,
-    "status": "published",
-    "evaluationPeriod": {
-      "id": 1,
-      "title": "Ganjil 2024/25",
-      "description": "Periode evaluasi ganjil tahun ajaran 2024/25"
-    },
-    "components": [
+    "contents": [
       {
         "id": 1,
-        "name": "Kebijakan Struktural",
-        "orderNumber": 1,
-        "sub_components": [
-          {
-            "id": 1,
-            "name": "Kebijakan Struktural",
-            "indicators": [
-              {
-                "id": 1,
-                "name": "Kebijakan Struktural",
-                "questions": [
-                  {
-                    "id": 1,
-                    "text": "Sekolah memiliki dokumen resmi kebijakan lingkungan",
-                    "weight": 1,
-                    "orderNumber": 1
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        "indicatorId": 1,
+        "minScore": 1.0,
+        "maxScore": 2.33,
+        "category": "Kurang",
+        "recommendation": "Perlu perbaikan dalam implementasi...",
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
       }
-    ]
-  }
-}
-```
-
-**Error Response (404 Not Found):**
-```json
-{
-  "status": false,
-  "message": "Tidak ada kuesioner yang tersedia",
-  "errors": []
-}
-```
-
----
-
-## Start Evaluation
-Mulai sesi evaluasi baru.
-
-**Endpoint:** `POST /evaluations/start`
-
-**Request:**
-```json
-{
-  "questionnaireId": 1
-}
-```
-
-**Response (201 Created):**
-```json
-{
-  "status": true,
-  "message": "Evaluation started successfully",
-  "data": {
-    "session": {
-      "id": 1,
-      "userId": 10,
-      "questionnaireId": 1,
-      "status": "in_progress",
-      "startedAt": "2024-01-01T10:00:00Z",
-      "remainingSeconds": 3600
-    },
-    "questionnaire": {
-      "id": 1,
-      "title": "Kuesioner Evaluasi 2026",
-      "components": [...]
-    },
-    "scoringLevels": [
-      {"id": 1, "title": "Sangat Tidak Sesuai", "value": "1", "is_active": 1, "description": "Sangat Tidak Sesuai"},
-      {"id": 2, "title": "Tidak Sesuai", "value": "2", "is_active": 1, "description": "Tidak Sesuai"},
-      {"id": 3, "title": "Kurang Sesuai", "value": "3", "is_active": 1, "description": "Kurang Sesuai"},
-      {"id": 4, "title": "Netral", "value": "4", "is_active": 1, "description": "Netral"},
-      {"id": 5, "title": "Cukup Sesuai", "value": "5", "is_active": 1, "description": "Cukup Sesuai"},
-      {"id": 6, "title": "Sesuai", "value": "6", "is_active": 1, "description": "Sesuai"},
-      {"id": 7, "title": "Sangat Sesuai", "value": "7", "is_active": 1, "description": "Sangat Sesuai"}
     ],
-    "isResumed": false
+    "meta": { ... }
   }
 }
 ```
 
-> **Note:** `scoringLevels` berisi data master level skor (Likert 1-7) yang digunakan responden untuk menjawab setiap pertanyaan. Frontend menggunakan data ini untuk menampilkan radio button/opsi jawaban dengan label yang benar.
+### Create / Update / Delete
+
+**Endpoint:** `POST /admin/recommendations` | `PUT /admin/recommendations/{id}` | `DELETE /admin/recommendations/{id}`
 
 ---
 
-## Resume Evaluation
-Resume sesi evaluasi yang belum selesai.
+## 3.9 Scoring Levels
 
-**Endpoint:** `GET /evaluations/{sessionId}`
+### List Scoring Levels
+
+**Endpoint:** `GET /admin/scoring-levels`
 
 **Response (200 OK):**
 ```json
 {
   "status": true,
-  "message": "Session retrieved successfully",
+  "message": "Scoring levels retrieved successfully",
   "data": {
-    "session": {
-      "id": 1,
-      "userId": 10,
-      "questionnaireId": 1,
-      "status": "in_progress",
-      "startedAt": "2024-01-01T10:00:00Z",
-      "remainingSeconds": 2800,
-      "answers": [...]
-    },
-    "scoringLevels": [
-      {"id": 1, "title": "Sangat Tidak Sesuai", "value": "1", "is_active": 1},
-      {"id": 2, "title": "Tidak Sesuai", "value": "2", "is_active": 1},
-      {"id": 3, "title": "Kurang Sesuai", "value": "3", "is_active": 1},
-      {"id": 4, "title": "Netral", "value": "4", "is_active": 1},
-      {"id": 5, "title": "Cukup Sesuai", "value": "5", "is_active": 1},
-      {"id": 6, "title": "Sesuai", "value": "6", "is_active": 1},
-      {"id": 7, "title": "Sangat Sesuai", "value": "7", "is_active": 1}
-    ]
+    "contents": [
+      {
+        "id": 1,
+        "title": "Sangat Tidak Sesuai",
+        "value": "1",
+        "description": "Sangat Tidak Sesuai",
+        "isActive": true,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
   }
 }
 ```
 
+### Create / Update / Delete
+
+**Endpoint:** `POST /admin/scoring-levels` | `PUT /admin/scoring-levels/{id}` | `DELETE /admin/scoring-levels/{id}`
+
 ---
 
-## Auto Save Answer
-Simpan jawaban otomatis dan update sisa waktu (periodic save).
+# 4. Admin — Settings
 
-**Endpoint:** `POST /evaluations/{sessionId}/auto-save`
+## Get Settings
+
+**Endpoint:** `GET /admin/settings`
+
+**Headers:** `Authorization: Bearer ***` (admin only)
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Settings retrieved successfully",
+  "data": {
+    "activePeriodId": 1,
+    "evaluationDurationMinutes": 60,
+    "autoSaveIntervalSeconds": 30,
+    "allowResumeSession": true,
+    "timeoutAfterMinutes": 120
+  }
+}
+```
+
+## Update Settings
+
+**Endpoint:** `PUT /admin/settings`
 
 **Request:**
 ```json
 {
-  "remainingSeconds": 2800,
-  "answers": [
-    {
-      "questionId": 1,
-      "score": 5
-    },
-    {
-      "questionId": 2,
-      "score": 6
-    }
-  ]
+  "activePeriodId": 1,
+  "evaluationDurationMinutes": 60,
+  "autoSaveIntervalSeconds": 30,
+  "allowResumeSession": true,
+  "timeoutAfterMinutes": 120
 }
 ```
 
-**Response (200 OK):**
-```json
-{
-  "status": true,
-  "message": "Auto-save successful",
-  "data": {
-    "remainingSeconds": 2800,
-    "savedAt": "2024-01-01T10:05:00Z",
-    "savedAnswers": [1, 2]
-  }
-}
-```
+**Response (200 OK):** Updated settings data.
 
 ---
 
-## Save Single Answer
-Simpan satu jawaban (as respondent fills).
-
-**Endpoint:** `POST /evaluations/{sessionId}/answers`
-
-**Request:**
-```json
-{
-  "questionId": 1,
-  "score": 5
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": {
-    "responseAnswerId": 1,
-    "questionId": 1,
-    "score": 5,
-    "savedAt": "2024-01-01T10:05:00Z"
-  }
-}
-```
-
----
-
-## Submit Evaluation
-Submit sesi evaluasi (final submission).
-
-**Endpoint:** `POST /evaluations/{sessionId}/submit`
-
-**Request:**
-```json
-{}
-```
-
-**Response (200 OK):**
-```json
-{
-  "status": true,
-  "message": "Evaluation submitted successfully",
-  "data": {
-    "result": {
-      "id": 1,
-      "responseSessionId": 1,
-      "overallScore": 5.25,
-      "overallPercentage": 75.0,
-      "overallCategory": "B",
-      "conclusion": "Implementasi kebijakan lingkungan sudah baik...",
-      "createdAt": "2024-01-01T10:30:00Z",
-      "updatedAt": "2024-01-01T10:30:00Z",
-      "details": [
-        {
-          "id": 1,
-          "evaluationResultId": 1,
-          "indicatorId": 1,
-          "score": 6.5,
-          "percentage": 92.86,
-          "category": "A",
-          "recommendation": "Pertahankan implementasi saat ini..."
-        }
-      ]
-    }
-  }
-}
-```
-
----
-
-# 5. Results
-
-## Get Evaluation Results
-Dapatkan hasil evaluasi setelah submit.
-
-Evaluation dihitung per Indicator dengan kategori A-E berdasarkan Standar Baku Ideal dan Rerata Ideal.
-
-**Endpoint:** `GET /evaluations/{sessionId}/results`
-
-**Response (200 OK):**
-```json
-{
-  "status": true,
-  "message": "Results retrieved successfully",
-  "data": {
-    "result": {
-      "id": 1,
-      "responseSessionId": 1,
-      "overallScore": 5.25,
-      "overallPercentage": 75.0,
-      "overallCategory": "B",
-      "conclusion": "Implementasi kebijakan lingkungan sudah baik...",
-      "createdAt": "2024-01-01T10:30:00Z",
-      "updatedAt": "2024-01-01T10:30:00Z",
-      "details": [
-        {
-          "id": 1,
-          "evaluationResultId": 1,
-          "indicatorId": 1,
-          "indicatorName": "Keberadaan organisasi, struktur dan tugas",
-          "score": 6.5,
-          "percentage": 92.86,
-          "category": "A",
-          "recommendation": "Pertahankan implementasi saat ini..."
-        }
-      ]
-    }
-  }
-}
-```
-
-**Category Scale:**
-- A: Kesesuaian Sangat Tinggi (86-100%)
-- B: Kesesuaian Tinggi (71-85%)
-- C: Kesesuaian Sedang (56-70%)
-- D: Kesesuaian Rendah (41-55%)
-- E: Kesesuaian Sangat Rendah (0-40%)
-
----
-
-# 6. Admin - Dashboard & Monitoring
+# 5. Admin — Dashboard & Monitoring
 
 ## Dashboard Summary
-Get dashboard summary stats, weekly progress, and active sessions.
 
 **Endpoint:** `GET /admin/dashboard`
 
-**Headers:**
-```
-Authorization: Bearer <token>
-Content-Type: application/json
-Accept: application/json
-```
+**Headers:** `Authorization: Bearer ***` (admin only)
 
 **Response (200 OK):**
 ```json
@@ -1208,8 +909,8 @@ Accept: application/json
         "progress": 90,
         "remainingSeconds": 252,
         "timeRemaining": "04m 12s",
-        "startedAt": "2024-01-01T10:00:00Z",
-        "updatedAt": "2024-01-01T10:25:48Z"
+        "startedAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:25:48.000000Z"
       }
     ]
   }
@@ -1218,63 +919,86 @@ Accept: application/json
 
 ---
 
-## List Evaluation Sessions
-Monitor semua sesi evaluasi.
+## List Evaluation Sessions (Monitoring)
 
 **Endpoint:** `GET /admin/sessions`
 
 **Query Parameters:**
 - `questionnaireId` (optional)
-- `status` (optional) - in_progress, submitted, timeout
+- `status` (optional) — `in_progress`, `submitted`, `timeout`
+- `search` (optional) — search by name or email
 - `page` (optional)
-- `perPage` (optional)
+- `limit` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "userId": 10,
-      "userName": "Responden 1",
-      "questionnaireId": 1,
-      "status": "submitted",
-      "startedAt": "2024-01-01T10:00:00Z",
-      "submittedAt": "2024-01-01T10:30:00Z",
-      "durationMinutes": 30,
-      "progress": 100
-    }
-  ],
-  "pagination": {}
+  "status": true,
+  "message": "Sessions retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "user": {
+          "id": 10,
+          "name": "Responden 1",
+          "email": "responden@example.com"
+        },
+        "questionnaire": {
+          "id": 1,
+          "title": "Evaluasi Kebijakan Lingkungan"
+        },
+        "status": "submitted",
+        "startedAt": "2024-01-01T10:00:00.000000Z",
+        "submittedAt": "2024-01-01T10:30:00.000000Z",
+        "remainingSeconds": 0,
+        "sessionNumber": 1,
+        "answeredCount": 50,
+        "totalQuestions": 50,
+        "progress": 100,
+        "result": {
+          "overallScore": 5.25,
+          "overallPercentage": 75.0,
+          "overallCategory": "B"
+        },
+        "createdAt": "2024-01-01T10:00:00.000000Z"
+      }
+    ],
+    "meta": { ... }
+  }
 }
 ```
 
 ---
 
 ## Get Session Detail
+
 **Endpoint:** `GET /admin/sessions/{sessionId}`
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Session retrieved successfully",
   "data": {
-    "id": 1,
-    "user": {
-      "id": 10,
-      "name": "Responden 1",
-      "email": "responden@example.com"
-    },
-    "questionnaireId": 1,
-    "status": "submitted",
-    "startedAt": "2024-01-01T10:00:00Z",
-    "submittedAt": "2024-01-01T10:30:00Z",
-    "answersCount": 50,
-    "evaluationResult": {
-      "totalScore": 312.5,
-      "percentage": 75.5,
-      "category": "Baik"
+    "session": {
+      "id": 1,
+      "user": {
+        "id": 10,
+        "name": "Responden 1",
+        "email": "responden@example.com"
+      },
+      "questionnaire": { ... },
+      "status": "submitted",
+      "startedAt": "2024-01-01T10:00:00.000000Z",
+      "submittedAt": "2024-01-01T10:30:00.000000Z",
+      "remainingSeconds": 0,
+      "sessionNumber": 1,
+      "answeredCount": 50,
+      "totalQuestions": 50,
+      "progress": 100,
+      "answers": [ ... ],
+      "result": { ... }
     }
   }
 }
@@ -1282,99 +1006,503 @@ Monitor semua sesi evaluasi.
 
 ---
 
-## Export Results to Excel
-**Endpoint:** `POST /admin/reports/export-excel`
+# 6. Admin — Reports
+
+## Report Summary
+
+**Endpoint:** `GET /admin/reports`
 
 **Query Parameters:**
-- `questionnaireId` (required)
-- `evaluationPeriodId` (optional)
-
-**Response:** Excel file download
-
----
-
-## Export Results to PDF
-**Endpoint:** `POST /admin/reports/export-pdf`
-
-**Query Parameters:**
-- `sessionId` (required)
-
-**Response:** PDF file download
-
----
-
-# 7. Settings
-
-## Get Settings
-**Endpoint:** `GET /settings`
+- `questionnaireId` (optional)
+- `periodId` (optional)
+- `search` (optional) — search by respondent name
+- `page` (optional)
+- `limit` (optional)
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
+  "status": true,
+  "message": "Report retrieved successfully",
   "data": {
-    "activePeriodId": 1,
-    "evaluationDurationMinutes": 60,
-    "autoSaveIntervalSeconds": 30,
-    "allowResumeSession": true,
-    "timeoutAfterMinutes": 120
+    "summary": {
+      "totalSessions": 200,
+      "totalRespondents": 150,
+      "averageScore": 130.5,
+      "averagePercentage": 65.25
+    },
+    "categoryDistribution": {
+      "A": { "label": "Sangat Tinggi (86-100%)", "count": 30, "percentage": 15.0 },
+      "B": { "label": "Tinggi (71-85%)", "count": 50, "percentage": 25.0 },
+      "C": { "label": "Sedang (56-70%)", "count": 60, "percentage": 30.0 },
+      "D": { "label": "Rendah (41-55%)", "count": 40, "percentage": 20.0 },
+      "E": { "label": "Sangat Rendah (0-40%)", "count": 20, "percentage": 10.0 }
+    },
+    "contents": [
+      {
+        "id": 1,
+        "respondent": "Andi Wijaya",
+        "questionnaire": "Evaluasi Kebijakan Lingkungan",
+        "score": 5.25,
+        "percentage": 75.0,
+        "status": "SUBMITTED",
+        "category": "B",
+        "submissionOrder": 1,
+        "startedAt": "2024-01-01T10:00:00.000000Z",
+        "submittedAt": "2024-01-01T10:30:00.000000Z"
+      }
+    ],
+    "meta": { ... }
   }
 }
 ```
 
 ---
 
-## Update Settings
-**Endpoint:** `PUT /settings`
+## Export Excel
+
+Export bulk summary atau detail per responden ke file `.xlsx`.
+
+**Endpoint:** `POST /admin/reports/export-excel`
+
+**Query Parameters (Bulk Summary):**
+- `questionnaireId` (optional)
+- `periodId` (optional)
+- `search` (optional)
+
+**Query Parameters (Per-Session Detail):**
+- `sessionId` (required for detail export)
+
+**Response:** Excel file download (Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
+
+**Filename pattern:** `laporan-evaluasi-{title}-{YYYYMMDDHHmmss}.xlsx`
+
+### Bulk Summary Columns:
+| No | Nama Responden | Email | Kuesioner | Persentase | Tanggal Isi Angket |
+
+### Per-Session Detail Columns:
+| No | Aspek | Pernyataan | Skor |
+
+---
+
+## Export PDF
+
+Export laporan per responden ke file HTML (siap dikonversi PDF).
+
+**Endpoint:** `POST /admin/reports/export-pdf`
 
 **Request:**
 ```json
 {
-  "activePeriodId": 1,
-  "evaluationDurationMinutes": 60,
-  "autoSaveIntervalSeconds": 30,
-  "allowResumeSession": true,
-  "timeoutAfterMinutes": 120
+  "sessionId": 1
 }
 ```
 
-**Response (200 OK):** Updated settings data
+**Response:** HTML document with embedded CSS styling.
 
 ---
 
-# 8. Error Responses
+# 7. Respondent — Evaluation
 
-## Standard Error Response
+Semua endpoint di section ini memerlukan `Authorization: Bearer ***` (role respondent).
+
+**Base path:** `/evaluations/...`
+
+---
+
+## Get Active Questionnaire
+
+Ambil kuesioner yang sedang aktif (published) untuk responden.
+
+**Endpoint:** `GET /evaluations/active-questionnaire`
+
+**Response (200 OK):**
 ```json
 {
-  "success": false,
-  "message": "Error message",
-  "errors": {
-    "fieldName": ["Error detail 1", "Error detail 2"]
+  "status": true,
+  "message": "Kuesioner aktif ditemukan",
+  "data": {
+    "id": 1,
+    "evaluationPeriodId": 1,
+    "title": "Kuesioner Evaluasi Kebijakan Lingkungan 2026",
+    "description": "Instrumen penelitian evaluasi kebijakan lingkungan",
+    "durationMinutes": 20,
+    "status": "published",
+    "createdAt": "2024-01-01T10:00:00.000000Z",
+    "updatedAt": "2024-01-01T10:00:00.000000Z",
+    "evaluationPeriod": {
+      "id": 1,
+      "name": "Ganjil 2024/25",
+      "description": "Periode evaluasi ganjil tahun ajaran 2024/25"
+    },
+    "session": {
+      "evaluation": null,
+      "statements": {
+        "page": 1,
+        "indicator": "Keberadaan organisasi, struktur dan tugas",
+        "statementList": [
+          {
+            "id": 1,
+            "text": "Sekolah memiliki dokumen resmi kebijakan lingkungan",
+            "weight": 1,
+            "orderNumber": 1
+          }
+        ],
+        "count": 50,
+        "indicatorLength": 10
+      }
+    }
   }
 }
 ```
 
-## HTTP Status Codes
+---
+
+## Start Evaluation
+
+Memulai sesi evaluasi baru atau melanjutkan sesi yang tertunda.
+
+**Endpoint:** `POST /evaluations/start`
+
+**Request:**
+```json
+{
+  "questionnaireId": 1
+}
+```
+
+**Response (201 Created) — New Session:**
+```json
+{
+  "status": true,
+  "message": "Evaluation started successfully",
+  "data": {
+    "session": {
+      "evaluation": {
+        "id": 1,
+        "userId": 10,
+        "questionnaireId": 1,
+        "status": "in_progress",
+        "startedAt": "2024-01-01T10:00:00.000000Z",
+        "submittedAt": null,
+        "remainingSeconds": 1200,
+        "sessionNumber": 1,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:00:00.000000Z"
+      },
+      "statements": {
+        "page": 1,
+        "indicator": "...",
+        "statementList": [ ... ],
+        "count": 50,
+        "indicatorLength": 10
+      }
+    },
+    "questionnaire": { ... },
+    "scoringLevels": [
+      { "id": 1, "title": "Sangat Tidak Sesuai", "value": "1", "isActive": 1, "description": "Sangat Tidak Sesuai" },
+      { "id": 2, "title": "Tidak Sesuai", "value": "2", "isActive": 1, "description": "Tidak Sesuai" },
+      { "id": 3, "title": "Kurang Sesuai", "value": "3", "isActive": 1, "description": "Kurang Sesuai" },
+      { "id": 4, "title": "Netral", "value": "4", "isActive": 1, "description": "Netral" },
+      { "id": 5, "title": "Cukup Sesuai", "value": "5", "isActive": 1, "description": "Cukup Sesuai" },
+      { "id": 6, "title": "Sesuai", "value": "6", "isActive": 1, "description": "Sesuai" },
+      { "id": 7, "title": "Sangat Sesuai", "value": "7", "isActive": 1, "description": "Sangat Sesuai" }
+    ],
+    "isResumed": false
+  }
+}
+```
+
+**Response (200 OK) — Resumed Session:**
+Sama seperti di atas, dengan `isResumed: true` dan `session.evaluation.answers` sudah terisi.
+
+> **Note:** `scoringLevels` berisi data master Likert 1-7 yang digunakan frontend untuk menampilkan opsi jawaban.
+
+---
+
+## Resume / Load Component Page
+
+Mendapatkan data sesi dan pertanyaan per halaman (indicator).
+
+**Endpoint:** `GET /evaluations/{sessionId}/component/{questionnaireId}`
+
+**Parameters:**
+- `sessionId` — ID sesi evaluasi
+- `questionnaireId` — ID halaman/indicator yang akan ditampilkan
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Session retrieved successfully",
+  "data": {
+    "session": {
+      "evaluation": {
+        "id": 1,
+        "userId": 10,
+        "questionnaireId": 1,
+        "status": "in_progress",
+        "startedAt": "2024-01-01T10:00:00.000000Z",
+        "submittedAt": null,
+        "remainingSeconds": 2800,
+        "sessionNumber": 1,
+        "createdAt": "2024-01-01T10:00:00.000000Z",
+        "updatedAt": "2024-01-01T10:05:00.000000Z",
+        "answers": [ ... ]
+      },
+      "statements": {
+        "page": 1,
+        "indicator": "Keberadaan organisasi, struktur dan tugas",
+        "statementList": [
+          {
+            "id": 1,
+            "indicatorId": 1,
+            "questionText": "Apakah ada bukti tertulis?",
+            "weight": 1,
+            "orderNumber": 1,
+            "isActive": true,
+            "number": 1
+          }
+        ],
+        "count": 50,
+        "indicatorLength": 10
+      }
+    },
+    "scoringLevels": [ ... ]
+  }
+}
+```
+
+---
+
+## Save Answer
+
+Menyimpan jawaban untuk satu pertanyaan.
+
+**Endpoint:** `POST /evaluations/{sessionId}/answers`
+
+**Request:**
+```json
+{
+  "questionId": 1,
+  "score": 5
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Answer saved successfully",
+  "data": {
+    "id": 1,
+    "responseSessionId": 1,
+    "questionId": 1,
+    "score": 5,
+    "createdAt": "2024-01-01T10:05:00.000000Z",
+    "updatedAt": "2024-01-01T10:05:00.000000Z"
+  }
+}
+```
+
+---
+
+## Auto Save
+
+Auto-save periodik (biasanya setiap 30 detik). Menyimpan sisa waktu + jawaban.
+
+**Endpoint:** `POST /evaluations/{sessionId}/autosave`
+
+**Request:**
+```json
+{
+  "remainingSeconds": 2800,
+  "answers": [
+    { "questionId": 1, "score": 5 },
+    { "questionId": 2, "score": 6 }
+  ]
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Auto-save successful",
+  "data": {
+    "remainingSeconds": 2800,
+    "savedAt": "2024-01-01T10:05:00Z",
+    "savedAnswers": [1, 2],
+    "skippedAnswers": [],
+    "skippedReason": "Questions do not belong to this questionnaire"
+  }
+}
+```
+
+> **Note:** `answers` bersifat opsional (`nullable`). Auto-save bisa dipanggil hanya untuk update `remainingSeconds` saja.
+
+---
+
+## Submit Evaluation
+
+Submit final evaluasi. Menghitung skor dan menghasilkan rekomendasi.
+
+**Endpoint:** `POST /evaluations/{sessionId}/submit`
+
+**Request:** `{}` (empty body)
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Evaluation submitted successfully",
+  "data": {
+    "result": {
+      "id": 1,
+      "responseSessionId": 1,
+      "overallScore": 5.25,
+      "overallPercentage": 75.0,
+      "overallCategory": "B",
+      "conclusion": "Baik - Kebijakan lingkungan sekolah sudah cukup baik, perlu peningkatan di beberapa aspek",
+      "createdAt": "2024-01-01T10:30:00.000000Z",
+      "updatedAt": "2024-01-01T10:30:00.000000Z",
+      "details": [
+        {
+          "id": 1,
+          "evaluationResultId": 1,
+          "indicatorId": 1,
+          "score": 6.5,
+          "percentage": 92.86,
+          "category": "A",
+          "recommendation": "Pertahankan implementasi saat ini...",
+          "createdAt": "2024-01-01T10:30:00.000000Z",
+          "updatedAt": "2024-01-01T10:30:00.000000Z"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Error Response (422) — Belum semua terjawab:**
+```json
+{
+  "status": false,
+  "message": "Please answer all questions before submitting",
+  "errors": {
+    "answered": 45,
+    "total": 50
+  }
+}
+```
+
+---
+
+## Get Results
+
+Mendapatkan hasil evaluasi setelah submit.
+
+**Endpoint:** `GET /evaluations/{sessionId}/results`
+
+**Response (200 OK):** Sama dengan response submit di atas.
+
+---
+
+# 8. Category Scale
+
+Skor dan kategori dihitung dengan rumus:
+
+**Per-Indicator:**
+```
+score = (total bobot jawaban) / (total bobot pertanyaan)
+percentage = (score / 7) * 100
+```
+
+**Overall:**
+```
+overallScore = Σ(score_indicator * totalBobot_indicator) / Σ(totalBobot_indicator)
+overallPercentage = (overallScore / 7) * 100
+```
+
+**Kategori:**
+| Kategori | Rentang | Label |
+|----------|---------|-------|
+| A | >= 90% | Sangat Tinggi |
+| B | >= 75% | Tinggi |
+| C | >= 60% | Sedang |
+| D | >= 45% | Rendah |
+| E | < 45% | Sangat Rendah |
+
+---
+
+# 9. Common Error Responses
+
+## Standard Error
+```json
+{
+  "status": false,
+  "message": "Error message",
+  "errors": {}
+}
+```
+
+## Validation Error (422)
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "fieldName": ["The field name is required."]
+  }
+}
+```
+
+## Unauthenticated (401)
+```json
+{
+  "status": false,
+  "message": "Unauthenticated.",
+  "errors": []
+}
+```
+
+## Not Found (404)
+```json
+{
+  "status": false,
+  "message": "Resource not found",
+  "errors": []
+}
+```
+
+---
+
+# 10. HTTP Status Codes
 
 | Code | Meaning |
 |------|---------|
-| 200 | OK - Request successful |
-| 201 | Created - Resource created |
-| 400 | Bad Request - Invalid input |
-| 401 | Unauthorized - Missing/invalid token |
-| 403 | Forbidden - Insufficient permissions |
-| 404 | Not Found - Resource not found |
-| 422 | Unprocessable Entity - Validation failed |
+| 200 | OK — Request successful |
+| 201 | Created — Resource created |
+| 400 | Bad Request — Invalid input |
+| 401 | Unauthorized — Missing/invalid token |
+| 403 | Forbidden — Insufficient permissions (inactive/non-admin) |
+| 404 | Not Found — Resource not found |
+| 409 | Conflict — Duplicate submission |
+| 422 | Unprocessable Entity — Validation failed |
 | 500 | Internal Server Error |
 
 ---
 
-# 9. Rate Limiting
+# 11. Rate Limiting
 
-API rate limiting: **60 requests per minute** per user.
+| Endpoint | Limit |
+|----------|-------|
+| `/auth/login` | 500 requests per 15 minutes |
+| `/auth/login-admin` | 100 requests per 15 minutes |
+| `/auth/register` | 100 requests per 15 minutes |
+| All others | Default Laravel |
 
-Response Headers:
+Response headers:
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
@@ -1383,66 +1511,410 @@ X-RateLimit-Reset: 1703001600
 
 ---
 
-# 10. Pagination
+# 12. Pagination
 
-Default pagination settings:
+Semua endpoint list menggunakan format pagination yang konsisten:
 
 ```json
 {
-  "total": 100,
-  "perPage": 15,
-  "currentPage": 1,
-  "lastPage": 7,
-  "from": 1,
-  "to": 15
+  "data": {
+    "contents": [ ... ],
+    "meta": {
+      "page": 1,
+      "limit": 15,
+      "total": 100
+    }
+  }
+}
+```
+
+**Default:** `limit=15`, `max_limit=100`
+
+---
+
+# 13. Timestamps & Data Types
+
+**Timestamps:** Semua menggunakan ISO 8601 dengan timezone UTC:
+```
+2024-01-01T10:00:00.000000Z
+```
+
+**Convention:** Database menyimpan dalam `snake_case`, API Resources mengonversi ke `camelCase` secara otomatis.
+
+| Type | Format | Example |
+|------|--------|---------|
+| integer | 32-bit | 123 |
+| bigint | 64-bit | 9223372036854775807 |
+| decimal | Fixed-point | 123.45 |
+| string | Text | "Hello" |
+| boolean | true/false | true |
+| datetime | ISO 8601 | "2024-01-01T10:00:00Z" |
+| enum | Limited set | "in_progress", "submitted" |
+
+---
+
+---
+
+# 14. V2 — Questions (Flat/Cascade API)
+
+**Base URL:** `http://localhost:8000/api/v2`
+
+API V2 untuk halaman pernyataan flat dengan cascade filter. Tidak ada perubahan struktur table — hanya cara query dan response shape yang berbeda dari V1.
+
+**Headers:** `Authorization: Bearer *** (role admin/superadmin)`
+
+---
+
+## 14.1 List Questions
+
+**Endpoint:** `GET /admin/questions`
+
+Query Parameters:
+
+| Parameter | Tipe | Wajib | Default | Deskripsi |
+|-----------|------|-------|---------|-----------|
+| `search` | string | - | - | Cari berdasarkan `questionText` |
+| `instrumentId` | int | - | - | Filter by questionnaire |
+| `componentId` | int | - | - | Filter by component |
+| `subComponentId` | int | - | - | Filter by sub component |
+| `indicatorId` | int | - | - | Filter by indicator |
+| `page` | int | - | 1 | Halaman |
+| `limit` | int | - | 10 | Per halaman (max 100) |
+| `sortBy` | string | - | `order_number` | `order_number`, `created_at`, `question_text` |
+| `sortOrder` | string | - | `asc` | `asc` / `desc` |
+
+**Response 200:**
+
+```json
+{
+  "status": true,
+  "message": "Questions retrieved successfully",
+  "data": {
+    "contents": [
+      {
+        "id": 1,
+        "questionText": "Seberapa sering Anda mematikan peralatan listrik...",
+        "weight": 0.8,
+        "isActive": true,
+        "orderNumber": 1,
+        "createdAt": "2025-01-15 00:00:00",
+        "updatedAt": "2025-03-22 00:00:00",
+        "indicator": {
+          "id": 1,
+          "name": "Indikator A1 — Efisiensi Energi",
+          "subComponent": {
+            "id": 1,
+            "name": "Pemakaian Listrik Kelas",
+            "component": {
+              "id": 1,
+              "name": "Energi: Konsumsi Listrik",
+              "questionnaire": {
+                "id": 1,
+                "title": "Evaluasi Penggunaan Energi 2024",
+                "period": {
+                  "id": 1,
+                  "name": "Ganjil 2023/2024"
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 10,
+      "total": 45,
+      "totalPages": 5
+    }
+  }
 }
 ```
 
 ---
 
-# 11. Timestamps
+## 14.2 Cascade Tree Data
 
-Semua timestamps menggunakan ISO 8601 format dengan UTC timezone:
-```
-2024-01-01T10:00:00Z
+**Endpoint:** `GET /admin/questions/tree`
+
+Mengembalikan data hirarki lengkap untuk populate cascade dropdown di halaman list, add, dan edit.
+
+**Response 200:**
+
+```json
+{
+  "status": true,
+  "data": [
+    {
+      "id": 1,
+      "title": "Evaluasi Penggunaan Energi 2024",
+      "period": "Ganjil 2023/2024",
+      "components": [
+        {
+          "id": 1,
+          "name": "Energi: Konsumsi Listrik",
+          "subComponents": [
+            {
+              "id": 1,
+              "name": "Pemakaian Listrik Kelas",
+              "indicators": [
+                { "id": 1, "name": "Indikator A1 — Efisiensi Energi" },
+                { "id": 2, "name": "Indikator A2 — Penggunaan LED" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ---
 
-# 12. API Versioning
+## 14.3 Create Question
 
-API menggunakan URL versioning:
-```
-/api/v1/...
+**Endpoint:** `POST /admin/questions`
+
+**Request:**
+
+```json
+{
+  "indicatorId": 1,
+  "questionText": "Apakah sekolah Anda menggunakan lampu LED hemat energi?",
+  "weight": 0.6,
+  "isActive": true
+}
 ```
 
-Future versions akan tersedia di:
+| Field | Tipe | Wajib | Validasi |
+|-------|------|-------|----------|
+| `indicatorId` | int | yes | `required|exists:indicators,id` |
+| `questionText` | string | yes | `required|string|max:1000` |
+| `weight` | float | yes | `required|numeric|min:0|max:1` |
+| `isActive` | boolean | no | default `true` |
+| `orderNumber` | int | no | auto jika tidak dikirim |
+
+**Response 201:**
+
+```json
+{
+  "status": true,
+  "message": "Question created successfully",
+  "data": {
+    "id": 46,
+    "questionText": "Apakah sekolah Anda menggunakan lampu LED hemat energi?",
+    "weight": 0.6,
+    "isActive": true,
+    "orderNumber": 1,
+    "createdAt": "2026-07-24 10:30:00",
+    "updatedAt": "2026-07-24 10:30:00",
+    "indicator": {
+      "id": 1,
+      "name": "Indikator A2 — Penggunaan LED",
+      "subComponent": {
+        "id": 1,
+        "name": "Pemakaian Listrik Kelas",
+        "component": {
+          "id": 1,
+          "name": "Energi: Konsumsi Listrik",
+          "questionnaire": {
+            "id": 1,
+            "title": "Evaluasi Penggunaan Energi 2024"
+          }
+        }
+      }
+    }
+  }
+}
 ```
-/api/v2/...
+
+**Error 422:**
+
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "indicatorId": ["The indicator id field is required."],
+    "questionText": ["The question text field is required."]
+  }
+}
 ```
 
 ---
 
-# 13. Data Types
+## 14.4 Get Question Detail
 
-| Type | Format | Example |
-|------|--------|---------|
-| integer | 32-bit integer | 123 |
-| bigint | 64-bit integer | 9223372036854775807 |
-| decimal | Fixed-point | 123.45 |
-| string | Text | "Hello" |
-| boolean | true/false | true |
-| datetime | ISO 8601 | "2024-01-01T10:00:00Z" |
-| enum | Limited set | "draft", "published" |
-| tinyint | 0-255 | 7 |
+**Endpoint:** `GET /admin/questions/{id}`
+
+**Response 200:**
+
+```json
+{
+  "status": true,
+  "message": "Question retrieved successfully",
+  "data": {
+    "id": 1,
+    "questionText": "Seberapa sering Anda mematikan peralatan listrik yang tidak digunakan di sekolah?",
+    "weight": 0.8,
+    "isActive": true,
+    "orderNumber": 1,
+    "createdAt": "2025-01-15 00:00:00",
+    "updatedAt": "2025-03-22 00:00:00",
+    "indicator": {
+      "id": 1,
+      "name": "Indikator A1 — Efisiensi Energi",
+      "subComponent": {
+        "id": 1,
+        "name": "Pemakaian Listrik Kelas",
+        "component": {
+          "id": 1,
+          "name": "Energi: Konsumsi Listrik",
+          "questionnaire": {
+            "id": 1,
+            "title": "Evaluasi Penggunaan Energi 2024",
+            "period": { "id": 1, "name": "Ganjil 2023/2024" }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Error 404:**
+
+```json
+{ "status": false, "message": "Question not found" }
+```
 
 ---
 
-# 14. Webhook Events (Future)
+## 14.5 Update Question
 
-Planned webhook events untuk integrasi eksternal:
+**Endpoint:** `PUT /admin/questions/{id}`
 
-- `evaluation.submitted` - Saat responden submit evaluasi
-- `evaluation.timeout` - Saat waktu evaluasi habis
-- `results.generated` - Saat hasil evaluasi selesai dihitung
-- `recommendation.matched` - Saat rekomendasi matched dengan score
+**Request** (sama dengan create):
+
+```json
+{
+  "indicatorId": 1,
+  "questionText": "Updated question text...",
+  "weight": 0.9,
+  "isActive": false
+}
+```
+
+> **Catatan:** `orderNumber` tidak bisa diubah via update.
+
+**Response 200:**
+
+```json
+{
+  "status": true,
+  "message": "Question updated successfully",
+  "data": {
+    "id": 1,
+    "questionText": "Updated question text...",
+    "weight": 0.9,
+    "isActive": false,
+    "orderNumber": 1,
+    "createdAt": "2025-01-15 00:00:00",
+    "updatedAt": "2026-07-24 11:00:00",
+    "indicator": {
+      "id": 1,
+      "name": "Indikator A1 — Efisiensi Energi",
+      "subComponent": {
+        "id": 1,
+        "name": "Pemakaian Listrik Kelas",
+        "component": {
+          "id": 1,
+          "name": "Energi: Konsumsi Listrik",
+          "questionnaire": {
+            "id": 1,
+            "title": "Evaluasi Penggunaan Energi 2024"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## 14.6 Delete Question
+
+**Endpoint:** `DELETE /admin/questions/{id}`
+
+**Response 200:**
+
+```json
+{ "status": true, "message": "Question deleted successfully", "data": null }
+```
+
+**Response 404:**
+
+```json
+{ "status": false, "message": "Question not found" }
+```
+
+---
+
+# 15. Authentication Flow
+
+```
+Respondent:
+  POST /auth/register → [optional] buat akun
+  POST /auth/login    → dapat token (via username + password)
+  🔒 Semua endpoint evaluation
+
+Admin:
+  POST /auth/login-admin → dapat token (via email + password)
+  🔒 Semua endpoint /admin/*
+  🔒 GET /auth/profile, GET /auth/validate
+
+Both:
+  POST /auth/logout   → hapus token
+  GET  /auth/profile  → lihat profil
+  GET  /auth/validate → validasi token
+```
+
+---
+
+# 16. Endpoint Summary
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/auth/register` | Public | Register respondent |
+| POST | `/auth/login` | Public | Login (all roles) |
+| POST | `/auth/login-admin` | Public | Login admin only |
+| POST | `/auth/logout` | Sanctum | Revoke token |
+| GET | `/auth/profile` | Sanctum | Get user profile |
+| GET | `/auth/validate` | Sanctum | Validate token |
+| GET | `/admin/dashboard` | Admin | Dashboard stats |
+| CRUD | `/admin/periods` | Admin | Evaluation periods |
+| CRUD | `/admin/questionnaires` | Admin | Questionnaires |
+| POST | `/admin/questionnaires/{id}/publish` | Admin | Publish |
+| CRUD | `/admin/components` | Admin | Components |
+| CRUD | `/admin/sub-components` | Admin | Sub components |
+| CRUD | `/admin/indicators` | Admin | Indicators |
+| CRUD | `/admin/questions` | Admin | Questions |
+| CRUD | `/admin/respondents` | Admin | Respondents |
+| POST | `/admin/respondents/import` | Admin | Bulk import CSV |
+| CRUD | `/admin/recommendations` | Admin | Recommendations |
+| CRUD | `/admin/scoring-levels` | Admin | Scoring levels |
+| GET/PUT | `/admin/settings` | Admin | System settings |
+| GET | `/admin/sessions` | Admin | Monitoring list |
+| GET | `/admin/sessions/{id}` | Admin | Session detail |
+| GET | `/admin/reports` | Admin | Report summary |
+| POST | `/admin/reports/export-excel` | Admin | Export to Excel |
+| POST | `/admin/reports/export-pdf` | Admin | Export to PDF |
+| GET | `/evaluations/active-questionnaire` | Sanctum | Active questionnaire |
+| POST | `/evaluations/start` | Sanctum | Start session |
+| GET | `/evaluations/{id}/component/{page}` | Sanctum | Resume/load page |
+| POST | `/evaluations/{id}/answers` | Sanctum | Save answer |
+| POST | `/evaluations/{id}/autosave` | Sanctum | Auto-save |
+| POST | `/evaluations/{id}/submit` | Sanctum | Submit evaluation |
+| GET | `/evaluations/{id}/results` | Sanctum | Get results |
