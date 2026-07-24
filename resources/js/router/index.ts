@@ -121,6 +121,26 @@ const router = createRouter({
           name: 'admin-reports',
           component: () => import('@/views/admin/master-data/ReportView.vue'),
         },
+        {
+          path: 'statements',
+          name: 'statements',
+          component: () => import('@/v2/questions/views/QuestionListView.vue'),
+        },
+        {
+          path: 'statements/add',
+          name: 'statements-add',
+          component: () => import('@/v2/questions/views/QuestionAddView.vue'),
+        },
+        {
+          path: 'statements/:id',
+          name: 'statements-detail',
+          component: () => import('@/v2/questions/views/QuestionDetailView.vue'),
+        },
+        {
+          path: 'statements/:id/edit',
+          name: 'statements-edit',
+          component: () => import('@/v2/questions/views/QuestionEditView.vue'),
+        },
       ],
     },
     // Respondent routes

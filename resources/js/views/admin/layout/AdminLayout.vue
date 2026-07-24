@@ -58,6 +58,7 @@ const navGroups = computed(() => {
       items: [
         { path: '/admin/period', icon: 'calendar_today', label: 'Period', badge: null },
         { path: '/admin/instrument', icon: 'assignment', label: 'Instrument Penelitian', badge: null },
+        { path: '/admin/statements', icon: 'book', label: 'Pernyataan', badge: null },
       ],
     },
     {

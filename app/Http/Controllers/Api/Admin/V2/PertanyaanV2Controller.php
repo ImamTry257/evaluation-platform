@@ -111,7 +111,6 @@ class PertanyaanV2Controller extends Controller
         $validator = Validator::make($request->all(), [
             'indicatorId' => 'required|exists:indicators,id',
             'questionText' => 'required|string|max:1000',
-            'weight' => 'required|numeric|min:0|max:1',
             'isActive' => 'nullable|boolean',
             'orderNumber' => 'nullable|integer|min:0',
         ]);
@@ -125,7 +124,7 @@ class PertanyaanV2Controller extends Controller
         $dbData = [
             'indicator_id' => $data['indicatorId'],
             'question_text' => $data['questionText'],
-            'weight' => $data['weight'],
+            'weight' => 1.00,
             'is_active' => $data['isActive'] ?? 1,
         ];
 
@@ -180,7 +179,6 @@ class PertanyaanV2Controller extends Controller
         $validator = Validator::make($request->all(), [
             'indicatorId' => 'required|exists:indicators,id',
             'questionText' => 'required|string|max:1000',
-            'weight' => 'required|numeric|min:0|max:1',
             'isActive' => 'nullable|boolean',
         ]);
 
@@ -193,7 +191,7 @@ class PertanyaanV2Controller extends Controller
         $question->update([
             'indicator_id' => $data['indicatorId'],
             'question_text' => $data['questionText'],
-            'weight' => $data['weight'],
+            'weight' => 1.00,
             'is_active' => $data['isActive'] ?? $question->is_active,
         ]);
 
