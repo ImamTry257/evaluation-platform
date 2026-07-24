@@ -366,18 +366,24 @@ onMounted(() => {
               </div>
             </div>
 
-            <!-- Status -->
+            <!-- Status → toggle switch (konsisten dengan QuestionForm) -->
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-              <div class="flex items-center gap-4">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" :value="true" v-model="form.isActive" class="accent-primary w-4 h-4" />
-                  <span class="text-body-sm text-on-surface">Aktif</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" :value="false" v-model="form.isActive" class="accent-primary w-4 h-4" />
-                  <span class="text-body-sm text-on-surface">Nonaktif</span>
-                </label>
+              <div class="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                  :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                  @click="form.isActive = !form.isActive"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
+                  />
+                </button>
+                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                  {{ form.isActive ? 'Aktif' : 'Nonaktif' }}
+                </span>
               </div>
             </div>
           </div>
