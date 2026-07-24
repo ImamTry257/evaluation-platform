@@ -43,7 +43,8 @@ class RekomendasiController extends Controller
 
         return $this->listResponse(
             RecommendationResource::collection($recommendations),
-            'Recommendations retrieved successfully'
+            'Recommendations retrieved successfully',
+            $recommendations
         );
     }
 

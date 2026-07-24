@@ -69,8 +69,8 @@ function openAddModal() {
   form.value = {
     name: '',
     description: '',
-    startDate: '',
-    endDate: '',
+    startDate: null,
+    endDate: null,
     isActive: true,
   }
   showFormModal.value = true
@@ -82,8 +82,8 @@ function openEditModal(item: any) {
   form.value = {
     name: item.name,
     description: item.description || '',
-    startDate: item.startDate ? item.startDate.split('T')[0] : '',
-    endDate: item.endDate ? item.endDate.split('T')[0] : '',
+    startDate: item.startDate ? item.startDate.split('T')[0] : null,
+    endDate: item.endDate ? item.endDate.split('T')[0] : null,
     isActive: item.isActive,
   }
   showFormModal.value = true

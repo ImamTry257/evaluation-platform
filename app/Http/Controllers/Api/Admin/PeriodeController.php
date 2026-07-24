@@ -38,7 +38,8 @@ class PeriodeController extends Controller
 
         return $this->listResponse(
             EvaluationPeriodResource::collection($periods),
-            'Periods retrieved successfully'
+            'Periods retrieved successfully',
+            $periods
         );
     }
 

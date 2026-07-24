@@ -45,7 +45,8 @@ class RespondenController extends Controller
 
         return $this->listResponse(
             UserResource::collection($respondents),
-            'Respondents retrieved successfully'
+            'Respondents retrieved successfully',
+            $respondents
         );
     }
 
