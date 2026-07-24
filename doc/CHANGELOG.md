@@ -1,6 +1,71 @@
 # Changelog
 
-## v1.3.0
+## v1.6.0 — 24 Juli 2026
+
+### Added
+- Session number (`session_number`) di tabel `response_sessions` untuk tracking sesi
+- Echo check read parameter untuk debugging koneksi
+
+### Fixed
+- Migrasi kompatibel untuk **fresh install** — urutan dan dependency diperbaiki
+- **Kompatibilitas MySQL 5.7 / MariaDB** — ganti `ROW_NUMBER()` jadi user variables
+- Hapus **duplicate `deleted_at` field** di migration action
+- Set default MySQL database config di compose
+
+---
+
+## v1.5.0 — 22-23 Juli 2026
+
+### Added
+- **Export Excel** via Laravel Excel — merge kolom indikator, file `.xlsx` siap download
+- **Export PDF** hasil evaluasi per responden
+- **Dashboard Admin** — summary (totalRespondent, submitted, inProgress, notStarted, completionPercent), weeklyProgress chart, activeSessions
+- **Monitoring Sessions** — lihat semua sesi evaluasi dengan filter status & pagination
+- **Docker CI/CD** — Dockerfile + compose fix untuk deployment
+- **Filter button** instrumen penelitian di halaman admin
+- **401 auto-redirect** ke halaman login jika token expired
+- Icon PolicyEval dipindahkan ke header kiri
+
+### Changed
+- Kolom **status + started_at** ditambahkan di tabel laporan
+- Nama kuesioner dipakai sebagai **filename export** Excel
+- Respons API dashboard & monitoring standardisasi pakai `{status, message, data}`
+
+### Fixed
+- HeaderRowIndex + 1 blank row antara metadata dan tabel di export Excel
+- Perbaiki validasi error field login di halaman respondent
+
+---
+
+## v1.4.0 — 20-21 Juli 2026
+
+### Added
+- **Evaluation Engine** — endpoint respondent:
+  - `GET /evaluations/active-questionnaire` — ambil kuesioner aktif
+  - `POST /evaluations/start` — mulai sesi baru
+  - `POST /evaluations/{sessionId}/answers` — simpan jawaban
+  - `POST /evaluations/{sessionId}/autosave` — auto-save periodik
+  - `POST /evaluations/{sessionId}/submit` — submit final
+  - `GET /evaluations/{sessionId}/results` — lihat hasil
+  - `GET /evaluations/{sessionId}/component/{questionnaireId}` — resume sesi
+- **Countdown timer persistent** via localStorage + sync ke backend
+- **Auto-save backend** setiap 30 detik
+- **Halaman profil respondent** — navigasi dari user menu dropdown
+- **Modal profil terkunci** saat sedang mengisi angket
+- **StepHeader component** — extract + implement di semua halaman respondent
+- Extract **useLogin** dan **useLoginAdmin** hooks
+
+### Changed
+- Split `InputAngketView` jadi 3 komponen terpisah (StepIndicator, QuestionCard, NavigationButtons)
+- User menu dropdown — avatar + nama, navigasi ke profile & logout
+- Penanganan error login — validasi field spesifik ditampilkan
+
+### Fixed
+- Validasi error field login tidak tampil di frontend — sekarang pesan error dari backend ditampilkan
+
+---
+
+## v1.3.0 — 19 Juli 2026
 
 ### Changed
 - Standardisasi DB columns ke snake_case: `questionnaire_id`, `order_number`, `is_active`, `indicator_id`, `question_text`, `component_id`, `sub_component_id`
@@ -16,7 +81,7 @@
 
 ---
 
-## v1.2.0
+## v1.2.0 — 18 Juli 2026
 
 ### Added
 
@@ -38,7 +103,7 @@
 
 ---
 
-## v1.1.0
+## v1.1.0 — 17 Juli 2026
 
 ### Changed
 
