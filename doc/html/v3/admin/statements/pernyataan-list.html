@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Semua Pernyataan | PolicyEval</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: {
+        colors: {
+          "on-tertiary-container": "#711419","inverse-surface": "#2b322d","surface-container-lowest": "#ffffff",
+          "on-primary": "#ffffff","surface": "#f4fbf4","on-background": "#161d19","secondary-container": "#dfe0e0",
+          "surface-variant": "#dde4dd","surface-container-low": "#eef6ee","surface-container-high": "#e3eae3",
+          "on-primary-container": "#00422b","outline": "#6c7a71","background": "#f4fbf4","secondary": "#5d5f5f",
+          "inverse-primary": "#4edea3","surface-container": "#e8f0e9","tertiary-container": "#fc7c78",
+          "surface-tint": "#006c49","primary-fixed": "#6ffbbe","tertiary-fixed-dim": "#ffb3af",
+          "secondary-fixed-dim": "#c6c6c7","on-error": "#ffffff","on-tertiary-fixed": "#410005",
+          "on-surface-variant": "#3c4a42","outline-variant": "#bbcabf","error": "#ba1a1a",
+          "primary-fixed-dim": "#4edea3","on-error-container": "#93000a","on-secondary-container": "#616363",
+          "tertiary": "#a43a3a","surface-bright": "#f4fbf4","on-secondary": "#ffffff",
+          "primary-container": "#10b981","surface-dim": "#d4dcd5","error-container": "#ffdad6",
+          "tertiary-fixed": "#ffdad7","primary": "#006c49","secondary-fixed": "#e2e2e2",
+          "on-secondary-fixed-variant": "#454747","on-primary-fixed-variant": "#005236",
+          "on-tertiary-fixed-variant": "#842225","on-primary-fixed": "#002113","on-secondary-fixed": "#1a1c1c",
+          "inverse-on-surface": "#ebf3eb","on-tertiary": "#ffffff","surface-container-highest": "#dde4dd","on-surface": "#161d19"
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: { sm: "0.5rem", gutter: "1.5rem", "2xl": "3rem", base: "4px", md: "1rem", xs: "0.25rem", lg: "1.5rem", xl: "2rem" },
+        fontFamily: { "headline-xl": ["Poppins"],"body-sm": ["Poppins"],"headline-lg": ["Poppins"],"label-caps": ["Poppins"],"title-md": ["Poppins"],"body-base": ["Poppins"] },
+        fontSize: {
+          "headline-xl": ["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+          "body-sm": ["14px",{lineHeight:"1.5",fontWeight:"400"}],
+          "headline-lg": ["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+          "label-caps": ["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],
+          "title-md": ["20px",{lineHeight:"1.5",fontWeight:"500"}],
+          "body-base": ["16px",{lineHeight:"1.6",fontWeight:"400"}]
+        }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .search-input { transition: all 0.3s ease; }
+    .search-input:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); transform: translateY(-2px); border-color: #10b981; }
+    .table-row { transition: all 0.3s ease; cursor: pointer; }
+    .table-row:hover { background-color: rgba(238, 246, 238, 0.5); transform: scale(1.01); }
+    .custom-select { transition: all 0.3s ease; cursor: pointer; }
+    .custom-select:hover { background-color: #e3eae3; }
+    .custom-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+    .select-pending { border-color: #f59e0b !important; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15); }
+    .filter-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .filter-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0, 108, 73, 0.3); }
+    .filter-btn:active { transform: scale(0.95); }
+    .filter-chip { display: inline-flex; align-items: center; gap: 4px; background: rgba(16, 185, 129, 0.1); color: #006c49; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; animation: chipPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .filter-chip button { transition: color 0.15s; }
+    .filter-chip button:hover { color: #ba1a1a; }
+    @keyframes chipPop { from { transform: scale(0); } to { transform: scale(1); } }
+    .status-badge { transition: all 0.3s ease; }
+    .status-badge:hover { transform: scale(1.05); }
+    .hierarchy-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+    .page-btn { transition: all 0.3s ease; }
+    .page-btn:hover:not(:disabled) { background-color: #e3eae3; transform: translateY(-1px); }
+    .page-btn:active:not(:disabled) { transform: scale(0.95); }
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .fade-in-delay { animation: fadeIn 0.5s ease-out 0.1s forwards; opacity: 0; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .data-table-scroll::-webkit-scrollbar { height: 6px; }
+    .data-table-scroll::-webkit-scrollbar-thumb { background: #bbcabf; border-radius: 10px; }
+    .weight-bar { display: flex; align-items: center; gap: 8px; }
+    .weight-bar .bar { width: 60px; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+    .weight-bar .bar-fill { height: 100%; background: #006c49; border-radius: 3px; transition: width 0.3s ease; }
+    .filter-label { font-size: 10px; font-weight: 600; color: #6c7a71; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Searchable Select (Select2 style) */
+    .search-select { position: relative; }
+    .search-select .search-select-trigger {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      width: 100%; background: #fff; border: 1px solid rgba(187,202,191,0.5);
+      border-radius: 0.75rem; padding: 10px 14px;
+      font-size: 14px; font-family: 'Poppins', sans-serif; color: #161d19;
+      cursor: pointer; transition: all 0.3s ease; text-align: left;
+    }
+    .search-select .search-select-trigger:hover { background-color: #eef6ee; }
+    .search-select .search-select-trigger:focus { outline: none; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+    .search-select .search-select-trigger .placeholder { color: #6c7a71; }
+    .search-select .search-select-trigger .arrow { transition: transform 0.2s; color: #6c7a71; }
+    .search-select .search-select-trigger.open .arrow { transform: rotate(180deg); }
+    .search-select .search-select-panel {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: #fff; border: 1px solid rgba(187,202,191,0.5);
+      border-radius: 0.75rem; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      z-index: 50; max-height: 260px; display: none; overflow: hidden;
+      animation: panelIn 0.15s ease-out;
+    }
+    .search-select .search-select-panel.open { display: flex; flex-direction: column; }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .search-select .search-select-panel .search-box { padding: 8px; border-bottom: 1px solid rgba(187,202,191,0.3); flex-shrink: 0; }
+    .search-select .search-select-panel .search-box input {
+      width: 100%; padding: 8px 12px; border: 1px solid rgba(187,202,191,0.5);
+      border-radius: 0.5rem; font-size: 13px; font-family: 'Poppins', sans-serif;
+      outline: none; background: #f4fbf4; color: #161d19; transition: all 0.2s;
+    }
+    .search-select .search-select-panel .search-box input:focus { border-color: #10b981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15); }
+    .search-select .search-select-panel .options-list { overflow-y: auto; flex: 1; padding: 4px; }
+    .search-select .search-select-panel .options-list::-webkit-scrollbar { width: 4px; }
+    .search-select .search-select-panel .options-list::-webkit-scrollbar-thumb { background: #bbcabf; border-radius: 4px; }
+    .search-select .search-select-panel .opt {
+      padding: 8px 12px; font-size: 13px; font-family: 'Poppins', sans-serif;
+      color: #161d19; border-radius: 0.5rem; cursor: pointer; transition: all 0.15s;
+    }
+    .search-select .search-select-panel .opt:hover { background: #eef6ee; color: #006c49; }
+    .search-select .search-select-panel .opt.selected { background: rgba(16, 185, 129, 0.1); color: #006c49; font-weight: 600; }
+    .search-select .search-select-panel .opt.hidden { display: none; }
+    .search-select .search-select-panel .no-result { padding: 16px 12px; text-align: center; font-size: 13px; color: #6c7a71; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="fixed left-0 top-0 h-full w-[280px] bg-surface border-r border-outline-variant/30 flex flex-col py-6 z-50">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
+      </div>
+      <div>
+        <h1 class="font-headline-lg text-[20px] font-bold text-primary leading-none">PolicyEval</h1>
+        <p class="text-[12px] text-secondary mt-1">Environmental Admin</p>
+      </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-body-base text-body-base">Dashboard</span></a>
+      <div class="pt-4 pb-1 px-6"><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Master Data</p></div>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">calendar_today</span><span class="font-body-base text-body-base">Period</span></a>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">assignment</span><span class="font-body-base text-body-base">Instrument Penelitian</span></a>
+      <a class="flex items-center gap-3 bg-surface-container-high text-primary font-bold border-l-4 border-primary py-3 px-6" href="#"><span class="material-symbols-outlined">quiz</span><span class="font-body-base text-body-base">Semua Pernyataan</span></a>
+      <div class="pt-4 pb-1 px-6"><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Pelaksanaan</p></div>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">groups</span><span class="font-body-base text-body-base">Responden</span></a>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">assessment</span><span class="font-body-base text-body-base">Reports</span></a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/20">
+        <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">settings</span><span class="font-body-base text-body-base">Settings</span></a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="ml-[280px] p-8 max-w-[1440px] w-full mx-auto">
+    <nav class="mb-6 flex items-center gap-2 text-sm">
+      <a href="#" class="text-primary font-medium hover:underline">Semua Pernyataan</a>
+    </nav>
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
+      <div>
+        <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Semua Pernyataan</h2>
+        <p class="text-body-sm text-on-surface-variant mt-1">Kelola seluruh pernyataan dari semua instrumen penelitian</p>
+      </div>
+      <a href="pernyataan-add.html" class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 no-underline">
+        <span class="material-symbols-outlined">add</span>
+        Tambah Pernyataan
+      </a>
+    </div>
+
+    <!-- Content Card -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay">
+      <!-- Filter Bar -->
+      <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30">
+        <!-- Search -->
+        <div class="relative mb-5">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+          <input id="searchInput" class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm" placeholder="Cari pernyataan..." type="text"/>
+        </div>
+
+        <!-- Cascade Filter - Select2 style searchable -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+          <div>
+            <p class="filter-label mb-1.5">Instrument</p>
+            <div class="search-select filter-select" id="fsInstrument">
+              <button type="button" class="search-select-trigger" data-trigger>
+                <span class="placeholder">Semua</span>
+                <span class="material-symbols-outlined arrow text-[18px]">expand_more</span>
+              </button>
+              <div class="search-select-panel" data-panel>
+                <div class="search-box"><input type="text" data-search placeholder="Cari instrument..." autocomplete="off"/></div>
+                <div class="options-list" data-options></div>
+                <div class="no-result hidden">Tidak ditemukan</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="filter-label mb-1.5">Komponen</p>
+            <div class="search-select filter-select" id="fsComponent">
+              <button type="button" class="search-select-trigger" data-trigger>
+                <span class="placeholder">Pilih Instrument dulu</span>
+                <span class="material-symbols-outlined arrow text-[18px]">expand_more</span>
+              </button>
+              <div class="search-select-panel" data-panel>
+                <div class="search-box"><input type="text" data-search placeholder="Cari komponen..." autocomplete="off"/></div>
+                <div class="options-list" data-options></div>
+                <div class="no-result hidden">Tidak ditemukan</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="filter-label mb-1.5">Sub Komponen</p>
+            <div class="search-select filter-select" id="fsSubComponent">
+              <button type="button" class="search-select-trigger" data-trigger>
+                <span class="placeholder">Pilih Komponen dulu</span>
+                <span class="material-symbols-outlined arrow text-[18px]">expand_more</span>
+              </button>
+              <div class="search-select-panel" data-panel>
+                <div class="search-box"><input type="text" data-search placeholder="Cari sub komponen..." autocomplete="off"/></div>
+                <div class="options-list" data-options></div>
+                <div class="no-result hidden">Tidak ditemukan</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="filter-label mb-1.5">Indikator</p>
+            <div class="search-select filter-select" id="fsIndicator">
+              <button type="button" class="search-select-trigger" data-trigger>
+                <span class="placeholder">Pilih Sub Komponen dulu</span>
+                <span class="material-symbols-outlined arrow text-[18px]">expand_more</span>
+              </button>
+              <div class="search-select-panel" data-panel>
+                <div class="search-box"><input type="text" data-search placeholder="Cari indikator..." autocomplete="off"/></div>
+                <div class="options-list" data-options></div>
+                <div class="no-result hidden">Tidak ditemukan</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3 mt-5">
+          <button id="filterBtn" class="filter-btn h-[42px] px-6 bg-primary text-on-primary font-body-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm whitespace-nowrap">
+            <span class="material-symbols-outlined text-[18px]">filter_list</span>
+            Filter
+          </button>
+          <button id="resetBtn" class="h-[42px] px-4 border border-outline-variant/50 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors flex items-center gap-2 font-body-sm">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div id="loadingState" class="hidden p-12 text-center">
+        <span class="material-symbols-outlined text-[32px] text-outline animate-spin">progress_activity</span>
+        <p class="text-body-sm text-on-surface-variant mt-2">Memuat data...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden p-12 text-center">
+        <span class="material-symbols-outlined text-[48px] text-outline">search_off</span>
+        <p class="text-body-base text-on-surface-variant mt-3 font-medium">Tidak ada pernyataan ditemukan</p>
+        <p class="text-body-sm text-on-surface-variant mt-1">Coba ubah filter atau kata kunci pencarian</p>
+      </div>
+
+      <!-- Data Table -->
+      <div id="dataTable" class="overflow-x-auto data-table-scroll">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low/50">
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase w-14">#</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase min-w-[250px]">Pernyataan</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Bobot</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-outline-variant/10">
+            <tr class="table-row" data-instrument="1" data-component="1" data-subcomponent="1" data-indicator="1" data-status="active">
+              <td class="px-6 py-5 text-sm font-medium text-secondary">01</td>
+              <td class="px-6 py-5">
+                <div><p class="text-sm font-semibold text-on-surface">Seberapa sering Anda mematikan peralatan listrik yang tidak digunakan di sekolah?</p>
+                  <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="hierarchy-tag bg-primary/10 text-primary">Energi: Konsumsi Listrik</span>
+                    <span class="hierarchy-tag bg-sky-100 text-sky-700">Indikator A1</span>
+                    <span class="text-[10px] text-outline">Evaluasi Penggunaan Energi 2024</span>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5"><span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Active</span></td>
+              <td class="px-6 py-5"><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:80%"></div></div><span class="text-xs font-semibold text-primary">0.8</span></div></td>
+              <td class="px-6 py-5">
+                <div class="flex items-center justify-center gap-1">
+                  <a href="pernyataan-detail.html" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all no-underline inline-flex" title="Lihat Detail"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+                  <a href="pernyataan-edit.html" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all no-underline inline-flex" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></a>
+                  <a href="pernyataan-delete.html" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all no-underline inline-flex" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></a>
+                </div>
+              </td>
+            </tr>
+            <tr class="table-row" data-instrument="1" data-component="1" data-subcomponent="1" data-indicator="2" data-status="active">
+              <td class="px-6 py-5 text-sm font-medium text-secondary">02</td>
+              <td class="px-6 py-5">
+                <div><p class="text-sm font-semibold text-on-surface">Apakah sekolah Anda menggunakan lampu LED hemat energi di seluruh ruangan?</p>
+                  <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="hierarchy-tag bg-primary/10 text-primary">Energi: Konsumsi Listrik</span>
+                    <span class="hierarchy-tag bg-sky-100 text-sky-700">Indikator A2</span>
+                    <span class="text-[10px] text-outline">Evaluasi Penggunaan Energi 2024</span>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5"><span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Active</span></td>
+              <td class="px-6 py-5"><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:60%"></div></div><span class="text-xs font-semibold text-primary">0.6</span></div></td>
+              <td class="px-6 py-5"><div class="flex items-center justify-center gap-1">
+                  <a href="pernyataan-detail.html" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all no-underline inline-flex" title="Lihat Detail"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+                  <a href="pernyataan-edit.html" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all no-underline inline-flex" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></a>
+                  <a href="pernyataan-delete.html" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all no-underline inline-flex" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></a>
+                </div></td>
+            </tr>
+            <tr class="table-row opacity-50" data-instrument="1" data-component="1" data-subcomponent="1" data-indicator="1" data-status="inactive">
+              <td class="px-6 py-5 text-sm font-medium text-secondary">03</td>
+              <td class="px-6 py-5">
+                <div><p class="text-sm font-semibold text-on-surface">Berapa rata-rata tagihan listrik bulanan sekolah Anda?</p>
+                  <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="hierarchy-tag bg-primary/10 text-primary">Energi: Konsumsi Listrik</span>
+                    <span class="hierarchy-tag bg-sky-100 text-sky-700">Indikator A1</span>
+                    <span class="text-[10px] text-outline">Evaluasi Penggunaan Energi 2024</span>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5"><span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">Inactive</span></td>
+              <td class="px-6 py-5"><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:50%"></div></div><span class="text-xs font-semibold text-primary">0.5</span></div></td>
+              <td class="px-6 py-5"><div class="flex items-center justify-center gap-1">
+                  <a href="pernyataan-detail.html" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all no-underline inline-flex" title="Lihat Detail"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+                  <a href="pernyataan-edit.html" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all no-underline inline-flex" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></a>
+                  <a href="pernyataan-delete.html" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all no-underline inline-flex" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></a>
+                </div></td>
+            </tr>
+            <tr class="table-row" data-instrument="2" data-component="2" data-subcomponent="3" data-indicator="4" data-status="active">
+              <td class="px-6 py-5 text-sm font-medium text-secondary">04</td>
+              <td class="px-6 py-5">
+                <div><p class="text-sm font-semibold text-on-surface">Apakah sekolah Anda memiliki program daur ulang sampah plastik?</p>
+                  <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="hierarchy-tag bg-primary/10 text-primary">Lingkungan: Pengelolaan Sampah</span>
+                    <span class="hierarchy-tag bg-sky-100 text-sky-700">Indikator B1</span>
+                    <span class="text-[10px] text-outline">Survei Pengelolaan Sampah Mandiri</span>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5"><span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Active</span></td>
+              <td class="px-6 py-5"><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:90%"></div></div><span class="text-xs font-semibold text-primary">0.9</span></div></td>
+              <td class="px-6 py-5"><div class="flex items-center justify-center gap-1">
+                  <a href="pernyataan-detail.html" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all no-underline inline-flex" title="Lihat Detail"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+                  <a href="pernyataan-edit.html" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all no-underline inline-flex" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></a>
+                  <a href="pernyataan-delete.html" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all no-underline inline-flex" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></a>
+                </div></td>
+            </tr>
+            <tr class="table-row" data-instrument="3" data-component="3" data-subcomponent="5" data-indicator="6" data-status="active">
+              <td class="px-6 py-5 text-sm font-medium text-secondary">05</td>
+              <td class="px-6 py-5">
+                <div><p class="text-sm font-semibold text-on-surface">Apakah sekolah Anda memiliki area RTH yang terawat dengan baik?</p>
+                  <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span class="hierarchy-tag bg-primary/10 text-primary">Lingkungan: RTH</span>
+                    <span class="hierarchy-tag bg-sky-100 text-sky-700">Indikator C1</span>
+                    <span class="text-[10px] text-outline">Audit RTH Sekolah Tahap 1</span>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5"><span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Active</span></td>
+              <td class="px-6 py-5"><div class="weight-bar"><div class="bar"><div class="bar-fill" style="width:75%"></div></div><span class="text-xs font-semibold text-primary">0.75</span></div></td>
+              <td class="px-6 py-5"><div class="flex items-center justify-center gap-1">
+                  <a href="pernyataan-detail.html" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all no-underline inline-flex" title="Lihat Detail"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+                  <a href="pernyataan-edit.html" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all no-underline inline-flex" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></a>
+                  <a href="pernyataan-delete.html" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all no-underline inline-flex" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></a>
+                </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div id="paginationFooter" class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-body-sm font-body-sm text-on-surface-variant">
+          Menampilkan <span class="font-semibold text-on-surface" id="showingFrom">1</span>-<span class="font-semibold text-on-surface" id="showingTo">5</span> dari <span class="font-semibold text-on-surface" id="totalItems">5</span> pernyataan
+        </p>
+        <div class="flex items-center gap-2">
+          <button class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50" disabled><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+          <button class="page-btn w-9 h-9 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold">1</button>
+          <button class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/50 text-outline hover:bg-white transition-colors disabled:opacity-50" disabled><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // DATA HIERARKI
+    // ============================================================
+    const tree = {
+      1: { name: 'Evaluasi Penggunaan Energi 2024',
+        components: {
+          1: { name: 'Energi: Konsumsi Listrik',
+            subComponents: {
+              1: { name: 'Pemakaian Listrik Kelas', indicators: { 1: 'Indikator A1 — Efisiensi Energi', 2: 'Indikator A2 — Penggunaan LED' } },
+              2: { name: 'Pemakaian Listrik Lab',   indicators: { 3: 'Indikator A3 — Beban Puncak' } }
+            }
+          },
+          2: { name: 'Lingkungan: Pengelolaan Sampah',
+            subComponents: {
+              3: { name: 'Daur Ulang Plastik', indicators: { 4: 'Indikator B1 — Program Daur Ulang', 5: 'Indikator B2 — Pengelolaan Sampah Organik' } }
+            }
+          }
+        }
+      },
+      2: { name: 'Survei Pengelolaan Sampah Mandiri',
+        components: {
+          2: { name: 'Lingkungan: Pengelolaan Sampah',
+            subComponents: {
+              3: { name: 'Daur Ulang Plastik', indicators: { 4: 'Indikator B1 — Program Daur Ulang' } },
+              4: { name: 'Kompos Organik',     indicators: { 5: 'Indikator B2 — Pengelolaan Sampah Organik' } }
+            }
+          }
+        }
+      },
+      3: { name: 'Audit RTH Sekolah Tahap 1',
+        components: {
+          3: { name: 'Lingkungan: RTH',
+            subComponents: {
+              5: { name: 'Luasan RTH', indicators: { 6: 'Indikator C1 — Luas & Perawatan RTH' } }
+            }
+          }
+        }
+      }
+    };
+
+    // ============================================================
+    // SEARCHABLE SELECT ENGINE
+    // ============================================================
+    function initFilterSelect(id) {
+      const container = document.getElementById(id);
+      if (!container) return null;
+      const trigger = container.querySelector('[data-trigger]');
+      const panel = container.querySelector('[data-panel]');
+      const searchInput = container.querySelector('[data-search]');
+      const optionsList = container.querySelector('[data-options]');
+      const noResult = container.querySelector('.no-result');
+      const label = trigger.querySelector('span:first-child');
+
+      const sel = {
+        container, trigger, panel, searchInput, optionsList, noResult, label,
+        setOptions(list, placeholderText, selectValue) {
+          optionsList.innerHTML = '';
+          if (!list || list.length === 0) {
+            label.textContent = placeholderText || 'Tidak ada';
+            container.dataset.value = '';
+            return;
+          }
+          // Add "All" option first
+          const allDiv = document.createElement('div');
+          allDiv.className = 'opt';
+          allDiv.dataset.value = '';
+          allDiv.textContent = 'Semua';
+          if (!selectValue) allDiv.classList.add('selected');
+          allDiv.addEventListener('click', (e) => { e.stopPropagation(); selectOption(allDiv); });
+          optionsList.appendChild(allDiv);
+
+          let found = false;
+          list.forEach(({value, label: lbl}) => {
+            const div = document.createElement('div');
+            div.className = 'opt';
+            div.dataset.value = value;
+            div.textContent = lbl;
+            if (selectValue && value == selectValue) { div.classList.add('selected'); found = true; }
+            div.addEventListener('click', (e) => { e.stopPropagation(); selectOption(div); });
+            optionsList.appendChild(div);
+          });
+
+          if (found && selectValue) {
+            const lbl = list.find(i => i.value == selectValue)?.label || 'Semua';
+            label.textContent = lbl;
+            container.dataset.value = selectValue;
+          } else {
+            label.textContent = 'Semua';
+            container.dataset.value = '';
+          }
+        },
+        getValue() { return container.dataset.value || ''; }
+      };
+
+      function selectOption(opt) {
+        optionsList.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        label.textContent = opt.textContent;
+        panel.classList.remove('open');
+        trigger.classList.remove('open');
+        container.dataset.value = opt.dataset.value;
+        // cascade
+        if (id === 'fsInstrument') cascade();
+        if (id === 'fsComponent') cascade();
+        if (id === 'fsSubComponent') cascade();
+      }
+
+      trigger.addEventListener('click', e => {
+        e.stopPropagation();
+        document.querySelectorAll('.search-select-panel.open').forEach(p => { if (p !== panel) p.classList.remove('open'); });
+        document.querySelectorAll('.search-select-trigger.open').forEach(t => { if (t !== trigger) t.classList.remove('open'); });
+        const isOpen = panel.classList.contains('open');
+        if (isOpen) { panel.classList.remove('open'); trigger.classList.remove('open'); }
+        else { panel.classList.add('open'); trigger.classList.add('open'); if (searchInput) { searchInput.value = ''; searchInput.focus(); filterOpts(''); } }
+      });
+
+      function filterOpts(q) {
+        const lower = q.toLowerCase();
+        let vis = 0;
+        optionsList.querySelectorAll('.opt').forEach(o => {
+          const match = o.textContent.toLowerCase().includes(lower);
+          o.classList.toggle('hidden', !match);
+          if (match) vis++;
+        });
+        if (noResult) noResult.classList.toggle('hidden', vis > 0);
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => filterOpts(searchInput.value));
+        searchInput.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { const v = optionsList.querySelectorAll('.opt:not(.hidden)'); if (v.length > 0) selectOption(v[0]); }
+          if (e.key === 'Escape') { panel.classList.remove('open'); trigger.classList.remove('open'); }
+        });
+      }
+      document.addEventListener('click', e => { if (!container.contains(e.target)) { panel.classList.remove('open'); trigger.classList.remove('open'); } });
+
+      return sel;
+    }
+
+    // ============================================================
+    // CASCADE — Init 4 filter selects
+    // ============================================================
+    const fsInst = initFilterSelect('fsInstrument');
+    const fsComp = initFilterSelect('fsComponent');
+    const fsSub  = initFilterSelect('fsSubComponent');
+    const fsInd  = initFilterSelect('fsIndicator');
+
+    // populate instrument
+    fsInst.setOptions(Object.entries(tree).map(([k,v]) => ({value:k, label:v.name})), 'Semua');
+
+    function cascade() {
+      const iv = fsInst.getValue();
+      const cv = fsComp.getValue();
+      const sv = fsSub.getValue();
+
+      // Komponen
+      const comps = iv && tree[iv] ? Object.entries(tree[iv].components).map(([k,v]) => ({value:k, label:v.name})) : [];
+      const cvOk = comps.some(c => c.value === cv);
+      fsComp.setOptions(comps, iv ? 'Semua' : 'Pilih Instrument dulu', cvOk ? cv : '');
+
+      // Sub Komponen
+      let subs = [];
+      if (iv && cvOk && tree[iv] && tree[iv].components[cv]) {
+        subs = Object.entries(tree[iv].components[cv].subComponents).map(([k,v]) => ({value:k, label:v.name}));
+      }
+      const svOk = subs.some(s => s.value === sv);
+      fsSub.setOptions(subs, cvOk ? 'Semua' : 'Pilih Komponen dulu', svOk ? sv : '');
+
+      // Indikator
+      let inds = [];
+      if (iv && cvOk && svOk && tree[iv] && tree[iv].components[cv] && tree[iv].components[cv].subComponents[sv]) {
+        inds = Object.entries(tree[iv].components[cv].subComponents[sv].indicators).map(([k,v]) => ({value:k, label:v}));
+      }
+      fsInd.setOptions(inds, svOk ? 'Semua' : 'Pilih Sub Komponen dulu', '');
+    }
+
+    // ============================================================
+    // FILTER & SEARCH — unified render
+    // ============================================================
+    let _searchTerm = '';
+
+    function renderTable() {
+      const iv = fsInst.getValue(), cv = fsComp.getValue(), sv = fsSub.getValue(), indv = fsInd.getValue();
+      const q = _searchTerm.toLowerCase();
+      const rows = document.querySelectorAll('#tableBody tr');
+      const emptyState = document.getElementById('emptyState');
+
+      let count = 0;
+      rows.forEach(r => {
+        const matchFilter = (!iv || r.dataset.instrument === iv)
+                         && (!cv || r.dataset.component === cv)
+                         && (!sv || r.dataset.subcomponent === sv)
+                         && (!indv || r.dataset.indicator === indv);
+        const title = r.querySelector('p.font-semibold')?.textContent.toLowerCase() || '';
+        const tags  = Array.from(r.querySelectorAll('.hierarchy-tag')).map(t => t.textContent.toLowerCase()).join(' ');
+        const matchSearch = !q || title.includes(q) || tags.includes(q);
+
+        const show = matchFilter && matchSearch;
+        r.style.display = show ? '' : 'none';
+        if (show) count++;
+      });
+
+      document.getElementById('totalItems').textContent = count;
+      document.getElementById('showingFrom').textContent = count > 0 ? '1' : '0';
+      document.getElementById('showingTo').textContent = count;
+
+      // Empty state
+      const table = document.getElementById('dataTable');
+      if (count === 0) {
+        table.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+      } else {
+        table.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function applyFilter() {
+      document.getElementById('dataTable').classList.add('hidden');
+      document.getElementById('paginationFooter').classList.add('hidden');
+      document.getElementById('loadingState').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('paginationFooter').classList.remove('hidden');
+        renderTable();
+      }, 300);
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', applyFilter);
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      fsInst.setOptions(Object.entries(tree).map(([k,v]) => ({value:k, label:v.name})), 'Semua');
+      fsComp.setOptions([], 'Pilih Instrument dulu');
+      fsSub.setOptions([], 'Pilih Komponen dulu');
+      fsInd.setOptions([], 'Pilih Sub Komponen dulu');
+      document.getElementById('searchInput').value = '';
+      _searchTerm = '';
+      applyFilter();
+    });
+
+    let st;
+    document.getElementById('searchInput').addEventListener('input', e => {
+      _searchTerm = e.target.value;
+      clearTimeout(st);
+      st = setTimeout(renderTable, 250);
+    });
+  </script>
+</body>
+</html>

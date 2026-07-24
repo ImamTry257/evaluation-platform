@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Detail Pernyataan | PolicyEval</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: {
+        colors: {
+          "on-tertiary-container": "#711419","inverse-surface": "#2b322d","surface-container-lowest": "#ffffff",
+          "on-primary": "#ffffff","surface": "#f4fbf4","on-background": "#161d19","secondary-container": "#dfe0e0",
+          "surface-variant": "#dde4dd","surface-container-low": "#eef6ee","surface-container-high": "#e3eae3",
+          "on-primary-container": "#00422b","outline": "#6c7a71","background": "#f4fbf4","secondary": "#5d5f5f",
+          "inverse-primary": "#4edea3","surface-container": "#e8f0e9","tertiary-container": "#fc7c78",
+          "surface-tint": "#006c49","primary-fixed": "#6ffbbe","tertiary-fixed-dim": "#ffb3af",
+          "secondary-fixed-dim": "#c6c6c7","on-error": "#ffffff","on-tertiary-fixed": "#410005",
+          "on-surface-variant": "#3c4a42","outline-variant": "#bbcabf","error": "#ba1a1a",
+          "primary-fixed-dim": "#4edea3","on-error-container": "#93000a","on-secondary-container": "#616363",
+          "tertiary": "#a43a3a","surface-bright": "#f4fbf4","on-secondary": "#ffffff",
+          "primary-container": "#10b981","surface-dim": "#d4dcd5","error-container": "#ffdad6",
+          "tertiary-fixed": "#ffdad7","primary": "#006c49","secondary-fixed": "#e2e2e2",
+          "on-secondary-fixed-variant": "#454747","on-primary-fixed-variant": "#005236",
+          "on-tertiary-fixed-variant": "#842225","on-primary-fixed": "#002113","on-secondary-fixed": "#1a1c1c",
+          "inverse-on-surface": "#ebf3eb","on-tertiary": "#ffffff","surface-container-highest": "#dde4dd","on-surface": "#161d19"
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: { sm: "0.5rem", gutter: "1.5rem", "2xl": "3rem", base: "4px", md: "1rem", xs: "0.25rem", lg: "1.5rem", xl: "2rem" },
+        fontFamily: { "headline-xl": ["Poppins"],"body-sm": ["Poppins"],"headline-lg": ["Poppins"],"label-caps": ["Poppins"],"title-md": ["Poppins"],"body-base": ["Poppins"] },
+        fontSize: {
+          "headline-xl": ["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+          "body-sm": ["14px",{lineHeight:"1.5",fontWeight:"400"}],
+          "headline-lg": ["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+          "label-caps": ["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],
+          "title-md": ["20px",{lineHeight:"1.5",fontWeight:"500"}],
+          "body-base": ["16px",{lineHeight:"1.6",fontWeight:"400"}]
+        }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .back-btn { transition: all 0.2s ease; text-decoration: none; }
+    .back-btn:hover { background-color: rgba(16, 185, 129, 0.1); }
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .fade-in-delay { animation: fadeIn 0.5s ease-out 0.1s forwards; opacity: 0; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .status-badge { transition: all 0.3s ease; }
+    .status-badge:hover { transform: scale(1.05); }
+    .hierarchy-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+    .bar-fill { transition: width 0.3s ease; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="fixed left-0 top-0 h-full w-[280px] bg-surface border-r border-outline-variant/30 flex flex-col py-6 z-50">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
+      </div>
+      <div>
+        <h1 class="font-headline-lg text-[20px] font-bold text-primary leading-none">PolicyEval</h1>
+        <p class="text-[12px] text-secondary mt-1">Environmental Admin</p>
+      </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-body-base text-body-base">Dashboard</span></a>
+      <div class="pt-4 pb-1 px-6"><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Master Data</p></div>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">calendar_today</span><span class="font-body-base text-body-base">Period</span></a>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">assignment</span><span class="font-body-base text-body-base">Instrument Penelitian</span></a>
+      <a class="flex items-center gap-3 bg-surface-container-high text-primary font-bold border-l-4 border-primary py-3 px-6" href="pernyataan-list.html"><span class="material-symbols-outlined">quiz</span><span class="font-body-base text-body-base">Semua Pernyataan</span></a>
+      <div class="pt-4 pb-1 px-6"><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Pelaksanaan</p></div>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">groups</span><span class="font-body-base text-body-base">Responden</span></a>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">assessment</span><span class="font-body-base text-body-base">Reports</span></a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/20">
+        <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">settings</span><span class="font-body-base text-body-base">Settings</span></a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="ml-[280px] p-8 max-w-[1440px] w-full mx-auto">
+    <nav class="mb-6 flex items-center gap-2 text-sm">
+      <a href="pernyataan-list.html" class="text-primary font-medium hover:underline">Semua Pernyataan</a>
+      <span class="text-outline">›</span>
+      <span class="text-on-surface font-semibold">Detail Pernyataan</span>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
+      <div class="flex items-center gap-4">
+        <a href="pernyataan-list.html" class="back-btn flex items-center gap-1 text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Kembali
+        </a>
+      </div>
+      <a href="pernyataan-edit.html" class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 no-underline">
+        <span class="material-symbols-outlined">edit</span>
+        Edit Pernyataan
+      </a>
+    </div>
+
+    <!-- Detail Card -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay">
+      <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30">
+        <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">visibility</span>
+          Detail Pernyataan
+        </h3>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Hierarchy Info -->
+        <div class="grid grid-cols-2 gap-4 p-4 bg-surface-container-low/50 rounded-xl border border-outline-variant/20">
+          <div>
+            <span class="text-label-caps text-label-caps text-outline uppercase tracking-wider">Instrument</span>
+            <p class="text-body-sm font-semibold text-on-surface mt-0.5">Evaluasi Penggunaan Energi 2024</p>
+          </div>
+          <div>
+            <span class="text-label-caps text-label-caps text-outline uppercase tracking-wider">Komponen</span>
+            <p class="text-body-sm font-semibold text-on-surface mt-0.5">Energi: Konsumsi Listrik</p>
+          </div>
+          <div>
+            <span class="text-label-caps text-label-caps text-outline uppercase tracking-wider">Sub Komponen</span>
+            <p class="text-body-sm font-semibold text-on-surface mt-0.5">Pemakaian Listrik Kelas</p>
+          </div>
+          <div>
+            <span class="text-label-caps text-label-caps text-outline uppercase tracking-wider">Indikator</span>
+            <p class="text-body-sm font-semibold text-on-surface mt-0.5">Indikator A1 — Efisiensi Energi</p>
+          </div>
+        </div>
+
+        <hr class="border-outline-variant/20"/>
+
+        <!-- Teks Pernyataan -->
+        <div>
+          <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Teks Pernyataan</label>
+          <textarea rows="4" disabled class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed resize-none">Seberapa sering Anda mematikan peralatan listrik yang tidak digunakan di sekolah?</textarea>
+        </div>
+
+        <div>
+          <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Bobot</label>
+          <div class="flex items-center gap-3">
+            <div class="bar w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="bar-fill h-full bg-primary rounded-full" style="width:80%"></div>
+            </div>
+            <span class="text-sm font-semibold text-primary">0.8</span>
+          </div>
+        </div>
+        <div>
+          <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+          <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Active</span>
+        </div>
+
+        <!-- Info Tambahan -->
+        <div class="pt-4 border-t border-outline-variant/20">
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-secondary text-xs">Nomor Urut:</span>
+              <p class="font-medium text-on-surface">1</p>
+            </div>
+            <div>
+              <span class="text-secondary text-xs">Dibuat:</span>
+              <p class="font-medium text-on-surface">15 Jan 2025</p>
+            </div>
+            <div>
+              <span class="text-secondary text-xs">Diupdate:</span>
+              <p class="font-medium text-on-surface">22 Mar 2025</p>
+            </div>
+            <div>
+              <span class="text-secondary text-xs">ID Pernyataan:</span>
+              <p class="font-medium text-on-surface">#Q-001</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-end gap-3">
+        <a href="pernyataan-list.html" class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 no-underline inline-block">
+          Tutup
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
