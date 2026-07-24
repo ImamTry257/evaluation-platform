@@ -83,7 +83,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('✅ Registration successful! Token saved.');",
+                      "        console.log('\u2705 Registration successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -219,14 +219,14 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('✅ Token saved successfully!');",
+                      "        console.log('\u2705 Token saved successfully!');",
                       "        console.log('Token: ' + token.substring(0, 20) + '...');",
                       "        console.log('User: ' + response.data.user.name + ' (' + response.data.user.role + ')');",
                       "    } else {",
-                      "        console.log('⚠️ Login response missing token');",
+                      "        console.log('\u26a0\ufe0f Login response missing token');",
                       "    }",
                       "} else {",
-                      "    console.log('❌ Login failed with status: ' + pm.response.code);",
+                      "    console.log('\u274c Login failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -355,7 +355,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('✅ Admin Login successful! Token saved.');",
+                      "        console.log('\u2705 Admin Login successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -442,12 +442,12 @@
                       "        pm.collectionVariables.unset('userName');",
                       "        pm.collectionVariables.unset('userRole');",
                       "        ",
-                      "        console.log('✅ Logged out successfully. Token cleared.');",
+                      "        console.log('\u2705 Logged out successfully. Token cleared.');",
                       "    } else {",
-                      "        console.log('⚠️ Logout response unexpected');",
+                      "        console.log('\u26a0\ufe0f Logout response unexpected');",
                       "    }",
                       "} else {",
-                      "    console.log('❌ Logout failed with status: ' + pm.response.code);",
+                      "    console.log('\u274c Logout failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -2018,6 +2018,311 @@
                   "name": "Delete Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Question deleted successfully\",\n  \"data\": null\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "V2 \u2014 Questions (Flat API)",
+          "description": "API V2 untuk halaman pernyataan flat dengan cascade filter. Prefix: /api/v2/admin/questions",
+          "item": [
+            {
+              "name": "Tree Data",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v2/admin/questions/tree",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v2",
+                    "admin",
+                    "questions",
+                    "tree"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Tree Data",
+                  "status": "OK",
+                  "code": 200,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Tree data retrieved successfully\",\n  \"data\": [\n    {\n      \"id\": 10,\n      \"title\": \"VALUASI KEBIJAKAN LINGKUNGAN...\",\n      \"period\": \"2024\",\n      \"components\": [\n        {\n          \"id\": 24,\n          \"name\": \"Kebijakan Struktural\",\n          \"subComponents\": [\n            {\n              \"id\": 16,\n              \"name\": \"Kerangka Organisasi\",\n              \"indicators\": [\n                {\n                  \"id\": 14,\n                  \"name\": \"Keberadaan organisasi, struktur dan tugas\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "List Questions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v2/admin/questions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v2",
+                    "admin",
+                    "questions"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "disabled": false
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "disabled": false
+                    },
+                    {
+                      "key": "instrumentId",
+                      "value": "",
+                      "disabled": false
+                    },
+                    {
+                      "key": "componentId",
+                      "value": "",
+                      "disabled": false
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "disabled": false
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "List Questions",
+                  "status": "OK",
+                  "code": 200,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Questions retrieved successfully\",\n  \"data\": {\n    \"contents\": [\n      {\n        \"id\": 28,\n        \"questionText\": \"Sekolah memiliki pembelajaran...\",\n        \"weight\": 1,\n        \"isActive\": true,\n        \"orderNumber\": 1,\n        \"createdAt\": \"2026-07-19T07:31:47.000000Z\",\n        \"updatedAt\": \"2026-07-19T07:31:47.000000Z\",\n        \"indicator\": {\n          \"id\": 22,\n          \"name\": \"Kurikulum dan media edukasi\",\n          \"subComponent\": {\n            \"id\": 24,\n            \"name\": \"Pendidikan Lingkungan\",\n            \"component\": {\n              \"id\": 27,\n              \"name\": \"Edukasi dan Partisipasi\",\n              \"questionnaire\": {\n                \"id\": 10,\n                \"title\": \"VALUASI KEBIJAKAN...\",\n                \"period\": {\n                  \"id\": 7,\n                  \"name\": \"2024\"\n                }\n              }\n            }\n          }\n        }\n      }\n    ],\n    \"meta\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 31,\n      \"totalPages\": 4\n    }\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Create Question",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v2/admin/questions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v2",
+                    "admin",
+                    "questions"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"indicatorId\": 14,\n  \"questionText\": \"Test create question via V2 API?\",\n  \"weight\": 0.75,\n  \"isActive\": true\n}"
+                }
+              },
+              "response": [
+                {
+                  "name": "Create Question",
+                  "status": "OK",
+                  "code": 200,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Question created successfully\",\n  \"data\": {\n    \"id\": 38,\n    \"questionText\": \"Test create question via V2 API?\",\n    \"weight\": 0.75,\n    \"isActive\": true,\n    \"orderNumber\": 4,\n    \"createdAt\": \"2026-07-24T06:46:13.000000Z\",\n    \"updatedAt\": \"2026-07-24T06:46:13.000000Z\",\n    \"indicator\": {\n      \"id\": 14,\n      \"name\": \"Keberadaan organisasi, struktur dan tugas\",\n      \"subComponent\": {\n        \"id\": 16,\n        \"name\": \"Kerangka Organisasi\",\n        \"component\": {\n          \"id\": 24,\n          \"name\": \"Kebijakan Struktural\",\n          \"questionnaire\": {\n            \"id\": 10,\n            \"title\": \"VALUASI KEBIJAKAN...\",\n            \"period\": {\n              \"id\": 7,\n              \"name\": \"2024\"\n            }\n          }\n        }\n      }\n    }\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Get Question Detail",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v2/admin/questions/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v2",
+                    "admin",
+                    "questions",
+                    "{{id}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Get Question Detail",
+                  "status": "OK",
+                  "code": 200,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Question retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionText\": \"Contoh question\",\n    \"weight\": 0.8,\n    \"isActive\": true,\n    \"orderNumber\": 1,\n    \"createdAt\": \"2025-01-15 00:00:00\",\n    \"updatedAt\": \"2025-03-22 00:00:00\",\n    \"indicator\": {\n      \"id\": 14,\n      \"name\": \"Keberadaan organisasi, struktur dan tugas\",\n      \"subComponent\": {\n        \"id\": 16,\n        \"name\": \"Kerangka Organisasi\",\n        \"component\": {\n          \"id\": 24,\n          \"name\": \"Kebijakan Struktural\",\n          \"questionnaire\": {\n            \"id\": 10,\n            \"title\": \"VALUASI KEBIJAKAN...\",\n            \"period\": {\n              \"id\": 7,\n              \"name\": \"2024\"\n            }\n          }\n        }\n      }\n    }\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Update Question",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v2/admin/questions/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v2",
+                    "admin",
+                    "questions",
+                    "{{id}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"indicatorId\": 14,\n  \"questionText\": \"Updated question text\",\n  \"weight\": 0.9,\n  \"isActive\": false\n}"
+                }
+              },
+              "response": [
+                {
+                  "name": "Update Question",
+                  "status": "OK",
+                  "code": 200,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Question updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"questionText\": \"Updated question text\",\n    \"weight\": 0.9,\n    \"isActive\": false,\n    \"orderNumber\": 1,\n    \"createdAt\": \"2025-01-15 00:00:00\",\n    \"updatedAt\": \"2026-07-24 11:00:00\",\n    \"indicator\": {\n      \"id\": 14,\n      \"name\": \"Keberadaan organisasi, struktur dan tugas\",\n      \"subComponent\": {\n        \"id\": 16,\n        \"name\": \"Kerangka Organisasi\",\n        \"component\": {\n          \"id\": 24,\n          \"name\": \"Kebijakan Struktural\",\n          \"questionnaire\": {\n            \"id\": 10,\n            \"title\": \"VALUASI KEBIJAKAN...\",\n            \"period\": {\n              \"id\": 7,\n              \"name\": \"2024\"\n            }\n          }\n        }\n      }\n    }\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Delete Question",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v2/admin/questions/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v2",
+                    "admin",
+                    "questions",
+                    "{{id}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Delete Question",
+                  "status": "OK",
+                  "code": 200,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
                   "body": "{\n  \"status\": true,\n  \"message\": \"Question deleted successfully\",\n  \"data\": null\n}"
                 }
               ]

@@ -91,4 +91,13 @@ Route::prefix('v1')->group(function () {
             Route::get('/{sessionId}/results', [EvaluasiController::class, 'results']);
         });
     });
+
+});
+
+// API V2
+Route::prefix('v2')->group(function () {
+    Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+        Route::get('/questions/tree', [\App\Http\Controllers\Api\Admin\V2\PertanyaanV2Controller::class, 'tree']);
+        Route::apiResource('questions', \App\Http\Controllers\Api\Admin\V2\PertanyaanV2Controller::class);
+    });
 });

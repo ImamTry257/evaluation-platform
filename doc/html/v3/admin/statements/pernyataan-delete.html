@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Hapus Pernyataan | PolicyEval</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: {
+        colors: {
+          "on-tertiary-container": "#711419","inverse-surface": "#2b322d","surface-container-lowest": "#ffffff",
+          "on-primary": "#ffffff","surface": "#f4fbf4","on-background": "#161d19","secondary-container": "#dfe0e0",
+          "surface-variant": "#dde4dd","surface-container-low": "#eef6ee","surface-container-high": "#e3eae3",
+          "on-primary-container": "#00422b","outline": "#6c7a71","background": "#f4fbf4","secondary": "#5d5f5f",
+          "inverse-primary": "#4edea3","surface-container": "#e8f0e9","tertiary-container": "#fc7c78",
+          "surface-tint": "#006c49","primary-fixed": "#6ffbbe","tertiary-fixed-dim": "#ffb3af",
+          "secondary-fixed-dim": "#c6c6c7","on-error": "#ffffff","on-tertiary-fixed": "#410005",
+          "on-surface-variant": "#3c4a42","outline-variant": "#bbcabf","error": "#ba1a1a",
+          "primary-fixed-dim": "#4edea3","on-error-container": "#93000a","on-secondary-container": "#616363",
+          "tertiary": "#a43a3a","surface-bright": "#f4fbf4","on-secondary": "#ffffff",
+          "primary-container": "#10b981","surface-dim": "#d4dcd5","error-container": "#ffdad6",
+          "tertiary-fixed": "#ffdad7","primary": "#006c49","secondary-fixed": "#e2e2e2",
+          "on-secondary-fixed-variant": "#454747","on-primary-fixed-variant": "#005236",
+          "on-tertiary-fixed-variant": "#842225","on-primary-fixed": "#002113","on-secondary-fixed": "#1a1c1c",
+          "inverse-on-surface": "#ebf3eb","on-tertiary": "#ffffff","surface-container-highest": "#dde4dd","on-surface": "#161d19"
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: { sm: "0.5rem", gutter: "1.5rem", "2xl": "3rem", base: "4px", md: "1rem", xs: "0.25rem", lg: "1.5rem", xl: "2rem" },
+        fontFamily: { "headline-xl": ["Poppins"],"body-sm": ["Poppins"],"headline-lg": ["Poppins"],"label-caps": ["Poppins"],"title-md": ["Poppins"],"body-base": ["Poppins"] },
+        fontSize: {
+          "headline-xl": ["36px",{lineHeight:"1.2",letterSpacing:"-0.02em",fontWeight:"600"}],
+          "body-sm": ["14px",{lineHeight:"1.5",fontWeight:"400"}],
+          "headline-lg": ["30px",{lineHeight:"1.3",letterSpacing:"-0.01em",fontWeight:"600"}],
+          "label-caps": ["12px",{lineHeight:"1",letterSpacing:"0.05em",fontWeight:"600"}],
+          "title-md": ["20px",{lineHeight:"1.5",fontWeight:"500"}],
+          "body-base": ["16px",{lineHeight:"1.6",fontWeight:"400"}]
+        }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-overlay { animation: modalFadeIn 0.2s ease-out; }
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-content { animation: modalSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+
+  <!-- SIDEBAR (same, dimmed by modal backdrop) -->
+  <aside class="fixed left-0 top-0 h-full w-[280px] bg-surface border-r border-outline-variant/30 flex flex-col py-6 z-30">
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
+      </div>
+      <div>
+        <h1 class="font-headline-lg text-[20px] font-bold text-primary leading-none">PolicyEval</h1>
+        <p class="text-[12px] text-secondary mt-1">Environmental Admin</p>
+      </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-body-base text-body-base">Dashboard</span></a>
+      <div class="pt-4 pb-1 px-6"><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Master Data</p></div>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">calendar_today</span><span class="font-body-base text-body-base">Period</span></a>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">assignment</span><span class="font-body-base text-body-base">Instrument Penelitian</span></a>
+      <a class="flex items-center gap-3 bg-surface-container-high text-primary font-bold border-l-4 border-primary py-3 px-6" href="pernyataan-list.html"><span class="material-symbols-outlined">quiz</span><span class="font-body-base text-body-base">Semua Pernyataan</span></a>
+      <div class="pt-4 pb-1 px-6"><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Pelaksanaan</p></div>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">groups</span><span class="font-body-base text-body-base">Responden</span></a>
+      <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">assessment</span><span class="font-body-base text-body-base">Reports</span></a>
+      <div class="pt-4 mt-4 border-t border-outline-variant/20">
+        <a class="flex items-center gap-3 text-on-surface-variant py-3 px-6 hover:bg-surface-container transition-all" href="#"><span class="material-symbols-outlined">settings</span><span class="font-body-base text-body-base">Settings</span></a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT (dimmed) -->
+  <div class="ml-[280px] p-8 max-w-[1440px] w-full mx-auto pointer-events-none">
+    <nav class="mb-6 flex items-center gap-2 text-sm">
+      <a href="pernyataan-list.html" class="text-primary font-medium hover:underline pointer-events-auto">Pernyataan</a>
+    </nav>
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
+      <div>
+        <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Semua Pernyataan</h2>
+        <p class="text-body-sm text-on-surface-variant mt-1">Kelola seluruh pernyataan dari semua instrumen penelitian</p>
+      </div>
+    </div>
+
+    <!-- Simplified table preview -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden opacity-40">
+      <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30 h-[52px]"></div>
+      <div class="divide-y divide-outline-variant/10">
+        <div class="px-6 py-5 flex gap-4">
+          <div class="w-8 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="flex-1 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="w-16 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="w-12 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="w-24 h-4 bg-outline-variant/30 rounded"></div>
+        </div>
+        <div class="px-6 py-5 flex gap-4">
+          <div class="w-8 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="flex-1 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="w-16 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="w-12 h-4 bg-outline-variant/30 rounded"></div>
+          <div class="w-24 h-4 bg-outline-variant/30 rounded"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DELETE MODAL ==================== -->
+  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay">
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div class="relative bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-md z-10 modal-content">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-6 pb-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-error/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-error">delete</span>
+          </div>
+          <h3 class="font-title-md text-title-md text-on-surface">Hapus Pernyataan</h3>
+        </div>
+        <a href="pernyataan-list.html" class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors no-underline">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </a>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6">
+        <p class="text-body-base text-on-surface-variant mb-4">Anda yakin ingin menghapus Pernyataan berikut?</p>
+        <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
+          <p class="font-body-base font-semibold text-on-surface line-clamp-2">Seberapa sering Anda mematikan peralatan listrik yang tidak digunakan di sekolah?</p>
+          <div class="flex items-center gap-3 mt-2 flex-wrap">
+            <span class="text-body-sm text-on-surface-variant">Bobot: 0.8</span>
+            <span class="text-body-sm text-on-surface-variant">•</span>
+            <span class="hierarchy-tag bg-primary/10 text-primary text-[10px] font-semibold px-2 py-0.5 rounded">Indikator A1</span>
+            <span class="text-body-sm text-on-surface-variant">•</span>
+            <span class="text-[10px] text-outline">Energi: Konsumsi Listrik</span>
+          </div>
+        </div>
+        <p class="text-body-sm text-error mt-3 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">warning</span>
+          Tindakan ini tidak dapat dibatalkan.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-end gap-3 p-6 pt-0">
+        <a href="pernyataan-list.html" class="px-5 py-2.5 rounded-xl border border-outline-variant/50 text-on-surface font-body-base font-medium hover:bg-surface-container transition-colors no-underline inline-block">Batal</a>
+        <button class="px-5 py-2.5 rounded-xl bg-error text-on-error font-body-base font-semibold shadow-sm transition-all hover:bg-error/90 active:scale-95 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">delete</span>
+          Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
