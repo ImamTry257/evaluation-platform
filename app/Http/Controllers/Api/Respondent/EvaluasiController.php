@@ -543,11 +543,17 @@ class EvaluasiController extends Controller
      */
     private function calculateIndicatorScores(ResponseSession $session): array
     {
-        $answers = $session->answers()->with('question.indicator')->get();
+        $answers = $session->answers()->with([
+            'question' => fn ($q) => $q->withTrashed(),
+            'question.indicator' => fn ($q) => $q->withTrashed(),
+        ])->get();
 
         $indicatorScores = [];
 
         foreach ($answers as $answer) {
+            if (!$answer->question || !$answer->question->indicator) {
+                continue;
+            }
             $indicatorId = $answer->question->indicator->id;
             $weight = $answer->question->weight;
 
