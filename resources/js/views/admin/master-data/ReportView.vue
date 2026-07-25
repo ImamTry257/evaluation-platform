@@ -240,7 +240,7 @@ onMounted(() => {
                 <!-- <button @click="handleExportPdf(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export PDF">
                   <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
                 </button> -->
-                <button @click="handleExportExcelSession(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export Excel">
+                <button v-if="item.status == 'SUBMITTED'" @click="handleExportExcelSession(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export Excel">
                   <span class="material-symbols-outlined text-[18px]">table_chart</span>
                 </button>
               </div>
