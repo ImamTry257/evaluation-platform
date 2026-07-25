@@ -147,9 +147,11 @@ class ReportController extends Controller
         // Per-session detail export
         if ($request->has('sessionId') && $request->sessionId) {
             $session = ResponseSession::with([
-                'user', 'questionnaire',
+                'user',
+                'questionnaire' => fn ($q) => $q->withTrashed(),
                 'result',
-                'answers.question.indicator',
+                'answers.question' => fn ($q) => $q->withTrashed(),
+                'answers.question.indicator' => fn ($q) => $q->withTrashed(),
             ])->find($request->sessionId);
 
             if (!$session || $session->status !== 'submitted') {
@@ -163,15 +165,19 @@ class ReportController extends Controller
             $result = $session->result;
             $answers = $session->answers;
 
-            // Group answers by indicator
-            $groupedAnswers = $answers->groupBy(function ($answer) {
+            // Group answers by indicator (skip answers with missing question/indicator)
+            $groupedAnswers = $answers->filter(function ($answer) {
+                return $answer->question && $answer->question->indicator;
+            })->groupBy(function ($answer) {
                 return $answer->question->indicator->id;
             });
 
-            // Sort by indicator order
+            // Sort by indicator order_number
             $groupedAnswers = $groupedAnswers->sortKeysUsing(function ($a, $b) use ($answers) {
-                $indA = $answers->first(fn($ans) => $ans->question->indicator->id === $a)->question->indicator->order_number ?? 999;
-                $indB = $answers->first(fn($ans) => $ans->question->indicator->id === $b)->question->indicator->order_number ?? 999;
+                $ansA = $answers->first(fn($ans) => $ans->question?->indicator?->id === $a);
+                $ansB = $answers->first(fn($ans) => $ans->question?->indicator?->id === $b);
+                $indA = $ansA?->question?->indicator?->order_number ?? 999;
+                $indB = $ansB?->question?->indicator?->order_number ?? 999;
                 return $indA <=> $indB;
             });
 
@@ -198,14 +204,17 @@ class ReportController extends Controller
             // Data rows
             $no = 1;
             foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
-                $indicator = $indicatorAnswers->first()->question->indicator;
+                $indicator = $indicatorAnswers->first()->question?->indicator;
+                if (!$indicator) {
+                    continue;
+                }
                 $sortedAnswers = $indicatorAnswers->sortBy('question.order_number');
 
                 foreach ($sortedAnswers as $answer) {
                     $rows[] = [
                         $no++,
                         $indicator->name,
-                        $answer->question->question_text,
+                        $answer->question?->question_text ?? '-',
                         $answer->score,
                     ];
                 }
@@ -306,9 +315,11 @@ class ReportController extends Controller
         }
 
         $session = ResponseSession::with([
-            'user', 'questionnaire',
+            'user',
+            'questionnaire' => fn ($q) => $q->withTrashed(),
             'result',
-            'answers.question.indicator',
+            'answers.question' => fn ($q) => $q->withTrashed(),
+            'answers.question.indicator' => fn ($q) => $q->withTrashed(),
         ])->find($request->sessionId);
 
         if ($session->status !== 'submitted') {
@@ -340,16 +351,20 @@ class ReportController extends Controller
         $result = $session->result;
         $answers = $session->answers;
 
-        // Group answers by indicator
-        $groupedAnswers = $answers->groupBy(function ($answer) {
+        // Group answers by indicator (skip answers with missing question/indicator)
+        $groupedAnswers = $answers->filter(function ($answer) {
+            return $answer->question && $answer->question->indicator;
+        })->groupBy(function ($answer) {
             return $answer->question->indicator->id;
         });
 
-        // Sort by indicator order
-        $groupedAnswers = $groupedAnswers->sortKeysUsing(function ($a, $b) use ($answers) {
-            $indA = $answers->first(fn($a) => $a->question->indicator->id === $a)->question->indicator->order_number ?? 999;
-            $indB = $answers->first(fn($b) => $b->question->indicator->id === $b)->question->indicator->order_number ?? 999;
-            return $indA <=> $indB;
+        // Sort by indicator order_number
+        $groupedAnswers = $groupedAnswers->sortKeysUsing(function ($indIdA, $indIdB) use ($answers) {
+            $ansA = $answers->first(fn($ans) => $ans->question?->indicator?->id === $indIdA);
+            $ansB = $answers->first(fn($ans) => $ans->question?->indicator?->id === $indIdB);
+            $orderA = $ansA?->question?->indicator?->order_number ?? 999;
+            $orderB = $ansB?->question?->indicator?->order_number ?? 999;
+            return $orderA <=> $orderB;
         });
 
         $html = '<!DOCTYPE html>
@@ -416,7 +431,10 @@ class ReportController extends Controller
 
         $no = 1;
         foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
-            $indicator = $indicatorAnswers->first()->question->indicator;
+            $indicator = $indicatorAnswers->first()->question?->indicator;
+            if (!$indicator) {
+                continue;
+            }
             $rowspan = $indicatorAnswers->count();
 
             // Sort questions by order_number
@@ -433,7 +451,7 @@ class ReportController extends Controller
                     $first = false;
                 }
                 $html .= '
-                    <td>' . $answer->question->question_text . '</td>
+                    <td>' . ($answer->question?->question_text ?? '-') . '</td>
                     <td>' . $answer->score . '</td>
                 </tr>';
             }

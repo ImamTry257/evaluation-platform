@@ -112,12 +112,9 @@ onMounted(() => {
     <template v-else-if="resultData">
       <!-- Success Header -->
       <section class="flex flex-col items-center text-center mb-12 fade-in">
-        <div class="w-48 h-48 mb-6 float-animation relative">
-          <div class="w-full h-full bg-gradient-to-br from-primary/10 to-primary-container/20 rounded-full flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary" style="font-size: 80px;">eco</span>
-          </div>
-          <div class="absolute -bottom-2 -right-2 bg-primary text-on-primary rounded-full p-3 shadow-lg flex items-center justify-center">
-            <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        <div class="w-48 h-48 mb-6 float-animation flex items-center justify-center">
+          <div class="bg-primary text-on-primary rounded-full p-5 shadow-lg flex items-center justify-center">
+            <span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
           </div>
         </div>
         <h1 class="font-headline-xl text-headline-xl text-on-surface mb-2 fade-in-delay">Angket Berhasil Diselesaikan</h1>
@@ -144,7 +141,7 @@ onMounted(() => {
               ></circle>
             </svg>
             <div class="absolute flex flex-col items-center">
-              <span class="font-display-lg text-display-lg text-primary leading-none">{{ overallPercentage }}%</span>
+              <span class="font-display-lg text-display-md text-primary leading-none">{{ overallPercentage }}%</span>
               <span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Persentase</span>
             </div>
           </div>
