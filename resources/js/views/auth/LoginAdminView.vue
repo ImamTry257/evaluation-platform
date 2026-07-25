@@ -22,14 +22,14 @@ async function handleLogin() {
 
       <!-- Brand Header -->
       <header class="mb-8 text-center fade-in">
-        <div class="flex items-center justify-center gap-2.5 mb-4">
+        <!-- <div class="flex items-center justify-center gap-2.5 mb-4">
           <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-sm">
             <span class="material-symbols-outlined text-white text-[24px]" style="font-variation-settings: 'FILL' 1;">eco</span>
           </div>
           <span class="font-headline-lg text-[22px] tracking-tight text-primary font-bold">PolicyEval</span>
-        </div>
+        </div> -->
         <!-- Accent line -->
-        <div class="h-[3px] w-12 mx-auto rounded-full mb-6" style="background: linear-gradient(90deg, #10b981, #006c49);"></div>
+        <!-- <div class="h-[3px] w-12 mx-auto rounded-full mb-6" style="background: linear-gradient(90deg, #10b981, #006c49);"></div> -->
       </header>
 
       <!-- Login Card -->

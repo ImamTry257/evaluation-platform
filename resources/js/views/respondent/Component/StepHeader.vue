@@ -38,8 +38,8 @@ function handleProfile() {
     <div class="max-w-12xl mx-auto px-6 py-2.5 flex items-center justify-between">
       <!-- Brand -->
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-2xl">eco</span>
-        <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span>
+        <!-- <span class="material-symbols-outlined text-primary text-2xl">eco</span>
+        <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span> -->
       </div>
 
       <!-- Step Indicator -->

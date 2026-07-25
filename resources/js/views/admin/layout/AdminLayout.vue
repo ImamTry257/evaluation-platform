@@ -87,7 +87,7 @@ const navGroups = computed(() => {
     <aside class="fixed left-0 top-0 h-full w-[280px] z-50 py-6 bg-surface-container-low border-r border-outline-variant/30 hidden md:flex flex-col">
       <!-- Logo -->
       <div class="px-6 mb-8">
-        <div class="flex items-center gap-3">
+        <!-- <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
             <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
           </div>
@@ -95,7 +95,7 @@ const navGroups = computed(() => {
             <h1 class="font-headline-lg text-headline-lg font-bold text-primary leading-none">PolicyEval</h1>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Environmental Policy</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Navigation -->

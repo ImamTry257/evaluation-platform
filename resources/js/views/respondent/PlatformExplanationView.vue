@@ -99,7 +99,7 @@ onUnmounted(() => {
       :class="scrolled ? 'shadow-md' : ''"
     >
       <div class="flex justify-between items-center h-16 px-6 max-w-[1440px] mx-auto">
-        <div class="flex items-center gap-2">
+        <!-- <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-primary text-3xl">eco</span>
           <h1 class="font-headline-lg text-headline-lg font-bold text-primary">EcoPolicy</h1>
         </div>
@@ -107,7 +107,7 @@ onUnmounted(() => {
           <div class="w-8 h-8 rounded-full bg-primary-container/20 overflow-hidden border border-outline-variant/30">
             <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8g0ZQfuZ05pOzHiAb6SoPDylE5O1Av_-NMy47kc-XejbNtB2oOSofTvfPXHqX01jv3_jqLjJVidyXRNkBEeB4Nzhl2-dmYJU37styOAhFTFafC_eZYr_yJkl2n9_Di-filh3na00U3Nj0U1XSXPW-RU7i8Gy5h8M1dJ0qxwbTuoD_YFFTf4JuQTB2gwYr0piG-uck4564JZdwu0lsmlKwab9pEo2m8IwVJtHSZYeOXjDBVcQAlA" />
           </div>
-        </div>
+        </div> -->
       </div>
     </header>
 
