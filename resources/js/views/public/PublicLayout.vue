@@ -56,7 +56,7 @@ onUnmounted(() => {
               to="/register"
               class="press-scale px-5 py-2.5 bg-primary text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all duration-500"
             >
-              Register
+              Daftar
             </RouterLink>
           </div>
         </div>

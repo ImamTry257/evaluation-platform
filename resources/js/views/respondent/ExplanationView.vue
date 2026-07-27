@@ -28,7 +28,7 @@ const infoItems = computed(() => {
   if (!questionnaire.value) return []
   const q = questionnaire.value
   return [
-    { icon: 'calendar_today', label: 'Periode', value: q.evaluationPeriod?.title || '-' },
+    { icon: 'calendar_today', label: 'Periode', value: q.evaluationPeriod?.name || '-' },
     { icon: 'assignment', label: 'Instrument', value: q.title || '-' },
     { icon: 'timer', label: 'Estimasi', value: (q.durationMinutes || 20) + ' Menit' },
   ]

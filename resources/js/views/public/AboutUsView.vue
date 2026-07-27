@@ -3,31 +3,33 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const scrolled = ref(false)
 
-const teamMembers = [
-  {
-    name: 'Dr. Ahmad Santoso',
-    role: 'Ketua Peneliti',
-    institution: 'Universitas Indonesia',
-    email: 'ahmad@pekls.ac.id',
-    badge: 'Project Leader',
-    hasBadge: true,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNmtksYuft2A8zk2L9e4R1u4iBmAPS6xt5GzI9QQdF3-PIqklWefXhvj2GK6AuT5OhM2gQuQK6t6SOcRWDa5s35nB2I7QxbL94pxGqhJTxjWY1YpwbgoYIQZSgHQkozrjHM0iVk8VtXCJepmvcI6CLZ839kAJWldjb2Nqt0gvyS4CN_D_fbABrJq8pax6B3Wefz-lGESIN-SChmWqpjh1mG4crA6eWUjrxtIHsQAwcsOK-xXQ2fA',
-  },
-  {
-    name: 'Siti Aminah, M.T.',
-    role: 'Sistem Arsitek',
-    institution: 'Lembaga Riset Teknologi',
-    email: 'siti@pekls.ac.id',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCLYVhL5N2sGc0hk-BzT7u384LhUjibDPNmAwyuCZBVRTHuozJNfwnUcQIXRHXcVv87s0JmoCAcwlMdAHVD-jTwRzhTeov3AQa9piLnOtRk85ADHaRs5bgZMbz-zSRZv4W3E37fkDsJrp2oTtWMzTUCjfaTdSKcrzSslnHl7MnVkJNkgoHsIld4OaEo2BTeXFWC2IbooyZp368U32Sia_oGY9eLDI548XfVoYsRflwswSpNKJ3Ybg',
-  },
-  {
-    name: 'Budi Hartono, M.Sc',
-    role: 'Pakar Lingkungan',
-    institution: 'Institut Ekologi Nasional',
-    email: 'budi@pekls.ac.id',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCftTUzyyWp_BfmIdsEG6zuhOl5an2tz1oYsV39LgQyJckf-efctbX0TCsSGPAraVIWlVkv7jTFfPP9OcqnJGmX0ZZ7SIRQtirSbBYyP-SWfDOmhFtwBFwSQA3QM6CyvLTuafX8jfQAsEAdp8PBCTx6CZvSTb5pAGrVQYXxXxI7CpximnnhqHK222DgNWHtbHXW3gAU7GwGo1XKKXI1_mZNVqAJgJXTkxgcu8zOiF2NYCi4jwt-LQ',
-  },
-]
+// const teamMembers = [
+//   {
+//     name: 'Dr. Ahmad Santoso',
+//     role: 'Ketua Peneliti',
+//     institution: 'Universitas Indonesia',
+//     email: 'ahmad@pekls.ac.id',
+//     badge: 'Project Leader',
+//     hasBadge: true,
+//     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNmtksYuft2A8zk2L9e4R1u4iBmAPS6xt5GzI9QQdF3-PIqklWefXhvj2GK6AuT5OhM2gQuQK6t6SOcRWDa5s35nB2I7QxbL94pxGqhJTxjWY1YpwbgoYIQZSgHQkozrjHM0iVk8VtXCJepmvcI6CLZ839kAJWldjb2Nqt0gvyS4CN_D_fbABrJq8pax6B3Wefz-lGESIN-SChmWqpjh1mG4crA6eWUjrxtIHsQAwcsOK-xXQ2fA',
+//   },
+//   {
+//     name: 'Siti Aminah, M.T.',
+//     role: 'Sistem Arsitek',
+//     institution: 'Lembaga Riset Teknologi',
+//     email: 'siti@pekls.ac.id',
+//     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCLYVhL5N2sGc0hk-BzT7u384LhUjibDPNmAwyuCZBVRTHuozJNfwnUcQIXRHXcVv87s0JmoCAcwlMdAHVD-jTwRzhTeov3AQa9piLnOtRk85ADHaRs5bgZMbz-zSRZv4W3E37fkDsJrp2oTtWMzTUCjfaTdSKcrzSslnHl7MnVkJNkgoHsIld4OaEo2BTeXFWC2IbooyZp368U32Sia_oGY9eLDI548XfVoYsRflwswSpNKJ3Ybg',
+//   },
+//   {
+//     name: 'Budi Hartono, M.Sc',
+//     role: 'Pakar Lingkungan',
+//     institution: 'Institut Ekologi Nasional',
+//     email: 'budi@pekls.ac.id',
+//     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCftTUzyyWp_BfmIdsEG6zuhOl5an2tz1oYsV39LgQyJckf-efctbX0TCsSGPAraVIWlVkv7jTFfPP9OcqnJGmX0ZZ7SIRQtirSbBYyP-SWfDOmhFtwBFwSQA3QM6CyvLTuafX8jfQAsEAdp8PBCTx6CZvSTb5pAGrVQYXxXxI7CpximnnhqHK222DgNWHtbHXW3gAU7GwGo1XKKXI1_mZNVqAJgJXTkxgcu8zOiF2NYCi4jwt-LQ',
+//   },
+// ]
+
+const teamMembers = [{}];
 
 function handleScroll() {
   scrolled.value = window.scrollY > 50
@@ -49,7 +51,7 @@ onUnmounted(() => {
       <!-- Development Team -->
       <section class="team-section mb-12">
         <h2 class="team-title font-headline-lg text-headline-lg mb-8 text-center fade-in-delay border-animated pb-2">Development Team</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="(member, index) in teamMembers"
             :key="member.name"
@@ -80,7 +82,7 @@ onUnmounted(() => {
               <span class="material-symbols-outlined text-[18px]">mail</span> {{ member.email }}
             </a>
           </div>
-        </div>
+        </div> -->
       </section>
     </main>
   </div>

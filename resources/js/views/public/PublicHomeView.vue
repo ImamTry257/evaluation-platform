@@ -36,7 +36,7 @@ import { RouterLink } from 'vue-router'
             to="/register"
             class="press-scale px-8 py-4 border-2 border-white text-white rounded-2xl font-bold text-lg hover:bg-white hover:text-emerald-700 transition-all duration-500"
           >
-            Daftar Sekolah
+            Daftar
           </RouterLink>
         </div>
       </div>

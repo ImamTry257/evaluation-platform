@@ -62,7 +62,7 @@ async function handleRegister() {
       username: form.username,
       email: form.email,
       password: form.password,
-      password_confirmation: form.confirmPassword,
+      passwordConfirmation: form.confirmPassword,
     })
 
     router.push('/login')
@@ -245,8 +245,8 @@ async function handleRegister() {
                 v-model="form.confirmPassword"
                 :type="showConfirmPassword ? 'text' : 'password'"
                 placeholder="••••••••"
-                @input="clearFieldError('password_confirmation')"
-                :class="['form-input block w-full h-11 pl-10 pr-10 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.password_confirmation ? 'border-error' : 'border-outline-variant']"
+                @input="clearFieldError('passwordConfirmation')"
+                :class="['form-input block w-full h-11 pl-10 pr-10 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.passwordConfirmation ? 'border-error' : 'border-outline-variant']"
               />
               <button
                 type="button"
@@ -256,9 +256,9 @@ async function handleRegister() {
                 <span class="material-symbols-outlined" style="font-size: 20px;">{{ showConfirmPassword ? 'visibility' : 'visibility_off' }}</span>
               </button>
             </div>
-            <p v-if="fieldErrors.password_confirmation" class="text-error text-xs flex items-center gap-1 mt-1">
+            <p v-if="fieldErrors.passwordConfirmation" class="text-error text-xs flex items-center gap-1 mt-1">
               <span class="material-symbols-outlined" style="font-size: 16px;">error</span>
-              {{ fieldErrors.password_confirmation[0] }}
+              {{ fieldErrors.passwordConfirmation[0] }}
             </p>
           </div>
           <div class="info-box bg-surface-container rounded-lg p-3 flex gap-3 items-start border border-primary/10">

@@ -66,7 +66,9 @@ class AuthController extends Controller
         }
 
         $username = strtolower($request->username);
-        $user = User::where('username', $username)->first();
+        $user = User::where([
+            'username'  => $username,
+        ])->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->errorResponse('Username atau password salah', 401);
