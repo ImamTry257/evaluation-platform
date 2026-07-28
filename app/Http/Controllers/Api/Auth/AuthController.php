@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -27,27 +28,55 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->errorResponse('Validation failed', 422, $validator->errors());
+            $response = $this->errorResponse('Validation failed', 422, $validator->errors());
+            Log::warning('Register validation failed', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+            return $response;
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'username' => strtolower($request->username),
-            'email' => strtolower($request->email),
-            'password' => Hash::make($request->password),
-            'role' => 'respondent',
-            'is_active' => true,
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'username' => strtolower($request->username),
+                'email' => strtolower($request->email),
+                'password' => Hash::make($request->password),
+                'role' => 'respondent',
+                'is_active' => true,
+            ]);
 
-        return $this->successResponse([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'username' => $user->username,
-                'email' => $user->email,
-                'role' => strtoupper($user->role),
-            ],
-        ], 'Registration successful', 201);
+            $response = $this->successResponse([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => strtoupper($user->role),
+                ],
+            ], 'Registration successful', 201);
+
+            Log::info('Register successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('Register error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
+        }
     }
 
     /**
@@ -56,49 +85,89 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ]);
 
-        if ($validator->fails()) {
-            return $this->errorResponse('Validation failed', 422, $validator->errors());
+            if ($validator->fails()) {
+                $response = $this->errorResponse('Validation failed', 422, $validator->errors());
+                Log::warning('Login validation failed', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            $username = strtolower($request->username);
+            $user = User::where(['username' => $username])->first();
+
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                $response = $this->errorResponse('Username atau password salah', 401);
+                Log::warning('Login failed - invalid credentials', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            if (!$user->is_active) {
+                $response = $this->errorResponse('Akun tidak aktif', 403);
+                Log::warning('Login failed - inactive account', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            $expiredTokenAt = now()->addHours(1);
+            $token = $user->createToken(
+                'auth-token',
+                ['*'],
+                $expiredTokenAt,
+            )->plainTextToken;
+
+            // update last login at
+            $user->update(['last_login_at' => now()]);
+
+            $response = $this->successResponse([
+                'token' => $token,
+                'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => strtoupper($user->role),
+                ],
+            ], 'Login successful');
+
+            Log::info('Login successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('Login error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
         }
-
-        $username = strtolower($request->username);
-        $user = User::where([
-            'username'  => $username,
-        ])->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->errorResponse('Username atau password salah', 401);
-        }
-
-        if (!$user->is_active) {
-            return $this->errorResponse('Akun tidak aktif', 403);
-        }
-
-        $expiredTokenAt = now()->addHours(1);
-        $token = $user->createToken(
-            'auth-token',
-            ['*'],
-            $expiredTokenAt,
-        )->plainTextToken;
-
-        // update last login at
-        $user->update(['last_login_at' => now()]);
-
-        return $this->successResponse([
-            'token' => $token,
-            'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'username' => $user->username,
-                'email' => $user->email,
-                'role' => strtoupper($user->role),
-            ],
-        ], 'Login successful');
     }
 
     /**
@@ -107,52 +176,101 @@ class AuthController extends Controller
      */
     public function loginAdmin(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|string',
+            ]);
 
-        if ($validator->fails()) {
-            return $this->errorResponse('Validation failed', 422, $validator->errors());
+            if ($validator->fails()) {
+                $response = $this->errorResponse('Validation failed', 422, $validator->errors());
+                Log::warning('LoginAdmin validation failed', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            $email = strtolower($request->email);
+            $user = User::where('email', $email)->first();
+
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                $response = $this->errorResponse('Email atau password salah', 401);
+                Log::warning('LoginAdmin failed - invalid credentials', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            // Hanya admin & superadmin yang boleh login via ini
+            if (!in_array($user->role, ['admin', 'superadmin'])) {
+                $response = $this->errorResponse('Akun ini tidak memiliki akses admin', 403);
+                Log::warning('LoginAdmin failed - not admin', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            if (!$user->is_active) {
+                $response = $this->errorResponse('Akun tidak aktif', 403);
+                Log::warning('LoginAdmin failed - inactive account', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            $expiredTokenAt = now()->addHours(1);
+            $token = $user->createToken(
+                'auth-token',
+                ['*'],
+                $expiredTokenAt,
+            )->plainTextToken;
+
+            // update last login at
+            $user->update(['last_login_at' => now()]);
+
+            $response = $this->successResponse([
+                'token' => $token,
+                'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => strtoupper($user->role),
+                ],
+            ], 'Login successful');
+
+            Log::info('LoginAdmin successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('LoginAdmin error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
         }
-
-        $email = strtolower($request->email);
-        $user = User::where('email', $email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->errorResponse('Email atau password salah', 401);
-        }
-
-        // Hanya admin & superadmin yang boleh login via ini
-        if (!in_array($user->role, ['admin', 'superadmin'])) {
-            return $this->errorResponse('Akun ini tidak memiliki akses admin', 403);
-        }
-
-        if (!$user->is_active) {
-            return $this->errorResponse('Akun tidak aktif', 403);
-        }
-
-        $expiredTokenAt = now()->addHours(1);
-        $token = $user->createToken(
-            'auth-token',
-            ['*'],
-            $expiredTokenAt,
-        )->plainTextToken;
-
-        // update last login at
-        $user->update(['last_login_at' => now()]);
-
-        return $this->successResponse([
-            'token' => $token,
-            'expiredAt' => $expiredTokenAt->format('Y-m-d H:i:s'),
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'username' => $user->username,
-                'email' => $user->email,
-                'role' => strtoupper($user->role),
-            ],
-        ], 'Login successful');
     }
 
     /**
@@ -161,9 +279,31 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        try {
+            $user = $request->user();
+            $user->currentAccessToken()->delete();
 
-        return $this->successResponse(null, 'Logged out successfully');
+            $response = $this->successResponse(null, 'Logged out successfully');
+
+            Log::info('Logout successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('Logout error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
+        }
     }
 
     /**
@@ -172,16 +312,35 @@ class AuthController extends Controller
      */
     public function validate(Request $request)
     {
-        // Laravel Sanctum automatically validates the token
-        // Return user data if token is valid
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        return $this->successResponse([
-            'id' => $user->id,
-            'name' => $user->name,
-            'username' => $user->username,
-            'email' => $user->email,
-            'role' => strtoupper($user->role),
-        ]);
+            $response = $this->successResponse([
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => strtoupper($user->role),
+            ]);
+
+            Log::info('Validate token successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('Validate token error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
+        }
     }
 }
