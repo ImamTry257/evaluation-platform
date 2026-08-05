@@ -20,7 +20,11 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ResponseSession::with(['user', 'questionnaire', 'result']);
+        $query = ResponseSession::with([
+            'user',
+            'questionnaire' => fn ($q) => $q->withTrashed(),
+            'result',
+        ]);
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
@@ -30,7 +34,7 @@ class ReportController extends Controller
         // Filter by period (via questionnaire)
         if ($request->has('periodId') && $request->periodId) {
             $query->whereHas('questionnaire', function ($q) use ($request) {
-                $q->where('evaluation_period_id', $request->periodId);
+                $q->withTrashed()->where('evaluation_period_id', $request->periodId);
             });
         }
 
@@ -104,7 +108,7 @@ class ReportController extends Controller
             return [
                 'id' => $session->id,
                 'respondent' => $session->user->name,
-                'questionnaire' => $session->questionnaire->title,
+                'questionnaire' => $session->questionnaire?->title,
                 'score' => $session->result?->overall_score,
                 'percentage' => $session->result?->overall_percentage,
                 'status' => ( $session->status == 'in_progress' ) ? 'IN PROGRESS' : strtoupper($session->status),
