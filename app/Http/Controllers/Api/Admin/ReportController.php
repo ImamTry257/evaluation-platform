@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ScoringLevelComponent;
 use App\Models\ResponseSession;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -149,14 +150,14 @@ class ReportController extends Controller
     public function exportExcel(Request $request)
     {
         // Per-session detail export
-        if ($request->has('sessionId') && $request->sessionId) {
+        if ($request->filled('sessionId')) {
             $session = ResponseSession::with([
                 'user',
                 'questionnaire' => fn ($q) => $q->withTrashed(),
                 'result',
                 'answers.question' => fn ($q) => $q->withTrashed(),
                 'answers.question.indicator' => fn ($q) => $q->withTrashed(),
-            ])->find($request->sessionId);
+            ])->find($request->input('sessionId'));
 
             if (!$session || $session->status !== 'submitted') {
                 return $this->errorResponse('Session not found or not submitted', 404);
@@ -169,21 +170,41 @@ class ReportController extends Controller
             $result = $session->result;
             $answers = $session->answers;
 
-            // Group answers by indicator (skip answers with missing question/indicator)
-            $groupedAnswers = $answers->filter(function ($answer) {
-                return $answer->question && $answer->question->indicator;
-            })->groupBy(function ($answer) {
-                return $answer->question->indicator->id;
+            // Group answers by component (skip answers with missing question/component)
+            $groupedByComponent = $answers
+                ->filter(function ($answer) {
+                    return $answer->question
+                        && $answer->question->indicator
+                        && $answer->question->indicator->subComponent
+                        && $answer->question->indicator->subComponent->component;
+                })
+                ->groupBy(function ($answer) {
+                    return $answer->question->indicator->subComponent->component->id;
+                });
+
+            // Sort components by order_number
+            $groupedByComponent = $groupedByComponent->sortKeysUsing(function ($a, $b) use ($answers) {
+                $ansA = $answers->first(fn($ans) => $ans->question?->indicator?->subComponent?->component?->id === $a);
+                $ansB = $answers->first(fn($ans) => $ans->question?->indicator?->subComponent?->component?->id === $b);
+                $orderA = $ansA?->question?->indicator?->subComponent?->component?->order_number ?? 999;
+                $orderB = $ansB?->question?->indicator?->subComponent?->component?->order_number ?? 999;
+                return $orderA <=> $orderB;
             });
 
-            // Sort by indicator order_number
-            $groupedAnswers = $groupedAnswers->sortKeysUsing(function ($a, $b) use ($answers) {
-                $ansA = $answers->first(fn($ans) => $ans->question?->indicator?->id === $a);
-                $ansB = $answers->first(fn($ans) => $ans->question?->indicator?->id === $b);
-                $indA = $ansA?->question?->indicator?->order_number ?? 999;
-                $indB = $ansB?->question?->indicator?->order_number ?? 999;
-                return $indA <=> $indB;
-            });
+            // Lookup score_title per component from scoring_level_component
+            $scoreTitles = [];
+            foreach ($groupedByComponent as $componentId => $componentAnswers) {
+                $component = $componentAnswers->first()->question->indicator->subComponent->component;
+                $scoreSum = $componentAnswers->sum('score');
+
+                $scoreTitle = ScoringLevelComponent::where('questionnaire_id', $session->questionnaire_id)
+                    ->where('component_id', $componentId)
+                    ->where('start_from', '<=', $scoreSum)
+                    ->where('end_at', '>=', $scoreSum)
+                    ->value('score_title');
+                $scoreTitleView = explode('_', $scoreTitle);
+                $scoreTitles[$componentId] =  ucwords(implode(' ', $scoreTitleView)) ?? '';
+            }
 
             // Build rows for detail export
             $rows = [];
@@ -200,26 +221,23 @@ class ReportController extends Controller
             $headerRowIndex = count($rows); // 1-indexed for Excel
             $rows[] = [
                 'No',
-                'Aspek',
+                'Component',
                 'Pernyataan',
                 'Skor',
             ];
 
             // Data rows
             $no = 1;
-            foreach ($groupedAnswers as $indicatorId => $indicatorAnswers) {
-                $indicator = $indicatorAnswers->first()->question?->indicator;
-                if (!$indicator) {
-                    continue;
-                }
-                $sortedAnswers = $indicatorAnswers->sortBy('question.order_number');
+            foreach ($groupedByComponent as $componentId => $componentAnswers) {
+                $component = $componentAnswers->first()->question->indicator->subComponent->component;
+                $sortedAnswers = $componentAnswers->sortBy('question.order_number');
 
                 foreach ($sortedAnswers as $answer) {
                     $rows[] = [
                         $no++,
-                        $indicator->name,
+                        $component->name,
                         $answer->question?->question_text ?? '-',
-                        $answer->score,
+                        $scoreTitles[$componentId],
                     ];
                 }
             }
@@ -231,7 +249,7 @@ class ReportController extends Controller
                 new \App\Exports\ReportsExport(
                     $rows,
                     $headerRowIndex,
-                    mergeColumn: 'B',
+                    mergeColumns: ['B', 'D'],
                     mergeStartRow: $headerRowIndex + 1,
                 ),
                 $filename

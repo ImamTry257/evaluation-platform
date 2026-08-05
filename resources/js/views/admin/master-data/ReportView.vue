@@ -194,7 +194,7 @@ onMounted(() => {
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Responden</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Instrument</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Pengisian Ke</th>
-            <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Presentase</th>
+            <!-- <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Presentase</th> -->
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Mulai isi Angket</th>
             <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tanggal Penyelesaian Angket</th>
@@ -217,9 +217,9 @@ onMounted(() => {
             <td class="px-6 py-5 text-body-sm text-on-surface">{{ item.questionnaire || '-' }}</td>
             <td class="px-6 py-5 text-body-sm text-on-surface">
               {{ item.submissionOrder || '-' }}</td>
-            <td class="px-6 py-5">
+            <!-- <td class="px-6 py-5">
               <span class="font-title-md font-semibold text-primary">{{ ( item.percentage != null ? `${item.percentage}%` : '' ) || '' }}</span>
-            </td>
+            </td> -->
             <td class="px-6 py-5 text-body-sm text-on-surface">
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(item.status)">
                 {{ item.status || '-' }}

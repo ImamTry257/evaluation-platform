@@ -40,35 +40,6 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Tidak ada kuesioner yang tersedia', 404);
         }
 
-        $getIndicatorList = [];
-        $numbering = 1;
-        $count = 0;
-        $indicatorLength = 0;
-        foreach($questionnaire->components as $component) {
-            foreach($component->subComponents as $subComponent){
-                foreach($subComponent->indicators as $indicator){
-                    if ( $numbering == 1 ) {
-                        $getIndicatorList = [
-                            'page'      => $numbering,
-                            'indicator' => $indicator->name,
-                            'statementList' => $indicator->questions
-                        ];
-                    }
-                    $count += count($indicator->questions);
-                    $indicatorLength += count($subComponent->indicators);
-                    $numbering++;
-                }
-            }
-        }
-
-        $getIndicatorList['count'] = $count;
-        $getIndicatorList['indicatorLength'] = $indicatorLength;
-
-        $questionnaire['session'] = [
-            'evaluation' => null,
-            'statements' => $getIndicatorList, 
-        ];
-
         return $this->successResponse(
             new \App\Http\Resources\QuestionnaireResource($questionnaire),
             'Kuesioner aktif ditemukan'
@@ -97,29 +68,7 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Questionnaire not found or not published', 404);
         }
 
-        $getIndicatorList = [];
-        $numbering = 1;
-        $count = 0;
-        $indicatorLength = 0;
-        foreach($questionnaire->components as $component) {
-            foreach($component->subComponents as $subComponent){
-                foreach($subComponent->indicators as $indicator){
-                    if ( $numbering == 1 ) {
-                        $getIndicatorList = [
-                            'page'      => $numbering,
-                            'indicator' => $indicator->name,
-                            'statementList' => $indicator->questions
-                        ];
-                    }
-                    $count += count($indicator->questions);
-                    $indicatorLength += count($subComponent->indicators);
-                    $numbering++;
-                }
-            }
-        }
-
-        $getIndicatorList['count'] = $count;
-        $getIndicatorList['indicatorLength'] = $indicatorLength;
+        [$getQuestionByComponent, $count, $indicatorLength] = $this->buildStatements($questionnaire, true);
 
         DB::beginTransaction();
 
@@ -136,7 +85,7 @@ class EvaluasiController extends Controller
                 return $this->successResponse([
                     'session' => [
                         'evaluation' => new ResponseSessionResource($existingSession->load(['answers.question.indicator'])),
-                        'statements' => $getIndicatorList,
+                        'statements' => $getQuestionByComponent,
                     ],
                     'questionnaire' => $questionnaire,
                     'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
@@ -160,7 +109,7 @@ class EvaluasiController extends Controller
             return $this->successResponse([
                 'session' => [
                     'evaluation' => new ResponseSessionResource($session->load(['answers.question.indicator'])),
-                    'statements' => $getIndicatorList,
+                    'statements' => $getQuestionByComponent,
                 ],
                 'questionnaire' => $questionnaire,
                 'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
@@ -171,6 +120,60 @@ class EvaluasiController extends Controller
             DB::rollBack();
             return $this->errorResponse('Failed to start evaluation: ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Build statements grouped by component, with global numbering per component.
+     *
+     * @param \App\Models\Questionnaire $questionnaire
+     * @return array{0: array, 1: int, 2: int} [statementsByComponent, totalQuestionCount, totalIndicatorCount]
+     */
+    private function buildStatements(Questionnaire $questionnaire, $isStart): array
+    {
+        $statements = [];
+        $count = 0;
+        $indicatorLength = 0;
+        $page = 1;
+        $number = 1;
+        foreach ($questionnaire->components as $component) {
+            $statementList = [];
+
+            foreach ($component->subComponents as $subComponent) {
+                foreach ($subComponent->indicators as $indicator) {
+                    $indicatorLength++;
+                    $count += count($indicator->questions);
+
+                    foreach ($indicator->questions as $question) {
+                        $statementList[] = [
+                            'id' => $question->id,
+                            'indicator_id' => $question->indicator_id,
+                            'question_text' => $question->question_text,
+                            'weight' => $question->weight,
+                            'order_number' => $number++,
+                            'is_active' => $question->is_active,
+                        ];
+                    }
+                }
+            }
+
+            if ( $isStart && $page == 1 ) {
+                $statements[] = [
+                    'page' => 1,
+                    'component' => $component->name,
+                    'statementList' => $statementList,
+                ];
+
+                return [$statements, $count, count($questionnaire->components)];
+            }
+
+            $statements[] = [
+                'page' => $page++,
+                'component' => $component->name,
+                'statementList' => $statementList,
+            ];
+        }
+
+        return [$statements, $count, count($questionnaire->components)];
     }
 
     /**
@@ -193,60 +196,32 @@ class EvaluasiController extends Controller
             return $this->errorResponse('Session sudah di-submit. Silakan lihat hasil evaluasi.', 422);
         }
 
-        $getIndicatorList = [];
-        $page = 1;
-        $count = 0;
-        $indicatorLength = 0;
-        $numbering = 0;
-        foreach($session->questionnaire->components as $component) {
-            foreach($component->subComponents as $subComponent){
-                foreach($subComponent->indicators as $indicator){
+        [$statements, $count, $indicatorLength] = $this->buildStatements($session->questionnaire, false);
 
-                    if ( $page > 0 ) {
-                        if ( $page < $pageId ) {
-                            $numbering += count($indicator->questions);
-                        }
+        $currentPage = $statements[$pageId - 1] ?? null;
 
-                        if ( $pageId == 1 ) {
-                            $numbering = 0;
-                        }
-                    }
-
-                    if ( $page == $pageId ) {
-                        $getIndicatorList = [
-                            'page'      => $page,
-                            'indicator' => $indicator->name,
-                        ];
-
-                        foreach($indicator->questions as $question) {
-                            $numbering++;
-
-                            $getIndicatorList['statementList'][] = [
-                                "id" => $question->id,
-                                "indicator_id" => $question->indicator_id,
-                                "question_text" => $question->question_text,
-                                "weight" => $question->weight,
-                                "order_number" => $question->order_number,
-                                "is_active" => $question->is_active,
-                                "number" => $numbering
-                            ];
-                        }
-                    }
-
-                    $count += count($indicator->questions);
-                    $indicatorLength += count($subComponent->indicators);
-                    $page++;
-                }
-            }
+        if (!$currentPage) {
+            return $this->errorResponse('Page not found', 404);
         }
 
-        $getIndicatorList['count'] = $count;
-        $getIndicatorList['indicatorLength'] = $indicatorLength;
+        // Frontend InputAngketView menampilkan q.number — tambahkan nomor berurutan per halaman.
+        $statementList = [];
+        $number = 1;
+        foreach ($currentPage['statementList'] as $item) {
+            $item['number'] = $number++;
+            $statementList[] = $item;
+        }
 
         return $this->successResponse([
             'session' => [
                 'evaluation' => new ResponseSessionResource($session),
-                'statements' => $getIndicatorList,
+                'statements' => [
+                    'page' => $pageId,
+                    'indicator' => $currentPage['component'],
+                    'statementList' => $statementList,
+                    'count' => $count,
+                    'indicatorLength' => $indicatorLength,
+                ],
             ],
             'scoringLevels' => ScoringLevel::where('is_active', 1)->orderBy('value', 'asc')->get(),
         ], 'Session retrieved successfully');

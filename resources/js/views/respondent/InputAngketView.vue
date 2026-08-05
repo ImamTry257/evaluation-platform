@@ -351,7 +351,7 @@ onUnmounted(() => {
                 <tbody class="divide-y divide-outline-variant/50">
                   <tr v-for="(q, qi) in statements?.statementList" :key="q.id"
                     :class="{ 'answered': answers[q.id] }" class="transition-colors hover:bg-[#004592]/[0.03]">
-                    <td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">{{ q.number }}</td>
+                    <td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">{{ q.order_number }}</td>
                     <td class="px-4 py-4 text-body-sm text-on-surface leading-relaxed">{{ q.question_text }}</td>
                     <td v-for="s in 7" :key="s"
                       class="text-center cursor-pointer transition-all duration-200 p-2"

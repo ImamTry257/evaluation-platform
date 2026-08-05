@@ -14,13 +14,14 @@ class ReportsExport implements FromArray, ShouldAutoSize, WithStyles
     /**
      * @param array $rows Fully prepared rows (metadata + header + data)
      * @param int|null $headerRow 1-indexed row for bold styling (null = no bold)
-     * @param string|null $mergeColumn Column letter to merge duplicate values (e.g. 'B')
+     * @param string|array|null $mergeColumns Column(s) to merge duplicate values
+     *        (e.g. 'B' or ['B', 'C'])
      * @param int|null $mergeStartRow Row to start merging from (1-indexed)
      */
     public function __construct(
         array $rows,
         protected ?int $headerRow = null,
-        protected ?string $mergeColumn = null,
+        protected string|array|null $mergeColumns = null,
         protected ?int $mergeStartRow = null,
     ) {
         $this->rows = $rows;
@@ -38,18 +39,19 @@ class ReportsExport implements FromArray, ShouldAutoSize, WithStyles
             $sheet->getStyle($this->headerRow)->getFont()->setBold(true);
         }
 
-        // Merge duplicate values in the specified column
-        if ($this->mergeColumn && $this->mergeStartRow) {
-            $this->mergeColumnValues($sheet);
+        // Merge duplicate values in the specified column(s)
+        if ($this->mergeColumns && $this->mergeStartRow) {
+            foreach ((array) $this->mergeColumns as $col) {
+                $this->mergeColumnValues($sheet, $col);
+            }
         }
     }
 
     /**
      * Merge contiguous cells with the same value vertically.
      */
-    private function mergeColumnValues(Worksheet $sheet): void
+    private function mergeColumnValues(Worksheet $sheet, string $col): void
     {
-        $col = $this->mergeColumn;
         $startRow = $this->mergeStartRow;
         $highestRow = $sheet->getHighestRow();
         $prevValue = null;
