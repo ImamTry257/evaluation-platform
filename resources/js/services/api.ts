@@ -36,20 +36,26 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       const authStore = useAuthStore()
 
-      // Determine login path BEFORE clearing auth state
-      const role = authStore.user?.role
-      const loginPath = (role === 'ADMIN' || role === 'SUPERADMIN')
-        ? '/login/admin'
-        : '/login'
+      // 401 on login endpoints = wrong credentials → let the form show its error, no redirect
+      const url = error.config?.url || ''
+      const isLoginRequest = url.includes('/auth/login')
 
-      // Clear both localStorage AND Pinia store state
-      authStore.clearAuth()
+      if (!isLoginRequest) {
+        // Determine login path BEFORE clearing auth state
+        const role = authStore.user?.role
+        const loginPath = (role === 'ADMIN' || role === 'SUPERADMIN')
+          ? '/login/admin'
+          : '/login'
 
-      // Dynamic import to avoid circular dependency with router → auth → api
-      const { default: router } = await import('@/router')
+        // Clear both localStorage AND Pinia store state
+        authStore.clearAuth()
 
-      // Redirect to correct login page
-      router.push(loginPath)
+        // Dynamic import to avoid circular dependency with router → auth → api
+        const { default: router } = await import('@/router')
+
+        // Redirect to correct login page
+        router.push(loginPath)
+      }
     }
     return Promise.reject(error)
   }
