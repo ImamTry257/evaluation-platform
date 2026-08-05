@@ -42,8 +42,8 @@ const strengthLabel = computed(() => {
   if (s === 0) return { text: 'Masukkan kata sandi', color: 'text-on-surface-variant', barClass: 'bg-error w-0' }
   if (s <= 25) return { text: 'Lemah', color: 'text-error', barClass: 'bg-error' }
   if (s <= 50) return { text: 'Cukup', color: 'text-tertiary', barClass: 'bg-tertiary-container' }
-  if (s <= 75) return { text: 'Kuat', color: 'text-primary', barClass: 'bg-primary-container opacity-60' }
-  return { text: 'Sangat Kuat', color: 'text-primary', barClass: 'bg-primary' }
+  if (s <= 75) return { text: 'Kuat', color: 'text-[#004592]', barClass: 'bg-[#004592] opacity-60' }
+  return { text: 'Sangat Kuat', color: 'text-[#004592]', barClass: 'bg-[#004592]' }
 })
 
 async function handleRegister() {
@@ -94,8 +94,8 @@ async function handleRegister() {
         </div>
       </div>
       <!-- Decorative circles -->
-      <div class="decorative-circle absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-      <div class="decorative-circle absolute -bottom-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+      <div class="decorative-circle absolute -top-24 -left-24 w-96 h-96 bg-[#004592]/5 rounded-full blur-3xl"></div>
+      <div class="decorative-circle absolute -bottom-24 -right-24 w-96 h-96 bg-[#004592]/10 rounded-full blur-3xl"></div>
     </section>
 
     <!-- Right Column: Register Form -->
@@ -108,7 +108,7 @@ async function handleRegister() {
             <div class="brand-logo w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-sm pulse-ring">
               <span class="material-symbols-outlined text-white" style="font-size: 28px; font-variation-settings: 'FILL' 1;">eco</span>
             </div>
-            <span class="brand-name text-2xl tracking-tight text-primary font-bold">PolicyEval</span>
+            <span class="brand-name text-2xl tracking-tight text-[#004592] font-bold">PolicyEval</span>
           </div> -->
           <h1 class="text-2xl font-semibold text-on-surface leading-tight mb-2 fade-in-delay">
             Buat Akun
@@ -140,7 +140,7 @@ async function handleRegister() {
                 type="text"
                 placeholder="John Doe"
                 @input="clearFieldError('name')"
-                :class="['form-input block w-full h-11 pl-10 pr-4 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.name ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input block w-full h-11 pl-10 pr-4 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all placeholder:text-on-secondary-container', fieldErrors.name ? 'border-error' : 'border-outline-variant']"
               />
             </div>
             <p v-if="fieldErrors.name" class="text-error text-xs flex items-center gap-1 mt-1">
@@ -163,7 +163,7 @@ async function handleRegister() {
                 type="text"
                 placeholder="johndoe22"
                 @input="clearFieldError('username')"
-                :class="['form-input block w-full h-11 pl-10 pr-4 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.username ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input block w-full h-11 pl-10 pr-4 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all placeholder:text-on-secondary-container', fieldErrors.username ? 'border-error' : 'border-outline-variant']"
               />
             </div>
             <p v-if="fieldErrors.username" class="text-error text-xs flex items-center gap-1 mt-1">
@@ -186,7 +186,7 @@ async function handleRegister() {
                 type="email"
                 placeholder="name@school.edu"
                 @input="clearFieldError('email')"
-                :class="['form-input block w-full h-11 pl-10 pr-4 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.email ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input block w-full h-11 pl-10 pr-4 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all placeholder:text-on-secondary-container', fieldErrors.email ? 'border-error' : 'border-outline-variant']"
               />
             </div>
             <p v-if="fieldErrors.email" class="text-error text-xs flex items-center gap-1 mt-1">
@@ -209,7 +209,7 @@ async function handleRegister() {
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 @input="clearFieldError('password')"
-                :class="['form-input block w-full h-11 pl-10 pr-10 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.password ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input block w-full h-11 pl-10 pr-10 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all placeholder:text-on-secondary-container', fieldErrors.password ? 'border-error' : 'border-outline-variant']"
               />
               <button
                 type="button"
@@ -246,7 +246,7 @@ async function handleRegister() {
                 :type="showConfirmPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 @input="clearFieldError('passwordConfirmation')"
-                :class="['form-input block w-full h-11 pl-10 pr-10 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-on-secondary-container', fieldErrors.passwordConfirmation ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input block w-full h-11 pl-10 pr-10 bg-surface-container-lowest border rounded-xl text-base focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all placeholder:text-on-secondary-container', fieldErrors.passwordConfirmation ? 'border-error' : 'border-outline-variant']"
               />
               <button
                 type="button"
@@ -261,8 +261,8 @@ async function handleRegister() {
               {{ fieldErrors.passwordConfirmation[0] }}
             </p>
           </div>
-          <div class="info-box bg-surface-container rounded-lg p-3 flex gap-3 items-start border border-primary/10">
-            <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-size: 20px;">info</span>
+          <div class="info-box bg-surface-container rounded-lg p-3 flex gap-3 items-start border border-[#004592]/10">
+            <span class="material-symbols-outlined text-[#004592] flex-shrink-0" style="font-size: 20px;">info</span>
             <p class="text-xs text-on-surface-variant leading-relaxed">
               Dengan membuat akun, Anda akan dapat berpartisipasi dalam kuesioner evaluasi kebijakan lingkungan.
             </p>
@@ -272,7 +272,7 @@ async function handleRegister() {
           <button
             type="submit"
             :disabled="isLoading"
-            class="btn-start w-full h-12 bg-primary text-white font-semibold rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-start w-full h-12 bg-[#004592] text-white font-semibold rounded-xl shadow-lg shadow-[#004592]/20 flex items-center justify-center gap-2 mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span v-if="isLoading" class="animate-spin material-symbols-outlined" style="font-size: 20px;">progress_activity</span>
             <span v-if="isLoading">Memproses...</span>
@@ -284,7 +284,7 @@ async function handleRegister() {
         </form>
         <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pt-4">
           Sudah punya akun?
-          <router-link to="/login" class="login-link text-primary font-bold">Masuk</router-link>
+          <router-link to="/login" class="login-link text-[#004592] font-bold">Masuk</router-link>
         </p>
         </div>
       </div>
@@ -318,7 +318,7 @@ async function handleRegister() {
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 69, 146, 0.1) 0%, transparent 70%);
   top: -100px;
   right: -100px;
   border-radius: 50%;
@@ -355,7 +355,7 @@ async function handleRegister() {
 }
 
 .brand-name:hover {
-  color: #006c49;
+  color: #004592;
 }
 
 .form-input {
@@ -363,13 +363,13 @@ async function handleRegister() {
 }
 
 .form-input:hover {
-  border-color: #10b981;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.1);
+  border-color: #004592;
+  box-shadow: 0 2px 10px rgba(0, 69, 146, 0.1);
 }
 
 .form-input:focus {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 4px 15px rgba(0, 69, 146, 0.12);
 }
 
 .input-icon {
@@ -377,7 +377,7 @@ async function handleRegister() {
 }
 
 .form-group:focus-within .input-icon {
-  color: #10b981;
+  color: #004592;
   transform: scale(1.1);
 }
 
@@ -386,7 +386,7 @@ async function handleRegister() {
 }
 
 .password-toggle:hover {
-  color: #006c49;
+  color: #004592;
   transform: scale(1.1);
 }
 
@@ -395,7 +395,7 @@ async function handleRegister() {
 }
 
 .form-group:focus-within .form-label {
-  color: #10b981;
+  color: #004592;
 }
 
 .btn-start {
@@ -404,8 +404,8 @@ async function handleRegister() {
 
 .btn-start:not(:disabled):hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-  background-color: #047857;
+  box-shadow: 0 8px 25px rgba(0, 69, 146, 0.4);
+  background-color: #2f6fed;
 }
 
 .btn-start:active:not(:disabled) {
@@ -417,7 +417,7 @@ async function handleRegister() {
 }
 
 .login-link:hover {
-  color: #006c49;
+  color: #004592;
   transform: translateX(4px);
 }
 
@@ -426,8 +426,8 @@ async function handleRegister() {
 }
 
 .info-box:hover {
-  border-color: #10b981;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
+  border-color: #004592;
+  box-shadow: 0 4px 15px rgba(0, 69, 146, 0.1);
 }
 
 .decorative-circle {
@@ -463,7 +463,7 @@ async function handleRegister() {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #006c49, #10b981);
+  background: linear-gradient(135deg, #004592, #2f6fed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -474,8 +474,8 @@ async function handleRegister() {
 }
 
 @keyframes pulseRing {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 69, 146, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 69, 146, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 69, 146, 0); }
 }
 </style>

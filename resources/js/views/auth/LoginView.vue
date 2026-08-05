@@ -41,8 +41,8 @@ async function handleLogin() {
         </div>
       </div>
       <!-- Decorative circle -->
-      <div class="decorative-circle absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-      <div class="decorative-circle absolute -bottom-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+      <div class="decorative-circle absolute -top-24 -left-24 w-96 h-96 bg-[#004592]/5 rounded-full blur-3xl"></div>
+      <div class="decorative-circle absolute -bottom-24 -right-24 w-96 h-96 bg-[#004592]/10 rounded-full blur-3xl"></div>
     </section>
 
     <!-- Right Column: Login Form -->
@@ -55,7 +55,7 @@ async function handleLogin() {
             <div class="brand-logo w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-sm pulse-ring">
               <span class="material-symbols-outlined text-white text-[28px]" style="font-variation-settings: 'FILL' 1;">eco</span>
             </div>
-            <span class="brand-name font-headline-lg text-[24px] tracking-tight text-primary font-bold">PolicyEval</span>
+            <span class="brand-name font-headline-lg text-[24px] tracking-tight text-[#004592] font-bold">PolicyEval</span>
           </div> -->
           <h1 class="font-headline-lg text-headline-lg text-on-surface leading-tight mb-2 fade-in-delay">
             Selamat Datang Kembali
@@ -88,7 +88,7 @@ async function handleLogin() {
                 type="text"
                 placeholder="budi123"
                 @input="clearFieldError('username')"
-                :class="['form-input w-full h-12 pl-12 pr-4 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60', fieldErrors.username ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input w-full h-12 pl-12 pr-4 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-[#004592]/20 focus:border-[#004592] outline-none placeholder:text-outline-variant/60', fieldErrors.username ? 'border-error' : 'border-outline-variant']"
               />
             </div>
             <p v-if="fieldErrors.username" class="text-error font-body-sm text-body-sm flex items-center gap-1 mt-1">
@@ -112,7 +112,7 @@ async function handleLogin() {
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 @input="clearFieldError('password')"
-                :class="['form-input w-full h-12 pl-12 pr-12 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60', fieldErrors.password ? 'border-error' : 'border-outline-variant']"
+                :class="['form-input w-full h-12 pl-12 pr-12 bg-surface border rounded-xl font-body-base text-body-base focus:ring-2 focus:ring-[#004592]/20 focus:border-[#004592] outline-none placeholder:text-outline-variant/60', fieldErrors.password ? 'border-error' : 'border-outline-variant']"
               />
               <button
                 type="button"
@@ -132,14 +132,14 @@ async function handleLogin() {
           <!-- <div class="flex items-center justify-between font-body-sm text-body-sm">
             <label class="flex items-center cursor-pointer group">
             </label>
-            <a class="forgot-link text-primary font-semibold" href="#">Lupa Kata Sandi?</a>
+            <a class="forgot-link text-[#004592] font-semibold" href="#">Lupa Kata Sandi?</a>
           </div> -->
 
           <!-- Submit Button -->
           <button
             type="submit"
             :disabled="isLoading"
-            class="btn-start w-full h-13 bg-primary-container text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-start w-full h-13 bg-[#004592] text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span v-if="isLoading" class="animate-spin material-symbols-outlined text-[20px]">progress_activity</span>
             <span v-if="isLoading" class="ml-2">Memproses...</span>
@@ -151,7 +151,7 @@ async function handleLogin() {
         </form>
         <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pt-4">
           Belum punya akun?
-          <router-link to="/register" class="login-link text-primary font-bold">Register</router-link>
+          <router-link to="/register" class="login-link text-[#004592] font-bold">Register</router-link>
         </p>
         </div>
       </div>
@@ -185,7 +185,7 @@ async function handleLogin() {
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 69, 146, 0.1) 0%, transparent 70%);
   top: -100px;
   right: -100px;
   border-radius: 50%;
@@ -218,7 +218,7 @@ async function handleLogin() {
   transition: all 0.3s ease;
 }
 .brand-name:hover {
-  color: #006c49;
+  color: #004592;
 }
 
 /* ===== FORM INPUTS ===== */
@@ -226,12 +226,12 @@ async function handleLogin() {
   transition: all 0.3s ease;
 }
 .form-input:hover {
-  border-color: #10b981;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.1);
+  border-color: #004592;
+  box-shadow: 0 2px 10px rgba(0, 69, 146, 0.1);
 }
 .form-input:focus {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 69, 146, 0.15);
 }
 
 /* ===== INPUT ICON ===== */
@@ -239,7 +239,7 @@ async function handleLogin() {
   transition: all 0.3s ease;
 }
 .form-group:focus-within .input-icon {
-  color: #10b981;
+  color: #004592;
   transform: scale(1.1);
 }
 
@@ -248,7 +248,7 @@ async function handleLogin() {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .password-toggle:hover {
-  color: #006c49;
+  color: #004592;
   transform: scale(1.1);
 }
 
@@ -257,7 +257,7 @@ async function handleLogin() {
   transition: all 0.3s ease;
 }
 .checkbox-custom:hover {
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== LABEL ===== */
@@ -265,7 +265,7 @@ async function handleLogin() {
   transition: all 0.3s ease;
 }
 .form-group:focus-within .form-label {
-  color: #10b981;
+  color: #004592;
 }
 
 /* ===== FORGOT PASSWORD LINK ===== */
@@ -273,7 +273,7 @@ async function handleLogin() {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .forgot-link:hover {
-  color: #006c49;
+  color: #004592;
   transform: translateX(4px);
 }
 
@@ -283,8 +283,8 @@ async function handleLogin() {
 }
 .btn-start:not(:disabled):hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-  background-color: #006c49;
+  box-shadow: 0 8px 25px rgba(0, 69, 146, 0.4);
+  background-color: #004592;
 }
 .btn-start:active:not(:disabled) {
   transform: scale(0.96);
@@ -295,7 +295,7 @@ async function handleLogin() {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .help-link:hover {
-  color: #006c49;
+  color: #004592;
   transform: translateX(4px);
 }
 
@@ -324,7 +324,7 @@ async function handleLogin() {
 
 /* ===== GRADIENT TEXT ===== */
 .gradient-text {
-  background: linear-gradient(135deg, #006c49, #10b981);
+  background: linear-gradient(135deg, #004592, #2f6fed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -335,8 +335,8 @@ async function handleLogin() {
   animation: pulseRing 2s ease-in-out infinite;
 }
 @keyframes pulseRing {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 69, 146, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 69, 146, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 69, 146, 0); }
 }
 </style>

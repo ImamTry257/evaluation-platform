@@ -78,7 +78,7 @@ onMounted(() => {
         <!-- Back Link -->
         <div class="mb-6 fade-in">
           <button @click="router.back()"
-            class="inline-flex items-center gap-1.5 text-primary text-body-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors">
+            class="inline-flex items-center gap-1.5 text-[#004592] text-body-sm font-medium hover:bg-[#004592]/10 px-3 py-2 rounded-lg transition-colors">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Beranda
           </button>
         </div>
@@ -86,12 +86,12 @@ onMounted(() => {
         <!-- Profile Header Card -->
         <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden mb-8 fade-in">
           <!-- Cover -->
-          <div class="h-32 bg-gradient-to-br from-primary/20 via-primary-container/30 to-primary/10 relative">
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDZjNDkiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC04VjE4SDJ2MmgzNG0wLThWMTBIMXYyaDM0bTAtOFYySDF2MmgzNCIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
+          <div class="h-32 bg-gradient-to-br from-[#004592]/20 via-[#004592]/30 to-[#004592]/10 relative">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDQ1OTIiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDJ2LTJoMzRtMC04VjE4SDJ2MmgzNG0wLThWMTBIMXYyaDM0bTAtOFYySDF2MmgzNCIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
           </div>
           <!-- Avatar + Info -->
           <div class="px-4 py-4 relative">
-            <div class="w-28 h-28 rounded-2xl bg-primary-container border-4 border-white shadow-lg flex items-center justify-center mb-4 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300">
+            <div class="w-28 h-28 rounded-2xl bg-[#004592] border-4 border-white shadow-lg flex items-center justify-center mb-4 cursor-pointer hover:scale-105 hover:shadow-lg transition-all duration-300">
               <span class="material-symbols-outlined text-white text-[48px]" style="font-variation-settings: 'FILL' 1;">person</span>
             </div>
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
@@ -99,15 +99,15 @@ onMounted(() => {
                 <h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">{{ profile.name }}</h1>
                 <p class="text-body-sm text-on-surface-variant mb-2">{{ profile.email }}</p>
                 <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#004592]/10 text-[#004592] rounded-full text-xs font-semibold">
                     <span class="material-symbols-outlined text-[14px]">school</span> {{ profile.role }}
                   </span>
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Aktif
                   </span>
                 </div>
               </div>
-              <button class="px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface font-body-base font-medium flex items-center gap-2 self-start hover:bg-surface-container-low hover:border-primary/50 transition-all">
+              <button class="px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface font-body-base font-medium flex items-center gap-2 self-start hover:bg-surface-container-low hover:border-[#004592]/50 transition-all">
                 <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profil
               </button>
             </div>
@@ -118,7 +118,7 @@ onMounted(() => {
         <!-- Profile Info Card -->
         <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 p-4 mb-4 fade-in-delay">
           <h3 class="font-title-md font-bold text-title-md text-on-surface flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-primary">person</span> Informasi Akun
+            <span class="material-symbols-outlined text-[#004592]">person</span> Informasi Akun
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>

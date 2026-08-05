@@ -29,7 +29,11 @@ const scrolled = ref(false)
 //   },
 // ]
 
-const teamMembers = [{}];
+const teamMembers = [
+  { name: 'Prof. Dr. Edi Istiyono, M.Si' },
+  { name: 'Aditya Yoga Purnama' },
+  { name: 'Imam Try Wibowo' },
+]
 
 function handleScroll() {
   scrolled.value = window.scrollY > 50
@@ -51,38 +55,16 @@ onUnmounted(() => {
       <!-- Development Team -->
       <section class="team-section mb-12">
         <h2 class="team-title font-headline-lg text-headline-lg mb-8 text-center fade-in-delay border-animated pb-2">Development Team</h2>
-        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
+        <ul class="team-list fade-in-delay-2">
+          <li
             v-for="(member, index) in teamMembers"
             :key="member.name"
-            class="profile-card bg-white p-6 rounded-xl border border-outline-variant flex flex-col items-center text-center relative glass-card"
-            :class="[
-              index === 0 ? 'fade-in' : index === 1 ? 'fade-in-delay' : 'fade-in-delay-2'
-            ]"
+            class="team-list-item"
           >
-            <div v-if="member.hasBadge" class="absolute top-4 right-4">
-              <span class="role-badge bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider pulse-ring">
-                {{ member.badge }}
-              </span>
-            </div>
-            <div class="profile-image-container mb-4">
-              <div class="profile-avatar profile-ring w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20">
-                <img class="w-full h-full object-cover" :alt="member.name" :src="member.image" />
-              </div>
-            </div>
-            <div class="profile-info">
-              <h4 class="profile-name font-title-md text-title-md text-on-surface mb-1">{{ member.name }}</h4>
-              <p class="font-label-caps text-label-caps text-primary mb-1 uppercase">{{ member.role }}</p>
-              <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">{{ member.institution }}</p>
-            </div>
-            <a
-              class="mail-link social-link inline-flex items-center gap-1 font-body-sm text-body-sm text-primary"
-              :href="'mailto:' + member.email"
-            >
-              <span class="material-symbols-outlined text-[18px]">mail</span> {{ member.email }}
-            </a>
-          </div>
-        </div> -->
+            <span class="team-number font-label-caps text-label-caps text-[#004592]">{{ index + 1 }}</span>
+            <span class="team-member-name font-body-lg text-body-lg text-on-surface">{{ member.name }}</span>
+          </li>
+        </ul>
       </section>
     </main>
   </div>
@@ -97,8 +79,8 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 }
 .glass-card:hover {
-  box-shadow: 0 8px 30px rgba(0, 108, 73, 0.1);
-  border-color: #10b981;
+  box-shadow: 0 8px 30px rgba(0, 69, 146, 0.1);
+  border-color: #004592;
 }
 
 /* ===== HEADER BUTTONS ===== */
@@ -108,7 +90,7 @@ onUnmounted(() => {
   padding: 0.5rem;
 }
 .header-btn-rotate:hover {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: rgba(0, 69, 146, 0.1);
   transform: rotate(15deg) scale(1.1);
 }
 .header-btn-rotate:active {
@@ -128,7 +110,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 69, 146, 0.05), transparent);
   transition: left 0.6s ease;
 }
 .profile-card:hover::before {
@@ -136,20 +118,20 @@ onUnmounted(() => {
 }
 .profile-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 50px rgba(0, 108, 73, 0.15);
-  border-color: #10b981;
+  box-shadow: 0 20px 50px rgba(0, 69, 146, 0.15);
+  border-color: #004592;
 }
 .profile-card:hover .profile-avatar {
   transform: scale(1.1);
-  border-color: #10b981;
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  border-color: #004592;
+  box-shadow: 0 8px 25px rgba(0, 69, 146, 0.3);
 }
 .profile-card:hover .profile-name {
-  color: #006c49;
+  color: #004592;
 }
 .profile-card:hover .role-badge {
   transform: scale(1.1) translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 69, 146, 0.4);
 }
 .profile-avatar {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -167,8 +149,8 @@ onUnmounted(() => {
   transition: all 0.4s ease;
 }
 .profile-card:hover .profile-ring {
-  border-color: #10b981;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+  border-color: #004592;
+  box-shadow: 0 0 0 4px rgba(0, 69, 146, 0.2);
 }
 .profile-info {
   transition: all 0.3s ease;
@@ -193,7 +175,7 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(0, 69, 146, 0.1);
   border-radius: 0.5rem;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -202,7 +184,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 .mail-link:hover {
-  color: #006c49;
+  color: #004592;
   transform: translateX(4px);
 }
 .mail-link:hover .material-symbols-outlined {
@@ -221,7 +203,7 @@ onUnmounted(() => {
 }
 .social-link:hover {
   transform: translateY(-3px);
-  color: #006c49;
+  color: #004592;
 }
 
 /* ===== ICON HOVER ===== */
@@ -242,7 +224,7 @@ onUnmounted(() => {
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 69, 146, 0.1) 0%, transparent 70%);
   top: -100px;
   right: -100px;
   border-radius: 50%;
@@ -290,7 +272,7 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   width: 80%;
   height: 80%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 69, 146, 0.03) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -298,7 +280,51 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 }
 .team-title:hover {
-  color: #006c49;
+  color: #004592;
+}
+
+/* ===== TEAM LIST ===== */
+.team-list {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.team-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.team-list-item:first-child {
+  border-top: 1px solid #e5e7eb;
+}
+.team-list-item:hover {
+  background: rgba(0, 69, 146, 0.06);
+  transform: translateX(6px);
+}
+.team-list-item:hover .team-member-name {
+  color: #004592;
+}
+.team-number {
+  min-width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(0, 69, 146, 0.12);
+  transition: all 0.3s ease;
+}
+.team-list-item:hover .team-number {
+  background: #004592;
+  color: #ffffff;
+}
+.team-member-name {
+  transition: all 0.3s ease;
 }
 
 /* ===== BORDER ANIMATION ===== */
@@ -312,7 +338,7 @@ onUnmounted(() => {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #006c49, #10b981);
+  background: linear-gradient(90deg, #004592, #2f6fed);
   transition: width 0.4s ease;
 }
 .border-animated:hover::after {
@@ -324,7 +350,7 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 }
 .institution-name:hover {
-  color: #006c49;
+  color: #004592;
 }
 
 /* ===== FOOTER ===== */
@@ -337,14 +363,14 @@ onUnmounted(() => {
 
 /* ===== GRADIENT TEXT ===== */
 .gradient-text {
-  background: linear-gradient(135deg, #006c49, #10b981);
+  background: linear-gradient(135deg, #004592, #2f6fed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   transition: all 0.3s ease;
 }
 .gradient-text:hover {
-  background: linear-gradient(135deg, #10b981, #006c49);
+  background: linear-gradient(135deg, #2f6fed, #004592);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -354,9 +380,9 @@ onUnmounted(() => {
   animation: pulseRing 2s ease-in-out infinite;
 }
 @keyframes pulseRing {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 69, 146, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 69, 146, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 69, 146, 0); }
 }
 
 /* ===== FADE IN ANIMATIONS ===== */

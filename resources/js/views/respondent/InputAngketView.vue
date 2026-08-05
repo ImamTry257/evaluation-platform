@@ -93,7 +93,7 @@ async function nextComp() {
   router.push(`/respondent/evaluation/${sessionId.value}/component/${Number(route.params.compIndex) + 1}`)
 
   currentPage.value = Number(route.params.compIndex) + 1
-
+  console.log(currentPage.value)
   await fetchSession()
 }
 async function prevComp() {
@@ -298,7 +298,7 @@ onUnmounted(() => {
             <span class="material-symbols-outlined text-base">timer</span>
             <span class="font-title-md text-title-md font-bold tabular-nums">{{ countdown }}</span>
           </div>
-          <div class="flex items-center gap-1.5 text-primary">
+          <div class="flex items-center gap-1.5 text-[#004592]">
             <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
             <span class="font-label-caps text-[10px] uppercase tracking-tighter">Tersimpan</span>
           </div>
@@ -309,10 +309,10 @@ onUnmounted(() => {
       <div class="fixed top-[42px] left-0 right-0 z-[140] bg-surface border-b border-outline-variant/50">
         <div class="max-w-5xl w-full mx-auto px-6 py-6 flex items-center justify-between">
           <span class="font-label-caps text-label-caps text-secondary uppercase">Progress</span>
-          <span class="font-label-caps text-label-caps text-primary font-bold">{{ answeredCount }} dari {{ statementCount }} dijawab</span>
+          <span class="font-label-caps text-label-caps text-[#004592] font-bold">{{ answeredCount }} dari {{ statementCount }} dijawab</span>
         </div>
         <div class="w-full h-1 bg-secondary-container">
-          <div class="bg-primary h-full transition-all duration-500" :style="{ width: progressPct + '%' }"></div>
+          <div class="bg-[#004592] h-full transition-all duration-500" :style="{ width: progressPct + '%' }"></div>
         </div>
       </div>
 
@@ -323,7 +323,7 @@ onUnmounted(() => {
           <div class="flex items-center gap-2">
             <div v-for="(comp, i) in components" :key="comp.id"
               class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"
-              :class="i === compPage ? 'bg-primary w-7' : i < compPage ? 'bg-primary-container w-2.5' : 'bg-outline-variant w-2.5'"
+              :class="i === compPage ? 'bg-[#004592] w-7' : i < compPage ? 'bg-[#004592]/50 w-2.5' : 'bg-outline-variant w-2.5'"
               @click="goToComp(i)"></div>
           </div>
           <span class="ml-3 text-body-sm text-on-surface-variant font-medium">Komponen {{ compPage + 1 }} dari {{ components.length }}</span>
@@ -332,7 +332,7 @@ onUnmounted(() => {
         <!-- Component Table -->
         <div v-if="statements?.count != 0">
           <div class="flex items-center gap-2 mb-4 mt-4">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#004592]/10 text-[#004592] rounded-full text-xs font-semibold">
               <span class="material-symbols-outlined text-[14px]">folder</span>
               {{ statements?.indicator }}
             </span>
@@ -350,7 +350,7 @@ onUnmounted(() => {
                 </thead>
                 <tbody class="divide-y divide-outline-variant/50">
                   <tr v-for="(q, qi) in statements?.statementList" :key="q.id"
-                    :class="{ 'answered': answers[q.id] }" class="transition-colors hover:bg-primary/[0.03]">
+                    :class="{ 'answered': answers[q.id] }" class="transition-colors hover:bg-[#004592]/[0.03]">
                     <td class="px-4 py-4 text-center text-body-sm font-semibold text-on-surface-variant">{{ q.number }}</td>
                     <td class="px-4 py-4 text-body-sm text-on-surface leading-relaxed">{{ q.question_text }}</td>
                     <td v-for="s in 7" :key="s"
@@ -374,11 +374,11 @@ onUnmounted(() => {
           </button>
           <div v-else></div>
           <button v-if="statements.indicatorLength != currentPage" @click="nextComp"
-            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary/50 text-on-primary shadow-lg shadow-primary/20 transition-all hover:bg-primary">
+            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-[#004592]/50 text-on-primary shadow-lg shadow-[#004592]/20 transition-all hover:bg-[#004592]">
             Selanjutnya <span class="material-symbols-outlined">arrow_forward</span>
           </button>
           <button v-else @click="showSubmitModalFn"
-            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-primary-container text-white shadow-lg shadow-tertiary/20 transition-all hover:shadow-xl">
+            class="flex items-center gap-2 px-10 py-3 rounded-xl font-title-md text-title-md bg-[#004592] text-white shadow-lg shadow-[#004592]/20 transition-all hover:shadow-xl">
             Submit <span class="material-symbols-outlined">send</span>
           </button>
         </div>
@@ -390,7 +390,7 @@ onUnmounted(() => {
       </main>
 
       <!-- Toast -->
-      <div class="fixed bottom-24 right-6 z-[300] bg-primary text-white px-5 py-3 rounded-xl text-body-sm font-medium flex items-center gap-2 shadow-lg transition-all duration-400"
+      <div class="fixed bottom-24 right-6 z-[300] bg-[#004592] text-white px-5 py-3 rounded-xl text-body-sm font-medium flex items-center gap-2 shadow-lg transition-all duration-400"
         :class="toastVisible ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0 pointer-events-none'">
         <span class="material-symbols-outlined text-[18px]">check_circle</span>
         {{ toastMsg }}
@@ -411,7 +411,7 @@ onUnmounted(() => {
         <div class="flex items-center justify-end gap-3">
           <button @click="closeSubmitModal" class="px-5 py-2.5 rounded-xl border border-outline-variant/50 text-on-surface font-body-base font-medium hover:bg-surface-container transition-colors">Batal</button>
           <button @click="confirmSubmit" :disabled="submitting"
-            class="px-8 py-2.5 rounded-xl bg-primary text-white font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 flex items-center gap-2">
+            class="px-8 py-2.5 rounded-xl bg-[#004592] text-white font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 flex items-center gap-2">
             <span v-if="submitting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
             <span v-else class="material-symbols-outlined text-[18px]">check_circle</span>
             {{ submitting ? 'Mengirim...' : 'Submit' }}
@@ -472,7 +472,7 @@ onUnmounted(() => {
         <!-- Actions -->
         <div class="flex flex-col gap-3">
           <button @click="handleTimeoutSubmit" :disabled="timeoutSubmitting"
-            class="w-full px-8 py-3.5 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50">
+            class="w-full px-8 py-3.5 rounded-xl bg-[#004592] text-on-primary font-title-md text-title-md font-semibold shadow-lg shadow-[#004592]/20 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50">
             <span v-if="timeoutSubmitting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
             <span v-else class="material-symbols-outlined">analytics</span>
             {{ timeoutSubmitting ? 'Mengirim...' : 'Lihat Hasil Evaluasi' }}
@@ -503,7 +503,7 @@ onUnmounted(() => {
         <div class="flex items-center justify-end gap-3">
           <button @click="closeProfileBlocked" class="px-5 py-2.5 rounded-xl border border-outline-variant/50 text-on-surface font-body-base font-medium hover:bg-surface-container transition-colors">Mengerti</button>
           <button @click="continueWithAngket"
-            class="px-8 py-2.5 rounded-xl bg-primary text-white font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 flex items-center gap-2">
+            class="px-8 py-2.5 rounded-xl bg-[#004592] text-white font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">edit</span> Lanjutkan Angket
           </button>
         </div>
@@ -526,14 +526,14 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 .selected-cell .radio-dot {
-  border-color: #006c49; background: #006c49; transform: scale(1.15);
+  border-color: #004592; background: #004592; transform: scale(1.15);
 }
 .selected-cell .radio-dot::after {
   content: ''; width: 8px; height: 8px; border-radius: 50%; background: white;
 }
 .hover-cell:hover {
-  background: rgba(16, 185, 129, 0.12); border-radius: 8px;
+  background: rgba(0, 69, 146, 0.12); border-radius: 8px;
 }
-tr.answered { background: rgba(16, 185, 129, 0.06); }
-tr.answered:hover { background: rgba(16, 185, 129, 0.08); }
+tr.answered { background: rgba(0, 69, 146, 0.06); }
+tr.answered:hover { background: rgba(0, 69, 146, 0.08); }
 </style>

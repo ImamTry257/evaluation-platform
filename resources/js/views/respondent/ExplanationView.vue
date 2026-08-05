@@ -45,9 +45,9 @@ const scaleItems = [
   { value: 2, label: 'Tidak Sesuai', bg: 'bg-orange-50', border: 'border-orange-100', text: 'text-orange-600' },
   { value: 3, label: 'Kurang Sesuai', bg: 'bg-yellow-50', border: 'border-yellow-100', text: 'text-yellow-600' },
   { value: 4, label: 'Netral', bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-500', subText: 'text-gray-600' },
-  { value: 5, label: 'Cukup Sesuai', bg: 'bg-emerald-50', border: 'border-emerald-100', text: 'text-emerald-600' },
-  { value: 6, label: 'Sesuai', bg: 'bg-primary/10', border: 'border-primary/30', text: 'text-primary' },
-  { value: 7, label: 'Sangat Sesuai Sekali', bg: 'bg-primary', border: 'border-primary/20', text: 'text-white', isWhite: true },
+  { value: 5, label: 'Cukup Sesuai', bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-600' },
+  { value: 6, label: 'Sesuai', bg: 'bg-[#004592]/10', border: 'border-[#004592]/30', text: 'text-[#004592]' },
+  { value: 7, label: 'Sangat Sesuai Sekali', bg: 'bg-[#004592]', border: 'border-[#004592]/20', text: 'text-white', isWhite: true },
 ]
 
 async function handleStartEvaluation() {
@@ -134,7 +134,7 @@ onMounted(async () => {
       <main class="pt-14 pb-32 max-w-[1440px] mx-auto px-6 space-y-8">
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20 fade-in">
           <div class="flex items-center gap-3 mb-4">
-            <span class="material-symbols-outlined text-primary">info</span>
+            <span class="material-symbols-outlined text-[#004592]">info</span>
             <h3 class="font-title-md text-title-md text-on-surface">Tentang Platform</h3>
           </div>
           <p class="font-body-base text-body-base text-secondary leading-relaxed">
@@ -144,8 +144,8 @@ onMounted(async () => {
 
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 fade-in-delay">
           <div v-for="item in infoItems" :key="item.label"
-            class="bg-surface-container-low p-4 rounded-xl flex flex-col items-center text-center group hover:bg-primary-container transition-all duration-200 cursor-pointer hover:-translate-y-1 hover:shadow-lg">
-            <span class="material-symbols-outlined text-primary mb-2 group-hover:text-white">{{ item.icon }}</span>
+            class="bg-surface-container-low p-4 rounded-xl flex flex-col items-center text-center group hover:bg-[#004592] transition-all duration-200 cursor-pointer hover:-translate-y-1 hover:shadow-lg">
+            <span class="material-symbols-outlined text-[#004592] mb-2 group-hover:text-white">{{ item.icon }}</span>
             <span class="font-label-caps text-label-caps text-outline uppercase mb-1 group-hover:text-white/80">{{ item.label }}</span>
             <span class="font-body-base font-bold text-on-surface group-hover:text-white">{{ item.value }}</span>
           </div>
@@ -153,12 +153,12 @@ onMounted(async () => {
 
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20 fade-in-delay-2">
           <div class="flex items-center gap-3 mb-6">
-            <span class="material-symbols-outlined text-primary">rule</span>
+            <span class="material-symbols-outlined text-[#004592]">rule</span>
             <h3 class="font-title-md text-title-md text-on-surface">Instruksi Pengisian</h3>
           </div>
           <ul class="space-y-4">
-            <li v-for="inst in instructions" :key="inst.title" class="flex gap-4 items-start px-3 py-2 rounded-lg -mx-3 hover:bg-primary/[0.03] transition-colors">
-              <span class="material-symbols-outlined text-primary-container mt-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <li v-for="inst in instructions" :key="inst.title" class="flex gap-4 items-start px-3 py-2 rounded-lg -mx-3 hover:bg-[#004592]/[0.03] transition-colors">
+              <span class="material-symbols-outlined text-[#004592] mt-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
               <div>
                 <span class="font-body-base font-medium text-on-surface">{{ inst.title }}</span>
                 <p class="text-body-sm text-secondary">{{ inst.desc }}</p>
@@ -169,7 +169,7 @@ onMounted(async () => {
 
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/20 fade-in-delay-2">
           <div class="flex items-center gap-3 mb-6">
-            <span class="material-symbols-outlined text-primary">straighten</span>
+            <span class="material-symbols-outlined text-[#004592]">straighten</span>
             <h3 class="font-title-md text-title-md text-on-surface">Skala Penilaian (Likert 1-7)</h3>
           </div>
           <div class="flex flex-wrap md:flex-nowrap gap-2 w-full">
@@ -187,18 +187,18 @@ onMounted(async () => {
       <footer class="fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-6 py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div v-if="error" class="text-error text-body-sm">{{ error }}</div>
-          <label class="flex items-center gap-3 cursor-pointer group transition-colors duration-300 hover:text-primary">
+          <label class="flex items-center gap-3 cursor-pointer group transition-colors duration-300 hover:text-[#004592]">
             <div class="relative">
               <input v-model="isChecked" class="peer hidden" type="checkbox" />
-              <div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+              <div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-[#004592] peer-checked:border-[#004592]">
                 <span class="material-symbols-outlined text-white text-lg scale-0 transition-transform peer-checked:scale-100">check</span>
               </div>
             </div>
-            <span class="font-body-base text-on-surface group-hover:text-primary transition-colors">Saya telah membaca dan memahami seluruh instruksi</span>
+            <span class="font-body-base text-on-surface group-hover:text-[#004592] transition-colors">Saya telah membaca dan memahami seluruh instruksi</span>
           </label>
           <button :disabled="!isChecked || starting"
-            class="px-8 h-12 rounded-xl bg-primary-container text-white font-bold flex items-center justify-center gap-2 transition-all duration-300"
-            :class="isChecked && !starting ? 'hover:bg-primary shadow-md cursor-pointer' : 'opacity-50 cursor-not-allowed'"
+            class="px-8 h-12 rounded-xl bg-[#004592] text-white font-bold flex items-center justify-center gap-2 transition-all duration-300"
+            :class="isChecked && !starting ? 'hover:bg-[#2f6fed] shadow-md cursor-pointer' : 'opacity-50 cursor-not-allowed'"
             @click="handleStartEvaluation">
             <span v-if="starting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
             <template v-else>Mulai Evaluasi<span class="material-symbols-outlined">arrow_forward</span></template>

@@ -48,14 +48,14 @@ function handleProfile() {
           <button
             class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
             :class="currentStep === step.number
-              ? 'bg-primary text-white cursor-default'
+              ? 'bg-[#004592] text-white cursor-default'
               : 'text-on-surface-variant hover:bg-surface-container cursor-pointer'"
             @click="emit('navigateStep', step.number)"
           >
             <span
               class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
               :class="currentStep === step.number
-                ? 'bg-white text-primary border-white'
+                ? 'bg-white text-[#004592] border-white'
                 : 'border border-current'"
             >
               {{ step.number }}
@@ -74,8 +74,8 @@ function handleProfile() {
         <!-- User Menu -->
         <div class="relative">
           <button @click="showUserMenu = !showUserMenu"
-            class="w-9 h-9 rounded-full bg-primary-container/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
-            <span class="material-symbols-outlined text-primary text-[20px]">person</span>
+            class="w-9 h-9 rounded-full bg-[#004592]/20 border-2 border-outline-variant/50 flex items-center justify-center hover:shadow-md transition-all">
+            <span class="material-symbols-outlined text-[#004592] text-[20px]">person</span>
           </button>
           <div v-if="showUserMenu"
             class="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-outline-variant/30 py-1 z-[300]"

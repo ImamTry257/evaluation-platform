@@ -28,37 +28,41 @@ onUnmounted(() => {
       <nav class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <!-- Logo -->
         <RouterLink to="/" class="flex items-center gap-3 icon-hover-spin cursor-pointer">
-          <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center float-hover">
-            <span class="material-symbols-outlined text-white" style="font-size: 22px;">eco</span>
+          <div class="float-hover">
+            <img
+              src="https://www.uny.ac.id/sites/default/files/inline-images/logo-uny.png"
+              alt="Logo UNY"
+              class="w-10 h-10 object-contain"
+            />
           </div>
           <span class="font-bold text-lg text-on-surface-variant hidden md:block leading-tight max-w-[300px]">
-            Platform Evaluasi Lingkungan
+            Platform Evaluasi Kebijakan
           </span>
         </RouterLink>
 
         <!-- Desktop Nav -->
         <div class="hidden lg:flex items-center gap-8">
-          <RouterLink to="/" class="nav-link text-primary font-semibold border-b-2 border-primary pb-1 hover:-translate-y-0.5 transition-all duration-300">
+          <RouterLink to="/" class="nav-link text-[#004592] font-semibold border-b-2 border-[#004592] pb-1 hover:-translate-y-0.5 transition-all duration-300">
             Home
           </RouterLink>
-          <RouterLink to="/about" class="nav-link text-on-surface-variant hover:text-primary hover:-translate-y-0.5 transition-all duration-300 font-medium">
-            About Us
+          <RouterLink to="/about" class="nav-link text-on-surface-variant hover:text-[#004592] hover:-translate-y-0.5 transition-all duration-300 font-medium">
+            Tentang Kami
           </RouterLink>
-          <div class="h-6 w-px bg-outline"></div>
-          <div class="flex gap-3">
+          <!-- <div class="h-6 w-px bg-outline"></div> -->
+          <!-- <div class="flex gap-3">
             <RouterLink
               to="/login"
-              class="press-scale px-5 py-2.5 text-primary font-semibold border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all duration-500"
+              class="press-scale px-5 py-2.5 text-[#004592] font-semibold border-2 border-[#004592] rounded-xl hover:bg-[#004592] hover:text-white transition-all duration-500"
             >
               Login
             </RouterLink>
             <RouterLink
               to="/register"
-              class="press-scale px-5 py-2.5 bg-primary text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all duration-500"
+              class="press-scale px-5 py-2.5 bg-[#004592] text-white rounded-xl font-semibold hover:bg-[#2f6fed] transition-all duration-500"
             >
               Daftar
             </RouterLink>
-          </div>
+          </div> -->
         </div>
 
         <!-- Mobile Menu Button -->
@@ -75,23 +79,23 @@ onUnmounted(() => {
         v-if="isMobileMenuOpen"
         class="lg:hidden bg-white px-6 py-4 space-y-4"
       >
-        <RouterLink to="/" class="block text-primary font-semibold" @click="isMobileMenuOpen = false">
+        <RouterLink to="/" class="block text-[#004592] font-semibold" @click="isMobileMenuOpen = false">
           Home
         </RouterLink>
-        <RouterLink to="/about" class="block text-on-surface-variant hover:text-primary font-medium" @click="isMobileMenuOpen = false">
+        <RouterLink to="/about" class="block text-on-surface-variant hover:text-[#004592] font-medium" @click="isMobileMenuOpen = false">
           About Us
         </RouterLink>
         <div class="pt-4 flex flex-col gap-3">
           <RouterLink
             to="/login"
-            class="press-scale px-5 py-2.5 text-primary font-semibold border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all duration-500 text-center"
+            class="press-scale px-5 py-2.5 text-[#004592] font-semibold border-2 border-[#004592] rounded-xl hover:bg-[#004592] hover:text-white transition-all duration-500 text-center"
             @click="isMobileMenuOpen = false"
           >
             Login
           </RouterLink>
           <RouterLink
             to="/register"
-            class="press-scale px-5 py-2.5 bg-primary text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all duration-500 text-center"
+            class="press-scale px-5 py-2.5 bg-[#004592] text-white rounded-xl font-semibold hover:bg-[#2f6fed] transition-all duration-500 text-center"
             @click="isMobileMenuOpen = false"
           >
             Register
@@ -155,7 +159,7 @@ onUnmounted(() => {
   left: 50%;
   width: 0;
   height: 2px;
-  background: #059669;
+  background: #004592;
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }

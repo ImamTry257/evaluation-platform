@@ -23,50 +23,6 @@ const { loading, error, fetchResults } = useEvaluation()
 const resultData = ref<any>(null)
 
 // Computed from API data
-const overallPercentage = computed(() => resultData.value?.result?.overallPercentage || 0)
-const overallCategory = computed(() => resultData.value?.result?.overallCategory || '-')
-const overallScore = computed(() => resultData.value?.result?.overallScore || 0)
-const conclusion = computed(() => resultData.value?.result?.conclusion || '-')
-const details = computed(() => resultData.value?.result?.details || [])
-
-const circumference = 2 * Math.PI * 80
-const strokeDashoffset = computed(() => {
-  return circumference - (overallPercentage.value / 100) * circumference
-})
-
-const categoryLabel = computed(() => {
-  const labels: Record<string, string> = {
-    A: 'Sangat Baik',
-    B: 'Baik',
-    C: 'Sedang',
-    D: 'Kurang',
-    E: 'Sangat Kurang',
-  }
-  return labels[overallCategory.value] || '-'
-})
-
-function getScoreColor(score: number) {
-  if (score >= 75) return 'text-primary'
-  if (score >= 60) return 'text-tertiary'
-  return 'text-error'
-}
-
-function getScoreBarColor(score: number) {
-  if (score >= 75) return 'bg-primary'
-  if (score >= 60) return 'bg-tertiary'
-  return 'bg-error'
-}
-
-function getCategoryColor(category: string) {
-  const colors: Record<string, string> = {
-    A: 'bg-primary-container/10 text-on-primary-container border-primary-container/20',
-    B: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    C: 'bg-orange-100 text-orange-800 border-orange-200',
-    D: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    E: 'bg-red-100 text-red-800 border-red-200',
-  }
-  return colors[category] || colors.C
-}
 
 // Fetch results
 async function loadResults() {
@@ -106,14 +62,14 @@ onMounted(() => {
     <div v-else-if="error" class="flex flex-col items-center justify-center py-20">
       <span class="material-symbols-outlined text-[48px] text-error">error</span>
       <p class="text-body-base text-error mt-4">{{ error }}</p>
-      <button @click="router.push('/respondent')" class="mt-4 text-primary text-body-sm font-semibold hover:underline">Kembali ke Beranda</button>
+      <button @click="router.push('/respondent')" class="mt-4 text-[#004592] text-body-sm font-semibold hover:underline">Kembali ke Beranda</button>
     </div>
 
     <template v-else-if="resultData">
       <!-- Success Header -->
       <section class="flex flex-col items-center text-center mb-12 fade-in">
         <div class="w-48 h-48 mb-6 float-animation flex items-center justify-center">
-          <div class="bg-primary text-on-primary rounded-full p-5 shadow-lg flex items-center justify-center">
+          <div class="bg-[#004592] text-on-primary rounded-full p-5 shadow-lg flex items-center justify-center">
             <span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
           </div>
         </div>
@@ -121,73 +77,6 @@ onMounted(() => {
         <p class="font-body-base text-body-base text-secondary max-w-lg fade-in-delay">
           Terima kasih telah mengisi. Data Anda telah berhasil tersimpan dalam sistem.
         </p>
-      </section>
-
-      <!-- Main Summary Grid -->
-      <div class="flex flex-col items-center gap-6 mb-12">
-        <!-- Score Card -->
-        <div class="w-full max-w-sm bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col items-center justify-center text-center fade-in-delay-2">
-          <div class="relative flex items-center justify-center mb-6">
-            <svg class="w-48 h-48">
-              <circle class="text-secondary-container" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
-              <circle
-                class="text-primary progress-ring-circle"
-                cx="96" cy="96" fill="transparent" r="80"
-                stroke="currentColor"
-                :stroke-dasharray="circumference"
-                :stroke-dashoffset="strokeDashoffset"
-                stroke-linecap="round"
-                stroke-width="12"
-              ></circle>
-            </svg>
-            <div class="absolute flex flex-col items-center">
-              <span class="font-display-lg text-display-md text-primary leading-none">{{ overallPercentage }}%</span>
-              <span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Persentase</span>
-            </div>
-          </div>
-          <!-- <div
-            class="px-6 py-2 rounded-full font-title-md text-title-md inline-flex items-center gap-2 border cursor-default"
-            :class="getCategoryColor(overallCategory)"
-          >
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stars</span>
-            {{ categoryLabel }}
-          </div> -->
-        </div>
-
-        <!-- Conclusion Card -->
-        <!-- <div class="md:col-span-7 bg-surface-container-low p-8 rounded-xl shadow-sm border border-outline-variant flex flex-col justify-center fade-in-delay-2">
-          <h3 class="font-headline-lg text-headline-lg text-on-surface mb-6 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary">analytics</span>
-            Kesimpulan Angket
-          </h3>
-          <p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
-            {{ conclusion }}
-          </p>
-        </div> -->
-      </div>
-
-      <!-- Detailed Breakdown -->
-      <section class="mb-12 fade-in-delay-2">
-        <h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2 mb-6">
-          <span class="material-symbols-outlined text-primary">segment</span>
-          Detail Capaian Per Komponen
-        </h2>
-
-        <div class="space-y-4">
-          <div v-for="detail in details" :key="detail.indicator?.id || detail.indicatorId" class="px-4 py-3 rounded-lg hover:bg-primary/[0.03] transition-colors">
-            <div class="flex justify-between items-end mb-2">
-              <span class="font-body-base text-on-surface font-medium">{{ detail.indicator?.name || 'Indikator' }}</span>
-              <span class="font-label-caps" :class="getScoreColor(detail.percentage)">{{ detail.percentage }}%</span>
-            </div>
-            <div class="h-2 w-full bg-secondary-container rounded-full overflow-hidden">
-              <div
-                class="h-full rounded-full transition-all duration-700"
-                :class="getScoreBarColor(detail.percentage)"
-                :style="{ width: detail.percentage + '%' }"
-              ></div>
-            </div>
-          </div>
-        </div>
       </section>
 
       <!-- Footer Actions -->
@@ -200,7 +89,7 @@ onMounted(() => {
         -->
         <button
           @click="router.push('/respondent')"
-          class="px-8 py-3 text-secondary font-body-base text-body-base flex items-center justify-center gap-2 hover:text-primary transition-colors"
+          class="px-8 py-3 text-secondary font-body-base text-body-base flex items-center justify-center gap-2 hover:text-[#004592] transition-colors"
         >
           <span class="material-symbols-outlined">refresh</span>
           Kembali ke Beranda

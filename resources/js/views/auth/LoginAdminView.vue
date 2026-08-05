@@ -29,7 +29,7 @@ async function handleLogin() {
           <span class="font-headline-lg text-[22px] tracking-tight text-primary font-bold">PolicyEval</span>
         </div> -->
         <!-- Accent line -->
-        <!-- <div class="h-[3px] w-12 mx-auto rounded-full mb-6" style="background: linear-gradient(90deg, #10b981, #006c49);"></div> -->
+        <!-- <div class="h-[3px] w-12 mx-auto rounded-full mb-6" style="background: linear-gradient(90deg, #004592, #004592);"></div> -->
       </header>
 
       <!-- Login Card -->
@@ -68,7 +68,7 @@ async function handleLogin() {
                 placeholder="admin@gmail.com"
                 @input="clearFieldError('email')"
                 :class="[
-                  'form-input w-full h-11 pl-11 pr-4 bg-surface border rounded-xl font-body-base text-body-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60',
+                  'form-input w-full h-11 pl-11 pr-4 bg-surface border rounded-xl font-body-base text-body-sm focus:ring-2 focus:ring-[#004592]/20 focus:border-[#004592] outline-none placeholder:text-outline-variant/60',
                   fieldErrors.email ? 'border-error' : 'border-outline-variant'
                 ]"
               />
@@ -95,14 +95,14 @@ async function handleLogin() {
                 placeholder="••••••••"
                 @input="clearFieldError('password')"
                 :class="[
-                  'form-input w-full h-11 pl-11 pr-11 bg-surface border rounded-xl font-body-base text-body-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none placeholder:text-outline-variant/60',
+                  'form-input w-full h-11 pl-11 pr-11 bg-surface border rounded-xl font-body-base text-body-sm focus:ring-2 focus:ring-[#004592]/20 focus:border-[#004592] outline-none placeholder:text-outline-variant/60',
                   fieldErrors.password ? 'border-error' : 'border-outline-variant'
                 ]"
               />
               <button
                 type="button"
                 @click="showPassword = !showPassword"
-                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-outline transition-colors hover:text-primary-dark"
+                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-outline transition-colors hover:text-[#2f6fed]"
               >
                 <span class="material-symbols-outlined text-[18px]">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
               </button>
@@ -117,7 +117,7 @@ async function handleLogin() {
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full h-12 bg-primary-container text-on-primary rounded-xl font-title-md flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:bg-primary-dark active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none mt-2"
+            class="w-full h-12 bg-[#004592] text-on-primary rounded-xl font-title-md flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:bg-[#2f6fed] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none mt-2"
           >
             <span v-if="isLoading" class="animate-spin material-symbols-outlined text-[18px]">progress_activity</span>
             <span v-if="!isLoading">Masuk</span>
@@ -130,7 +130,7 @@ async function handleLogin() {
       <footer class="mt-6 text-center fade-in-delay-2">
         <p class="font-body-sm text-body-sm text-on-surface-variant">
           Kembali ke
-          <router-link to="/login" class="text-primary font-semibold transition-colors hover:text-primary-dark">halaman responden</router-link>
+          <router-link to="/login" class="text-[#004592] font-semibold transition-colors hover:text-[#2f6fed]">halaman responden</router-link>
         </p>
       </footer>
 
@@ -144,20 +144,20 @@ async function handleLogin() {
   transition: all 0.3s ease;
 }
 .form-input:hover {
-  border-color: #10b981;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.1);
+  border-color: #004592;
+  box-shadow: 0 2px 10px rgba(0, 69, 146, 0.1);
 }
 .form-input:focus {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 69, 146, 0.12);
 }
 
 /* ===== FORM GROUP ===== */
 .form-group:focus-within label {
-  color: #10b981;
+  color: #004592;
 }
 .form-group:focus-within .text-outline {
-  color: #10b981;
+  color: #004592;
 }
 
 /* ===== ANIMATIONS ===== */
