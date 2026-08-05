@@ -307,6 +307,48 @@ class AuthController extends Controller
     }
 
     /**
+     * GET /api/v1/auth/profile
+     * Get authenticated user profile.
+     */
+    public function profile(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            $response = $this->successResponse([
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => strtoupper($user->role),
+                'isActive' => (bool) $user->is_active,
+                'createdAt' => $user->created_at,
+                'updatedAt' => $user->updated_at,
+                'lastLoginAt' => $user->last_login_at,
+            ]);
+
+            Log::info('Get profile successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('Get profile error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
+        }
+    }
+
+    /**
      * GET /api/v1/auth/validate
      * Validate current access token and return user profile.
      */
