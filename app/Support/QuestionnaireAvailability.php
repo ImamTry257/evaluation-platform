@@ -69,22 +69,9 @@ class QuestionnaireAvailability
             }
         }
 
-        // 3. Responden sudah pernah submit pada kuesioner ini?
-        if ($user) {
-            $alreadySubmitted = $questionnaire->responseSessions()
-                ->where('user_id', $user->id)
-                ->where('status', 'submitted')
-                ->exists();
-
-            if ($alreadySubmitted) {
-                return [
-                    'available' => false,
-                    'reason' => QuestionnaireAvailabilityReason::ALREADY_SUBMITTED,
-                    'period' => self::periodShape($period),
-                    'estimatedMinutes' => $questionnaire->duration_minutes,
-                ];
-            }
-        }
+        // 3. Responden boleh mengisi ulang — session yang sudah submitted
+        //    TIDAK memblokir availability; start() tetap membuat session baru.
+        //    (Case ALREADY_SUBMITTED di enum dipertahankan untuk keperluan lain.)
 
         // 4. Kuesioner aktif tersedia
         return [

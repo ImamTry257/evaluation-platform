@@ -78,12 +78,12 @@ export function useEvaluation() {
     }
   }
 
-  // Submit evaluation
-  async function submitEvaluation(sessionId: number) {
+  // Submit evaluation (force=true untuk jalur timeout: izinkan jawaban parsial)
+  async function submitEvaluation(sessionId: number, body: Record<string, any> = {}) {
     loading.value = true
     error.value = null
     try {
-      const { data } = await api.post(`/evaluations/${sessionId}/submit`)
+      const { data } = await api.post(`/evaluations/${sessionId}/submit`, body)
       return data.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Gagal mengirim evaluasi'

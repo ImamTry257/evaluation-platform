@@ -29,6 +29,8 @@ const showTimeoutModal = ref(false)
 const showProfileBlocked = ref(false)
 const submitting = ref(false)
 const timeoutSubmitting = ref(false)
+const timeoutDone = ref(false)
+const timeoutRetryable = ref(false)
 const toastMsg = ref('')
 const toastVisible = ref(false)
 const currentPage = ref<any>(pageId.value)
@@ -151,7 +153,7 @@ function confirmReset() {
 // Logout
 async function handleLogout() {
   await authStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 
 // Profile blocking logic for angket filling mode
@@ -167,20 +169,25 @@ function continueWithAngket() {
   closeProfileBlocked()
 }
 
-// Timeout handlers
-async function handleTimeoutSubmit() {
+// Timeout handlers — submit otomatis saat waktu habis (Opsi B)
+async function performTimeoutSubmit() {
+  if (timeoutSubmitting.value) return
   timeoutSubmitting.value = true
   try {
-    await submitEvaluation(sessionId.value)
-    clearTimerLocal()
-    router.push(`/respondent/result/${sessionId.value}`)
+    await submitEvaluation(sessionId.value, { force: true })
+    timeoutDone.value = true
+    timeoutRetryable.value = false
   } catch (err) {
-    // Even if submit fails, redirect to result (backend may have partial data)
-    clearTimerLocal()
-    router.push(`/respondent/result/${sessionId.value}`)
+    timeoutDone.value = false
+    timeoutRetryable.value = true
   } finally {
     timeoutSubmitting.value = false
   }
+}
+
+function handleTimeoutSubmit() {
+  clearTimerLocal()
+  router.push(`/respondent/result/${sessionId.value}`)
 }
 
 function handleTimeoutGoHome() {
@@ -196,11 +203,12 @@ function startTimer() {
     if (timeLeft.value > 0) {
       timeLeft.value--
     } else {
-      // Timer expired — show timeout modal
+      // Timer expired — tampilkan modal + auto-submit jawaban yang ada
       clearTimerLocal()
       if (timerInterval) clearInterval(timerInterval)
       if (saveInterval) clearInterval(saveInterval)
       showTimeoutModal.value = true
+      performTimeoutSubmit()
     }
   }, 1000)
   // Save to localStorage every 5 seconds
@@ -444,16 +452,28 @@ onUnmounted(() => {
     <!-- Timeout Modal -->
     <div v-if="showTimeoutModal" class="fixed inset-0 z-[600] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);animation:fadeIn .4s ease-out;">
       <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10 text-center" style="animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275);">
-        <!-- Icon -->
-        <div class="mx-auto mb-6 w-20 h-20 rounded-full bg-error/10 flex items-center justify-center" style="animation:pulse 2s ease-in-out infinite;">
-          <div class="w-16 h-16 rounded-full bg-error/20 flex items-center justify-center" style="box-shadow:0 0 0 0 rgba(186,26,26,0.3);animation:clockPulse 1.5s ease-in-out infinite;">
-            <span class="material-symbols-outlined text-error" style="font-size:36px;">timer_off</span>
+        <!-- Icon: spinner / sukses / gagal -->
+        <div class="mx-auto mb-6 w-20 h-20 rounded-full flex items-center justify-center" :class="timeoutSubmitting ? 'bg-[#004592]/10' : (timeoutDone ? 'bg-emerald-50' : 'bg-error/10')" style="animation:pulse 2s ease-in-out infinite;">
+          <div v-if="timeoutSubmitting" class="w-16 h-16 rounded-full bg-[#004592]/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#004592] animate-spin" style="font-size:34px;">progress_activity</span>
+          </div>
+          <div v-else class="w-16 h-16 rounded-full flex items-center justify-center" :class="timeoutDone ? 'bg-emerald-100 text-emerald-600' : 'bg-error/20 text-error'" style="box-shadow:0 0 0 0 rgba(186,26,26,0.3);animation:clockPulse 1.5s ease-in-out infinite;">
+            <span v-if="timeoutDone" class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:36px;">check_circle</span>
+            <span v-else class="material-symbols-outlined" style="font-size:36px;">timer_off</span>
           </div>
         </div>
         <!-- Title -->
         <h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Waktu Habis!</h2>
         <p class="font-body-base text-on-surface-variant mb-6 leading-relaxed">
-          Batas waktu evaluasi telah berakhir. Jawaban yang sudah Anda isi telah <strong>tersimpan otomatis</strong> oleh sistem.
+          <template v-if="timeoutSubmitting">
+            Batas waktu evaluasi telah berakhir. Sistem sedang mengirim jawaban Anda secara otomatis...
+          </template>
+          <template v-else-if="timeoutDone">
+            Batas waktu evaluasi telah berakhir. Jawaban yang sudah Anda isi telah <strong>dikirim otomatis</strong> oleh sistem.
+          </template>
+          <template v-else>
+            Pengiriman otomatis gagal. Periksa koneksi Anda lalu coba kirim ulang, atau kembali ke beranda.
+          </template>
         </p>
         <!-- Summary -->
         <div class="bg-surface-container-low rounded-xl p-5 mb-6 text-left">
@@ -471,14 +491,35 @@ onUnmounted(() => {
         </div>
         <!-- Actions -->
         <div class="flex flex-col gap-3">
-          <button @click="handleTimeoutSubmit" :disabled="timeoutSubmitting"
-            class="w-full px-8 py-3.5 rounded-xl bg-[#004592] text-on-primary font-title-md text-title-md font-semibold shadow-lg shadow-[#004592]/20 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50">
-            <span v-if="timeoutSubmitting" class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-            <span v-else class="material-symbols-outlined">analytics</span>
-            {{ timeoutSubmitting ? 'Mengirim...' : 'Lihat Hasil Evaluasi' }}
+          <button
+            v-if="timeoutSubmitting"
+            disabled
+            class="w-full px-8 py-3.5 rounded-xl bg-[#004592] text-white font-title-md text-title-md font-semibold shadow-lg shadow-[#004592]/20 flex items-center justify-center gap-2 opacity-60 cursor-not-allowed"
+          >
+            <span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+            Mengirim otomatis...
           </button>
-          <button @click="handleTimeoutGoHome"
-            class="w-full px-8 py-3 rounded-xl border border-outline-variant text-on-surface-variant font-body-base font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-2">
+          <button
+            v-else-if="timeoutDone"
+            class="w-full px-8 py-3.5 rounded-xl bg-[#004592] text-white font-title-md text-title-md font-semibold shadow-lg shadow-[#004592]/20 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+            @click="handleTimeoutSubmit"
+          >
+            <span class="material-symbols-outlined">analytics</span>
+            Selesai Evaluasi
+          </button>
+          <button
+            v-else
+            class="w-full px-8 py-3.5 rounded-xl bg-[#004592] text-white font-title-md text-title-md font-semibold shadow-lg shadow-[#004592]/20 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+            @click="performTimeoutSubmit"
+          >
+            <span class="material-symbols-outlined">refresh</span>
+            Coba Kirim Ulang
+          </button>
+          <button
+            @click="handleTimeoutGoHome"
+            :disabled="timeoutSubmitting"
+            class="w-full px-8 py-3 rounded-xl border border-outline-variant text-on-surface-variant font-body-base font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <span class="material-symbols-outlined text-[18px]">home</span>
             Kembali ke Beranda
           </button>

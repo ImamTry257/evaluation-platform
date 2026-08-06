@@ -331,14 +331,22 @@ class EvaluasiController extends Controller
                 return $this->errorResponse('Session not found or not in progress', 404);
             }
 
-            // 2. Validasi jawaban di DALAM transaksi (setelah lock)
-            $totalQuestions = Question::whereHas('indicator.subComponent.component', function ($q) use ($session) {
-                $q->where('questionnaire_id', $session->questionnaire_id);
-            })->count();
+            // 2. Validasi jawaban di DALAM transaksi (setelah lock).
+            //    force=true dipakai jalur timeout: jawaban parsial diterima,
+            //    skor dihitung dari jawaban yang sudah ada.
+            $force = (bool) $request->input('force', false);
+
+            // Hitung total soal LIVE (bukan soft-deleted) milik kuesioner ini.
+            // Join eksplisit — relasi Eloquent whereHas ternyata tidak resolvable (selalu 0).
+            $totalQuestions = \App\Models\Question::join('indicators', 'indicators.id', '=', 'questions.indicator_id')
+                ->join('sub_components', 'sub_components.id', '=', 'indicators.sub_component_id')
+                ->join('components', 'components.id', '=', 'sub_components.component_id')
+                ->where('components.questionnaire_id', $session->questionnaire_id)
+                ->count();
 
             $answeredQuestions = $session->answers()->count();
 
-            if ($answeredQuestions < $totalQuestions) {
+            if (!$force && $answeredQuestions < $totalQuestions) {
                 DB::rollBack();
                 return $this->errorResponse('Please answer all questions before submitting', 422, [
                     'answered' => $answeredQuestions,
