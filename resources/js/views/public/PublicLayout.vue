@@ -35,8 +35,8 @@ onUnmounted(() => {
               class="w-10 h-10 object-contain"
             />
           </div>
-          <span class="font-bold text-lg text-on-surface-variant hidden md:block leading-tight max-w-[300px]">
-            Platform Evaluasi Kebijakan
+          <span class="font-bold text-lg text-on-surface-variant hidden md:block leading-tight max-w-[500px]">
+            Platform Evaluasi Implementasi Kebijakan Lingkungan
           </span>
         </RouterLink>
 
