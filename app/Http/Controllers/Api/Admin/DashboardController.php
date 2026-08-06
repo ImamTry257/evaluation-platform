@@ -22,16 +22,23 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         // === Summary Stats ===
-        $totalRespondent = User::where('role', 'RESPONDENT')->count();
+        $totalRespondent = User::where('role', 'RESPONDENT')
+            ->where('is_active', true)
+            ->count();
 
-        $submittedCount = ResponseSession::where('status', 'submitted')->count();
-        $inProgressCount = ResponseSession::where('status', 'in_progress')->count();
+        $submittedCount = ResponseSession::where('status', 'submitted')
+            ->whereHas('user', fn ($q) => $q->where('is_active', true))
+            ->count();
+        $inProgressCount = ResponseSession::where('status', 'in_progress')
+            ->whereHas('user', fn ($q) => $q->where('is_active', true))
+            ->count();
         $notStartedCount = $totalRespondent - $submittedCount - $inProgressCount;
         if ($notStartedCount < 0) $notStartedCount = 0;
 
         // === Weekly Progress (last 7 days) ===
         $weeklyData = ResponseSession::where('status', 'submitted')
             ->where('submitted_at', '>=', now()->subDays(7)->startOfDay())
+            ->whereHas('user', fn ($q) => $q->where('is_active', true))
             ->select(
                 DB::raw('DAYOFWEEK(submitted_at) as day_of_week'),
                 DB::raw('DATE(submitted_at) as date'),
@@ -127,6 +134,7 @@ class DashboardController extends Controller
             ])
                 ->where('questionnaire_id', $publishedQuestionnaire->id)
                 ->where('status', 'submitted')
+                ->whereHas('user', fn ($q) => $q->where('is_active', true))
                 ->get();
 
             if ($submittedSessions->isNotEmpty()) {

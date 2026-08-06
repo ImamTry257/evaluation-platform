@@ -25,7 +25,9 @@ class ReportController extends Controller
             'user',
             'questionnaire' => fn ($q) => $q->withTrashed(),
             'result',
-        ]);
+        ])
+            // Hanya hitung sesi responden yang masih aktif (is_active=true)
+            ->whereHas('user', fn ($q) => $q->where('is_active', true));
 
         // Filter by questionnaire
         if ($request->has('questionnaireId') && $request->questionnaireId) {
@@ -258,7 +260,9 @@ class ReportController extends Controller
 
         // Bulk summary export
         $query = ResponseSession::with(['user', 'questionnaire', 'result'])
-            ->where('status', 'submitted');
+            ->where('status', 'submitted')
+            // Hanya responden yang masih aktif (is_active=true)
+            ->whereHas('user', fn ($q) => $q->where('is_active', true));
 
         if ($request->has('questionnaireId') && $request->questionnaireId) {
             $query->where('questionnaire_id', $request->questionnaireId);

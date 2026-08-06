@@ -21,7 +21,8 @@ class RespondenController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('role', 'respondent');
+        $query = User::where('role', 'respondent')
+            ->where('is_active', true);
 
         // Search by name, username, or email
         if ($request->has('search') && $request->search) {
@@ -31,11 +32,6 @@ class RespondenController extends Controller
                   ->orWhere('username', 'like', '%' . $search . '%')
                   ->orWhere('email', 'like', '%' . $search . '%');
             });
-        }
-
-        // Filter by isActive (request key camelCase, DB column snake_case)
-        if ($request->has('isActive') && $request->isActive !== '') {
-            $query->where('is_active', filter_var($request->isActive, FILTER_VALIDATE_BOOLEAN));
         }
 
         $limit = min($request->get('limit', 10), 100);
@@ -90,7 +86,7 @@ class RespondenController extends Controller
      */
     public function show($id)
     {
-        $respondent = User::where('role', 'respondent')->find($id);
+        $respondent = User::where('role', 'respondent')->where('is_active', true)->find($id);
 
         if (!$respondent) {
             return $this->errorResponse('Respondent not found', 404);
@@ -108,7 +104,7 @@ class RespondenController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $respondent = User::where('role', 'respondent')->find($id);
+        $respondent = User::where('role', 'respondent')->where('is_active', true)->find($id);
 
         if (!$respondent) {
             return $this->errorResponse('Respondent not found', 404);
@@ -152,18 +148,16 @@ class RespondenController extends Controller
      */
     public function destroy($id)
     {
-        $respondent = User::where('role', 'respondent')->find($id);
+        $respondent = User::where('role', 'respondent')->where('is_active', true)->find($id);
 
         if (!$respondent) {
             return $this->errorResponse('Respondent not found', 404);
         }
 
-        // Check if respondent has response sessions
-        if ($respondent->responseSessions()->count() > 0) {
-            return $this->errorResponse('Cannot delete respondent with existing evaluation sessions', 422);
-        }
-
-        $respondent->delete();
+        // Delete secara log = nonaktifkan akun (is_active=false). Responden
+        // langsung hilang dari UI & tak dihitung statistik, data historis
+        // response_sessions tetap utuh tersimpan.
+        $respondent->update(['is_active' => false]);
 
         return $this->successResponse(null, 'Respondent deleted successfully');
     }

@@ -99,7 +99,8 @@ function openEditModal(r: any) {
     username: r.username,
     email: r.email,
     password: '',
-    isActive: r.isActive,
+    // Responden selalu aktif (toggle status disembunyikan)
+    isActive: true,
   }
   showFormModal.value = true
 }
@@ -181,32 +182,14 @@ onMounted(() => {
     </section>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 fade-in-delay">
+    <div class="grid grid-cols-1 gap-4 mb-8 fade-in-delay">
       <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/30 flex items-center gap-4">
         <div class="w-12 h-12 bg-primary-container/20 rounded-xl flex items-center justify-center text-primary">
           <span class="material-symbols-outlined">person</span>
         </div>
         <div>
-          <p class="text-xs font-bold text-secondary uppercase tracking-wider">Total Responden</p>
+          <p class="text-xs font-bold text-secondary uppercase tracking-wide">Total Responden</p>
           <p class="text-2xl font-bold text-on-surface">{{ stats.total }}</p>
-        </div>
-      </div>
-      <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/30 flex items-center gap-4">
-        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700">
-          <span class="material-symbols-outlined">check_circle</span>
-        </div>
-        <div>
-          <p class="text-xs font-bold text-secondary uppercase tracking-wider">Aktif</p>
-          <p class="text-2xl font-bold text-on-surface">{{ stats.active }}</p>
-        </div>
-      </div>
-      <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/30 flex items-center gap-4">
-        <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-700">
-          <span class="material-symbols-outlined">cancel</span>
-        </div>
-        <div>
-          <p class="text-xs font-bold text-secondary uppercase tracking-wider">Inaktif</p>
-          <p class="text-2xl font-bold text-on-surface">{{ stats.inactive }}</p>
         </div>
       </div>
     </div>
@@ -254,7 +237,9 @@ onMounted(() => {
             <tr class="bg-surface-container-low/50">
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Nama & Email</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Username</th>
+              <!-- Kolom Status disematikan/hidden: semua responden selalu tampil aktif (is_active=true)
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status Akun</th>
+              -->
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Terakhir Update</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
             </tr>
@@ -279,6 +264,7 @@ onMounted(() => {
               <td class="px-6 py-5">
                 <span class="text-body-sm text-on-surface font-body-sm">{{ r.username }}</span>
               </td>
+              <!-- Kolom Status dinonaktifkan (selalu Aktif)
               <td class="px-6 py-5">
                 <span
                   class="px-2.5 py-1 rounded-full text-xs font-semibold"
@@ -287,6 +273,7 @@ onMounted(() => {
                   {{ r.isActive ? 'Aktif' : 'Inaktif' }}
                 </span>
               </td>
+              -->
               <td class="px-6 py-5 text-sm text-secondary">
                 {{ r.lastLoginAt ? formatDate(r.lastLoginAt) : '-' }}
               </td>
@@ -429,7 +416,8 @@ onMounted(() => {
               />
             </div>
 
-            <!-- Status -->
+            <!-- Status Akun dinonaktifkan: responden selalu dibuat/diedit sebagai aktif (isActive=true),
+                 nonaktif hanya lewat aksi Hapus (is_active → false).
             <div>
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status Akun</label>
               <div class="flex items-center gap-4">
@@ -443,6 +431,7 @@ onMounted(() => {
                 </label>
               </div>
             </div>
+            -->
           </div>
 
           <!-- Modal Footer -->
