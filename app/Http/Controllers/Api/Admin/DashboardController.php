@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Questionnaire;
 use App\Models\ResponseSession;
+use App\Models\ScoringLevelComponent;
 use App\Models\User;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
@@ -101,6 +103,105 @@ class DashboardController extends Controller
                 ];
             });
 
+        // === Instrument Penelitian + Grafik Skor per Komponen ===
+        // Instrumen = kuesioner published pertama (urut id), konsisten dengan
+        // pola report-chart-component v3. Saat tidak ada published → available=false.
+        $publishedQuestionnaire = Questionnaire::with([
+                'components' => fn ($q) => $q->withTrashed()->orderBy('order_number'),
+            ])
+            ->where('status', 'published')
+            ->orderBy('id')
+            ->first();
+
+        $instrumentAvailable = false;
+        $componentCharts = [];
+
+        if ($publishedQuestionnaire) {
+            $submittedSessions = ResponseSession::with([
+                'answers' => fn ($a) => $a->with([
+                    'question' => fn ($q) => $q->withTrashed(),
+                    'question.indicator' => fn ($q) => $q->withTrashed(),
+                    'question.indicator.subComponent' => fn ($q) => $q->withTrashed(),
+                    'question.indicator.subComponent.component' => fn ($q) => $q->withTrashed(),
+                ]),
+            ])
+                ->where('questionnaire_id', $publishedQuestionnaire->id)
+                ->where('status', 'submitted')
+                ->get();
+
+            if ($submittedSessions->isNotEmpty()) {
+                $instrumentAvailable = true;
+
+                // Level categories per komponen untuk instrumen ini (mirror exportExcel:
+                // sum(score) sesi → lookup score_title between start_from & end_at).
+                $scoreLevelsByComponent = ScoringLevelComponent::where('questionnaire_id', $publishedQuestionnaire->id)
+                    ->orderBy('start_from')
+                    ->get()
+                    ->groupBy('component_id');
+
+                foreach ($publishedQuestionnaire->components as $component) {
+                    $levels = $scoreLevelsByComponent->get($component->id, collect());
+
+                    // Hitung kategori tiap sesi: sum(score) seluruh jawaban komponen sesi itu,
+                    // lalu bucket sesuai rentang scoring_level_component. Skip sesi tanpa jawaban.
+                    $categoryCounts = [];
+                    $total = 0;
+                    foreach ($submittedSessions as $session) {
+                        $componentAnswers = $session->answers->filter(function ($answer) use ($component) {
+                            return $answer->question
+                                && $answer->question->indicator
+                                && $answer->question->indicator->subComponent
+                                && $answer->question->indicator->subComponent->component_id === $component->id;
+                        });
+
+                        if ($componentAnswers->isEmpty()) {
+                            continue;
+                        }
+
+                        $scoreSum = $componentAnswers->sum('score');
+                        $title = $levels->firstWhere(
+                            fn ($l) => $scoreSum >= $l->start_from && $scoreSum <= $l->end_at
+                        )?->score_title;
+
+                        if ($title) {
+                            $categoryCounts[$title] = ($categoryCounts[$title] ?? 0) + 1;
+                            $total++;
+                        }
+                    }
+
+                    // Bangun dist urut start_from; isi count 0 bila tak ada sesi di bucket itu
+                    $dist = [];
+                    foreach ($levels as $level) {
+                        $dist[] = [
+                            'title' => ucwords(strtolower(str_replace('_', ' ', $level->score_title))),
+                            'scoreTitle' => $level->score_title,
+                            'count' => $categoryCounts[$level->score_title] ?? 0,
+                        ];
+                    }
+
+                    // Kategori dominan = bucket count terbesar (tie-break: urutan array)
+                    $dominant = null;
+                    $maxCount = -1;
+                    foreach ($dist as $bucket) {
+                        if ($bucket['count'] > $maxCount) {
+                            $maxCount = $bucket['count'];
+                            $dominant = $bucket;
+                        }
+                    }
+
+                    $componentCharts[] = [
+                        'id' => $component->id,
+                        'name' => $component->name,
+                        'orderNumber' => $component->order_number,
+                        'total' => $total,
+                        'dist' => $dist,
+                        'dominantTitle' => $dominant ? $dominant['title'] : null,
+                        'dominantCount' => $dominant ? $dominant['count'] : null,
+                    ];
+                }
+            }
+        }
+
         return $this->successResponse([
             'summary' => [
                 'totalRespondent' => $totalRespondent,
@@ -113,6 +214,13 @@ class DashboardController extends Controller
             ],
             'weeklyProgress' => $filledWeekly,
             'activeSessions' => $activeSessions,
+            'instrument' => [
+                'available' => $instrumentAvailable,
+                'id' => $publishedQuestionnaire?->id,
+                'title' => $publishedQuestionnaire?->title,
+                'status' => $publishedQuestionnaire?->status,
+            ],
+            'componentCharts' => $componentCharts,
         ], 'Dashboard data retrieved successfully');
     }
 }
