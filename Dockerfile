@@ -53,4 +53,4 @@ COPY --from=frontend /app/public ./public
 
 EXPOSE 8989
 
-CMD php artisan key:generate --force && php artisan migrate --force && php artisan db:seed --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=8989
+CMD php artisan key:generate --force && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=8989
