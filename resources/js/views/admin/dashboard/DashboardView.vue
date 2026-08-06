@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import api from '@/services/api'
 
 // Loading state
@@ -13,17 +13,6 @@ const stats = ref({
   berjalan: 0,
   belumMulai: 0,
 })
-
-// Completion percentage
-const completionPercent = computed(() => {
-  if (stats.value.totalResponden === 0) return 0
-  return Math.round((stats.value.selesai / stats.value.totalResponden) * 100)
-})
-
-// Weekly progress data
-const weeklyData = ref<{ day: string; date: string; value: number }[]>([])
-
-const maxWeeklyValue = computed(() => Math.max(...weeklyData.value.map((d) => d.value)))
 
 // Monitoring table
 const monitoringData = ref<any[]>([])
@@ -41,8 +30,9 @@ async function fetchDashboard() {
       berjalan: payload.summary.inProgress,
       belumMulai: payload.summary.notStarted,
     }
-    weeklyData.value = payload.weeklyProgress || []
     monitoringData.value = payload.activeSessions || []
+    instrument.value = payload.instrument || null
+    componentCharts.value = payload.componentCharts || []
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Gagal memuat data dashboard'
     console.error('Dashboard fetch error:', err)
@@ -62,11 +52,11 @@ function getProgressPercent(current: number, total: number) {
 function getStatusClass(status: string) {
   switch (status) {
     case 'Aktif':
-      return 'bg-primary/10 text-primary'
+      return 'bg-[#004592]/10 text-[#004592]'
     case 'Idle':
       return 'bg-amber-100 text-amber-700'
     case 'Selesai':
-      return 'bg-primary text-white'
+      return 'bg-[#004592] text-white'
     default:
       return 'bg-surface-container-highest text-outline'
   }
@@ -77,8 +67,30 @@ function getAvatarColor(id: number) {
   return colors[id % colors.length]
 }
 
-// Chart period
-const chartPeriod = ref('7 Hari Terakhir')
+// ===== Instrument & Grafik skor per komponen (dari API /admin/dashboard) =====
+const instrument = ref<{ id: number | null; title: string; status?: string } | null>(null)
+const componentCharts = ref<
+  { id: number; name: string; total: number; dist: { title: string; scoreTitle: string; count: number }[]; dominantTitle?: string; dominantCount?: number }[]
+>([])
+
+const TITLE_COLORS = ['#dc2626', '#f97316', '#f59e0b', '#10b981', '#004592']
+
+function compTotal(dist: { count: number }[]) {
+  return dist.reduce((a, d) => a + d.count, 0)
+}
+
+function compMax(dist: { count: number }[]) {
+  return Math.max(...dist.map((d) => d.count), 1)
+}
+
+function compTop(dist: { count: number }[]) {
+  const counts = dist.map((d) => d.count)
+  return counts.indexOf(Math.max(...counts))
+}
+
+function barHeight(count: number, dist: { count: number }[]) {
+  return Math.max(4, Math.round((count / compMax(dist)) * 100))
+}
 </script>
 
 <template>
@@ -93,7 +105,7 @@ const chartPeriod = ref('7 Hari Terakhir')
     <div v-else-if="error" class="flex flex-col items-center justify-center py-20">
       <span class="material-symbols-outlined text-[48px] text-error">error</span>
       <p class="text-body-base text-error mt-4">{{ error }}</p>
-      <button @click="fetchDashboard" class="mt-4 text-primary text-body-sm font-semibold hover:underline">Coba Lagi</button>
+      <button @click="fetchDashboard" class="mt-4 text-[#004592] text-body-sm font-semibold hover:underline">Coba Lagi</button>
     </div>
 
     <template v-else>
@@ -103,14 +115,79 @@ const chartPeriod = ref('7 Hari Terakhir')
       <p class="text-on-surface-variant font-body-base">Pantau real-time perkembangan pengisian kuesioner kebijakan lingkungan sekolah.</p>
     </div>
 
+    <!-- Instrument & Grafik Skor per Komponen -->
+    <section class="mb-8">
+      <div class="bg-white rounded-xl card-shadow p-6 mb-6 flex items-center gap-4 fade-in-delay">
+        <span class="material-symbols-outlined text-[#004592] text-[34px]" style="font-variation-settings: 'FILL' 1;">assignment</span>
+        <div>
+          <p class="text-label-caps text-on-surface-variant uppercase mb-0.5">Instrument Penelitian</p>
+          <h3 class="font-title-md text-title-md font-semibold">{{ instrument?.title || 'Belum ada instrument published' }}</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6">
+        <div v-if="componentCharts.length === 0" class="bg-white rounded-xl card-shadow p-12 text-center fade-in-delay">
+          <span class="material-symbols-outlined text-[44px] text-outline/60">query_stats</span>
+          <p class="text-body-base text-on-surface-variant mt-3 font-medium">Belum ada data grafik skor komponen</p>
+          <p class="text-body-sm text-on-surface-variant mt-1">Grafik muncul setelah ada sesi yang disubmit pada instrumen ini</p>
+        </div>
+
+        <div
+          v-for="(comp, i) in componentCharts"
+          :key="comp.id"
+          class="chart-card bg-white p-6 rounded-xl card-shadow fade-in-delay"
+        >
+          <div class="flex items-start justify-between mb-3 px-1">
+            <div>
+              <h3 class="font-title-md text-title-md font-semibold">{{ comp.name }}</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">Component {{ i + 1 }} · {{ comp.total }} response</p>
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px] font-semibold">
+              <span class="w-2.5 h-2.5 rounded-full" :style="{ background: TITLE_COLORS[compTop(comp.dist)] }"></span>
+              Dominan: {{ comp.dominantTitle || '-' }}
+            </div>
+          </div>
+
+          <div class="flex items-end gap-2 h-[260px] px-1">
+            <div class="flex flex-col justify-between h-full mr-1 text-[10px] text-outline pr-1">
+              <span>{{ compMax(comp.dist) }}</span>
+              <span>{{ Math.round(compMax(comp.dist) * 0.75) }}</span>
+              <span>{{ Math.round(compMax(comp.dist) * 0.5) }}</span>
+              <span>{{ Math.round(compMax(comp.dist) * 0.25) }}</span>
+              <span>0</span>
+            </div>
+            <div class="flex items-end gap-2 flex-1 h-full border-b border-l border-outline-variant/40">
+              <div
+                v-for="(bucket, j) in comp.dist"
+                :key="bucket.scoreTitle"
+                class="flex-1 flex flex-col items-center justify-end h-[220px]"
+              >
+                <div class="text-xs font-bold text-on-surface">{{ bucket.count }}</div>
+                <div
+                  class="w-full max-w-[46px] rounded-t-lg"
+                  :style="{ height: barHeight(bucket.count, comp.dist) + '%', background: TITLE_COLORS[j], opacity: bucket.count ? 1 : 0.25 }"
+                ></div>
+                <div class="text-[10px] text-on-surface-variant text-center mt-2 leading-tight whitespace-nowrap">{{ bucket.title }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 mt-4 text-[11px] text-on-surface-variant px-1 pt-3 border-t border-outline-variant/10">
+            <span class="material-symbols-outlined text-[14px]">analytics</span>
+            <span>Kategori terbanyak: <b class="text-on-surface">{{ comp.dominantTitle || '-' }}</b> ({{ comp.dominantCount ?? 0 }} dari {{ comp.total }} response)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Summary Widgets -->
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
       <!-- Total Responden -->
       <div class="summary-card bg-white p-6 rounded-xl card-shadow flex flex-col gap-2 fade-in">
         <div class="flex justify-between items-start">
           <span class="text-label-caps text-on-surface-variant uppercase">Total Responden</span>
-          <div class="summary-icon p-2 bg-primary/5 rounded-lg">
-            <span class="material-symbols-outlined text-primary">groups</span>
+          <div class="summary-icon p-2 bg-[#004592]/5 rounded-lg">
+            <span class="material-symbols-outlined text-[#004592]">groups</span>
           </div>
         </div>
         <div class="mt-2">
@@ -123,8 +200,8 @@ const chartPeriod = ref('7 Hari Terakhir')
       <div class="summary-card bg-white p-6 rounded-xl card-shadow flex flex-col gap-2 fade-in-delay">
         <div class="flex justify-between items-start">
           <span class="text-label-caps text-on-surface-variant uppercase">Evaluasi Selesai</span>
-          <div class="summary-icon p-2 bg-primary-container/10 rounded-lg">
-            <span class="material-symbols-outlined text-primary">check_circle</span>
+          <div class="summary-icon p-2 bg-[#004592]/10 rounded-lg">
+            <span class="material-symbols-outlined text-[#004592]">check_circle</span>
           </div>
         </div>
         <div class="mt-2">
@@ -162,60 +239,8 @@ const chartPeriod = ref('7 Hari Terakhir')
       </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-      <!-- Persentase Penyelesaian -->
-      <div class="chart-card lg:col-span-4 bg-white p-6 rounded-xl card-shadow fade-in-delay">
-        <h3 class="font-title-md text-title-md mb-6">Persentase Penyelesaian</h3>
-        <div class="relative h-64 flex items-center justify-center">
-          <svg class="circular-chart w-48 h-48 transform -rotate-90" viewBox="0 0 36 36">
-            <path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
-            <path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" :stroke-dasharray="`${completionPercent}, 100`" stroke-linecap="round" stroke-width="3"></path>
-          </svg>
-          <div class="absolute flex flex-col items-center">
-            <span class="text-display-lg font-bold">{{ completionPercent }}%</span>
-            <span class="text-label-caps text-on-surface-variant">Global Progress</span>
-          </div>
-        </div>
-        <div class="mt-4 flex flex-wrap gap-4 justify-center">
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-full bg-primary"></div>
-            <span class="text-body-sm text-on-surface-variant">Selesai</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-full bg-surface-container-highest"></div>
-            <span class="text-body-sm text-on-surface-variant">Tertunda</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Progres Responden Mingguan -->
-      <div class="chart-card lg:col-span-8 bg-white p-6 rounded-xl card-shadow fade-in-delay-2">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="font-title-md text-title-md">Progres Responden Mingguan</h3>
-          <select v-model="chartPeriod" class="custom-select bg-surface-container-low border-none rounded-lg text-body-sm px-3 py-1.5">
-            <option>7 Hari Terakhir</option>
-            <option>30 Hari Terakhir</option>
-          </select>
-        </div>
-        <div class="h-64 flex items-end justify-between gap-2 px-2">
-          <div
-            v-for="item in weeklyData"
-            :key="item.day"
-            class="bar-item flex flex-col items-center flex-1 gap-2"
-          >
-            <div
-              class="bar-fill w-full bg-primary/20 rounded-t-lg"
-              :style="{ height: (item.value / maxWeeklyValue) * 100 + '%' }"
-            ></div>
-            <span class="text-[10px] text-on-surface-variant">{{ item.day }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Monitoring Table -->
-    <div class="bg-white rounded-xl card-shadow overflow-hidden fade-in-delay-3">
+    <!-- HIDDEN SEMENTARA: Tabel Monitoring Real-Time disembunyikan (ubah v-if="false" jadi true untuk menampilkan lagi) -->
+    <div v-if="false" class="bg-white rounded-xl card-shadow overflow-hidden fade-in-delay-3">
       <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
         <h3 class="font-title-md text-title-md">Tabel Monitoring Real-Time</h3>
         <div class="flex gap-2">
@@ -271,7 +296,7 @@ const chartPeriod = ref('7 Hari Terakhir')
                 <div class="flex items-center gap-3">
                   <div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden min-w-[80px]">
                     <div
-                      class="bg-primary h-full transition-all duration-400"
+                      class="bg-[#004592] h-full transition-all duration-400"
                       :style="{ width: row.progress + '%' }"
                     ></div>
                   </div>
@@ -282,7 +307,7 @@ const chartPeriod = ref('7 Hari Terakhir')
               <td class="px-6 py-4">
                 <span
                   class="px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-tighter"
-                  :class="'bg-primary/10 text-primary'"
+                  :class="'bg-[#004592]/10 text-[#004592]'"
                 >
                   Aktif
                 </span>
@@ -389,7 +414,7 @@ const chartPeriod = ref('7 Hari Terakhir')
 }
 .table-btn:hover {
   background-color: #eef6ee;
-  color: #006c49;
+  color: #004592;
   transform: translateY(-1px);
 }
 
@@ -400,8 +425,8 @@ const chartPeriod = ref('7 Hari Terakhir')
   padding: 0.25rem;
 }
 .more-btn:hover {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #006c49;
+  background-color: rgba(0, 69, 146, 0.1);
+  color: #004592;
   transform: rotate(90deg);
 }
 
@@ -423,7 +448,7 @@ const chartPeriod = ref('7 Hari Terakhir')
 }
 .action-btn:hover {
   background-color: #eef6ee;
-  border-color: #10b981;
+  border-color: #2f6fed;
   transform: translateY(-1px);
 }
 .action-btn:active {
@@ -440,7 +465,7 @@ const chartPeriod = ref('7 Hari Terakhir')
 }
 .custom-select:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 108, 73, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 69, 146, 0.2);
 }
 
 /* ===== FADE IN ANIMATIONS ===== */
@@ -475,6 +500,6 @@ const chartPeriod = ref('7 Hari Terakhir')
   transition: all 0.3s ease;
 }
 .header-title:hover {
-  color: #006c49;
+  color: #004592;
 }
 </style>
