@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Respondent;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\QuestionnaireAvailabilityResource;
+use App\Http\Resources\QuestionnaireResource;
 use App\Http\Resources\ResponseAnswerResource;
 use App\Http\Resources\ResponseSessionResource;
 use App\Models\Indicator;
@@ -14,6 +16,7 @@ use App\Models\EvaluationResult;
 use App\Models\EvaluationResultDetail;
 use App\Models\Recommendation;
 use App\Models\ScoringLevel;
+use App\Support\QuestionnaireAvailability;
 use App\Traits\HasApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +29,10 @@ class EvaluasiController extends Controller
     /**
      * GET /api/v1/evaluations/active-questionnaire
      * Get the published questionnaire for respondent to evaluate.
+     *
+     * Selalu mengembalikan HTTP 200 — saat tidak ada kuesioner aktif,
+     * frontend mendapat struktur { available:false, reason, period, ... }
+     * yang siap dirender oleh halaman empty-state kuesioner.
      */
     public function activeQuestionnaire(Request $request)
     {
@@ -36,12 +43,26 @@ class EvaluasiController extends Controller
             ->where('status', 'published')
             ->first();
 
-        if (!$questionnaire) {
-            return $this->errorResponse('Tidak ada kuesioner yang tersedia', 404);
+        $availability = QuestionnaireAvailability::build($questionnaire, $request->user());
+
+        if (!$availability['available']) {
+            $availability['questionnaire'] = null;
+            $availability['scoringLevels'] = null;
+
+            return $this->successResponse(
+                new QuestionnaireAvailabilityResource($availability),
+                $availability['reason']?->label() ?? 'Tidak ada kuesioner yang tersedia saat ini'
+            );
         }
 
+        // Kuesioner tersedia — sertakan data lengkap + scoringLevels untuk halaman penjelasan
+        $availability['questionnaire'] = $questionnaire;
+        $availability['scoringLevels'] = ScoringLevel::where('is_active', 1)
+            ->orderBy('value', 'asc')
+            ->get();
+
         return $this->successResponse(
-            new \App\Http\Resources\QuestionnaireResource($questionnaire),
+            new QuestionnaireAvailabilityResource($availability),
             'Kuesioner aktif ditemukan'
         );
     }

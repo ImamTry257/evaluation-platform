@@ -13,8 +13,12 @@ const router = useRouter()
 const { loading, error, fetchActiveQuestionnaire, startEvaluation } = useEvaluation()
 
 const questionnaire = ref<any>(null)
+const availability = ref<any>(null)
 const isChecked = ref(false)
 const starting = ref(false)
+const checking = ref(false)
+const lastCheckedAt = ref('baru saja')
+const retryNote = ref('')
 
 // Get the current component from localStorage for resuming
 const getCurrentComponentFromStorage = () => {
@@ -70,7 +74,39 @@ async function handleStartEvaluation() {
 
 async function handleLogout() {
   await authStore.logout()
-  router.push('/login')
+  router.push('/')
+}
+
+/**
+ * Terapkan payload dari GET /evaluations/active-questionnaire.
+ * available=true  → lanjut render halaman penjelasan (questionnaire terisi).
+ * available=false → kosongkan questionnaire agar empty-state tampil,
+ *                   simpan payload availability untuk chip status/periode dinamis.
+ */
+function applyAvailability(res: any) {
+  if (res && res.available && res.questionnaire) {
+    questionnaire.value = res.questionnaire
+    availability.value = null
+  } else {
+    questionnaire.value = null
+    availability.value = res || null
+  }
+}
+
+async function retryLoad() {
+  if (checking.value) return
+  checking.value = true
+  error.value = null
+  retryNote.value = ''
+  try {
+    applyAvailability(await fetchActiveQuestionnaire())
+  } catch {
+    const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    lastCheckedAt.value = now
+    retryNote.value = 'Kuesioner masih belum tersedia. Silakan coba lagi nanti.'
+  } finally {
+    checking.value = false
+  }
 }
 
 onMounted(async () => {
@@ -98,7 +134,8 @@ onMounted(async () => {
     }
     
     // No existing session or couldn't resume, fetch active questionnaire
-    questionnaire.value = await fetchActiveQuestionnaire()
+    const res = await fetchActiveQuestionnaire()
+    applyAvailability(res)
   } catch (err) { 
     // Error handled by hook
   }
@@ -113,11 +150,96 @@ onMounted(async () => {
       <p class="text-body-base text-on-surface-variant mt-4">Memuat kuesioner...</p>
     </div>
 
-    <!-- Error -->
-    <div v-else-if="error && !questionnaire" class="flex flex-col items-center justify-center py-32">
-      <span class="material-symbols-outlined text-[48px] text-error">error</span>
-      <p class="text-body-base text-error mt-4">{{ error }}</p>
-    </div>
+    <!-- Error / No active questionnaire -->
+    <template v-else-if="!questionnaire">
+      <StepHeader
+        :current-step="1"
+        :user-name="userName"
+        :user-email="userEmail"
+        :show-steps="true"
+        @logout="handleLogout"
+        @go-profile="router.push('/respondent/profile')"
+      />
+
+      <!-- decorative blob -->
+      <div class="pointer-events-none fixed inset-0 overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#004592]/5 blur-3xl"></div>
+      </div>
+
+      <main class="relative z-10 pt-28 pb-24 min-h-screen flex flex-col items-center justify-center px-6">
+        <div class="w-full max-w-lg">
+          <div class="bg-surface-container-lowest rounded-2xl shadow-[0_18px_50px_-20px_rgba(0,69,146,0.28)] border border-outline-variant/40 p-8 sm:p-10 text-center fade-in">
+            <!-- status pill -->
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+              {{ availability?.reasonLabel || 'Belum ada evaluasi' }}
+            </span>
+
+            <!-- icon -->
+            <div class="mt-8 flex justify-center">
+              <div class="ring-pulse w-24 h-24 rounded-full bg-[#004592]/10 flex items-center justify-center floaty">
+                <span class="material-symbols-outlined text-[#004592] text-6xl" style="font-variation-settings: 'FILL' 1;">assignment</span>
+              </div>
+            </div>
+
+            <!-- title -->
+            <h1 class="mt-7 text-2xl sm:text-[28px] font-bold text-on-surface leading-snug">Belum Ada Kuesioner<br/>yang Tersedia</h1>
+
+            <!-- friendly explanation -->
+            <p class="mt-4 text-sm sm:text-[15px] text-on-surface-variant leading-relaxed max-w-md mx-auto">
+              Saat ini belum ada kegiatan evaluasi yang terbuka untuk Anda. Kuesioner akan tersedia secara otomatis
+              begitu admin membuka periode evaluasi tertentu. Silakan kembali lagi beberapa saat ke depan.
+            </p>
+
+            <!-- info chips -->
+            <div class="mt-8 grid grid-cols-3 gap-3">
+              <div class="bg-[#f5f7fa] rounded-xl px-3 py-3 border border-outline-variant/60">
+                <span class="material-symbols-outlined text-outline text-lg block">calendar_today</span>
+                <div class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">Periode</div>
+                <div class="font-semibold text-sm text-on-surface/50">{{ availability?.period?.name || '-' }}</div>
+              </div>
+              <div class="bg-[#f5f7fa] rounded-xl px-3 py-3 border border-outline-variant/60">
+                <span class="material-symbols-outlined text-outline text-lg block">schedule</span>
+                <div class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">Status</div>
+                <div class="font-semibold text-xs text-amber-600">{{ availability?.reasonLabel || 'Menunggu' }}</div>
+              </div>
+              <div class="bg-[#f5f7fa] rounded-xl px-3 py-3 border border-outline-variant/60">
+                <span class="material-symbols-outlined text-outline text-lg block">timer</span>
+                <div class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">Estimasi</div>
+                <div class="font-semibold text-sm text-on-surface/50">{{ availability?.estimatedMinutes ? availability.estimatedMinutes + ' Menit' : '-' }}</div>
+              </div>
+            </div>
+
+            <!-- actions -->
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                :disabled="checking"
+                class="w-full sm:w-auto px-7 h-12 rounded-xl bg-[#004592] text-white font-bold inline-flex items-center justify-center gap-2 transition-all duration-300 hover:bg-[#2f6fed] hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                @click="retryLoad"
+              >
+                <span v-if="checking" class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
+                <span v-else class="material-symbols-outlined text-[20px]">refresh</span>
+                {{ checking ? 'Memeriksa kuesioner...' : 'Muat Ulang & Cek Lagi' }}
+              </button>
+              <button
+                class="w-full sm:w-auto px-7 h-12 rounded-xl border border-[#c6d2e4] text-[#004592] font-semibold inline-flex items-center justify-center gap-2 transition-all duration-300 hover:bg-[#f2f7fd] active:scale-95"
+                @click="handleLogout"
+              >
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+                Keluar
+              </button>
+            </div>
+
+            <!-- last checked + retry note -->
+            <p class="mt-6 text-xs text-on-surface-variant/80 inline-flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[14px]">sync</span>
+              Terakhir diperiksa: {{ lastCheckedAt }}
+            </p>
+            <p v-if="retryNote" class="mt-3 text-xs text-amber-600">{{ retryNote }}</p>
+          </div>
+        </div>
+      </main>
+    </template>
 
     <template v-else-if="questionnaire">
       <!-- Step Header -->
@@ -214,4 +336,18 @@ onMounted(async () => {
 .fade-in-delay { animation: fadeIn 0.6s ease-out 0.15s forwards; opacity: 0; }
 .fade-in-delay-2 { animation: fadeIn 0.6s ease-out 0.3s forwards; opacity: 0; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Empty state decorations */
+.ring-pulse { position: relative; }
+.ring-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 9999px;
+  border: 2px solid rgba(0, 69, 146, 0.18);
+  animation: pulseRing 2.6s ease-out infinite;
+}
+@keyframes pulseRing { 0% { transform: scale(0.92); opacity: 1; } 100% { transform: scale(1.18); opacity: 0; } }
+.floaty { animation: floaty 4s ease-in-out infinite; }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 </style>

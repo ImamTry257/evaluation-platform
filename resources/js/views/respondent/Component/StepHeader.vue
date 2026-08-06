@@ -38,8 +38,12 @@ function handleProfile() {
     <div class="max-w-12xl mx-auto px-6 py-2.5 flex items-center justify-between">
       <!-- Brand -->
       <div class="flex items-center gap-2">
-        <!-- <span class="material-symbols-outlined text-primary text-2xl">eco</span>
-        <span class="font-title-md text-title-md font-bold text-primary hidden sm:inline">EcoPolicy</span> -->
+        <img
+          src="https://www.uny.ac.id/sites/default/files/inline-images/logo-uny.png"
+          alt="Logo UNY"
+          class="w-9 h-9 object-contain"
+        />
+        <!-- <span class="font-title-md text-title-md font-bold text-[#004592] hidden sm:inline">Platform Evaluasi Kebijakan</span> -->
       </div>
 
       <!-- Step Indicator -->
