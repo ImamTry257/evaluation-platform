@@ -70,7 +70,7 @@ function getAvatarColor(id: number) {
 // ===== Instrument & Grafik skor per komponen (dari API /admin/dashboard) =====
 const instrument = ref<{ id: number | null; title: string; status?: string } | null>(null)
 const componentCharts = ref<
-  { id: number; name: string; total: number; dist: { title: string; scoreTitle: string; count: number }[]; dominantTitle?: string; dominantCount?: number }[]
+  { id: number; name: string; total: number; dist: { title: string; scoreTitle: string; count: number, countPrecentage: number, }[]; dominantTitle?: string; dominantCount?: number }[]
 >([])
 
 const TITLE_COLORS = ['#dc2626', '#f97316', '#f59e0b', '#10b981', '#004592']
@@ -79,17 +79,15 @@ function compTotal(dist: { count: number }[]) {
   return dist.reduce((a, d) => a + d.count, 0)
 }
 
-function compMax(dist: { count: number }[]) {
-  return Math.max(...dist.map((d) => d.count), 1)
-}
-
 function compTop(dist: { count: number }[]) {
   const counts = dist.map((d) => d.count)
   return counts.indexOf(Math.max(...counts))
 }
 
-function barHeight(count: number, dist: { count: number }[]) {
-  return Math.max(4, Math.round((count / compMax(dist)) * 100))
+// Tinggi bar dalam % mengikuti sumbu y persentase (countPrecentage 0–100).
+// Minimum 4% biar bucket kosong tetap terlihat sebagai stub tipis (opacity 0.25).
+function barHeight(pct: number) {
+  return Math.max(4, Math.min(100, pct))
 }
 </script>
 
@@ -149,12 +147,12 @@ function barHeight(count: number, dist: { count: number }[]) {
           </div>
 
           <div class="flex items-end gap-2 h-[260px] px-1">
-            <div class="flex flex-col justify-between h-full mr-1 text-[10px] text-outline pr-1">
-              <span>{{ compMax(comp.dist) }}</span>
-              <span>{{ Math.round(compMax(comp.dist) * 0.75) }}</span>
-              <span>{{ Math.round(compMax(comp.dist) * 0.5) }}</span>
-              <span>{{ Math.round(compMax(comp.dist) * 0.25) }}</span>
-              <span>0</span>
+            <div class="flex flex-col justify-between h-full mr-1 text-[10px] text-outline pr-1 text-right">
+              <span>100%</span>
+              <span>75%</span>
+              <span>50%</span>
+              <span>25%</span>
+              <span>0%</span>
             </div>
             <div class="flex items-end gap-2 flex-1 h-full border-b border-l border-outline-variant/40">
               <div
@@ -162,10 +160,10 @@ function barHeight(count: number, dist: { count: number }[]) {
                 :key="bucket.scoreTitle"
                 class="flex-1 flex flex-col items-center justify-end h-[220px]"
               >
-                <div class="text-xs font-bold text-on-surface">{{ bucket.count }}</div>
+                <div class="text-xs font-bold text-on-surface">{{ bucket.countPrecentage }}%</div>
                 <div
                   class="w-full max-w-[46px] rounded-t-lg"
-                  :style="{ height: barHeight(bucket.count, comp.dist) + '%', background: TITLE_COLORS[j], opacity: bucket.count ? 1 : 0.25 }"
+                  :style="{ height: barHeight(bucket.countPrecentage) + '%', background: TITLE_COLORS[j], opacity: bucket.count ? 1 : 0.25 }"
                 ></div>
                 <div class="text-[10px] text-on-surface-variant text-center mt-2 leading-tight whitespace-nowrap">{{ bucket.title }}</div>
               </div>
