@@ -184,7 +184,7 @@ onMounted(() => {
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 gap-4 mb-8 fade-in-delay">
       <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/30 flex items-center gap-4">
-        <div class="w-12 h-12 bg-primary-container/20 rounded-xl flex items-center justify-center text-primary">
+        <div class="w-12 h-12 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
           <span class="material-symbols-outlined">person</span>
         </div>
         <div>
@@ -203,14 +203,14 @@ onMounted(() => {
           <input
             v-model="searchQuery"
             @input="onSearch"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama, username, atau email..."
             type="text"
           />
         </div>
         <button
           @click="openAddModal"
-          class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+          class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
         >
           <span class="material-symbols-outlined text-[20px]">add</span>
           <span class="text-body-sm">Tambah Responden</span>
@@ -279,7 +279,7 @@ onMounted(() => {
               </td>
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-2">
-                  <button @click="openViewModal(r)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                  <button @click="openViewModal(r)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Lihat Detail">
                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                   </button>
                   <button
@@ -322,7 +322,7 @@ onMounted(() => {
             :key="page"
             @click="goToPage(page)"
             class="w-8 h-8 flex items-center justify-center rounded-lg font-medium text-sm transition-colors"
-            :class="page === currentPage ? 'bg-primary text-white shadow-sm' : 'hover:bg-surface-container text-on-surface'"
+            :class="page === currentPage ? 'bg-[#004592] text-white shadow-sm' : 'hover:bg-surface-container text-on-surface'"
           >
             {{ page }}
           </button>
@@ -351,8 +351,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">{{ formMode === 'add' ? 'person_add' : 'edit' }}</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">{{ formMode === 'add' ? 'person_add' : 'edit' }}</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ formMode === 'add' ? 'Tambah Responden' : 'Edit Responden' }}</h3>
@@ -376,7 +376,7 @@ onMounted(() => {
                 v-model="form.name"
                 type="text"
                 placeholder="Contoh: Andi Budiman"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -387,7 +387,7 @@ onMounted(() => {
                 v-model="form.username"
                 type="text"
                 placeholder="Contoh: andi_budiman"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -398,7 +398,7 @@ onMounted(() => {
                 v-model="form.email"
                 type="email"
                 placeholder="Contoh: andi@email.com"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -412,7 +412,7 @@ onMounted(() => {
                 v-model="form.password"
                 type="password"
                 :placeholder="formMode === 'edit' ? '••••••••' : 'Minimal 8 karakter'"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -422,11 +422,11 @@ onMounted(() => {
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status Akun</label>
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" :value="true" v-model="form.isActive" class="accent-primary w-4 h-4" />
+                  <input type="radio" :value="true" v-model="form.isActive" class="accent-[#004592] w-4 h-4" />
                   <span class="text-body-sm text-on-surface">Aktif</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" :value="false" v-model="form.isActive" class="accent-primary w-4 h-4" />
+                  <input type="radio" :value="false" v-model="form.isActive" class="accent-[#004592] w-4 h-4" />
                   <span class="text-body-sm text-on-surface">Inaktif</span>
                 </label>
               </div>
@@ -446,7 +446,7 @@ onMounted(() => {
             <button
               @click="handleFormSubmit"
               :disabled="!form.name || !form.username || !form.email || (formMode === 'add' && !form.password) || formLoading"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="formLoading" class="material-symbols-outlined text-[18px] animate-spin mr-1">progress_activity</span>
               {{ formMode === 'add' ? 'Simpan Responden' : 'Ubah' }}
@@ -537,8 +537,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">visibility</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">visibility</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Responden</h3>
@@ -607,7 +607,7 @@ onMounted(() => {
           <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
             <button
               @click="showViewModal = false"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95"
             >
               Tutup
             </button>
@@ -624,9 +624,9 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== TABLE ===== */
@@ -635,7 +635,7 @@ onMounted(() => {
   cursor: pointer;
 }
 .table-row:hover {
-  background-color: rgba(238, 246, 238, 0.5);
+  background-color: rgba(238, 244, 251, 0.6);
   transform: scale(1.01);
 }
 .table-row:hover td {
@@ -648,8 +648,8 @@ onMounted(() => {
   border-radius: 0.5rem;
 }
 .table-btn:hover {
-  background-color: #eef6ee;
-  color: #006c49;
+  background-color: #eef4fb;
+  color: #004592;
   transform: translateY(-1px);
 }
 
@@ -667,7 +667,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .modal-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12);
   transform: translateY(-1px);
 }
 

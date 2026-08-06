@@ -51,13 +51,13 @@ function onCancel() {
 <template>
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <a class="text-primary font-medium hover:underline cursor-pointer" @click="onCancel">Semua Pernyataan</a>
+      <a class="text-[#004592] font-medium hover:underline cursor-pointer" @click="onCancel">Semua Pernyataan</a>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Edit Pernyataan</span>
     </nav>
 
     <div class="flex items-center gap-4 mb-8 fade-in">
-      <button class="back-btn flex items-center gap-1 text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors" @click="onCancel">
+      <button class="back-btn flex items-center gap-1 text-[#004592] text-sm font-medium hover:bg-[#004592]/10 px-3 py-2 rounded-lg transition-colors" @click="onCancel">
         <span class="material-symbols-outlined text-[18px]">arrow_back</span>
         Kembali
       </button>
@@ -96,7 +96,7 @@ function onCancel() {
     <Teleport to="body">
       <div v-if="submitting" class="fixed inset-0 z-[200] bg-black/20 flex items-center justify-center">
         <div class="bg-white rounded-xl px-8 py-6 shadow-xl flex items-center gap-4">
-          <span class="material-symbols-outlined text-[28px] text-primary animate-spin">progress_activity</span>
+          <span class="material-symbols-outlined text-[28px] text-[#004592] animate-spin">progress_activity</span>
           <span class="font-body-base font-medium text-on-surface">Menyimpan perubahan...</span>
         </div>
       </div>
@@ -106,7 +106,7 @@ function onCancel() {
 
 <style scoped>
 .back-btn { transition: all 0.2s ease; }
-.back-btn:hover { background-color: rgba(16, 185, 129, 0.1); }
+.back-btn:hover { background-color: rgba(0, 69, 146, 0.1); }
 .fade-in { animation: fadeIn 0.5s ease-out forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>

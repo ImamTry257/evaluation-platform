@@ -43,27 +43,27 @@ async function handleSubmit() {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <RouterLink to="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
+      <RouterLink to="/admin/instrument" class="text-[#004592] font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.questionnaire.title }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.component.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.subComponent" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.subComponent" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.subComponent.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.indicator" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component/${breadCrumbList.subComponent?.id}/indicator`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.indicator" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component/${breadCrumbList.subComponent?.id}/indicator`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.indicator.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Tambah Pernyataan</span>
     </nav>
@@ -71,7 +71,7 @@ async function handleSubmit() {
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 fade-in">
       <div class="flex items-center gap-4">
-        <button @click="router.back()" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-primary hover:bg-primary/80 hover:text-primary px-3 py-2 rounded-lg transition-colors text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors">
+        <button @click="router.back()" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-[#004592] hover:bg-[#2f6fed] px-3 py-2 rounded-lg transition-colors">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </button>
@@ -82,7 +82,7 @@ async function handleSubmit() {
     <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay max-w-3xl">
       <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30">
         <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">edit_note</span>
+          <span class="material-symbols-outlined text-[#004592]">edit_note</span>
           Form Pernyataan
         </h3>
       </div>
@@ -95,7 +95,7 @@ async function handleSubmit() {
             v-model="form.questionText"
             rows="4"
             placeholder="Tuliskan Pernyataan evaluasi..."
-            class="form-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
+            class="form-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all resize-none"
           ></textarea>
         </div>
 
@@ -110,7 +110,7 @@ async function handleSubmit() {
               max="1"
               step="0.1"
               placeholder="1.0"
-              class="form-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+              class="form-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
             />
             <p class="text-xs text-secondary mt-1">Nilai 0-1. Default: 1.0</p>
           </div>
@@ -123,14 +123,14 @@ async function handleSubmit() {
                 type="button"
                 @click="form.isActive = form.isActive === 1 ? 0 : 1"
                 class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                :class="form.isActive ? 'bg-[#004592]' : 'bg-outline-variant'"
               >
                 <span
                   class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
                   :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
                 />
               </button>
-              <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+              <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-[#004592] font-semibold' : 'text-on-surface-variant'">
                 {{ form.isActive ? 'Aktif' : 'Nonaktif' }}
               </span>
             </div>
@@ -149,7 +149,7 @@ async function handleSubmit() {
         <button
           @click="handleSubmit"
           :disabled="!form.questionText || formLoading"
-          class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ formLoading ? 'Menyimpan...' : 'Simpan Pernyataan' }}
         </button>
@@ -163,7 +163,7 @@ async function handleSubmit() {
   transition: all 0.3s ease;
 }
 .form-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12);
   transform: translateY(-1px);
 }
 
@@ -172,7 +172,7 @@ async function handleSubmit() {
   text-decoration: none;
 }
 .back-btn:hover {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: rgba(0, 69, 146, 0.1);
   text-decoration: none;
 }
 

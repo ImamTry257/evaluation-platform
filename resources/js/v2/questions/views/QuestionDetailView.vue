@@ -30,19 +30,19 @@ function formatDate(d: string): string {
 <template>
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <a class="text-primary font-medium hover:underline cursor-pointer" @click="router.push({ name: 'statements' })">Semua Pernyataan</a>
+      <a class="text-[#004592] font-medium hover:underline cursor-pointer" @click="router.push({ name: 'statements' })">Semua Pernyataan</a>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Detail Pernyataan</span>
     </nav>
 
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div class="flex items-center gap-4">
-        <button class="back-btn flex items-center gap-1 text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors" @click="router.push({ name: 'statements' })">
+        <button class="back-btn flex items-center gap-1 text-[#004592] text-sm font-medium hover:bg-[#004592]/10 px-3 py-2 rounded-lg transition-colors" @click="router.push({ name: 'statements' })">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </button>
       </div>
-      <button v-if="question" class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95" @click="router.push({ name: 'statements-edit', params: { id: question.id } })">
+      <button v-if="question" class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95" @click="router.push({ name: 'statements-edit', params: { id: question.id } })">
         <span class="material-symbols-outlined">edit</span>
         Edit Pernyataan
       </button>
@@ -64,7 +64,7 @@ function formatDate(d: string): string {
     <div v-else-if="question" class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden fade-in-delay">
       <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30">
         <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">visibility</span>
+          <span class="material-symbols-outlined text-[#004592]">visibility</span>
           Detail Pernyataan
         </h3>
       </div>
@@ -101,7 +101,7 @@ function formatDate(d: string): string {
         <!-- Status -->
         <div>
           <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="question.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="question.isActive ? 'bg-[#004592]/10 text-[#004592]' : 'bg-slate-100 text-slate-500'">
             {{ question.isActive ? 'Active' : 'Inactive' }}
           </span>
         </div>
@@ -126,7 +126,7 @@ function formatDate(d: string): string {
       </div>
 
       <div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-end gap-3">
-        <button class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95" @click="router.push({ name: 'statements' })">Tutup</button>
+        <button class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95" @click="router.push({ name: 'statements' })">Tutup</button>
       </div>
     </div>
   </div>
@@ -134,7 +134,7 @@ function formatDate(d: string): string {
 
 <style scoped>
 .back-btn { transition: all 0.2s ease; }
-.back-btn:hover { background-color: rgba(16, 185, 129, 0.1); }
+.back-btn:hover { background-color: rgba(0, 69, 146, 0.1); }
 .fade-in { animation: fadeIn 0.5s ease-out forwards; }
 .fade-in-delay { animation: fadeIn 0.5s ease-out 0.1s forwards; opacity: 0; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

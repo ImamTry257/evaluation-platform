@@ -102,7 +102,7 @@ function cancelDelete() {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <span class="text-primary font-medium">Semua Pernyataan</span>
+      <span class="text-[#004592] font-medium">Semua Pernyataan</span>
     </nav>
 
     <!-- Page Header -->
@@ -112,7 +112,7 @@ function cancelDelete() {
         <p class="text-body-sm text-on-surface-variant mt-1">Kelola seluruh pernyataan dari semua instrumen penelitian</p>
       </div>
       <!-- TODO: tambah route -->
-      <button class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95" @click="router.push({ name: 'statements-add' })">
+      <button class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95" @click="router.push({ name: 'statements-add' })">
         <span class="material-symbols-outlined">add</span>
         Tambah Pernyataan
       </button>
@@ -127,7 +127,7 @@ function cancelDelete() {
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
           <input
             ref="searchInput"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari pernyataan..."
             type="text"
             @input="onSearchInput"
@@ -172,7 +172,7 @@ function cancelDelete() {
             v-for="p in meta.totalPages"
             :key="p"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="meta.page === p ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="meta.page === p ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="onPageChange(p)"
           >
             {{ p }}
@@ -202,9 +202,9 @@ function cancelDelete() {
 
 <style scoped>
 .search-input { transition: all 0.3s ease; }
-.search-input:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); transform: translateY(-2px); border-color: #10b981; }
+.search-input:focus { box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15); transform: translateY(-2px); border-color: #004592; }
 .page-btn { transition: all 0.3s ease; }
-.page-btn:hover:not(:disabled) { background-color: #e3eae3; transform: translateY(-1px); }
+.page-btn:hover:not(:disabled) { background-color: #e3ebf9; transform: translateY(-1px); }
 .page-btn:active:not(:disabled) { transform: scale(0.95); }
 .fade-in { animation: fadeIn 0.5s ease-out forwards; }
 .fade-in-delay { animation: fadeIn 0.5s ease-out 0.1s forwards; opacity: 0; }

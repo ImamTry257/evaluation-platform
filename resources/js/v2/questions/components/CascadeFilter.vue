@@ -123,7 +123,7 @@ fetchTree()
 
   <div class="flex items-center gap-3 mt-5">
     <button
-      class="filter-btn h-[42px] px-6 bg-primary text-on-primary font-body-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm whitespace-nowrap"
+      class="filter-btn h-[42px] px-6 bg-[#004592] text-on-primary font-body-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm whitespace-nowrap"
       @click="handleFilter"
     >
       <span class="material-symbols-outlined text-[18px]">filter_list</span>

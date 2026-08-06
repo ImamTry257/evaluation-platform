@@ -124,7 +124,7 @@ fetchTree()
   <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden max-w-full">
     <div class="p-6 border-b border-outline-variant/10 bg-surface-container-low/30">
       <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">edit_note</span>
+        <span class="material-symbols-outlined text-[#004592]">edit_note</span>
         {{ mode === 'add' ? 'Form Pernyataan Baru' : 'Edit Pernyataan' }}
       </h3>
     </div>
@@ -187,7 +187,7 @@ fetchTree()
           v-model="questionText"
           rows="4"
           placeholder="Tuliskan pernyataan evaluasi..."
-          class="form-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
+          class="form-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all resize-none"
         ></textarea>
       </div>
 
@@ -198,7 +198,7 @@ fetchTree()
           <button
             type="button"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-            :class="isActive ? 'bg-primary' : 'bg-outline-variant'"
+            :class="isActive ? 'bg-[#004592]' : 'bg-outline-variant'"
             @click="isActive = !isActive"
           >
             <span
@@ -206,7 +206,7 @@ fetchTree()
               :class="isActive ? 'translate-x-6' : 'translate-x-1'"
             />
           </button>
-          <span class="text-body-sm font-body-sm" :class="isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+          <span class="text-body-sm font-body-sm" :class="isActive ? 'text-[#004592] font-semibold' : 'text-on-surface-variant'">
             {{ isActive ? 'Aktif' : 'Nonaktif' }}
           </span>
         </div>
@@ -224,7 +224,7 @@ fetchTree()
         Batal
       </button>
       <button
-        class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="!canSubmit()"
         @click="handleSave"
       >
@@ -242,8 +242,8 @@ fetchTree()
         <div ref="confirmRef" class="relative bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-lg z-10 modal-content">
           <div class="flex items-center justify-between p-6 pb-4">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">save</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">save</span>
               </div>
               <h3 class="font-title-md text-title-md text-on-surface">Konfirmasi Simpan</h3>
             </div>
@@ -261,13 +261,13 @@ fetchTree()
               <div class="flex justify-between"><span class="text-on-surface-variant">Indikator</span><span class="font-semibold text-on-surface text-right">{{ summaryLabels.indicator }}</span></div>
               <hr class="border-outline-variant/20"/>
               <div><span class="text-on-surface-variant text-xs">Pernyataan</span><p class="font-medium text-on-surface mt-0.5 leading-snug">{{ summaryLabels.text }}</p></div>
-              <div class="flex justify-between"><span class="text-on-surface-variant">Status</span><span class="font-semibold" :class="isActive ? 'text-primary' : 'text-error'">{{ summaryLabels.status }}</span></div>
+              <div class="flex justify-between"><span class="text-on-surface-variant">Status</span><span class="font-semibold" :class="isActive ? 'text-[#004592]' : 'text-error'">{{ summaryLabels.status }}</span></div>
             </div>
           </div>
 
           <div class="flex items-center justify-end gap-3 p-6 pt-2">
             <button class="px-5 py-2.5 rounded-xl border border-outline-variant/50 text-on-surface font-body-base font-medium hover:bg-surface-container transition-colors disabled:opacity-50" :disabled="submitting" @click="confirmShow = false">Batal</button>
-            <button class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="submitting" @click="handleConfirm">
+            <button class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="submitting" @click="handleConfirm">
               <span v-if="submitting" class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
               <span v-else class="material-symbols-outlined text-[18px]">check</span>
               {{ submitting ? 'Menyimpan...' : 'Simpan' }}
@@ -281,7 +281,7 @@ fetchTree()
 
 <style scoped>
 .form-input { transition: all 0.3s ease; }
-.form-input:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); transform: translateY(-1px); }
+.form-input:focus { box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12); transform: translateY(-1px); }
 .modal-content { animation: modalSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .modal-enter-active, .modal-leave-active { transition: all 0.2s ease; }

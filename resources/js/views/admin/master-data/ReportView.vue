@@ -60,7 +60,7 @@ function getCategoryBadge(category: string) {
 function getStatusBadge(status: string) {
   switch (status) {
     case 'SUBMITTED':
-      return 'bg-primary/10 text-primary font-semibold'
+      return 'bg-[#004592]/10 text-[#004592] font-semibold'
     case 'IN PROGRESS':
       return 'bg-amber-100 text-amber-700 font-semibold'
     default:
@@ -125,7 +125,7 @@ onMounted(() => {
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 fade-in-delay">
       <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/30 flex items-center gap-4">
-        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+        <div class="w-12 h-12 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
           <span class="material-symbols-outlined">assessment</span>
         </div>
         <div>
@@ -134,7 +134,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/30 flex items-center gap-4">
-        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700">
+        <div class="w-12 h-12 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
           <span class="material-symbols-outlined">groups</span>
         </div>
         <div>
@@ -168,7 +168,7 @@ onMounted(() => {
           <input
             :value="searchQuery"
             @input="onSearch(($event.target as HTMLInputElement).value)"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari berdasarkan nama responden..."
             type="text"
           />
@@ -218,7 +218,7 @@ onMounted(() => {
             <td class="px-6 py-5 text-body-sm text-on-surface">
               {{ item.submissionOrder || '-' }}</td>
             <!-- <td class="px-6 py-5">
-              <span class="font-title-md font-semibold text-primary">{{ ( item.percentage != null ? `${item.percentage}%` : '' ) || '' }}</span>
+              <span class="font-title-md font-semibold text-[#004592]">{{ ( item.percentage != null ? `${item.percentage}%` : '' ) || '' }}</span>
             </td> -->
             <td class="px-6 py-5 text-body-sm text-on-surface">
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" :class="getStatusBadge(item.status)">
@@ -234,13 +234,13 @@ onMounted(() => {
             <td class="px-6 py-5 text-body-sm text-on-surface">{{ formatDate(item.submittedAt) }}</td>
             <td class="px-6 py-5">
               <div class="flex items-center justify-center gap-1">
-                <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
                 </button>
-                <!-- <button @click="handleExportPdf(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export PDF">
+                <!-- <button @click="handleExportPdf(item.id)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Export PDF">
                   <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
                 </button> -->
-                <button v-if="item.status == 'SUBMITTED'" @click="handleExportExcelSession(item.id)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Export Excel">
+                <button v-if="item.status == 'SUBMITTED'" @click="handleExportExcelSession(item.id)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Export Excel">
                   <span class="material-symbols-outlined text-[18px]">table_chart</span>
                 </button>
               </div>
@@ -266,7 +266,7 @@ onMounted(() => {
             v-for="page in totalPages"
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="currentPage === page ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="goToPage(page)"
           >
             {{ page }}
@@ -296,8 +296,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">assessment</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">assessment</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Laporan</h3>
@@ -316,7 +316,7 @@ onMounted(() => {
           <div class="p-6 space-y-5" v-if="viewingReport">
             <!-- Responden Info -->
             <div class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+              <div class="w-16 h-16 rounded-full bg-[#004592]/10 flex items-center justify-center text-[#004592] font-bold text-lg">
                 {{ viewingReport.respondent?.charAt(0) || 'U' }}
               </div>
               <div>
@@ -346,7 +346,7 @@ onMounted(() => {
           <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
             <button
               @click="showViewModal = false"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95"
             >
               Tutup
             </button>
@@ -363,9 +363,9 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== TABLE ===== */
@@ -394,7 +394,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: translateY(-1px);
 }
 .page-btn:active:not(:disabled) {

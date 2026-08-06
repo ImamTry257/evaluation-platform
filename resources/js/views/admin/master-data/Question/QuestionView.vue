@@ -90,27 +90,27 @@ onMounted(() => {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <RouterLink to="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
+      <RouterLink to="/admin/instrument" class="text-[#004592] font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.questionnaire.title }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.component.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.subComponent" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.subComponent" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.subComponent.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.indicator" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component/${breadCrumbList.subComponent?.id}/indicator`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.indicator" :to="`/admin/instrument/${breadCrumbList.questionnaire?.id}/component/${breadCrumbList.component?.id}/sub-component/${breadCrumbList.subComponent?.id}/indicator`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.indicator.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Pernyataan</span>
     </nav>
@@ -118,14 +118,14 @@ onMounted(() => {
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div class="flex items-center gap-4">
-        <RouterLink :to="`/admin/component/${componentId}/sub-component/${subComponentId}/indicator`" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-primary hover:bg-primary/80 hover:text-primary px-3 py-2 rounded-lg transition-colors text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
+        <RouterLink :to="`/admin/component/${componentId}/sub-component/${subComponentId}/indicator`" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-[#004592] hover:bg-[#2f6fed] hover:text-white px-3 py-2 rounded-lg transition-colors no-underline">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </RouterLink>
       </div>
       <RouterLink
         :to="{ name: 'admin-question-add', params: { indicatorId } }"
-        class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+        class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
       >
         <span class="material-symbols-outlined">add</span>
         Tambah Pernyataan
@@ -140,7 +140,7 @@ onMounted(() => {
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
           <input
             v-model="searchQuery"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari Pernyataan..."
             type="text"
           />
@@ -159,7 +159,7 @@ onMounted(() => {
         <p class="text-body-base text-on-surface-variant mt-3">Belum ada Pernyataan untuk indikator ini.</p>
         <RouterLink
           :to="{ name: 'admin-question-add', params: { indicatorId } }"
-          class="mt-4 bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto inline-flex"
+          class="mt-4 bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto inline-flex"
         >
           <span class="material-symbols-outlined">add</span>
           Tambah Pernyataan Pertama
@@ -193,7 +193,7 @@ onMounted(() => {
                 <button
                   @click="toggleStatus(q)"
                   class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105"
-                  :class="q.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                  :class="q.isActive ? 'bg-[#004592]/10 text-[#004592]' : 'bg-slate-100 text-slate-500'"
                 >
                   {{ q.isActive ? 'Active' : 'Inactive' }}
                 </button>
@@ -201,16 +201,16 @@ onMounted(() => {
               <td class="px-6 py-5">
                 <div class="weight-bar flex items-center gap-2">
                   <div class="bar w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div class="bar-fill h-full bg-primary rounded-full" :style="{ width: (q.weight * 100) + '%' }"></div>
+                    <div class="bar-fill h-full bg-[#004592] rounded-full" :style="{ width: (q.weight * 100) + '%' }"></div>
                   </div>
-                  <span class="text-xs font-semibold text-primary">{{ q.weight }}</span>
+                  <span class="text-xs font-semibold text-[#004592]">{{ q.weight }}</span>
                 </div>
               </td>
               <td class="px-6 py-5">
                 <div class="flex items-center justify-center gap-1">
                   <RouterLink
                     :to="{ name: 'admin-question-show', params: { indicatorId, id: q.id } }"
-                    class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all"
                     title="Lihat Detail"
                   >
                     <span class="material-symbols-outlined text-[18px]">visibility</span>
@@ -249,7 +249,7 @@ onMounted(() => {
             v-for="page in totalPages"
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="currentPage === page ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="goToPage(page)"
           >
             {{ page }}
@@ -336,9 +336,9 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== BACK BUTTON ===== */
@@ -347,7 +347,7 @@ onMounted(() => {
   text-decoration: none;
 }
 .back-btn:hover {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: rgba(0, 69, 146, 0.1);
   text-decoration: none;
 }
 
@@ -379,7 +379,7 @@ onMounted(() => {
 }
 .weight-bar .bar-fill {
   height: 100%;
-  background: #006c49;
+  background: #004592;
   border-radius: 3px;
   transition: width 0.3s ease;
 }
@@ -397,7 +397,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: translateY(-1px);
 }
 .page-btn:active:not(:disabled) {

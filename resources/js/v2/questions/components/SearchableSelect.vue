@@ -164,7 +164,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
   font-size: 14px; font-family: 'Poppins', sans-serif; color: #161d19;
   cursor: pointer; transition: all 0.3s ease; text-align: left;
 }
-.search-select-trigger:hover { background-color: #eef6ee; }
+.search-select-trigger:hover { background-color: #eef4fb; }
 .search-select-trigger:disabled { opacity: 0.6; cursor: not-allowed; }
 .search-select-trigger .placeholder { color: #6c7a71; }
 .search-select-trigger .arrow { transition: transform 0.2s; color: #6c7a71; }
@@ -181,10 +181,10 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 .search-box input {
   width: 100%; padding: 8px 12px; border: 1px solid rgba(187,202,191,0.5);
   border-radius: 0.5rem; font-size: 13px; font-family: 'Poppins', sans-serif;
-  outline: none; background: #f4fbf4; color: #161d19; transition: all 0.2s;
+  outline: none; background: #f4f8ff; color: #161d19; transition: all 0.2s;
   box-sizing: border-box;
 }
-.search-box input:focus { border-color: #10b981; box-shadow: 0 0 0 2px rgba(16,185,129,0.15); }
+.search-box input:focus { border-color: #004592; box-shadow: 0 0 0 2px rgba(0,69,146,0.15); }
 .options-list { overflow-y: auto; flex: 1; padding: 4px; }
 .options-list::-webkit-scrollbar { width: 4px; }
 .options-list::-webkit-scrollbar-thumb { background: #bbcabf; border-radius: 4px; }
@@ -192,9 +192,9 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
   padding: 8px 12px; font-size: 13px; font-family: 'Poppins', sans-serif;
   color: #161d19; border-radius: 0.5rem; cursor: pointer; transition: all 0.15s;
 }
-.opt:hover { background: #eef6ee; color: #006c49; }
-.opt.selected { background: rgba(16,185,129,0.1); color: #006c49; font-weight: 600; }
-.opt.highlighted { background: #d4f0d4; color: #006c49; font-weight: 600; }
+.opt:hover { background: #eef4fb; color: #004592; }
+.opt.selected { background: rgba(0,69,146,0.1); color: #004592; font-weight: 600; }
+.opt.highlighted { background: #dbe9f8; color: #004592; font-weight: 600; }
 .no-result { padding: 16px 12px; text-align: center; font-size: 13px; color: #6c7a71; }
 
 .dropdown-enter-active, .dropdown-leave-active { transition: all 0.15s ease-out; }

@@ -55,17 +55,17 @@ function formatDate(d: string): string {
           <td class="px-6 py-5">
             <span
               class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-              :class="q.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+              :class="q.isActive ? 'bg-[#004592]/10 text-[#004592]' : 'bg-slate-100 text-slate-500'"
             >
               {{ q.isActive ? 'Active' : 'Inactive' }}
             </span>
           </td>
           <td class="px-6 py-5">
             <div class="flex items-center justify-center gap-1">
-              <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail" @click="emit('view', q.id)">
+              <button class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Lihat Detail" @click="emit('view', q.id)">
                 <span class="material-symbols-outlined text-[18px]">visibility</span>
               </button>
-              <button class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit" @click="emit('edit', q.id)">
+              <button class="p-2 text-on-surface-variant hover:text-[#2f6fed] hover:bg-[#2f6fed]/10 rounded-lg transition-all" title="Edit" @click="emit('edit', q.id)">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
               </button>
               <button class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Hapus" @click="emit('delete', q)">
@@ -85,8 +85,8 @@ function formatDate(d: string): string {
 
     <!-- Empty -->
     <div v-else-if="questions.length === 0" class="p-16 text-center">
-      <div class="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center mx-auto mb-4">
-        <span class="material-symbols-outlined text-[32px] text-primary">search_off</span>
+      <div class="w-16 h-16 rounded-2xl bg-[#004592]/5 flex items-center justify-center mx-auto mb-4">
+        <span class="material-symbols-outlined text-[32px] text-[#004592]">search_off</span>
       </div>
       <p class="text-body-base text-on-surface-variant font-medium">Tidak ada pernyataan ditemukan</p>
       <p class="text-body-sm text-on-surface-variant mt-1">Coba ubah filter atau kata kunci pencarian</p>

@@ -144,25 +144,25 @@ function handleDelete(item: any) {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <RouterLink to="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
+      <RouterLink to="/admin/instrument" class="text-[#004592] font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}/component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}/component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.questionnaire.title }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Components</span>
     </nav>
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div class="flex items-center gap-4">
-        <RouterLink to="/admin/instrument" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-primary hover:bg-primary/80 hover:text-primary px-3 py-2 rounded-lg transition-colors text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
+        <RouterLink to="/admin/instrument" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-[#004592] hover:bg-[#2f6fed] px-3 py-2 rounded-lg transition-colors no-underline">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </RouterLink>
       </div>
       <button
         @click="openAddModal"
-        class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+        class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
       >
         <span class="material-symbols-outlined">add</span>
         Tambah Component
@@ -183,7 +183,7 @@ function handleDelete(item: any) {
           <input
             :value="searchQuery"
             @input="onSearch(($event.target as HTMLInputElement).value)"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama komponen..."
             type="text"
           />
@@ -200,7 +200,7 @@ function handleDelete(item: any) {
       <div v-else-if="components.length === 0" class="p-12 text-center">
         <span class="material-symbols-outlined text-4xl text-outline">folder_open</span>
         <p class="text-body-base text-on-surface-variant mt-3">Belum ada komponen</p>
-        <button @click="openAddModal" class="mt-4 text-primary text-body-sm font-semibold hover:underline">
+        <button @click="openAddModal" class="mt-4 text-[#004592] text-body-sm font-semibold hover:underline">
           + Tambah Komponen Pertama
         </button>
       </div>
@@ -226,8 +226,8 @@ function handleDelete(item: any) {
               >
               <td class="px-6 py-5">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-[20px]">folder</span>
+                  <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[#004592] text-[20px]">folder</span>
                   </div>
                   <div>
                     <span class="font-body-base font-semibold text-on-surface">{{ c.name }}</span>
@@ -243,7 +243,7 @@ function handleDelete(item: any) {
               <td class="px-6 py-5">
                 <span
                   class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                  :class="c.isActive === true ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                  :class="c.isActive === true ? 'bg-[#004592]/10 text-[#004592]' : 'bg-slate-100 text-slate-500'"
                   @click="toggleStatus(c)"
                   style="cursor: pointer;"
                 >
@@ -304,7 +304,7 @@ function handleDelete(item: any) {
             v-for="page in totalPages"
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="currentPage === page ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="goToPage(page)"
           >
             {{ page }}
@@ -334,8 +334,8 @@ function handleDelete(item: any) {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ formMode === 'add' ? 'Tambah Component' : 'Edit Component' }}</h3>
@@ -358,7 +358,7 @@ function handleDelete(item: any) {
                 v-model="form.name"
                 type="text"
                 placeholder="Contoh: Kebijakan Struktural"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -369,7 +369,7 @@ function handleDelete(item: any) {
                 v-model="form.description"
                 rows="2"
                 placeholder="Deskripsi komponen evaluasi..."
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all resize-none"
               ></textarea>
             </div>
 
@@ -381,14 +381,14 @@ function handleDelete(item: any) {
                   type="button"
                   @click="form.isActive = form.isActive === 1 ? 0 : 1"
                   class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                  :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                  :class="form.isActive ? 'bg-[#004592]' : 'bg-outline-variant'"
                 >
                   <span
                     class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
                     :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
                   />
                 </button>
-                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-[#004592] font-semibold' : 'text-on-surface-variant'">
                   {{ form.isActive ? 'Aktif' : 'Tidak Aktif' }}
                 </span>
               </div>
@@ -401,7 +401,7 @@ function handleDelete(item: any) {
             <button
               @click="handleFormSubmit"
               :disabled="!form.name || loading"
-              class="px-8 py-2 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-8 py-2 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ loading ? 'Menyimpan...' : (formMode === 'add' ? 'Simpan' : 'Ubah') }}
             </button>
@@ -444,7 +444,7 @@ function handleDelete(item: any) {
             </p>
             <div v-if="deletingComponent" class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <div class="w-10 h-10 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
                   <span class="material-symbols-outlined text-[20px]">widgets</span>
                 </div>
                 <div>
@@ -492,8 +492,8 @@ function handleDelete(item: any) {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">visibility</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">visibility</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Component</h3>
@@ -538,14 +538,14 @@ function handleDelete(item: any) {
               <div class="flex items-center gap-3">
                 <span
                   class="relative inline-flex h-6 w-11 items-center rounded-full"
-                  :class="viewingComponent.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                  :class="viewingComponent.isActive ? 'bg-[#004592]' : 'bg-outline-variant'"
                 >
                   <span
                     class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
                     :class="viewingComponent.isActive ? 'translate-x-6' : 'translate-x-1'"
                   />
                 </span>
-                <span class="text-body-sm font-body-sm" :class="viewingComponent.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                <span class="text-body-sm font-body-sm" :class="viewingComponent.isActive ? 'text-[#004592] font-semibold' : 'text-on-surface-variant'">
                   {{ viewingComponent.isActive ? 'Aktif' : 'Tidak Aktif' }}
                 </span>
               </div>
@@ -570,7 +570,7 @@ function handleDelete(item: any) {
           <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
             <button
               @click="showViewModal = false"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95"
             >
               Tutup
             </button>
@@ -587,9 +587,9 @@ function handleDelete(item: any) {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== TABLE ===== */
@@ -618,8 +618,8 @@ function handleDelete(item: any) {
   transition: all 0.2s ease;
 }
 .action-btn:hover {
-  background-color: #eef6ee;
-  color: #006c49;
+  background-color: #eef4fb;
+  color: #004592;
 }
 .action-btn.danger {
   color: #ba1a1a;
@@ -630,8 +630,8 @@ function handleDelete(item: any) {
 
 /* ===== COUNT BADGE ===== */
 .count-badge {
-  background: #eef6ee;
-  color: #006c49;
+  background: #eef4fb;
+  color: #004592;
   font-size: 11px;
   font-weight: 600;
   padding: 2px 8px;
@@ -652,7 +652,7 @@ function handleDelete(item: any) {
   transition: all 0.3s ease;
 }
 .modal-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12);
   transform: translateY(-1px);
 }
 
@@ -696,7 +696,7 @@ function handleDelete(item: any) {
   transition: all 0.3s ease;
 }
 .page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: translateY(-1px);
 }
 .page-btn:active:not(:disabled) {

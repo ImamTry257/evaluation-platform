@@ -38,7 +38,7 @@ function handleSave() {
       <!-- Duration -->
       <section class="bg-white rounded-xl custom-shadow overflow-hidden border border-outline-variant/30 fade-in-delay">
         <div class="p-4 border-b border-outline-variant/30 bg-surface-container-low flex items-center gap-3">
-          <span class="material-symbols-outlined text-primary">timer</span>
+          <span class="material-symbols-outlined text-[#004592]">timer</span>
           <h3 class="font-title-md text-title-md">Duration</h3>
         </div>
         <div class="p-6 space-y-6">
@@ -48,7 +48,7 @@ function handleSave() {
               v-model.number="defaultSession"
               type="number"
               min="1"
-              class="w-full h-10 px-4 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+              class="w-full h-10 px-4 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-[#004592]/40 focus:outline-none transition-all"
             />
           </div>
           <div class="space-y-2">
@@ -57,7 +57,7 @@ function handleSave() {
               v-model.number="countdownAlert"
               type="number"
               min="1"
-              class="w-full h-10 px-4 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+              class="w-full h-10 px-4 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-[#004592]/40 focus:outline-none transition-all"
             />
             <p class="text-body-sm text-secondary">Warning displayed before session ends.</p>
           </div>
@@ -67,7 +67,7 @@ function handleSave() {
       <!-- Logic -->
       <section class="bg-white rounded-xl custom-shadow overflow-hidden border border-outline-variant/30 fade-in-delay">
         <div class="p-4 border-b border-outline-variant/30 bg-surface-container-low flex items-center gap-3">
-          <span class="material-symbols-outlined text-primary">schema</span>
+          <span class="material-symbols-outlined text-[#004592]">schema</span>
           <h3 class="font-title-md text-title-md">Logic</h3>
         </div>
         <div class="p-6 space-y-6">
@@ -79,7 +79,7 @@ function handleSave() {
             </div>
             <label class="relative inline-block w-10 align-middle select-none cursor-pointer">
               <input v-model="autoSave" type="checkbox" class="sr-only peer" />
-              <div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-primary transition-colors duration-200"></div>
+              <div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-[#004592] transition-colors duration-200"></div>
               <div class="absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full border border-gray-200 transition-transform duration-200 peer-checked:translate-x-full peer-checked:border-white shadow-sm"></div>
             </label>
           </div>
@@ -91,7 +91,7 @@ function handleSave() {
             </div>
             <label class="relative inline-block w-10 align-middle select-none cursor-pointer">
               <input v-model="resumeOption" type="checkbox" class="sr-only peer" />
-              <div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-primary transition-colors duration-200"></div>
+              <div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-[#004592] transition-colors duration-200"></div>
               <div class="absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full border border-gray-200 transition-transform duration-200 peer-checked:translate-x-full peer-checked:border-white shadow-sm"></div>
             </label>
           </div>
@@ -103,7 +103,7 @@ function handleSave() {
     <div class="mt-8 flex justify-end">
       <button
         @click="handleSave"
-        class="bg-primary text-white px-6 py-3 rounded-xl font-body-base font-semibold hover:bg-primary/90 active:scale-95 transition-all flex items-center gap-2 shadow-sm"
+        class="bg-[#004592] text-white px-6 py-3 rounded-xl font-body-base font-semibold hover:bg-[#2f6fed] active:scale-95 transition-all flex items-center gap-2 shadow-sm"
       >
         <span class="material-symbols-outlined text-[20px]">save</span>
         Ubah

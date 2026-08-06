@@ -155,17 +155,17 @@ function goToPage(page: number) {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <RouterLink to="/admin/instrument" class="text-primary font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
+      <RouterLink to="/admin/instrument" class="text-[#004592] font-medium hover:underline cursor-pointer">Instrument Penelitian</RouterLink>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}/component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.questionnaire" :to="`/admin/instrument/${breadCrumbList.questionnaire.id}/component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.questionnaire.title }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
-      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/component/${breadCrumbList.component?.id}/sub-component`" class="text-primary font-medium hover:underline cursor-pointer">
+      <RouterLink v-if="breadCrumbList?.component" :to="`/admin/component/${breadCrumbList.component?.id}/sub-component`" class="text-[#004592] font-medium hover:underline cursor-pointer">
         {{ breadCrumbList.component.name }}
       </RouterLink>
-      <span v-else class="text-primary font-medium">-</span>
+      <span v-else class="text-[#004592] font-medium">-</span>
       <span class="text-outline">›</span>
       <span class="text-on-surface font-semibold">Sub Components</span>
     </nav>
@@ -173,14 +173,14 @@ function goToPage(page: number) {
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 fade-in">
       <div class="flex items-center gap-4">
-        <RouterLink :to="`/admin/instrument/${breadCrumbList?.questionnaire?.id}/component`" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-primary hover:bg-primary/80 hover:text-primary px-3 py-2 rounded-lg transition-colors text-primary text-sm font-medium hover:bg-primary/10 px-3 py-2 rounded-lg transition-colors no-underline">
+        <RouterLink :to="`/admin/instrument/${breadCrumbList?.questionnaire?.id}/component`" class="back-btn flex items-center gap-1 text-white text-sm font-medium bg-[#004592] hover:bg-[#2f6fed] px-3 py-2 rounded-lg transition-colors no-underline">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Kembali
         </RouterLink>
       </div>
       <button
         @click="openAddModal"
-        class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+        class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
       >
         <span class="material-symbols-outlined">add</span>
         Tambah Sub Component
@@ -195,7 +195,7 @@ function goToPage(page: number) {
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
           <input
             v-model="searchQuery"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama sub komponen..."
             type="text"
           />
@@ -214,7 +214,7 @@ function goToPage(page: number) {
         <p class="text-body-base text-on-surface-variant mt-3">Belum ada sub komponen untuk komponen ini.</p>
         <button
           @click="openAddModal"
-          class="mt-4 bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto"
+          class="mt-4 bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto"
         >
           <span class="material-symbols-outlined">add</span>
           Tambah Sub Komponen Pertama
@@ -242,7 +242,7 @@ function goToPage(page: number) {
             >
               <td class="px-6 py-5">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center text-[#004592]">
                     <span class="material-symbols-outlined text-[20px]">subdirectory_arrow_right</span>
                   </div>
                   <div>
@@ -261,7 +261,7 @@ function goToPage(page: number) {
                 <button
                   @click="toggleStatus(sc)"
                   class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105"
-                  :class="sc.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                  :class="sc.isActive ? 'bg-[#004592]/10 text-[#004592]' : 'bg-slate-100 text-slate-500'"
                 >
                   {{ sc.isActive ? 'Active' : 'Inactive' }}
                 </button>
@@ -270,15 +270,15 @@ function goToPage(page: number) {
                 <div class="flex items-center justify-center gap-1">
                   <RouterLink
                     :to="`/admin/component/${componentId}/sub-component/${sc.id}/indicator`"
-                    class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all"
                     title="Lihat Indikator"
                   >
                     <span class="material-symbols-outlined text-[18px]">subdirectory_arrow_right</span>
                   </RouterLink>
-                  <button @click="openViewModal(sc)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                  <button @click="openViewModal(sc)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Lihat Detail">
                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                   </button>
-                  <button @click="handleEdit(sc)" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+                  <button @click="handleEdit(sc)" class="p-2 text-on-surface-variant hover:text-[#2f6fed] hover:bg-[#2f6fed]/10 rounded-lg transition-all" title="Edit">
                     <span class="material-symbols-outlined text-[18px]">edit</span>
                   </button>
                   <button @click="handleDelete(sc)" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Hapus">
@@ -308,7 +308,7 @@ function goToPage(page: number) {
             v-for="page in totalPages"
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="currentPage === page ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="goToPage(page)"
           >
             {{ page }}
@@ -338,8 +338,8 @@ function goToPage(page: number) {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ formMode === 'add' ? 'Tambah Sub Component' : 'Edit Sub Component' }}</h3>
@@ -363,7 +363,7 @@ function goToPage(page: number) {
                 v-model="form.name"
                 type="text"
                 placeholder="Contoh: Kerangka Organisasi"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -374,7 +374,7 @@ function goToPage(page: number) {
                 v-model="form.description"
                 rows="3"
                 placeholder="Deskripsi sub komponen..."
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all resize-none"
               ></textarea>
             </div>
 
@@ -386,14 +386,14 @@ function goToPage(page: number) {
                   type="button"
                   @click="form.isActive = form.isActive === 1 ? 0 : 1"
                   class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                  :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                  :class="form.isActive ? 'bg-[#004592]' : 'bg-outline-variant'"
                 >
                   <span
                     class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
                     :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
                   />
                 </button>
-                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-[#004592] font-semibold' : 'text-on-surface-variant'">
                   {{ form.isActive ? 'Aktif' : 'Tidak Aktif' }}
                 </span>
               </div>
@@ -411,7 +411,7 @@ function goToPage(page: number) {
             <button
               @click="handleFormSubmit"
               :disabled="!form.name || !form.description"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ formMode === 'add' ? 'Simpan Sub Component' : 'Simpan Perubahan' }}
             </button>
@@ -454,7 +454,7 @@ function goToPage(page: number) {
             </p>
             <div v-if="deletingSubComponent" class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <div class="w-10 h-10 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
                   <span class="material-symbols-outlined text-[20px]">subdirectory_arrow_right</span>
                 </div>
                 <div>
@@ -501,8 +501,8 @@ function goToPage(page: number) {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">visibility</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">visibility</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Sub Component</h3>
@@ -547,7 +547,7 @@ function goToPage(page: number) {
                 <div>
                   <span class="text-secondary">Status:</span>
                   <p class="font-medium text-on-surface">
-                    <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="viewingSubComponent.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+                    <span class="status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" :class="viewingSubComponent.isActive ? 'bg-[#004592]/10 text-[#004592]' : 'bg-slate-100 text-slate-500'">
                       {{ viewingSubComponent.isActive ? 'Active' : 'Inactive' }}
                     </span>
                   </p>
@@ -572,7 +572,7 @@ function goToPage(page: number) {
           <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
             <button
               @click="showViewModal = false"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95"
             >
               Tutup
             </button>
@@ -589,9 +589,9 @@ function goToPage(page: number) {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== BACK BUTTON ===== */
@@ -600,7 +600,7 @@ function goToPage(page: number) {
   text-decoration: none;
 }
 .back-btn:hover {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: rgba(0, 69, 146, 0.1);
   text-decoration: none;
 }
 
@@ -610,7 +610,7 @@ function goToPage(page: number) {
   cursor: pointer;
 }
 .table-row:hover {
-  background-color: rgba(238, 246, 238, 0.5);
+  background-color: rgba(238, 244, 251, 0.6);
   transform: scale(1.01);
 }
 .table-row:hover td {
@@ -625,7 +625,7 @@ function goToPage(page: number) {
   gap: 4px;
 }
 .action-link:hover {
-  background-color: #eef6ee;
+  background-color: #eef4fb;
 }
 
 /* ===== MORE MENU ===== */
@@ -661,7 +661,7 @@ function goToPage(page: number) {
   transition: background 0.15s;
 }
 .more-dropdown-item:hover {
-  background: #f9fdf9;
+  background: #f3f8ff;
 }
 .more-dropdown-item .material-symbols-outlined {
   font-size: 16px;
@@ -680,8 +680,8 @@ function goToPage(page: number) {
 
 /* ===== COUNT BADGE ===== */
 .count-badge {
-  background: #eef6ee;
-  color: #006c49;
+  background: #eef4fb;
+  color: #004592;
   font-size: 11px;
   font-weight: 600;
   padding: 2px 8px;
@@ -710,7 +710,7 @@ function goToPage(page: number) {
   transition: all 0.3s ease;
 }
 .modal-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12);
   transform: translateY(-1px);
 }
 
@@ -754,7 +754,7 @@ function goToPage(page: number) {
   transition: all 0.3s ease;
 }
 .page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: translateY(-1px);
 }
 .page-btn:active:not(:disabled) {

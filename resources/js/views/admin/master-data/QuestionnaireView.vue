@@ -73,7 +73,7 @@ function getStatusBadge(status: string) {
     case 'draft':
       return 'bg-amber-100 text-amber-700'
     case 'published':
-      return 'bg-emerald-100 text-emerald-700'
+      return 'bg-[#004592]/10 text-[#004592]'
     case 'closed':
       return 'bg-gray-100 text-gray-600'
     default:
@@ -224,7 +224,7 @@ onMounted(() => {
   <div class="p-8 max-w-[1440px] w-full mx-auto">
     <!-- Breadcrumb -->
     <nav class="mb-6 flex items-center gap-2 text-sm">
-      <a href="#" class="text-primary font-medium hover:underline">Instrument Penelitian</a>
+      <a href="#" class="text-[#004592] font-medium hover:underline">Instrument Penelitian</a>
     </nav>
 
     <!-- Page Header -->
@@ -234,7 +234,7 @@ onMounted(() => {
       </div>
       <button
         @click="openAddModal"
-        class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+        class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
       >
         <span class="material-symbols-outlined">add</span>
         Tambah Instrument
@@ -250,7 +250,7 @@ onMounted(() => {
           <input
             :value="searchQuery"
             @input="onSearch(($event.target as HTMLInputElement).value)"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama instrument..."
             type="text"
           />
@@ -260,7 +260,7 @@ onMounted(() => {
             <select
               v-model="periodFilter"
               @change="onFilterChange"
-              class="custom-select w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-primary-container outline-none text-body-sm font-body-sm cursor-pointer"
+              class="custom-select w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-[#004592]/20 outline-none text-body-sm font-body-sm cursor-pointer"
               :class="{ 'border-amber-400 ring-2 ring-amber-100': hasPendingFilter && periodFilter }"
             >
               <option value="">Semua Tahun</option>
@@ -272,7 +272,7 @@ onMounted(() => {
             <select
               v-model="statusFilter"
               @change="onFilterChange"
-              class="custom-select w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-primary-container outline-none text-body-sm font-body-sm cursor-pointer"
+              class="custom-select w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-2.5 appearance-none focus:ring-2 focus:ring-[#004592]/20 outline-none text-body-sm font-body-sm cursor-pointer"
               :class="{ 'border-amber-400 ring-2 ring-amber-100': hasPendingFilter && statusFilter }"
             >
               <option value="">Semua Status</option>
@@ -284,7 +284,7 @@ onMounted(() => {
           </div>
           <button
             @click="applyFilter"
-            class="h-[42px] px-5 bg-primary hover:bg-primary/90 text-on-primary font-body-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 whitespace-nowrap"
+            class="h-[42px] px-5 bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 whitespace-nowrap"
             :class="{ 'ring-2 ring-amber-400/50': hasPendingFilter }"
           >
             <span class="material-symbols-outlined text-[18px]">filter_list</span>
@@ -296,14 +296,14 @@ onMounted(() => {
       <!-- Active Filter Chips -->
       <div v-if="showActiveFilters" class="px-6 pt-3 pb-0 flex items-center gap-2 flex-wrap">
         <span class="text-body-sm text-on-surface-variant">Filter aktif:</span>
-        <span v-if="periodFilter" class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] font-semibold px-2.5 py-1 rounded-full">
+        <span v-if="periodFilter" class="inline-flex items-center gap-1 bg-[#004592]/10 text-[#004592] text-[11px] font-semibold px-2.5 py-1 rounded-full">
           <span class="material-symbols-outlined text-[12px]">calendar_today</span>
           {{ getPeriodLabel(periodFilter) }}
           <button @click="clearFilterByType('period')" class="ml-0.5 hover:text-error transition-colors">
             <span class="material-symbols-outlined text-[12px]">close</span>
           </button>
         </span>
-        <span v-if="statusFilter" class="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] font-semibold px-2.5 py-1 rounded-full">
+        <span v-if="statusFilter" class="inline-flex items-center gap-1 bg-[#004592]/10 text-[#004592] text-[11px] font-semibold px-2.5 py-1 rounded-full">
           <span class="material-symbols-outlined text-[12px]">label</span>
           {{ statusFilter === 'draft' ? 'Draft' : statusFilter === 'published' ? 'Published' : 'Closed' }}
           <button @click="clearFilterByType('status')" class="ml-0.5 hover:text-error transition-colors">
@@ -331,7 +331,7 @@ onMounted(() => {
         <p class="text-body-base text-on-surface-variant mt-3">Belum ada instrument penelitian.</p>
         <button
           @click="openAddModal"
-          class="mt-4 bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto"
+          class="mt-4 bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 mx-auto"
         >
           <span class="material-symbols-outlined">add</span>
           Tambah Instrument Pertama
@@ -359,7 +359,7 @@ onMounted(() => {
             >
               <td class="px-6 py-5">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center text-[#004592]">
                     <span class="material-symbols-outlined text-[20px]">assignment</span>
                   </div>
                   <div>
@@ -386,15 +386,15 @@ onMounted(() => {
                 <div class="flex items-center justify-center gap-1">
                   <RouterLink
                     :to="`/admin/instrument/${item.id}/component`"
-                    class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all"
                     title="Lihat Component"
                   >
                     <span class="material-symbols-outlined text-[18px]">subdirectory_arrow_right</span>
                   </RouterLink>
-                  <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                  <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Lihat Detail">
                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                   </button>
-                  <button @click="handleEdit(item)" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+                  <button @click="handleEdit(item)" class="p-2 text-on-surface-variant hover:text-[#2f6fed] hover:bg-[#2f6fed]/10 rounded-lg transition-all" title="Edit">
                     <span class="material-symbols-outlined text-[18px]">edit</span>
                   </button>
                   <button @click="handleDelete(item)" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Hapus">
@@ -424,7 +424,7 @@ onMounted(() => {
             v-for="page in totalPages"
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="currentPage === page ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="goToPage(page)"
           >
             {{ page }}
@@ -454,8 +454,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ formMode === 'add' ? 'Tambah Instrument' : 'Edit Instrument' }}</h3>
@@ -479,7 +479,7 @@ onMounted(() => {
                 v-model="form.title"
                 type="text"
                 placeholder="Contoh: Kuesioner Kebijakan Lingkungan 2024"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -490,7 +490,7 @@ onMounted(() => {
                 v-model="form.description"
                 rows="3"
                 placeholder="Deskripsi instrument penelitian..."
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all resize-none"
               ></textarea>
             </div>
 
@@ -501,7 +501,7 @@ onMounted(() => {
                 <div class="relative">
                   <select
                     v-model="form.evaluationPeriodId"
-                    class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface appearance-none focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
+                    class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface appearance-none focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all cursor-pointer"
                   >
                     <option value="">Pilih Periode</option>
                     <option v-for="period in periodOptions" :key="period.id" :value="period.id">{{ period.name }}</option>
@@ -514,7 +514,7 @@ onMounted(() => {
                 <div class="relative">
                   <select
                     v-model="form.status"
-                    class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface appearance-none focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
+                    class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface appearance-none focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all cursor-pointer"
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
@@ -533,7 +533,7 @@ onMounted(() => {
                 type="number"
                 min="1"
                 placeholder="30"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
           </div>
@@ -549,7 +549,7 @@ onMounted(() => {
             <button
               @click="handleFormSubmit"
               :disabled="!form.title || !form.description || !form.evaluationPeriodId"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ formMode === 'add' ? 'Simpan' : 'Ubah' }}
             </button>
@@ -592,7 +592,7 @@ onMounted(() => {
             </p>
             <div v-if="deletingInstrument" class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <div class="w-10 h-10 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
                   <span class="material-symbols-outlined text-[20px]">assignment</span>
                 </div>
                 <div>
@@ -639,8 +639,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">visibility</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">visibility</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Instrument</h3>
@@ -731,7 +731,7 @@ onMounted(() => {
           <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
             <button
               @click="showViewModal = false"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95"
             >
               Tutup
             </button>
@@ -748,9 +748,9 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== TABLE ===== */
@@ -759,7 +759,7 @@ onMounted(() => {
   cursor: pointer;
 }
 .table-row:hover {
-  background-color: rgba(238, 246, 238, 0.5);
+  background-color: rgba(238, 244, 251, 0.6);
   transform: scale(1.01);
 }
 .table-row:hover td {
@@ -774,7 +774,7 @@ onMounted(() => {
   gap: 4px;
 }
 .action-link:hover {
-  background-color: #eef6ee;
+  background-color: #eef4fb;
 }
 
 /* ===== MORE MENU ===== */
@@ -810,7 +810,7 @@ onMounted(() => {
   transition: background 0.15s;
 }
 .more-dropdown-item:hover {
-  background: #f9fdf9;
+  background: #f3f8ff;
 }
 .more-dropdown-item .material-symbols-outlined {
   font-size: 16px;
@@ -829,8 +829,8 @@ onMounted(() => {
 
 /* ===== COUNT BADGE ===== */
 .count-badge {
-  background: #eef6ee;
-  color: #006c49;
+  background: #eef4fb;
+  color: #004592;
   font-size: 11px;
   font-weight: 600;
   padding: 2px 8px;
@@ -859,7 +859,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: translateY(-1px);
 }
 .page-btn:active:not(:disabled) {
@@ -872,11 +872,11 @@ onMounted(() => {
   cursor: pointer;
 }
 .custom-select:hover {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
 }
 .custom-select:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 69, 146, 0.2);
 }
 
 /* ===== DATA TABLE SCROLL ===== */
@@ -893,7 +893,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .modal-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12);
   transform: translateY(-1px);
 }
 
