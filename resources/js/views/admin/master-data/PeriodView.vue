@@ -55,7 +55,7 @@ function formatDate(dateStr: string): string {
 }
 
 function getStatusBadge(isActive: boolean) {
-  return isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
+  return isActive ? 'bg-[#004592]/10 text-[#004592]' : 'bg-gray-100 text-gray-500'
 }
 
 function getStatusLabel(isActive: boolean) {
@@ -165,7 +165,7 @@ onMounted(() => {
       </div>
       <button
         @click="openAddModal"
-        class="bg-primary hover:bg-primary/90 text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
+        class="bg-[#004592] hover:bg-[#2f6fed] text-on-primary font-body-base font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95"
       >
         <span class="material-symbols-outlined">add</span>
         Tambah
@@ -187,7 +187,7 @@ onMounted(() => {
           <input
             :value="searchQuery"
             @input="onSearch(($event.target as HTMLInputElement).value)"
-            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary-container outline-none transition-all text-body-sm font-body-sm"
+            class="search-input w-full bg-white border border-outline-variant/50 rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all text-body-sm font-body-sm"
             placeholder="Cari nama periode..."
             type="text"
           />
@@ -226,7 +226,7 @@ onMounted(() => {
           >
             <td class="px-6 py-5">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center text-[#004592]">
                   <span class="material-symbols-outlined text-[20px]">calendar_today</span>
                 </div>
                 <div>
@@ -244,10 +244,10 @@ onMounted(() => {
             </td>
             <td class="px-6 py-5">
               <div class="flex items-center justify-center gap-1">
-                <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Lihat Detail">
+                <button @click="openViewModal(item)" class="p-2 text-on-surface-variant hover:text-[#004592] hover:bg-[#004592]/10 rounded-lg transition-all" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
                 </button>
-                <button @click="handleEdit(item)" class="p-2 text-on-surface-variant hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+                <button @click="handleEdit(item)" class="p-2 text-on-surface-variant hover:text-[#2f6fed] hover:bg-[#2f6fed]/10 rounded-lg transition-all" title="Edit">
                   <span class="material-symbols-outlined text-[18px]">edit</span>
                 </button>
                 <button @click="handleDelete(item)" class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Hapus">
@@ -276,7 +276,7 @@ onMounted(() => {
             v-for="page in totalPages"
             :key="page"
             class="page-btn w-9 h-9 flex items-center justify-center rounded-lg border border-transparent text-body-sm font-medium transition-colors"
-            :class="currentPage === page ? 'bg-primary text-on-primary font-bold' : 'hover:bg-surface-container'"
+            :class="currentPage === page ? 'bg-[#004592] text-on-primary font-bold' : 'hover:bg-surface-container'"
             @click="goToPage(page)"
           >
             {{ page }}
@@ -306,8 +306,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">{{ formMode === 'add' ? 'add' : 'edit' }}</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ formMode === 'add' ? 'Tambah Period' : 'Edit Period' }}</h3>
@@ -331,7 +331,7 @@ onMounted(() => {
                 v-model="form.name"
                 type="text"
                 placeholder="Contoh: Periode 2024 Ganjil"
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all"
               />
             </div>
 
@@ -342,7 +342,7 @@ onMounted(() => {
                 v-model="form.description"
                 rows="2"
                 placeholder="Deskripsi periode..."
-                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all resize-none"
+                class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all resize-none"
               ></textarea>
             </div>
 
@@ -363,7 +363,7 @@ onMounted(() => {
                       readonly
                       @click="togglePopover"
                       placeholder="Pilih tanggal mulai..."
-                      class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
+                      class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all cursor-pointer"
                     />
                   </template>
                 </DatePicker>
@@ -383,7 +383,7 @@ onMounted(() => {
                       readonly
                       @click="togglePopover"
                       placeholder="Pilih tanggal selesai..."
-                      class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary-container outline-none transition-all cursor-pointer"
+                      class="modal-input w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-[#004592]/20 outline-none transition-all cursor-pointer"
                     />
                   </template>
                 </DatePicker>
@@ -397,7 +397,7 @@ onMounted(() => {
                 <button
                   type="button"
                   class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                  :class="form.isActive ? 'bg-primary' : 'bg-outline-variant'"
+                  :class="form.isActive ? 'bg-[#004592]' : 'bg-outline-variant'"
                   @click="form.isActive = !form.isActive"
                 >
                   <span
@@ -405,7 +405,7 @@ onMounted(() => {
                     :class="form.isActive ? 'translate-x-6' : 'translate-x-1'"
                   />
                 </button>
-                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-primary font-semibold' : 'text-on-surface-variant'">
+                <span class="text-body-sm font-body-sm" :class="form.isActive ? 'text-[#004592] font-semibold' : 'text-on-surface-variant'">
                   {{ form.isActive ? 'Aktif' : 'Nonaktif' }}
                 </span>
               </div>
@@ -424,7 +424,7 @@ onMounted(() => {
             <button
               @click="handleFormSubmit"
               :disabled="!form.name || !form.startDate || !form.endDate || formLoading"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="formLoading" class="material-symbols-outlined text-[18px] animate-spin mr-1">progress_activity</span>
               {{ formMode === 'add' ? 'Simpan' : 'Ubah' }}
@@ -468,7 +468,7 @@ onMounted(() => {
             </p>
             <div v-if="deletingPeriod" class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <div class="w-10 h-10 bg-[#004592]/10 rounded-xl flex items-center justify-center text-[#004592]">
                   <span class="material-symbols-outlined text-[20px]">calendar_today</span>
                 </div>
                 <div>
@@ -515,8 +515,8 @@ onMounted(() => {
           <!-- Modal Header -->
           <div class="flex items-center justify-between p-6 border-b border-outline-variant/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary">visibility</span>
+              <div class="w-10 h-10 rounded-xl bg-[#004592]/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#004592]">visibility</span>
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Period</h3>
@@ -582,11 +582,11 @@ onMounted(() => {
               <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 cursor-not-allowed opacity-60">
-                  <input type="radio" :checked="viewingPeriod.isActive === true" disabled class="accent-primary w-4 h-4" />
+                  <input type="radio" :checked="viewingPeriod.isActive === true" disabled class="accent-[#004592] w-4 h-4" />
                   <span class="text-body-sm text-on-surface">Aktif</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-not-allowed opacity-60">
-                  <input type="radio" :checked="viewingPeriod.isActive === false" disabled class="accent-primary w-4 h-4" />
+                  <input type="radio" :checked="viewingPeriod.isActive === false" disabled class="accent-[#004592] w-4 h-4" />
                   <span class="text-body-sm text-on-surface">Nonaktif</span>
                 </label>
               </div>
@@ -611,7 +611,7 @@ onMounted(() => {
           <div class="flex items-center justify-end gap-3 p-6 border-t border-outline-variant/10">
             <button
               @click="showViewModal = false"
-              class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+              class="px-5 py-2.5 rounded-xl bg-[#004592] text-on-primary font-body-base font-semibold shadow-sm transition-all hover:bg-[#2f6fed] active:scale-95"
             >
               Tutup
             </button>
@@ -628,9 +628,9 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-2px);
-  border-color: #10b981;
+  border-color: #004592;
 }
 
 /* ===== TABLE ===== */
@@ -639,7 +639,7 @@ onMounted(() => {
   cursor: pointer;
 }
 .table-row:hover {
-  background-color: rgba(238, 246, 238, 0.5);
+  background-color: rgba(238, 244, 251, 0.6);
   transform: scale(1.01);
 }
 .table-row:hover td {
@@ -709,7 +709,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: translateY(-1px);
 }
 .page-btn:active:not(:disabled) {
@@ -721,7 +721,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 .modal-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.12);
   transform: translateY(-1px);
 }
 
@@ -763,14 +763,14 @@ onMounted(() => {
 
 /* ===== V-CALENDAR THEME OVERRIDES ===== */
 :deep(.vc-popover-content) {
-  --vc-accent-50: #ecfdf5;
-  --vc-accent-100: #d1fae5;
-  --vc-accent-200: #a7f3d0;
-  --vc-accent-300: #6ee7b7;
-  --vc-accent-400: #34d399;
-  --vc-accent-500: #10b981;
-  --vc-accent-600: #059669;
-  --vc-accent-700: #047857;
+  --vc-accent-50: #eef4fb;
+  --vc-accent-100: #dbe9f8;
+  --vc-accent-200: #b8d3f1;
+  --vc-accent-300: #8fbae9;
+  --vc-accent-400: #4f93dd;
+  --vc-accent-500: #004592;
+  --vc-accent-600: #00315f;
+  --vc-accent-700: #002a52;
 }
 :deep(.vc-popover-content) {
   border-radius: 0.75rem;
@@ -778,13 +778,13 @@ onMounted(() => {
   box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 :deep(.vc-day.is-today .vc-day-layer) {
-  color: #10b981;
+  color: #004592;
 }
 :deep(.vc-day.is-active .vc-day-content) {
-  background: #10b981;
+  background: #004592;
   color: #fff;
 }
 :deep(.vc-day .vc-day-content:hover) {
-  background: #eef6ee;
+  background: #eef4fb;
 }
 </style>

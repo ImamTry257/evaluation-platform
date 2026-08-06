@@ -82,17 +82,17 @@ const navGroups = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-on-surface">
+  <div class="min-h-screen bg-[#eef4fb]">
     <!-- Sidebar Navigation -->
-    <aside class="fixed left-0 top-0 h-full w-[280px] z-50 py-6 bg-surface-container-low border-r border-outline-variant/30 hidden md:flex flex-col">
+    <aside class="fixed left-0 top-0 h-full w-[280px] z-50 py-6 bg-[#eef4fb] border-r border-outline-variant/30 hidden md:flex flex-col">
       <!-- Logo -->
       <div class="px-6 mb-8">
         <!-- <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+          <div class="w-10 h-10 bg-[#004592] rounded-lg flex items-center justify-center">
             <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">eco</span>
           </div>
           <div>
-            <h1 class="font-headline-lg text-headline-lg font-bold text-primary leading-none">PolicyEval</h1>
+            <h1 class="font-headline-lg text-headline-lg font-bold text-[#004592] leading-none">PolicyEval</h1>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Environmental Policy</p>
           </div>
         </div> -->
@@ -105,8 +105,8 @@ const navGroups = computed(() => {
           to="/admin"
           class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all"
           :class="isActive('/admin')
-            ? 'bg-primary-container/10 text-primary font-semibold border-l-4 border-primary'
-            : 'text-on-surface-variant hover:bg-surface-container'"
+            ? 'bg-[#004592]/10 text-[#004592] font-semibold border-l-4 border-[#004592]'
+            : 'text-on-surface-variant hover:bg-[#e3ebf9]'"
         >
           <span class="material-symbols-outlined">dashboard</span>
           <span class="font-body-base text-body-base">Dashboard</span>
@@ -123,14 +123,14 @@ const navGroups = computed(() => {
             :to="item.path"
             class="flex items-center gap-3 py-3 px-4 rounded-lg transition-all"
             :class="isActive(item.path)
-              ? 'bg-primary-container/10 text-primary font-semibold border-l-4 border-primary'
-              : 'text-on-surface-variant hover:bg-surface-container'"
+              ? 'bg-[#004592]/10 text-[#004592] font-semibold border-l-4 border-[#004592]'
+              : 'text-on-surface-variant hover:bg-[#e3ebf9]'"
           >
             <span class="material-symbols-outlined">{{ item.icon }}</span>
             <span class="font-body-base text-body-base">{{ item.label }}</span>
             <span
               v-if="item.badge"
-              class="ml-auto bg-primary-container/20 text-on-primary-container text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              class="ml-auto bg-[#004592]/20 text-[#004592] text-[10px] font-semibold px-2 py-0.5 rounded-full"
             >
               {{ item.badge }}
             </span>
@@ -142,7 +142,7 @@ const navGroups = computed(() => {
     <!-- Main Content Area -->
     <main class="md:ml-[280px] min-h-screen flex flex-col">
       <!-- Top Navigation Bar -->
-      <header class="sticky top-0 w-full h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-lg z-40">
+      <header class="sticky top-0 w-full h-16 bg-[#f4f8ff]/90 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-lg z-40">
         <div class="flex items-center gap-4 flex-1">
         </div>
         <div class="flex items-center gap-4">
@@ -150,10 +150,10 @@ const navGroups = computed(() => {
           <div id="userMenuWrapper" class="relative">
             <button
               @click="toggleDropdown"
-              class="flex items-center gap-3 px-4 py-1.5 rounded-lg transition-colors hover:bg-surface-container"
+              class="flex items-center gap-3 px-4 py-1.5 rounded-lg transition-colors hover:bg-[#e3ebf9]"
               :class="{ 'bg-surface-container': isDropdownOpen }"
             >
-              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <div class="w-8 h-8 rounded-full bg-[#004592]/10 flex items-center justify-center text-[#004592]">
                 <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
               </div>
               <span class="font-body-sm text-body-sm font-medium hidden sm:block">{{ userName }}</span>
@@ -214,7 +214,7 @@ const navGroups = computed(() => {
   border-radius: 50%;
 }
 .header-btn:hover {
-  background-color: #e3eae3;
+  background-color: #e3ebf9;
   transform: scale(1.1);
 }
 .header-btn:active {
@@ -224,7 +224,7 @@ const navGroups = computed(() => {
   transition: all 0.3s ease;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 69, 146, 0.15);
   transform: translateY(-1px);
 }
 </style>
