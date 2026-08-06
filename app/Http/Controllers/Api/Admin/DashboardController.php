@@ -176,6 +176,7 @@ class DashboardController extends Controller
                             'title' => ucwords(strtolower(str_replace('_', ' ', $level->score_title))),
                             'scoreTitle' => $level->score_title,
                             'count' => $categoryCounts[$level->score_title] ?? 0,
+                            'countPrecentage' => round(( ( $categoryCounts[$level->score_title] ?? 0 ) / $total ) * 100, 2)
                         ];
                     }
 
