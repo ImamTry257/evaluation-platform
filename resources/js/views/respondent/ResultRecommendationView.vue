@@ -11,7 +11,7 @@ const userEmail = computed(() => authStore.user?.email || '')
 
 async function handleLogout() {
   await authStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 
 const route = useRoute()

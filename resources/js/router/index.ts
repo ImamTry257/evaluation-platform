@@ -179,7 +179,7 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/login')
+    next('/')
   } else if (to.meta.requiresAuth && authStore.isAuthenticated) {
     // Only validate token on page reload (from.name is undefined) to avoid
     // unnecessary API calls on every SPA navigation
