@@ -48,6 +48,9 @@ onUnmounted(() => {
           <RouterLink to="/about" class="nav-link text-on-surface-variant hover:text-[#004592] hover:-translate-y-0.5 transition-all duration-300 font-medium">
             Tentang Kami
           </RouterLink>
+          <a href="/web-guide/Petunjuk Pengisian Web Seviling.id.pptx" class="nav-link text-on-surface-variant hover:text-[#004592] hover:-translate-y-0.5 transition-all duration-300 font-medium">
+            Pentujuk Penggunaan Web
+          </a>
           <!-- <div class="h-6 w-px bg-outline"></div> -->
           <!-- <div class="flex gap-3">
             <RouterLink
