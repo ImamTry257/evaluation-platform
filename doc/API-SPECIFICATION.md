@@ -81,6 +81,10 @@ Register akun respondent baru.
 }
 ```
 
+> **Catatan:**
+> - `type` diisi dari daftar `GET /respondent-types` (KS / GURU / MURID).
+> - `address` & `additionalInfo` **tidak** diterima saat register — backend otomatis menyimpan `-`. Lengkapi lewat `PUT /auth/profile`.
+
 **Response (201 Created):**
 ```json
 {
@@ -109,6 +113,36 @@ Register akun respondent baru.
   "errors": {
     "email": ["The email has already been taken."]
   }
+}
+```
+
+## List Respondent Types
+
+Daftar tipe responden untuk dropdown form register.
+
+**Endpoint:** `GET /respondent-types`
+
+**Headers:** None (public)
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Respondent types retrieved successfully",
+  "data": [
+    { "id": 1, "title": "KS", "descriptions": null },
+    { "id": 2, "title": "GURU", "descriptions": null },
+    { "id": 3, "title": "MURID", "descriptions": null }
+  ]
+}
+```
+
+**Error Response (500):** saat terjadi kesalahan server
+```json
+{
+  "status": false,
+  "message": "Internal Server Error",
+  "errors": []
 }
 ```
 
@@ -2028,6 +2062,7 @@ Both:
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | POST | `/auth/register` | Public | Register respondent |
+| GET | `/respondent-types` | Public | Daftar tipe responden (KS/GURU/MURID) |
 | POST | `/auth/login` | Public | Login (all roles) |
 | POST | `/auth/login-admin` | Public | Login admin only |
 | POST | `/auth/logout` | Sanctum | Revoke token |

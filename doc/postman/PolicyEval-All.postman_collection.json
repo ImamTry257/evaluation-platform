@@ -118,6 +118,44 @@
               ]
             },
             {
+              "name": "List Respondent Types",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/respondent-types",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "respondent-types"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "List Respondent Types Success",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Respondent types retrieved successfully\",\n  \"data\": [\n    { \"id\": 1, \"title\": \"KS\", \"descriptions\": null },\n    { \"id\": 2, \"title\": \"GURU\", \"descriptions\": null },\n    { \"id\": 3, \"title\": \"MURID\", \"descriptions\": null }\n  ]\n}"
+                },
+                {
+                  "name": "List Respondent Types Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": false,\n  \"message\": \"Internal Server Error\",\n  \"errors\": []\n}"
+                }
+              ]
+            },
+            {
               "name": "Login",
               "request": {
                 "method": "POST",
