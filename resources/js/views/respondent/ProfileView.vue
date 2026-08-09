@@ -26,6 +26,11 @@ const formattedJoinDate = computed(() => {
   })
 })
 
+// Profil dianggap belum lengkap jika Tipe Pengguna atau Lokasi kosong
+const isProfileIncomplete = computed(() =>
+  !!profile.value && (!profile.value.type || !profile.value.cityName)
+)
+
 async function fetchProfile() {
   loading.value = true
   error.value = null
@@ -83,6 +88,15 @@ onMounted(() => {
           </button>
         </div>
 
+        <!-- Incomplete Profile Alert -->
+        <div v-if="isProfileIncomplete" class="mb-6 flex items-start gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 fade-in">
+          <span class="material-symbols-outlined text-amber-600 flex-shrink-0" style="font-size: 22px;">warning</span>
+          <div>
+            <p class="text-body-base font-semibold text-amber-900">Profil Anda belum lengkap</p>
+            <p class="text-body-sm text-amber-800 mt-0.5">Silakan lengkapi data Tipe Responden dan Lokasi melalui menu Edit Profil.</p>
+          </div>
+        </div>
+
         <!-- Profile Header Card -->
         <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden mb-8 fade-in">
           <!-- Cover -->
@@ -134,8 +148,12 @@ onMounted(() => {
               <span class="block pb-3 text-body-base text-on-surface">{{ profile.username }}</span>
             </div>
             <div>
-              <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Peran</label>
-              <span class="block pb-3 text-body-base text-on-surface">{{ profile.role }}</span>
+              <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Tipe Responden</label>
+              <span class="block pb-3 text-body-base text-on-surface uppercase">{{ profile.type }}</span>
+            </div>
+            <div>
+              <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Lokasi</label>
+              <span class="block pb-3 text-body-base text-on-surface uppercase">{{ profile.cityName }}</span>
             </div>
             <div>
               <label class="block text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2 text-xs">Tanggal Bergabung</label>
