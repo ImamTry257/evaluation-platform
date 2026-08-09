@@ -14,6 +14,7 @@ interface Props {
   loading?: boolean
   error?: boolean
   icon?: string
+  size?: 'md' | 'sm'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   error: false,
   icon: '',
+  size: 'md',
 })
 
 const emit = defineEmits<{
@@ -119,7 +121,8 @@ onBeforeUnmount(() => {
       type="button"
       :disabled="disabled || loading"
       :class="[
-        'form-input flex items-center justify-between gap-2 w-full h-11 pl-10 pr-3 bg-surface-container-lowest border rounded-xl text-base',
+        'form-input flex items-center justify-between gap-2 w-full pl-10 pr-3 bg-surface-container-lowest border rounded-xl',
+        size === 'sm' ? 'h-10 text-sm' : 'h-11 text-base',
         'focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all disabled:opacity-60 disabled:cursor-not-allowed',
         error ? 'border-error' : 'border-outline-variant',
       ]"
@@ -154,7 +157,10 @@ onBeforeUnmount(() => {
             v-model="search"
             type="text"
             placeholder="Cari..."
-            class="w-full h-9 pl-8 pr-3 bg-surface-container-low rounded-lg border border-outline-variant text-sm text-on-surface outline-none focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all"
+            :class="[
+              'w-full pl-8 pr-3 bg-surface-container-low rounded-lg border border-outline-variant text-on-surface outline-none focus:ring-2 focus:ring-[#004592] focus:border-[#004592] transition-all',
+              size === 'sm' ? 'h-8 text-[13px]' : 'h-9 text-sm',
+            ]"
             @keydown.stop="onSearchKeydown"
           />
         </div>
@@ -164,7 +170,7 @@ onBeforeUnmount(() => {
       <ul @click.self="close" class="max-h-52 overflow-y-auto py-1">
         <li
           v-if="filteredOptions.length === 0"
-          class="px-3 py-2.5 text-sm text-on-surface-variant"
+          :class="size === 'sm' ? 'px-3 py-2 text-[13px] text-on-surface-variant' : 'px-3 py-2.5 text-sm text-on-surface-variant'"
         >Tidak ada hasil</li>
         <li
           v-for="(opt, i) in filteredOptions"
@@ -172,7 +178,8 @@ onBeforeUnmount(() => {
           @click="select(opt)"
           @mouseenter="activeIndex = i"
           :class="[
-            'px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between gap-2 transition-colors',
+            size === 'sm' ? 'px-3 py-2 text-[13px]' : 'px-3 py-2.5 text-sm',
+            'cursor-pointer flex items-center justify-between gap-2 transition-colors',
             i === activeIndex ? 'bg-[#004592]/10 text-[#004592]' : 'text-on-surface hover:bg-surface-container-low',
           ]"
         >

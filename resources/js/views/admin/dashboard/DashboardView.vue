@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import api from '@/services/api'
+import SearchableSelect from '@/components/SearchableSelect.vue'
 
 // Loading state
 const loading = ref(true)
 const error = ref<string | null>(null)
+
+// Loading state per select filter (pola sama dengan RegisterView)
+const isLoadingTypes = ref(false)
+const isLoadingRegencies = ref(false)
 
 // Summary stats
 const stats = ref({
@@ -17,12 +22,46 @@ const stats = ref({
 // Monitoring table
 const monitoringData = ref<any[]>([])
 
+// ===== Filter States =====
+const selectedRespondentType = ref<string>('')
+const selectedCityName = ref<string>('')
+const allRespondentTypes = ref<any[]>([])
+const allCityNames = ref<any[]>([])
+
+// Computed properties for SearchableSelect options
+const respondentTypeOptions = computed(() =>
+  allRespondentTypes.value.map(type => ({
+    value: type.title,
+    label: type.title
+  }))
+)
+
+const cityNameOptions = computed(() =>
+  allCityNames.value.map(city => ({
+    value: city.name,
+    label: city.name
+  }))
+)
+
+// ===== Instrument & Grafik skor per komponen (dari API /admin/dashboard) =====
+const instrument = ref<{ id: number | null; title: string; status?: string } | null>(null)
+const componentCharts = ref<
+  { id: number; name: string; total: number; dist: { title: string; scoreTitle: string; count: number; countPrecentage: number }[]; dominantTitle?: string; dominantCount?: number }[]
+>([])
+
+const TITLE_COLORS = ['#dc2626', '#f97316', '#f59e0b', '#10b981', '#004592']
+
 // Fetch dashboard data
-async function fetchDashboard() {
+async function fetchDashboard(filters?: { respondentType?: string; cityName?: string }) {
   loading.value = true
   error.value = null
   try {
-    const { data } = await api.get('/admin/dashboard')
+    const params: Record<string, string> = {}
+
+    if (filters?.respondentType) params.respondentType = filters.respondentType
+    if (filters?.cityName) params.cityName = filters.cityName
+
+    const { data } = await api.get('/admin/dashboard', { params })
     const payload = data.data
     stats.value = {
       totalResponden: payload.summary.totalRespondent,
@@ -41,39 +80,62 @@ async function fetchDashboard() {
   }
 }
 
-onMounted(() => {
-  fetchDashboard()
-})
-
-function getProgressPercent(current: number, total: number) {
-  return Math.round((current / total) * 100)
-}
-
-function getStatusClass(status: string) {
-  switch (status) {
-    case 'Aktif':
-      return 'bg-[#004592]/10 text-[#004592]'
-    case 'Idle':
-      return 'bg-amber-100 text-amber-700'
-    case 'Selesai':
-      return 'bg-[#004592] text-white'
-    default:
-      return 'bg-surface-container-highest text-outline'
+// Fetch respondent types from API
+async function fetchRespondentTypes() {
+  isLoadingTypes.value = true
+  try {
+    const { data } = await api.get('/respondent-types')
+    allRespondentTypes.value = data.data || []
+  } catch (err) {
+    console.error('Failed to fetch respondent types:', err)
+  } finally {
+    isLoadingTypes.value = false
   }
 }
 
-function getAvatarColor(id: number) {
-  const colors = ['bg-emerald-100 text-emerald-700', 'bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700', 'bg-orange-100 text-orange-700']
-  return colors[id % colors.length]
+// Kabupaten/kota: regional lock DIY, konsisten dengan RegisterView
+const REGENCY_PROVINCE_CODE = '34'
+
+// Fetch regencies from API (users.city_name menyimpan nama kabupaten/kota)
+async function fetchRegencies() {
+  isLoadingRegencies.value = true
+  try {
+    const { data } = await api.get(`/locations/regencies/${REGENCY_PROVINCE_CODE}`)
+    allCityNames.value = data.data || []
+  } catch (err) {
+    console.error('Failed to fetch regencies:', err)
+  } finally {
+    isLoadingRegencies.value = false
+  }
 }
 
-// ===== Instrument & Grafik skor per komponen (dari API /admin/dashboard) =====
-const instrument = ref<{ id: number | null; title: string; status?: string } | null>(null)
-const componentCharts = ref<
-  { id: number; name: string; total: number; dist: { title: string; scoreTitle: string; count: number, countPrecentage: number, }[]; dominantTitle?: string; dominantCount?: number }[]
->([])
+// Apply filters
+function applyFilters() {
+  const params: { respondentType?: string; cityName?: string } = {}
 
-const TITLE_COLORS = ['#dc2626', '#f97316', '#f59e0b', '#10b981', '#004592']
+  if (selectedRespondentType.value) {
+    params.respondentType = selectedRespondentType.value
+  }
+
+  if (selectedCityName.value) {
+    params.cityName = selectedCityName.value
+  }
+
+  fetchDashboard(params)
+}
+
+// Clear filters
+function clearFilters() {
+  selectedRespondentType.value = ''
+  selectedCityName.value = ''
+  fetchDashboard()
+}
+
+onMounted(() => {
+  fetchDashboard()
+  fetchRespondentTypes()
+  fetchRegencies()
+})
 
 function compTotal(dist: { count: number }[]) {
   return dist.reduce((a, d) => a + d.count, 0)
@@ -84,10 +146,15 @@ function compTop(dist: { count: number }[]) {
   return counts.indexOf(Math.max(...counts))
 }
 
-// Tinggi bar dalam % mengikuti sumbu y persentase (countPrecentage 0–100).
+// Tinggi bar dalam % mengikuti sumbu y persentase (countPrecentage 0-100).
 // Minimum 4% biar bucket kosong tetap terlihat sebagai stub tipis (opacity 0.25).
 function barHeight(pct: number) {
   return Math.max(4, Math.min(100, pct))
+}
+
+function getAvatarColor(id: number) {
+  const colors = ['bg-emerald-100 text-emerald-700', 'bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700', 'bg-orange-100 text-orange-700']
+  return colors[id % colors.length]
 }
 </script>
 
@@ -115,19 +182,92 @@ function barHeight(pct: number) {
 
     <!-- Instrument & Grafik Skor per Komponen -->
     <section class="mb-8">
-      <div class="bg-white rounded-xl card-shadow p-6 mb-6 flex items-center gap-4 fade-in-delay">
-        <span class="material-symbols-outlined text-[#004592] text-[34px]" style="font-variation-settings: 'FILL' 1;">assignment</span>
-        <div>
-          <p class="text-label-caps text-on-surface-variant uppercase mb-0.5">Instrument Penelitian</p>
-          <h3 class="font-title-md text-title-md font-semibold">{{ instrument?.title || 'Belum ada instrument published' }}</h3>
+      <!-- relative z-20: kartu filter harus di atas kartu grafik (stacking context dari animasi fade-in),
+           biar dropdown SearchableSelect (z-50 di dalam kartu ini) tidak ketutup kartu di bawahnya -->
+      <div class="bg-white rounded-xl card-shadow p-6 mb-6 fade-in-delay relative z-20">
+        <div class="flex flex-col md:flex-row md:items-center gap-6">
+          <!-- Instrument Info -->
+          <div class="flex items-center gap-4 flex-1">
+            <span class="material-symbols-outlined text-[#004592] text-[34px]" style="font-variation-settings: 'FILL' 1;">assignment</span>
+            <div>
+              <p class="text-label-caps text-on-surface-variant uppercase mb-0.5">Instrument Penelitian</p>
+              <h3 class="font-title-md text-title-md font-semibold">{{ instrument?.title || 'Belum ada instrument published' }}</h3>
+            </div>
+          </div>
+
+          <!-- Filter Section -->
+          <div class="flex flex-wrap gap-4 items-center">
+            <!-- Respondent Type Filter -->
+            <div class="w-full md:w-56">
+              <label class="block text-[11px] text-on-surface-variant mb-1">Tipe Responden</label>
+              <SearchableSelect
+                v-model="selectedRespondentType"
+                :options="respondentTypeOptions"
+                placeholder="Semua Tipe"
+                icon="groups"
+                size="sm"
+                :loading="isLoadingTypes"
+              />
+            </div>
+
+            <!-- City Name Filter -->
+            <div class="w-full md:w-56">
+              <label class="block text-[11px] text-on-surface-variant mb-1">Kabupaten/Kota</label>
+              <SearchableSelect
+                v-model="selectedCityName"
+                :options="cityNameOptions"
+                placeholder="Semua Kabupaten/Kota"
+                icon="location_city"
+                size="sm"
+                :loading="isLoadingRegencies"
+              />
+            </div>
+
+            <!-- Apply Filter Button -->
+            <div class="self-end">
+              <button
+                @click="applyFilters"
+                :disabled="loading"
+                class="px-4 py-2.5 bg-[#004592] text-white text-sm font-medium rounded-lg hover:bg-[#003577] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-lg">filter_list</span>
+                Terapkan Filter
+              </button>
+            </div>
+
+            <!-- Clear Filter Button -->
+            <div v-if="selectedRespondentType || selectedCityName" class="self-end">
+              <button
+                @click="clearFilters"
+                :disabled="loading"
+                class="px-4 py-2.5 border border-outline-variant text-on-surface text-sm font-medium rounded-lg hover:bg-surface-container-highest transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-lg">clear_all</span>
+                Reset
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-6">
         <div v-if="componentCharts.length === 0" class="bg-white rounded-xl card-shadow p-12 text-center fade-in-delay">
-          <span class="material-symbols-outlined text-[44px] text-outline/60">query_stats</span>
-          <p class="text-body-base text-on-surface-variant mt-3 font-medium">Belum ada data grafik skor komponen</p>
-          <p class="text-body-sm text-on-surface-variant mt-1">Grafik muncul setelah ada sesi yang disubmit pada instrumen ini</p>
+          <template v-if="instrument?.hasData">
+            <span class="material-symbols-outlined text-[44px] text-[#004592]/50">filter_alt_off</span>
+            <p class="text-body-base text-on-surface-variant mt-3 font-medium">Belum ada data untuk filter ini</p>
+            <p class="text-body-sm text-on-surface-variant mt-1">Tidak ada responden yang cocok dengan filter terpilih</p>
+            <button
+              @click="clearFilters"
+              class="mt-4 px-4 py-2 bg-[#004592] text-white text-sm font-medium rounded-lg hover:bg-[#003577] transition-colors duration-200"
+            >
+              Reset Filter
+            </button>
+          </template>
+          <template v-else>
+            <span class="material-symbols-outlined text-[44px] text-outline/60">query_stats</span>
+            <p class="text-body-base text-on-surface-variant mt-3 font-medium">Belum ada data grafik skor komponen</p>
+            <p class="text-body-sm text-on-surface-variant mt-1">Grafik muncul setelah ada sesi yang disubmit pada instrumen ini</p>
+          </template>
         </div>
 
         <div
@@ -237,20 +377,10 @@ function barHeight(pct: number) {
       </div>
     </div>
 
-    <!-- HIDDEN SEMENTARA: Tabel Monitoring Real-Time disembunyikan (ubah v-if="false" jadi true untuk menampilkan lagi) -->
+    <!-- HIDDEN SEMENTARA: Tabel Monitoring Real-Time disembunyikan -->
     <div v-if="false" class="bg-white rounded-xl card-shadow overflow-hidden fade-in-delay-3">
       <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
         <h3 class="font-title-md text-title-md">Tabel Monitoring Real-Time</h3>
-        <div class="flex gap-2">
-          <button class="action-btn flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-lg text-body-sm">
-            <span class="material-symbols-outlined text-[18px]">filter_list</span>
-            Filter
-          </button>
-          <button class="action-btn flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-lg text-body-sm">
-            <span class="material-symbols-outlined text-[18px]">download</span>
-            Export
-          </button>
-        </div>
       </div>
 
       <div class="overflow-x-auto">
@@ -258,17 +388,15 @@ function barHeight(pct: number) {
           <thead class="bg-surface-container-low">
             <tr>
               <th class="px-6 py-4 text-label-caps text-on-surface-variant uppercase font-semibold">Responden</th>
-              <th class="px-6 py-4 text-label-caps text-on-surface-variant uppercase font-semibold">Sekolah</th>
               <th class="px-6 py-4 text-label-caps text-on-surface-variant uppercase font-semibold">Pertanyaan</th>
               <th class="px-6 py-4 text-label-caps text-on-surface-variant uppercase font-semibold">Progres</th>
               <th class="px-6 py-4 text-label-caps text-on-surface-variant uppercase font-semibold">Sisa Waktu</th>
               <th class="px-6 py-4 text-label-caps text-on-surface-variant uppercase font-semibold">Status</th>
-              <th class="px-6 py-4"></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-outline-variant/30">
             <tr v-if="monitoringData.length === 0 && !loading">
-              <td colspan="7" class="px-6 py-8 text-center text-on-surface-variant">
+              <td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">
                 Tidak ada sesi aktif saat ini
               </td>
             </tr>
@@ -288,7 +416,6 @@ function barHeight(pct: number) {
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 font-body-sm text-body-sm">{{ row.questionnaireTitle }}</td>
               <td class="px-6 py-4 font-body-sm text-body-sm">Q{{ String(row.answeredCount).padStart(2, '0') }} / {{ row.totalQuestions }}</td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
@@ -310,23 +437,9 @@ function barHeight(pct: number) {
                   Aktif
                 </span>
               </td>
-              <td class="px-6 py-4 text-right">
-                <button class="more-btn text-on-surface-variant">
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
-        <p class="text-body-sm text-on-surface-variant">Menampilkan {{ monitoringData.length }} dari {{ stats.totalResponden.toLocaleString() }} responden</p>
-        <div class="flex gap-2">
-          <button class="page-btn px-3 py-1 border border-outline-variant rounded-md text-xs font-medium disabled:opacity-50" disabled>Sebelumnya</button>
-          <button class="page-btn px-3 py-1 border border-outline-variant rounded-md text-xs font-medium">Selanjutnya</button>
-        </div>
       </div>
     </div>
     </template>
@@ -367,30 +480,6 @@ function barHeight(pct: number) {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
-/* ===== BAR CHART ===== */
-.bar-item {
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.bar-item:hover {
-  transform: scaleY(1.05);
-  transform-origin: bottom;
-}
-.bar-item:hover .bar-fill {
-  filter: brightness(1.1);
-}
-.bar-fill {
-  transition: all 0.4s ease;
-}
-
-/* ===== CIRCULAR CHART ===== */
-.circular-chart {
-  transition: all 0.3s ease;
-}
-.circular-chart:hover {
-  transform: scale(1.05) rotate(-90deg);
-}
-
 /* ===== TABLE ===== */
 .table-row {
   transition: all 0.3s ease;
@@ -402,68 +491,6 @@ function barHeight(pct: number) {
 }
 .table-row:hover td {
   color: #161d19;
-}
-
-/* ===== TABLE BUTTONS ===== */
-.table-btn {
-  transition: all 0.3s ease;
-  border-radius: 0.5rem;
-  padding: 0.375rem 0.75rem;
-}
-.table-btn:hover {
-  background-color: #eef6ee;
-  color: #004592;
-  transform: translateY(-1px);
-}
-
-/* ===== MORE VERT BUTTON ===== */
-.more-btn {
-  transition: all 0.3s ease;
-  border-radius: 50%;
-  padding: 0.25rem;
-}
-.more-btn:hover {
-  background-color: rgba(0, 69, 146, 0.1);
-  color: #004592;
-  transform: rotate(90deg);
-}
-
-/* ===== PAGINATION ===== */
-.page-btn {
-  transition: all 0.3s ease;
-}
-.page-btn:hover:not(:disabled) {
-  background-color: #e3eae3;
-  transform: translateY(-1px);
-}
-.page-btn:active:not(:disabled) {
-  transform: scale(0.95);
-}
-
-/* ===== ACTION BUTTON ===== */
-.action-btn {
-  transition: all 0.3s ease;
-}
-.action-btn:hover {
-  background-color: #eef6ee;
-  border-color: #2f6fed;
-  transform: translateY(-1px);
-}
-.action-btn:active {
-  transform: scale(0.97);
-}
-
-/* ===== CUSTOM SELECT ===== */
-.custom-select {
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.custom-select:hover {
-  background-color: #e3eae3;
-}
-.custom-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 69, 146, 0.2);
 }
 
 /* ===== FADE IN ANIMATIONS ===== */

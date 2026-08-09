@@ -22,21 +22,56 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         // === Summary Stats ===
-        $totalRespondent = User::where('role', 'RESPONDENT')
-            ->where('is_active', true)
-            ->count();
+        $queryTotalRespondent = User::where('role', 'RESPONDENT')
+            ->where('is_active', true);
 
-        $submittedCount = ResponseSession::where('status', 'submitted')
-            ->whereHas('user', fn ($q) => $q->where('is_active', true))
-            ->count();
-        $inProgressCount = ResponseSession::where('status', 'in_progress')
-            ->whereHas('user', fn ($q) => $q->where('is_active', true))
-            ->count();
+        // Search by respondent type
+        if ($request->has('respondentType') && $request->respondentType) {
+            $queryTotalRespondent->where('type', $request->respondentType);
+        }
+
+        // Search by city
+        if ($request->has('cityName') && $request->cityName) {
+            $queryTotalRespondent->where('city_name', strtoupper($request->cityName));
+        }
+
+        $totalRespondent = $queryTotalRespondent->count();
+
+        $querySubmittedCount = ResponseSession::where('status', 'submitted')
+            ->whereHas('user', fn ($q) => $q->where('is_active', true));
+
+        // Search by respondent type
+        if ($request->has('respondentType') && $request->respondentType) {
+            $querySubmittedCount->whereHas('user', fn ($q) => $q->where('type', $request->respondentType));
+        }
+
+        // Search by city
+        if ($request->has('cityName') && $request->cityName) {
+            $querySubmittedCount->whereHas('user', fn ($q) => $q->where('city_name', strtoupper($request->cityName)));
+        }
+
+        $submittedCount = $querySubmittedCount->count();
+
+        $queryInProgressCount = ResponseSession::where('status', 'in_progress')
+            ->whereHas('user', fn ($q) => $q->where('is_active', true));
+
+        // Search by respondent type
+        if ($request->has('respondentType') && $request->respondentType) {
+            $queryInProgressCount->whereHas('user', fn ($q) => $q->where('type', $request->respondentType));
+        }
+
+        // Search by city
+        if ($request->has('cityName') && $request->cityName) {
+            $queryInProgressCount->whereHas('user', fn ($q) => $q->where('city_name', strtoupper($request->cityName)));
+        }
+
+        $inProgressCount = $queryInProgressCount->count();
+
         $notStartedCount = $totalRespondent - $submittedCount - $inProgressCount;
         if ($notStartedCount < 0) $notStartedCount = 0;
 
         // === Weekly Progress (last 7 days) ===
-        $weeklyData = ResponseSession::where('status', 'submitted')
+        $queryWeeklyData = ResponseSession::where('status', 'submitted')
             ->where('submitted_at', '>=', now()->subDays(7)->startOfDay())
             ->whereHas('user', fn ($q) => $q->where('is_active', true))
             ->select(
@@ -45,8 +80,19 @@ class DashboardController extends Controller
                 DB::raw('COUNT(*) as count')
             )
             ->groupBy('date', 'day_of_week')
-            ->orderBy('date')
-            ->get()
+            ->orderBy('date');
+
+        // Search by respondent type
+        if ($request->has('respondentType') && $request->respondentType) {
+            $queryWeeklyData->whereHas('user', fn ($q) => $q->where('type', $request->respondentType));
+        }
+
+        // Search by city
+        if ($request->has('cityName') && $request->cityName) {
+            $queryWeeklyData->whereHas('user', fn ($q) => $q->where('city_name', strtoupper($request->cityName)));
+        }
+        
+        $weeklyData = $queryWeeklyData->get()
             ->map(function ($item) {
                 $dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
                 return [
@@ -70,11 +116,22 @@ class DashboardController extends Controller
         }
 
         // === Real-time Monitoring (active sessions) ===
-        $activeSessions = ResponseSession::with(['user', 'questionnaire'])
+        $queryActiveSessions = ResponseSession::with(['user', 'questionnaire'])
             ->where('status', 'in_progress')
             ->orderBy('updated_at', 'desc')
-            ->limit(10)
-            ->get()
+            ->limit(10);
+
+        // Search by respondent type
+        if ($request->has('respondentType') && $request->respondentType) {
+            $queryActiveSessions->whereHas('user', fn ($q) => $q->where('type', $request->respondentType));
+        }
+
+        // Search by city
+        if ($request->has('cityName') && $request->cityName) {
+            $queryActiveSessions->whereHas('user', fn ($q) => $q->where('city_name', strtoupper($request->cityName)));
+        }
+
+        $activeSessions = $queryActiveSessions->get()
             ->map(function ($session) {
                 $totalQuestions = $session->questionnaire
                     ? $session->questionnaire->components->sum(function ($c) {
@@ -121,10 +178,11 @@ class DashboardController extends Controller
             ->first();
 
         $instrumentAvailable = false;
+        $hasData = false;
         $componentCharts = [];
 
         if ($publishedQuestionnaire) {
-            $submittedSessions = ResponseSession::with([
+            $querySubmittedSessions = ResponseSession::with([
                 'answers' => fn ($a) => $a->with([
                     'question' => fn ($q) => $q->withTrashed(),
                     'question.indicator' => fn ($q) => $q->withTrashed(),
@@ -134,8 +192,26 @@ class DashboardController extends Controller
             ])
                 ->where('questionnaire_id', $publishedQuestionnaire->id)
                 ->where('status', 'submitted')
+                ->whereHas('user', fn ($q) => $q->where('is_active', true));
+
+            // Search by respondent type
+            if ($request->has('respondentType') && $request->respondentType) {
+                $querySubmittedSessions->whereHas('user', fn ($q) => $q->where('type', $request->respondentType));
+            }
+
+            // Search by city
+            if ($request->has('cityName') && $request->cityName) {
+                $querySubmittedSessions->whereHas('user', fn ($q) => $q->where('city_name', strtoupper($request->cityName)));
+            }
+                
+            $submittedSessions = $querySubmittedSessions->get();
+
+            // Data submit global TANPA filter (type/city): pembeda empty state
+            // "belum ada data sama sekali" vs "belum ada data yang cocok dengan filter"
+            $hasData = ResponseSession::where('questionnaire_id', $publishedQuestionnaire->id)
+                ->where('status', 'submitted')
                 ->whereHas('user', fn ($q) => $q->where('is_active', true))
-                ->get();
+                ->exists();
 
             if ($submittedSessions->isNotEmpty()) {
                 $instrumentAvailable = true;
@@ -225,6 +301,7 @@ class DashboardController extends Controller
             'activeSessions' => $activeSessions,
             'instrument' => [
                 'available' => $instrumentAvailable,
+                'hasData' => $hasData,
                 'id' => $publishedQuestionnaire?->id,
                 'title' => $publishedQuestionnaire?->title,
                 'status' => $publishedQuestionnaire?->status,
