@@ -74,7 +74,10 @@ Register akun respondent baru.
   "username": "budi_santoso",
   "email": "budi@sekolah.id",
   "password": "password123",
-  "passwordConfirmation": "password123"
+  "passwordConfirmation": "password123",
+  "type": "MURID",
+  "cityCode": 3401,
+  "cityName": "Kabupaten Kulon Progo"
 }
 ```
 
@@ -89,7 +92,10 @@ Register akun respondent baru.
       "name": "Budi Santoso",
       "username": "budi_santoso",
       "email": "budi@sekolah.id",
-      "role": "RESPONDENT"
+      "role": "RESPONDENT",
+      "type": "MURID",
+      "city_code": 3401,
+      "city_name": "Kabupaten Kulon Progo"
     }
   }
 }
@@ -239,12 +245,84 @@ Mendapatkan data user yang sedang login.
     "email": "admin@cbt.com",
     "role": "ADMIN",
     "isActive": true,
+    "type": "MURID",
+    "cityCode": 3401,
+    "cityName": "Kabupaten Kulon Progo",
+    "address": "-",
+    "additionalInfo": "-",
     "createdAt": "2024-01-01T10:00:00.000000Z",
     "updatedAt": "2024-01-01T10:00:00.000000Z",
     "lastLoginAt": "2026-07-24T10:30:00.000000Z"
   }
 }
 ```
+
+---
+
+## Update Profile
+
+Mengupdate data user yang sedang login. Berguna untuk melengkapi field baru (`type`, `cityCode`, `cityName`, `address`, `additionalInfo`) pada user lama yang didaftarkan sebelum field tersebut ada.
+
+Semua field bersifat opsional (`sometimes`) — cukup kirim field yang ingin diubah, field lain tetap dipertahankan. `update_by` otomatis diisi id user yang login.
+
+**Endpoint:** `PUT /auth/profile`
+
+**Headers:** `Authorization: Bearer ***`
+
+**Request:**
+```json
+{
+  "name": "Budi Santoso",
+  "type": "GURU",
+  "cityCode": 3402,
+  "cityName": "Kabupaten Bantul",
+  "address": "Jl. Parangtritis Km 5",
+  "additionalInfo": "Guru BK"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Profile updated successfully",
+  "data": {
+    "user": {
+      "id": 3,
+      "name": "Budi Santoso",
+      "username": "budi_santoso",
+      "email": "budi@sekolah.id",
+      "role": "RESPONDENT",
+      "type": "GURU",
+      "city_code": 3402,
+      "city_name": "Kabupaten Bantul",
+      "address": "Jl. Parangtritis Km 5",
+      "additional_info": "Guru BK"
+    }
+  }
+}
+```
+
+**Error Response (422 Validation):**
+```json
+{
+  "status": false,
+  "message": "Validation failed",
+  "errors": {
+    "type": ["The type field is required."]
+  }
+}
+```
+
+**Validation Rules:**
+| Field | Rules |
+|-------|-------|
+| name | sometimes, string, max:255 |
+| type | sometimes, required, string, max:36 |
+| cityCode | sometimes, required, integer |
+| cityName | sometimes, required, string, max:255 |
+| address | sometimes, nullable, string |
+| additionalInfo | sometimes, nullable, string |
 
 ---
 
@@ -1435,7 +1513,69 @@ overallPercentage = (overallScore / 7) * 100
 
 ---
 
-# 9. Common Error Responses
+# 9. Public — Location (Wilayah Indonesia)
+
+Proxy daftar wilayah dari [wilayah.id](https://wilayah.id) — kode wilayah BPS untuk provinsi dan kabupaten/kota. Semua endpoint bersifat publik (tanpa auth).
+
+Setiap request dicatat di log (`Log::info` sukses / `Log::error` gagal) berisi path, timestamp, request, dan response.
+
+## List Provinces
+
+**Endpoint:** `GET /locations/provinces`
+
+**Headers:** None (public)
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Provinces retrieved successfully",
+  "data": [
+    { "code": "11", "name": "Aceh" },
+    { "code": "12", "name": "Sumatera Utara" }
+  ]
+}
+```
+
+**Error Response (502 Bad Gateway):** saat API eksternal gagal atau timeout
+```json
+{
+  "status": false,
+  "message": "Failed to fetch provinces from external API"
+}
+```
+
+## List Regencies (Kabupaten/Kota) by Province
+
+**Endpoint:** `GET /locations/regencies/{provinceCode}`
+
+`{provinceCode}` = kode provinsi 2 digit dari response List Provinces. Contoh: `34` (DI Yogyakarta), `32` (Jawa Barat).
+
+**Headers:** None (public)
+
+**Response (200 OK):**
+```json
+{
+  "status": true,
+  "message": "Regencies retrieved successfully",
+  "data": [
+    { "code": "34.01", "name": "Kabupaten Kulon Progo" },
+    { "code": "34.02", "name": "Kabupaten Bantul" }
+  ]
+}
+```
+
+**Error Response (502 Bad Gateway):** saat API eksternal gagal atau timeout
+```json
+{
+  "status": false,
+  "message": "Failed to fetch regencies from external API"
+}
+```
+
+---
+
+# 10. Common Error Responses
 
 ## Standard Error
 ```json
@@ -1477,7 +1617,7 @@ overallPercentage = (overallScore / 7) * 100
 
 ---
 
-# 10. HTTP Status Codes
+# 11. HTTP Status Codes
 
 | Code | Meaning |
 |------|---------|
@@ -1493,7 +1633,7 @@ overallPercentage = (overallScore / 7) * 100
 
 ---
 
-# 11. Rate Limiting
+# 12. Rate Limiting
 
 | Endpoint | Limit |
 |----------|-------|
@@ -1511,7 +1651,7 @@ X-RateLimit-Reset: 1703001600
 
 ---
 
-# 12. Pagination
+# 13. Pagination
 
 Semua endpoint list menggunakan format pagination yang konsisten:
 
@@ -1532,7 +1672,7 @@ Semua endpoint list menggunakan format pagination yang konsisten:
 
 ---
 
-# 13. Timestamps & Data Types
+# 14. Timestamps & Data Types
 
 **Timestamps:** Semua menggunakan ISO 8601 dengan timezone UTC:
 ```
@@ -1555,7 +1695,7 @@ Semua endpoint list menggunakan format pagination yang konsisten:
 
 ---
 
-# 14. V2 — Questions (Flat/Cascade API)
+# 15. V2 — Questions (Flat/Cascade API)
 
 **Base URL:** `http://localhost:8000/api/v2`
 
@@ -1862,7 +2002,7 @@ Mengembalikan data hirarki lengkap untuk populate cascade dropdown di halaman li
 
 ---
 
-# 15. Authentication Flow
+# 16. Authentication Flow
 
 ```
 Respondent:
@@ -1883,7 +2023,7 @@ Both:
 
 ---
 
-# 16. Endpoint Summary
+# 17. Endpoint Summary
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
@@ -1892,7 +2032,10 @@ Both:
 | POST | `/auth/login-admin` | Public | Login admin only |
 | POST | `/auth/logout` | Sanctum | Revoke token |
 | GET | `/auth/profile` | Sanctum | Get user profile |
+| PUT | `/auth/profile` | Sanctum | Update user profile |
 | GET | `/auth/validate` | Sanctum | Validate token |
+| GET | `/locations/provinces` | Public | Daftar provinsi (proxy wilayah.id) |
+| GET | `/locations/regencies/{provinceCode}` | Public | Daftar kabupaten/kota per provinsi |
 | GET | `/admin/dashboard` | Admin | Dashboard stats |
 | CRUD | `/admin/periods` | Admin | Evaluation periods |
 | CRUD | `/admin/questionnaires` | Admin | Questionnaires |

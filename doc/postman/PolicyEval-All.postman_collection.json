@@ -42,7 +42,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"username\": \"budi_santoso\",\n  \"email\": \"budi@sekolah.id\",\n  \"password\": \"password123\",\n  \"passwordConfirmation\": \"password123\"\n}"
+                  "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"username\": \"budi_santoso\",\n  \"email\": \"budi@sekolah.id\",\n  \"password\": \"password123\",\n  \"passwordConfirmation\": \"password123\",\n  \"type\": \"MURID\",\n  \"cityCode\": 3401,\n  \"cityName\": \"Kabupaten Kulon Progo\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/register",
@@ -83,7 +83,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('\u2705 Registration successful! Token saved.');",
+                      "        console.log('✅ Registration successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -219,14 +219,14 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('\u2705 Token saved successfully!');",
+                      "        console.log('✅ Token saved successfully!');",
                       "        console.log('Token: ' + token.substring(0, 20) + '...');",
                       "        console.log('User: ' + response.data.user.name + ' (' + response.data.user.role + ')');",
                       "    } else {",
-                      "        console.log('\u26a0\ufe0f Login response missing token');",
+                      "        console.log('⚠️ Login response missing token');",
                       "    }",
                       "} else {",
-                      "    console.log('\u274c Login failed with status: ' + pm.response.code);",
+                      "    console.log('❌ Login failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -355,7 +355,7 @@
                       "            pm.collectionVariables.set('userRole', response.data.user.role);",
                       "        }",
                       "        ",
-                      "        console.log('\u2705 Admin Login successful! Token saved.');",
+                      "        console.log('✅ Admin Login successful! Token saved.');",
                       "    }",
                       "}"
                     ]
@@ -442,12 +442,12 @@
                       "        pm.collectionVariables.unset('userName');",
                       "        pm.collectionVariables.unset('userRole');",
                       "        ",
-                      "        console.log('\u2705 Logged out successfully. Token cleared.');",
+                      "        console.log('✅ Logged out successfully. Token cleared.');",
                       "    } else {",
-                      "        console.log('\u26a0\ufe0f Logout response unexpected');",
+                      "        console.log('⚠️ Logout response unexpected');",
                       "    }",
                       "} else {",
-                      "    console.log('\u274c Logout failed with status: ' + pm.response.code);",
+                      "    console.log('❌ Logout failed with status: ' + pm.response.code);",
                       "}"
                     ]
                   }
@@ -494,7 +494,60 @@
                   "name": "Profile Success",
                   "code": 200,
                   "_postman_previewlanguage": "json",
-                  "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"username\": \"admin\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\",\n    \"createdAt\": \"2024-01-01T10:00:00Z\"\n  }\n}"
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Administrator\",\n    \"username\": \"admin\",\n    \"email\": \"admin@cbt.com\",\n    \"role\": \"ADMIN\",\n    \"isActive\": true,\n    \"type\": \"MURID\",\n    \"cityCode\": 3401,\n    \"cityName\": \"Kabupaten Kulon Progo\",\n    \"address\": \"-\",\n    \"additionalInfo\": \"-\",\n    \"createdAt\": \"2024-01-01T10:00:00Z\",\n    \"updatedAt\": \"2024-01-01T10:00:00Z\",\n    \"lastLoginAt\": \"2026-07-24T10:30:00Z\"\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Update Profile",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"type\": \"GURU\",\n  \"cityCode\": 3402,\n  \"cityName\": \"Kabupaten Bantul\",\n  \"address\": \"Jl. Parangtritis Km 5\",\n  \"additionalInfo\": \"Guru BK\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "profile"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Update Profile Success",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": true,\n  \"message\": \"Profile updated successfully\",\n  \"data\": {\n    \"user\": {\n      \"id\": 3,\n      \"name\": \"Budi Santoso\",\n      \"username\": \"budi_santoso\",\n      \"email\": \"budi@sekolah.id\",\n      \"role\": \"RESPONDENT\",\n      \"type\": \"GURU\",\n      \"city_code\": 3402,\n      \"city_name\": \"Kabupaten Bantul\",\n      \"address\": \"Jl. Parangtritis Km 5\",\n      \"additional_info\": \"Guru BK\"\n    }\n  }\n}"
+                },
+                {
+                  "name": "Validation Error",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "body": "{\n  \"status\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"type\": [\n      \"The type field is required.\"\n    ]\n  }\n}"
                 }
               ]
             }
@@ -2025,7 +2078,7 @@
           ]
         },
         {
-          "name": "V2 \u2014 Questions (Flat API)",
+          "name": "V2 — Questions (Flat API)",
           "description": "API V2 untuk halaman pernyataan flat dengan cascade filter. Prefix: /api/v2/admin/questions",
           "item": [
             {
@@ -3838,6 +3891,63 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "LOCATION",
+      "description": "Wilayah Indonesia (proxy wilayah.id) — provinces & regencies, public tanpa auth",
+      "item": [
+        {
+          "name": "List Provinces",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/locations/provinces",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "locations",
+                "provinces"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Regencies by Province",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/locations/regencies/{{provinceCode}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "locations",
+                "regencies",
+                "{{provinceCode}}"
+              ]
+            }
+          }
         }
       ]
     }

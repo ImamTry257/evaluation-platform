@@ -15,7 +15,8 @@ PolicyEval - All API
 │   ├── Register
 │   ├── Login
 │   ├── Logout
-│   └── Get Profile
+│   ├── Get Profile
+│   └── Update Profile
 ├── Admin - Periode
 │   ├── List Periods
 │   ├── Create Period
@@ -43,7 +44,12 @@ PolicyEval - All API
 ├── Admin - Indikator (coming soon)
 ├── Admin - Pertanyaan (coming soon)
 ├── Admin - Responden (coming soon)
-└── Admin - Rekomendasi (coming soon)
+├── Admin - Rekomendasi (coming soon)
+├── RESPONDENT
+│   └── Evaluasi
+└── LOCATION
+    ├── List Provinces
+    └── List Regencies by Province
 ```
 
 ## Response Format

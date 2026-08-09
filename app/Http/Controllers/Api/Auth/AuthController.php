@@ -25,6 +25,9 @@ class AuthController extends Controller
             'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|same:passwordConfirmation',
+            'cityCode' => 'required',
+            'cityName' => 'required',
+            'type' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -46,6 +49,12 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
                 'role' => 'respondent',
                 'is_active' => true,
+                'type'      => $request->type,
+                'city_code' => $request->cityCode,
+                'city_name' => $request->cityName,
+                'address'   => '-',
+                'additional_info' => '-',
+                'update_by' => 0
             ]);
 
             $response = $this->successResponse([
@@ -55,6 +64,9 @@ class AuthController extends Controller
                     'username' => $user->username,
                     'email' => $user->email,
                     'role' => strtoupper($user->role),
+                    'type'      => $user->type,
+                    'city_code' => $user->city_code,
+                    'city_name' => $user->city_name,
                 ],
             ], 'Registration successful', 201);
 
@@ -322,6 +334,11 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'role' => strtoupper($user->role),
                 'isActive' => (bool) $user->is_active,
+                'type' => $user->type,
+                'cityCode' => $user->city_code,
+                'cityName' => $user->city_name,
+                'address' => $user->address,
+                'additionalInfo' => $user->additional_info,
                 'createdAt' => $user->created_at,
                 'updatedAt' => $user->updated_at,
                 'lastLoginAt' => $user->last_login_at,
@@ -338,6 +355,81 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             $response = $this->errorResponse('Internal Server Error', 500);
             Log::error('Get profile error', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+                'error' => $th->getMessage(),
+            ]);
+            return $response;
+        }
+    }
+
+    /**
+     * PUT /api/v1/auth/profile
+     * Update authenticated user profile (melengkapi field yang belum ada di data lama).
+     */
+    public function updateProfile(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'sometimes|string|max:255',
+                'type' => 'sometimes|required|string|max:36',
+                'cityCode' => 'sometimes|required|integer',
+                'cityName' => 'sometimes|required|string|max:255',
+                'address' => 'sometimes|nullable|string',
+                'additionalInfo' => 'sometimes|nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                $response = $this->errorResponse('Validation failed', 422, $validator->errors());
+                Log::warning('Update profile validation failed', [
+                    'path' => $request->url(),
+                    'requestDate' => date('Y-m-d h:i:s'),
+                    'request' => $request->all(),
+                    'response' => $response->getData(true),
+                ]);
+                return $response;
+            }
+
+            $user = $request->user();
+
+            $user->update([
+                'name' => $request->name ?? $user->name,
+                'type' => $request->type ?? $user->type,
+                'city_code' => $request->cityCode ?? $user->city_code,
+                'city_name' => $request->cityName ?? $user->city_name,
+                'address' => $request->address ?? $user->address,
+                'additional_info' => $request->additionalInfo ?? $user->additional_info,
+                'update_by' => $user->id,
+            ]);
+
+            $response = $this->successResponse([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => strtoupper($user->role),
+                    'type' => $user->type,
+                    'city_code' => $user->city_code,
+                    'city_name' => $user->city_name,
+                    'address' => $user->address,
+                    'additional_info' => $user->additional_info,
+                ],
+            ], 'Profile updated successfully');
+
+            Log::info('Update profile successful', [
+                'path' => $request->url(),
+                'requestDate' => date('Y-m-d h:i:s'),
+                'request' => $request->all(),
+                'response' => $response->getData(true),
+            ]);
+
+            return $response;
+        } catch (\Throwable $th) {
+            $response = $this->errorResponse('Internal Server Error', 500);
+            Log::error('Update profile error', [
                 'path' => $request->url(),
                 'requestDate' => date('Y-m-d h:i:s'),
                 'request' => $request->all(),

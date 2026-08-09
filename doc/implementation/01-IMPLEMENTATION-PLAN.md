@@ -496,7 +496,10 @@ Setiap task dianggap selesai jika:
   "name": "Budi Santoso",
   "email": "budi@sekolah.id",
   "password": "password123",
-  "passwordConfirmation": "password123"
+  "passwordConfirmation": "password123",
+  "type": "MURID",
+  "cityCode": 3401,
+  "cityName": "Kabupaten Kulon Progo"
 }
 ```
 
@@ -506,6 +509,9 @@ Setiap task dianggap selesai jika:
 | name | required, string, max:255 |
 | email | required, email, unique:users,email |
 | password | required, string, min:8, same:passwordConfirmation |
+| type | required |
+| cityCode | required |
+| cityName | required |
 
 **Features:**
 - Auto-generate token after registration

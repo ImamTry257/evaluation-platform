@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import api from '@/services/api'
+import SearchableSelect from '@/components/SearchableSelect.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -18,7 +20,65 @@ const form = reactive({
   email: '',
   password: '',
   confirmPassword: '',
+  type: '',
+  cityCode: null as number | null,
+  cityName: '',
 })
+
+// Lokasi: regional lock DIY (BE paksa provinsi 34, list kabupaten/kota hanya DIY)
+const REGENCY_PROVINCE_CODE = '34'
+const regencies = ref<any[]>([])
+const selectedRegency = ref('')
+const isLoadingRegencies = ref(false)
+
+// Jenis pengguna dari API
+const respondentTypes = ref<any[]>([])
+const isLoadingTypes = ref(false)
+
+const typeOptions = computed(() => respondentTypes.value.map(t => ({ value: t.title, label: t.title })))
+const regencyOptions = computed(() => regencies.value.map(r => ({ value: r.code, label: r.name })))
+
+async function fetchRespondentTypes() {
+  isLoadingTypes.value = true
+  try {
+    const response = await api.get('/respondent-types')
+    respondentTypes.value = response.data.data || []
+  } catch (e) {
+    errorMessage.value = 'Gagal memuat daftar jenis pengguna.'
+  } finally {
+    isLoadingTypes.value = false
+  }
+}
+
+async function fetchRegencies() {
+  clearFieldError('cityCode')
+  selectedRegency.value = ''
+  form.cityCode = null
+  form.cityName = ''
+  regencies.value = []
+
+  isLoadingRegencies.value = true
+  try {
+    const response = await api.get(`/locations/regencies/${REGENCY_PROVINCE_CODE}`)
+    regencies.value = response.data.data || []
+  } catch (e) {
+    errorMessage.value = 'Gagal memuat daftar kabupaten/kota.'
+  } finally {
+    isLoadingRegencies.value = false
+  }
+}
+
+function onRegencyChange() {
+  clearFieldError('cityCode')
+  const regency = regencies.value.find(r => r.code === selectedRegency.value)
+  if (regency) {
+    form.cityCode = parseInt(regency.code.replace('.', ''), 10)
+    form.cityName = regency.name
+  } else {
+    form.cityCode = null
+    form.cityName = ''
+  }
+}
 
 function clearFieldError(field: string) {
   if (fieldErrors[field]) {
@@ -56,6 +116,18 @@ async function handleRegister() {
   errorMessage.value = ''
   Object.keys(fieldErrors).forEach(k => delete fieldErrors[k])
 
+  if (!form.type) {
+    isLoading.value = false
+    errorMessage.value = 'Pilih jenis pengguna terlebih dahulu.'
+    return
+  }
+
+  if (!form.cityCode || !form.cityName) {
+    isLoading.value = false
+    errorMessage.value = 'Pilih kabupaten/kota terlebih dahulu.'
+    return
+  }
+
   try {
     await authStore.register({
       name: form.fullName,
@@ -63,6 +135,9 @@ async function handleRegister() {
       email: form.email,
       password: form.password,
       passwordConfirmation: form.confirmPassword,
+      type: form.type,
+      cityCode: form.cityCode!,
+      cityName: form.cityName,
     })
 
     router.push('/login')
@@ -77,6 +152,11 @@ async function handleRegister() {
     isLoading.value = false
   }
 }
+
+onMounted(() => {
+  fetchRespondentTypes()
+  fetchRegencies()
+})
 </script>
 
 <template>
@@ -261,6 +341,51 @@ async function handleRegister() {
               {{ fieldErrors.passwordConfirmation[0] }}
             </p>
           </div>
+
+          <!-- Jenis Pengguna -->
+          <div class="space-y-1 form-group">
+            <label class="form-label text-xs text-on-surface-variant uppercase font-bold ml-1" style="letter-spacing: 0.08em;">
+              Jenis Pengguna
+            </label>
+            <SearchableSelect
+              v-model="form.type"
+              :options="typeOptions"
+              :loading="isLoadingTypes"
+              :error="!!fieldErrors.type"
+              icon="school"
+              placeholder="Pilih jenis pengguna"
+              @change="clearFieldError('type')"
+            />
+            <p v-if="fieldErrors.type" class="text-error text-xs flex items-center gap-1 mt-1">
+              <span class="material-symbols-outlined" style="font-size: 16px;">error</span>
+              {{ fieldErrors.type[0] }}
+            </p>
+          </div>
+
+          <!-- Kabupaten/Kota (DIY) -->
+          <div class="space-y-1 form-group">
+            <label class="form-label text-xs text-on-surface-variant uppercase font-bold ml-1" style="letter-spacing: 0.08em;">
+              Kabupaten/Kota
+            </label>
+            <SearchableSelect
+              v-model="selectedRegency"
+              :options="regencyOptions"
+              :loading="isLoadingRegencies"
+              :error="!!fieldErrors.cityCode"
+              icon="location_city"
+              placeholder="Pilih kabupaten/kota"
+              @change="onRegencyChange()"
+            />
+            <p class="text-[11px] text-on-surface-variant ml-1 mt-1 flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size: 13px;">location_on</span>
+              Provinsi: Daerah Istimewa Yogyakarta
+            </p>
+            <p v-if="fieldErrors.cityCode" class="text-error text-xs flex items-center gap-1 mt-1">
+              <span class="material-symbols-outlined" style="font-size: 16px;">error</span>
+              {{ fieldErrors.cityCode[0] }}
+            </p>
+          </div>
+
           <div class="info-box bg-surface-container rounded-lg p-3 flex gap-3 items-start border border-[#004592]/10">
             <span class="material-symbols-outlined text-[#004592] flex-shrink-0" style="font-size: 20px;">info</span>
             <p class="text-xs text-on-surface-variant leading-relaxed">

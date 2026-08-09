@@ -16,9 +16,14 @@ use App\Http\Controllers\Api\Admin\MonitoringController;
 use App\Http\Controllers\Api\Admin\ReportController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Respondent\EvaluasiController;
+use App\Http\Controllers\Api\RespondentTypeController;
+use App\Http\Controllers\LocationController;
 
 Route::prefix('v1')->group(function () {
     // Public routes
+    Route::get('/respondent-types', [RespondentTypeController::class, 'index']);
+    Route::get('/locations/provinces', [LocationController::class, 'provinces']);
+    Route::get('/locations/regencies/{provinceCode}', [LocationController::class, 'regencies']);
     Route::post('/auth/register', [AuthController::class, 'register'])
         ->middleware('throttle:100,15');
     Route::post('/auth/login', [AuthController::class, 'login'])
@@ -30,6 +35,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/auth/profile', [AuthController::class, 'profile']);
+        Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
         Route::get('/auth/validate', [AuthController::class, 'validate']);
 
         // Admin routes

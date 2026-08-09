@@ -60,6 +60,7 @@ SUPERADMIN > ADMIN > RESPONDENT
 | POST | `/api/v1/auth/login-admin` | Login admin/superadmin | No |
 | POST | `/api/v1/auth/logout` | Logout | Yes |
 | GET | `/api/v1/auth/profile` | Get user profile | Yes |
+| PUT | `/api/v1/auth/profile` | Update user profile | Yes |
 
 **Register Request:**
 ```json
@@ -68,7 +69,10 @@ SUPERADMIN > ADMIN > RESPONDENT
   "username": "budi_santoso",
   "email": "budi@sekolah.id",
   "password": "password123",
-  "passwordConfirmation": "password123"
+  "passwordConfirmation": "password123",
+  "type": "MURID",
+  "cityCode": 3401,
+  "cityName": "Kabupaten Kulon Progo"
 }
 ```
 
@@ -79,6 +83,9 @@ SUPERADMIN > ADMIN > RESPONDENT
 | username | required, string, max:255, unique:users,username |
 | email | required, email, unique:users,email |
 | password | required, string, min:8, same:passwordConfirmation |
+| type | required |
+| cityCode | required |
+| cityName | required |
 
 **Login Request:**
 ```json
