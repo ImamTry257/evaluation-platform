@@ -117,6 +117,9 @@ async function handleLogin() {
       <!-- Kanan: Deskripsi + Foto ketua tim -->
       <div class="order-1 lg:order-2 flex flex-col items-center gap-10 w-full">
         <div class="text-center fade-in-delay max-w-xl mx-auto">
+          <h2 class="text-4xl text-blue-50 leading-relaxed">
+            SEvILing
+          </h2>
           <p class="text-base md:text-lg text-blue-50 leading-relaxed">
             Platform digital untuk mengevaluasi implementasi kebijakan lingkungan di sekolah melalui assessmen berbasis kuesioner terstruktur.
           </p>

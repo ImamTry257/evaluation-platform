@@ -68,22 +68,25 @@ class LocationController extends Controller
             if (!config('location.all_province')) {
                 $provinceCode = config('location.default_city_code');
             }
-            $response = Http::timeout(10)->get("https://wilayah.id/api/regencies/{$provinceCode}.json");
+            // $response = Http::timeout(10)->get("https://wilayah.id/api/regencies/{$provinceCode}.json");
 
-            if ($response->failed()) {
-                $response = $this->errorResponse('Failed to fetch regencies from external API', 502);
+            // if ($response->failed()) {
+            //     $response = $this->errorResponse('Failed to fetch regencies from external API', 502);
 
-                Log::error('Fetch regencies error', [
-                    'path' => $request->url(),
-                    'requestDate' => date('Y-m-d h:i:s'),
-                    'request' => $request->all(),
-                    'response' => $response->getData(true),
-                ]);
+            //     Log::error('Fetch regencies error', [
+            //         'path' => $request->url(),
+            //         'requestDate' => date('Y-m-d h:i:s'),
+            //         'request' => $request->all(),
+            //         'response' => $response->getData(true),
+            //     ]);
 
-                return $response;
-            }
+            //     return $response;
+            // }
 
-            $response = $this->successResponse($response->json('data'), 'Regencies retrieved successfully');
+            // $dataCity = $response->json('data'); # karena ada kendala ke API Eksternal dengan lama waktu response, maka aku buat hardcode dulu
+            $dataCity = [["code" => "34.01","name" => "Kabupaten Kulon Progo"],["code" => "34.02","name" => "Kabupaten Bantul"],["code" => "34.03","name" => "Kabupaten Gunungkidul"],["code" => "34.04","name" => "Kabupaten Sleman"],["code" => "34.71","name" => "Kota Yogyakarta"]];
+
+            $response = $this->successResponse($dataCity, 'Regencies retrieved successfully');
 
             Log::info('Fetch regencies successful', [
                 'path' => $request->url(),

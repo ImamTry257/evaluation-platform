@@ -40,6 +40,9 @@ Route::prefix('v1')->group(function () {
 
         // Admin routes
         Route::prefix('admin')->middleware('admin')->group(function () {
+            // Dashboard
+            Route::get('/dashboard', [DashboardController::class, 'index']);
+            
             // Periods
             Route::apiResource('periods', PeriodeController::class);
 
@@ -72,9 +75,6 @@ Route::prefix('v1')->group(function () {
             // Settings
             Route::get('/settings', [SettingController::class, 'index']);
             Route::put('/settings', [SettingController::class, 'update']);
-
-            // Dashboard
-            Route::get('/dashboard', [DashboardController::class, 'index']);
 
             // Monitoring
             Route::get('/sessions', [MonitoringController::class, 'index']);

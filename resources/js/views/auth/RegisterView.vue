@@ -409,7 +409,7 @@ onMounted(() => {
         </form>
         <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 pt-4">
           Sudah punya akun?
-          <router-link to="/login" class="login-link text-[#004592] font-bold">Masuk</router-link>
+          <router-link to="/" class="login-link text-[#004592] font-bold">Masuk</router-link>
         </p>
         </div>
       </div>

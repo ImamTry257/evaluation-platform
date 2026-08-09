@@ -25,7 +25,9 @@ class UserResource extends JsonResource
             'isActive' => $this->is_active,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'lastLoginAt' => $this->last_login_at
+            'lastLoginAt' => $this->last_login_at,
+            'cityName'  => strtoupper($this->city_name),
+            'respondentType' => $this->type
         ];
     }
 }

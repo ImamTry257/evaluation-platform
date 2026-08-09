@@ -51,7 +51,7 @@ class AuthController extends Controller
                 'is_active' => true,
                 'type'      => $request->type,
                 'city_code' => $request->cityCode,
-                'city_name' => $request->cityName,
+                'city_name' => strtoupper($request->cityName),
                 'address'   => '-',
                 'additional_info' => '-',
                 'update_by' => 0
@@ -398,7 +398,9 @@ class AuthController extends Controller
                 'name' => $request->name ?? $user->name,
                 'type' => $request->type ?? $user->type,
                 'city_code' => $request->cityCode ?? $user->city_code,
-                'city_name' => $request->cityName ?? $user->city_name,
+                'city_name' => $request->has('cityName') && trim($request->cityName) !== ''
+                    ? strtoupper(trim($request->cityName))
+                    : $user->city_name,
                 'address' => $request->address ?? $user->address,
                 'additional_info' => $request->additionalInfo ?? $user->additional_info,
                 'update_by' => $user->id,

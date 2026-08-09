@@ -240,6 +240,8 @@ onMounted(() => {
               <!-- Kolom Status disematikan/hidden: semua responden selalu tampil aktif (is_active=true)
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Status Akun</th>
               -->
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Tipe</th>
+              <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Lokasi</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase">Terakhir Update</th>
               <th class="px-6 py-4 font-label-caps text-label-caps text-outline uppercase text-center">Aksi</th>
             </tr>
@@ -274,6 +276,12 @@ onMounted(() => {
                 </span>
               </td>
               -->
+              <td class="px-6 py-5 text-sm text-secondary">
+                {{ r.respondentType ? r.respondentType : '-' }}
+              </td>
+              <td class="px-6 py-5 text-sm text-secondary">
+                {{ r.cityName ? r.cityName : '-' }}
+              </td>
               <td class="px-6 py-5 text-sm text-secondary">
                 {{ r.lastLoginAt ? formatDate(r.lastLoginAt) : '-' }}
               </td>
@@ -542,7 +550,6 @@ onMounted(() => {
               </div>
               <div>
                 <h3 class="font-title-md text-title-md text-on-surface">Detail Responden</h3>
-                <p class="text-body-sm text-on-surface-variant">Informasi lengkap responden</p>
               </div>
             </div>
             <button
@@ -566,26 +573,30 @@ onMounted(() => {
               </div>
             </div>
 
-            <!-- Username -->
-            <div>
-              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Username</label>
-              <input
-                :value="viewingRespondent.username"
-                type="text"
-                disabled
-                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
-              />
+            <div class="pt-4 border-t border-outline-variant/20">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-secondary">Username:</span>
+                  <p class="font-medium text-on-surface">{{ viewingRespondent.username }}</p>
+                </div>
+                <div>
+                  <span class="text-secondary">Status:</span>
+                  <p class="font-medium text-on-surface">{{ viewingRespondent.isActive ? 'Aktif' : 'Inaktif' }}</p>
+                </div>
+              </div>
             </div>
 
-            <!-- Status -->
-            <div>
-              <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-              <input
-                :value="viewingRespondent.isActive ? 'Aktif' : 'Inaktif'"
-                type="text"
-                disabled
-                class="w-full bg-surface-container-low border border-outline-variant/50 rounded-xl px-4 py-3 text-body-base font-body-base text-on-surface opacity-60 cursor-not-allowed"
-              />
+            <div class="pt-4 border-t border-outline-variant/20">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-secondary">Tipe :</span>
+                  <p class="font-medium text-on-surface">{{ viewingRespondent.respondentType ?? "-" }}</p>
+                </div>
+                <div>
+                  <span class="text-secondary">Lokasi :</span>
+                  <p class="font-medium text-on-surface">{{ viewingRespondent.cityName ?? "-" }}</p>
+                </div>
+              </div>
             </div>
 
             <!-- Info Tambahan -->
