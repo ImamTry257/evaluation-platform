@@ -169,6 +169,11 @@ const router = createRouter({
           name: 'respondent-profile',
           component: () => import('@/views/respondent/ProfileView.vue'),
         },
+        {
+          path: 'profile/edit',
+          name: 'respondent-profile-edit',
+          component: () => import('@/views/respondent/ProfileEditView.vue'),
+        },
       ],
     },
   ],

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
 import StepHeader from './Component/StepHeader.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const userName = computed(() => authStore.user?.name || 'Responden')
@@ -26,10 +27,21 @@ const formattedJoinDate = computed(() => {
   })
 })
 
-// Profil dianggap belum lengkap jika Tipe Pengguna atau Lokasi kosong
+// Profil dianggap belum lengkap jika Tipe Responden atau Lokasi kosong
 const isProfileIncomplete = computed(() =>
   !!profile.value && (!profile.value.type || !profile.value.cityName)
 )
+
+// Alert sukses setelah edit profil (dari ?updated=1)
+const showUpdated = ref(false)
+
+onMounted(() => {
+  fetchProfile()
+  if (route.query.updated === '1') {
+    showUpdated.value = true
+    router.replace({ query: {} })
+  }
+})
 
 async function fetchProfile() {
   loading.value = true
@@ -48,10 +60,6 @@ async function handleLogout() {
   await authStore.logout()
   router.push('/')
 }
-
-onMounted(() => {
-  fetchProfile()
-})
 </script>
 
 <template>
@@ -88,6 +96,14 @@ onMounted(() => {
           </button>
         </div>
 
+        <!-- Updated Success Alert -->
+        <div v-if="showUpdated" class="mb-6 flex items-start gap-3 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 fade-in">
+          <span class="material-symbols-outlined text-emerald-600 flex-shrink-0" style="font-size: 22px;">check_circle</span>
+          <div>
+            <p class="text-body-base font-semibold text-emerald-900">Profil berhasil diperbarui</p>
+          </div>
+        </div>
+
         <!-- Incomplete Profile Alert -->
         <div v-if="isProfileIncomplete" class="mb-6 flex items-start gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 fade-in">
           <span class="material-symbols-outlined text-amber-600 flex-shrink-0" style="font-size: 22px;">warning</span>
@@ -121,7 +137,7 @@ onMounted(() => {
                   </span>
                 </div>
               </div>
-              <button class="px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface font-body-base font-medium flex items-center gap-2 self-start hover:bg-surface-container-low hover:border-[#004592]/50 transition-all">
+              <button @click="router.push('/respondent/profile/edit')" class="px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface font-body-base font-medium flex items-center gap-2 self-start hover:bg-surface-container-low hover:border-[#004592]/50 transition-all">
                 <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profil
               </button>
             </div>
